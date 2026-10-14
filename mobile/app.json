@@ -1,0 +1,94 @@
+{
+  "expo": {
+    "name": "Snaproom",
+    "slug": "snaproom",
+    "version": "0.1.0",
+    "scheme": "snaproom",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "com.choisj2702.snaproom",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.choisj2702.snaproom",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#f7f5ee"
+      }
+    },
+    "plugins": [
+      "expo-dev-client",
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-localization",
+      "expo-background-task",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Find photos from your chosen dates. Only selected photos are uploaded.",
+          "savePhotosPermission": "Save photos you choose to your library.",
+          "granularPermissions": [
+            "photo"
+          ],
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Choose photos to add to a Snaproom folder.",
+          "cameraPermission": "Take a photo to add to your folder.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-sharing",
+        {
+          "ios": {
+            "enabled": true,
+            "activationRule": {
+              "supportsImageWithMaxCount": 100
+            }
+          },
+          "android": {
+            "enabled": true,
+            "singleShareMimeTypes": [
+              "image/*"
+            ],
+            "multipleShareMimeTypes": [
+              "image/*"
+            ]
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "expo-sharing-extension",
+                  "bundleIdentifier": "com.choisj2702.snaproom.expo-sharing-extension",
+                  "entitlements": {
+                    "com.apple.security.application-groups": [
+                      "group.com.choisj2702.snaproom"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "projectId": "656c1ca2-14c7-46b5-b528-089bcf4a5592"
+      }
+    },
+    "owner": "seongjunchoi"
+  }
+}

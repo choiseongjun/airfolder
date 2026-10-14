@@ -1,0 +1,40 @@
+import type { PoolClient } from 'pg';
+
+export type Identity = { uid: string; provider: 'google.com' | 'apple.com'; email: string | null; name: string };
+
+// Only call this after Firebase Admin has verified the token's signature, issuer and audience.
+export function identityFromVerifiedClaims(token: {
+  uid?: string; auth_time?: number; email?: string; email_verified?: boolean; name?: string;
+  firebase?: { sign_in_provider?: string };
+}, now = Math.floor(Date.now() / 1000)): Identity {
+  const provider = token.firebase?.sign_in_provider;
+  if ((provider !== 'google.com' && provider !== 'apple.com') || !token.uid || token.uid.length > 128 ||
+    !Number.isFinite(token.auth_time) || token.auth_time! > now + 60 || now - token.auth_time! > 300 ||
+    (token.email !== undefined && (token.email_verified !== true || token.email.length > 254))) throw new Error('INVALID_IDENTITY');
+  return { uid: token.uid, provider, email: token.email || null, name: token.name?.trim().slice(0,80) || (provider === 'apple.com' ? 'Apple user' : 'Google user') };
+}
+
+// The caller owns the transaction. Never identify or merge an account by email.
+export async function attachIdentity(db: PoolClient, guest: string, identity: Identity) {
+  await db.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['snaproom-auth:' + identity.uid]);
+  const locked = await db.query('SELECT id FROM snaproom.viewers WHERE id=$1 FOR UPDATE', [guest]);
+  if (!locked.rowCount) throw new Error('SESSION_CHANGED');
+  const current = await db.query('SELECT firebase_uid FROM snaproom.accounts WHERE viewer_id=$1', [guest]);
+  if (current.rowCount && current.rows[0].firebase_uid !== identity.uid) throw new Error('LOGOUT_FIRST');
+  const existing = await db.query('SELECT viewer_id FROM snaproom.accounts WHERE firebase_uid=$1', [identity.uid]);
+  if (!existing.rowCount) {
+    await db.query('INSERT INTO snaproom.accounts(firebase_uid,viewer_id,provider,email,display_name) VALUES($1,$2,$3,$4,$5)', [identity.uid,guest,identity.provider,identity.email,identity.name]);
+    // Guest cookies must not become permanent credentials for the upgraded account.
+    await db.query('DELETE FROM snaproom.sessions WHERE viewer_id=$1', [guest]);
+    return guest;
+  }
+  const owner = existing.rows[0].viewer_id as string;
+  if (owner !== guest) {
+    await db.query('UPDATE snaproom.folders SET owner_id=$1 WHERE owner_id=$2', [owner,guest]);
+    await db.query('UPDATE snaproom.photos SET owner_id=$1 WHERE owner_id=$2', [owner,guest]);
+    await db.query('UPDATE snaproom.invites SET created_by=$1 WHERE created_by=$2', [owner,guest]);
+    await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) SELECT folder_id,$1 FROM snaproom.members WHERE viewer_id=$2 ON CONFLICT DO NOTHING', [owner,guest]);
+    await db.query('DELETE FROM snaproom.viewers WHERE id=$1', [guest]);
+  }
+  return owner;
+}
