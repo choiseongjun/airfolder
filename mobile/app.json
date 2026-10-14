@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Snaproom",
+    "name": "Memolumi",
     "slug": "snaproom",
     "version": "0.1.0",
     "scheme": "snaproom",
@@ -41,7 +41,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Choose photos to add to a Snaproom folder.",
+          "photosPermission": "Choose photos to add to a Memolumi folder.",
           "cameraPermission": "Take a photo to add to your folder.",
           "microphonePermission": false
         }

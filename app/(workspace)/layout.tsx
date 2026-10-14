@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Snaproom — Every moment, in its place",
+  title: "Memolumi — Every moment, in its place",
   description: "Capture into purpose-built rooms. Keep photos private and share only what you choose.",
   robots: { index: false, follow: false },
 };
