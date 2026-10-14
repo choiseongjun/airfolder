@@ -57,3 +57,4 @@ async function drain() {
 export function runQueue() { return running ??= drain().finally(() => { running = null; }); }
 export async function retryFailed(session: Session) { for (const item of await entries()) if (item.owner === session.viewerId && item.origin === session.origin && item.status === 'failed') await write({ ...item, status: 'pending', attempts: 0, nextAttempt: 0 }); await runQueue(); }
 export async function discardFailed(session: Session) { for (const item of await entries()) if (item.owner === session.viewerId && item.origin === session.origin && item.status === 'failed') await write(item, true); }
+export async function clearAccountHistory(session:Session){if(running)throw new Error('UPLOAD_IN_PROGRESS');for(const item of await entries())if(item.owner===session.viewerId&&item.origin===session.origin)await write(item,true);}

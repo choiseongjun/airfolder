@@ -24,3 +24,5 @@ export async function connectAccount(_locale: Locale, expectedViewerId?: string)
   return session;
 }
 export async function disconnectAccount() { await request('/api/auth/logout', { method: 'POST' }); }
+
+export async function forgetSession(){starting=null;}

@@ -1,5 +1,18 @@
 # Snaproom mobile
 
+Public brand: **Memolumi**. Existing bundle IDs, storage keys and EAS project identity remain stable.
+
+## Release preparation (2026-10-14)
+
+- Android back closes previews/dialogs, clears photo selection, returns to folders, then exits at the root. Camera and photo picker additions accumulate without discarding previously selected images; cancelling preserves the current selection.
+- Device notifications use Expo Push Service (FCM on Android, APNs on iOS). Users opt in from Account. `/api/push` binds registration to the authenticated session, and logout/account-deletion revocation cascades to device registrations. Shared-photo notifications contain no photos or folder names. Sending is opt-in on the server with `PUSH_ENABLED=true`, after delivery verification; failures do not roll back publication. This is best-effort delivery, not a durable notification queue.
+- Configure the project's Android Firebase app and `google-services.json`, upload FCM v1 credentials to EAS, and configure an APNs push key for the Apple team. Those account-side steps and real-device receipt tests are still outstanding. Never commit service-account JSON or APNs private keys. Adding the notification native module requires rebuilding the development client.
+- `/privacy` and `/support` are initial bilingual pages. `SUPPORT_EMAIL` and a deployed HTTPS origin must be set before submitting their URLs. The policy still needs operator/contact/retention review before publication.
+- Account deletion can be initiated in Account. The API revokes sessions and records a request. Operators run `node scripts/process-account-deletions.mjs` to inspect pending counts, and `--execute` to process requests older than five minutes using server-only `FIREBASE_SERVICE_ACCOUNT_JSON`. It deletes the Firebase identity, uploaded photos, owned folders (including member photos), and associated application records. The worker must be scheduled/operated before launch; requesting deletion does not currently execute this worker automatically.
+- App Store Connect app ID: `6822636339`. English/Korean descriptions, promotional copy and keywords are saved as a draft. Real iOS screenshots, production build, privacy declarations, review access/contact, public URLs and account agreement remain outstanding. Never substitute web-preview or Android screenshots for verified iOS captures.
+
+Validation: `node scripts/test-device-settings.mjs` covers invalid tokens, session-bound unregistration, origin protection, deletion confirmation, session revocation and rejection of stale sessions for deleting accounts.
+
 Expo SDK 57 / React Native application for collecting photos. The existing Next.js web application is still the invitation entrance and desktop workspace. There is no second database: this app calls the same `/api` routes and uses the same Firebase-backed account, Postgres folders and private Supabase bucket.
 
 ## Implemented

@@ -17,6 +17,8 @@ export async function POST(request: Request) {
     const token = randomBytes(32).toString('hex');
     const oldToken = (await cookies()).get('snaproom_session')?.value;
     const viewerId = await transaction(async db => {
+      const deleting=await db.query('SELECT 1 FROM snaproom.accounts a JOIN snaproom.viewers v ON v.id=a.viewer_id WHERE a.firebase_uid=$1 AND v.deletion_requested_at IS NOT NULL',[identity.uid]);
+      if(deleting.rowCount)throw new ApiError(409,'ACCOUNT_DELETION_PENDING');
       let owner;
       try { owner = await attachIdentity(db,guest,identity); }
       catch(error) { if(error instanceof Error && ['LOGOUT_FIRST','SESSION_CHANGED'].includes(error.message)) throw new ApiError(409,error.message); throw error; }

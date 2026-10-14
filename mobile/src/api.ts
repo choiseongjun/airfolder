@@ -52,3 +52,5 @@ export async function disconnectAccount() {
   if (session && session.expiresAt > Date.now()) await request('/api/auth/logout', { method: 'POST' }, session);
   await SecureStore.deleteItemAsync(key);
 }
+
+export async function forgetSession(){await SecureStore.deleteItemAsync(key);}

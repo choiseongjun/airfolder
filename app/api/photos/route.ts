@@ -1,3 +1,4 @@
+import { notifySharedPhotos } from '@/lib/push';
 import sharp from 'sharp';
 import { ApiError, json, pool, requireMember, safe, sameOrigin, storage, transaction, uuid, viewer } from '@/lib/server';
 
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
         VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(id) DO NOTHING`, [id, folder, who, String(data.get('name') || 'Photo').slice(0, 200), objectPath, bytes.length, data.get('shared') === 'true', new Date(captured)]);
       await db.query('UPDATE snaproom.folders SET updated_at=now() WHERE id=$1', [folder]);
     });
+    if(data.get('shared')==='true') await notifySharedPhotos([folder],who).catch(()=>console.error('Push notification delivery failed'));
     return Response.json({ id }, { status: 201 });
   });
 }
@@ -36,11 +38,14 @@ export async function PATCH(request: Request) {
     sameOrigin(request); const who = await viewer(), body = await json(request);
     if (!Array.isArray(body.ids) || !body.ids.length || body.ids.length > 200 || typeof body.shared !== 'boolean') throw new ApiError(400, 'INVALID_SELECTION');
     const ids = [...new Set(body.ids.map(uuid))];
+    const changedFolders: string[] = [];
     await transaction(async db => {
-      const rows = await db.query('SELECT id FROM snaproom.photos WHERE id=ANY($1::uuid[]) AND owner_id=$2 FOR UPDATE', [ids, who]);
+      const rows = await db.query('SELECT id,folder_id,shared FROM snaproom.photos WHERE id=ANY($1::uuid[]) AND owner_id=$2 FOR UPDATE', [ids, who]);
       if (rows.rowCount !== ids.length) throw new ApiError(403, 'PHOTO_NOT_OWNED');
+      if(body.shared) changedFolders.push(...rows.rows.filter(p=>!p.shared).map(p=>p.folder_id));
       await db.query('UPDATE snaproom.photos SET shared=$1 WHERE id=ANY($2::uuid[]) AND owner_id=$3', [body.shared, ids, who]);
     });
+    await notifySharedPhotos(changedFolders,who).catch(()=>console.error('Push notification delivery failed'));
     return Response.json({ updated: ids.length });
   });
 }

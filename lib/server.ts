@@ -43,7 +43,7 @@ export async function transaction<T>(work: (db: PoolClient) => Promise<T>): Prom
 export async function viewer() {
   const token = await sessionToken();
   if (!token) throw new ApiError(401, 'SESSION_REQUIRED');
-  const result = await pool().query('SELECT viewer_id FROM snaproom.sessions WHERE token_hash=$1 AND expires_at>now()', [hash(token)]);
+  const result = await pool().query('SELECT s.viewer_id FROM snaproom.sessions s JOIN snaproom.viewers v ON v.id=s.viewer_id WHERE s.token_hash=$1 AND s.expires_at>now() AND v.deletion_requested_at IS NULL', [hash(token)]);
   if (!result.rowCount) throw new ApiError(401, 'SESSION_EXPIRED');
   return result.rows[0].viewer_id as string;
 }

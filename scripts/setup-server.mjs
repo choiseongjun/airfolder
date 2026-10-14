@@ -10,6 +10,8 @@ try {
   await db.query(readFileSync(new URL('../db/001_snaproom.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/002_accounts.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/003_mobile_login.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/004_push.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/005_deletion.sql', import.meta.url), 'utf8'));
   await db.query('COMMIT');
   const storage = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } }).storage;
   const bucket = env.SUPABASE_STORAGE_BUCKET;

@@ -82,3 +82,9 @@ export async function discardFailed(session: Session) {
   await update(items => items.filter(i => { if (i.owner === session.viewerId && i.origin === session.origin && i.status === 'failed') { removed.push(i); return false; } return true; }));
   for (const item of removed) await FileSystem.deleteAsync(directory() + item.file, { idempotent: true });
 }
+export async function clearAccountHistory(session: Session) {
+  if(running) throw new Error('UPLOAD_IN_PROGRESS');
+  const removed: QueueItem[]=[];
+  await update(items=>items.filter(i=>{if(i.owner===session.viewerId&&i.origin===session.origin){removed.push(i);return false;}return true;}));
+  for(const item of removed)await FileSystem.deleteAsync(directory()+item.file,{idempotent:true}).catch(()=>{});
+}
