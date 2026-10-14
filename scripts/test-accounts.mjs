@@ -22,7 +22,27 @@ try {
   await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2),($1,$3)',[folder,guest,owner]);
   await db.query("INSERT INTO snaproom.photos(id,folder_id,owner_id,name,object_path,size_bytes,captured_at) VALUES($1,$2,$3,'Fixture',$4,1,now())",[photo,folder,guest,'fixture/'+photo]);
   await db.query("INSERT INTO snaproom.invites(token_hash,folder_id,created_by,expires_at) VALUES($1,$2,$3,now()+interval '1 day')",[randomUUID(),folder,guest]);
+  const record=randomUUID(),comment=randomUUID();
+  await db.query("INSERT INTO snaproom.records(id,folder_id,owner_id,body,recorded_on) VALUES($1,$2,$3,'Private record','2026-01-02')",[record,folder,guest]);
+  await db.query("INSERT INTO snaproom.comments(id,record_id,owner_id,body) VALUES($1,$2,$3,'Private comment')",[comment,record,guest]);
+  await db.query('INSERT INTO snaproom.reactions(id,record_id,owner_id) VALUES($1,$2,$3),($4,$2,$5)',[randomUUID(),record,guest,randomUUID(),owner]);
+  await db.query("INSERT INTO snaproom.comment_reports(id,comment_id,owner_id,reason) VALUES($1,$2,$3,'Fixture report')",[randomUUID(),comment,guest]);
+  for(const table of ['photos','records']) await db.query(`UPDATE snaproom.${table} SET recipients=$1 WHERE folder_id=$2`,[[guest,owner],folder]);
+  const group=randomUUID();
+  await db.query('INSERT INTO snaproom.groups(id,owner_id,name) VALUES($1,$2,$3)',[group,guest,'Account merge group']);
+  await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id) VALUES($1,$2),($1,$3)',[group,guest,owner]);
+  await db.query('UPDATE snaproom.folders SET group_id=$2 WHERE id=$1',[folder,group]);
   assert.equal(await attachIdentity(db,guest,identity),owner);
+  assert.equal((await db.query('SELECT owner_id FROM snaproom.groups WHERE id=$1',[group])).rows[0].owner_id,owner);
+  assert.equal((await db.query('SELECT viewer_id FROM snaproom.group_members WHERE group_id=$1',[group])).rowCount,1);
+
+  for(const table of ['photos','records']) assert.deepEqual((await db.query(`SELECT recipients FROM snaproom.${table} WHERE folder_id=$1`,[folder])).rows[0].recipients,[owner]);
+  assert.equal((await db.query('SELECT owner_id,shared FROM snaproom.records WHERE id=$1',[record])).rows[0].owner_id,owner);
+  assert.equal((await db.query('SELECT shared FROM snaproom.records WHERE id=$1',[record])).rows[0].shared,false);
+  assert.equal((await db.query('SELECT owner_id FROM snaproom.comments WHERE id=$1',[comment])).rows[0].owner_id,owner);
+  assert.equal((await db.query('SELECT owner_id FROM snaproom.reactions WHERE record_id=$1',[record])).rowCount,1);
+  assert.equal((await db.query('SELECT owner_id FROM snaproom.comment_reports WHERE comment_id=$1',[comment])).rows[0].owner_id,owner);
+
   assert.equal((await db.query('SELECT owner_id FROM snaproom.folders WHERE id=$1',[folder])).rows[0].owner_id,owner);
   const stored=(await db.query('SELECT owner_id,shared FROM snaproom.photos WHERE id=$1',[photo])).rows[0];
   assert.equal(stored.owner_id,owner);assert.equal(stored.shared,false);

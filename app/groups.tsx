@@ -1,0 +1,47 @@
+"use client";
+/* eslint-disable @next/next/no-img-element -- QR data URLs are generated locally. */
+import {useCallback,useEffect,useState} from 'react';
+import {Users,Plus,ArrowRight,Settings,LockKeyhole,X,Copy} from 'lucide-react';
+import QRCode from 'qrcode';
+import {api} from '@/lib/client-api';
+import type {Locale} from './i18n';
+import './group-space.css';
+import MembersPanel from './members-panel';
+export type Group={id:string;name:string;description:string;mine:boolean;muted:boolean;members:number;albums:number};
+type Member={id:string;name:string;mine:boolean;owner:boolean};
+export default function Groups({locale,selected,onSelect,onChanged,revision}:{locale:Locale;selected:string|null;onSelect:(id:string|null)=>void;onChanged:()=>Promise<void>;revision:string}){
+ const ko=locale==='ko',text=(a:string,b:string)=>ko?a:b;
+ const [groups,setGroups]=useState<Group[]>([]),[dialog,setDialog]=useState<'create'|'manage'|null>(null),[name,setName]=useState(''),[members,setMembers]=useState<Member[]>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[invite,setInvite]=useState(''),[qr,setQr]=useState(''),[confirm,setConfirm]=useState<{action:string;memberId?:string;name?:string}|null>(null);
+ const group=groups.find(g=>g.id===selected);
+ const load=useCallback(async()=>{const d=await api<{groups:Group[]}>('/api/groups');setGroups(d.groups);},[]);
+ useEffect(()=>{let alive=true;api<{groups:Group[]}>('/api/groups').then(d=>{if(alive){setGroups(d.groups);if(selected&&!d.groups.some(g=>g.id===selected))onSelect(null);}}).catch(()=>{if(alive)setError(ko?'그룹을 불러오지 못했어요.':'Could not load groups.');});return()=>{alive=false;};},[revision,ko,selected,onSelect]);
+ async function manage(){setName('');setError('');setInvite('');setQr('');setMembers([]);setDialog('manage');try{const d=await api<{members:Member[]}>('/api/groups?id='+selected);setMembers(d.members);}catch{setError(text('멤버를 불러오지 못했어요.','Could not load members.'));}}
+ async function action(action:string,values:Record<string,unknown>={}){setBusy(true);setError('');try{
+  const d=await api<{token?:string}>('/api/groups',{method:'PATCH',body:JSON.stringify({id:selected,action,...values})});
+  if(d.token){const url=new URL(window.location.origin);url.searchParams.set('invite',d.token);url.searchParams.set('lang',locale);setInvite(url.toString());setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1}));}
+  else if(action==='revoke'){setInvite('');setQr('');}
+  else if(action==='leave'){onSelect(null);setDialog(null);}
+  else if(action==='remove'||action==='transfer'){const m=await api<{members:Member[]}>('/api/groups?id='+selected);setMembers(m.members);}
+  setConfirm(null);await load();await onChanged();
+ }catch(e){setError(e instanceof Error&&e.message==='TRANSFER_OWNERSHIP_FIRST'?text('다른 멤버에게 그룹장을 넘긴 뒤 나갈 수 있어요.','Transfer ownership before leaving.'):text('변경하지 못했어요. 다시 시도해 주세요.','Could not save. Please retry.'));}finally{setBusy(false);}}
+ async function create(e:React.FormEvent){e.preventDefault();setBusy(true);setError('');try{const d=await api<{id:string}>('/api/groups',{method:'POST',body:JSON.stringify({name})});await load();onSelect(d.id);setDialog(null);setName('');await onChanged();}catch{setError(text('그룹을 만들지 못했어요. 다시 시도해 주세요.','Could not create group. Please retry.'));}finally{setBusy(false);}}
+ return <section className="groups-section" aria-label={text('우리 그룹','Our groups')}>
+  <div className="groups-heading"><div><span className="eyebrow">OUR CIRCLES</span><h2>{text('추억은 쌓이고, 우리는 이어지고.','More memories. Same people.')}</h2></div><button className="secondary-button" onClick={()=>{setName('');setError('');setDialog('create');}}><Plus size={16}/>{text('그룹 만들기','New group')}</button></div>
+  <div className="group-list"><button className={'group-card personal '+(!selected?'active':'')} onClick={()=>onSelect(null)} aria-pressed={!selected}><LockKeyhole size={22}/><strong>{text('내 공간','My space')}</strong><small>{text('개인 앨범 · 기존 공유 앨범','Personal & existing shared albums')}</small></button>
+   {groups.map((g,i)=><button key={g.id} className={'group-card '+(selected===g.id?'active':'')} onClick={()=>onSelect(g.id)} aria-pressed={selected===g.id}><span className={'group-symbol tone-'+i%3}><Users size={22}/></span><strong>{g.name}</strong><small>{ko?`${g.members}명 · 앨범 ${g.albums}개`:`${g.members} ${g.members===1?"member":"members"} · ${g.albums} ${g.albums===1?"album":"albums"}`}</small><ArrowRight size={15}/></button>)}
+  </div>
+  {!groups.length&&<p className="group-hint">{text('같은 사람들과 다음 추억도 함께. 그룹을 만들면 멤버를 다시 초대하지 않아도 돼요. 혼자라면 내 공간에서 시작하세요.','Keep the same people together for your next memory. Or start on your own in My space.')}</p>}
+  {group&&<div className="group-current"><div><h3>{group.name}</h3><p>{text('이 그룹의 앨범이 차곡차곡 쌓여요. 사진은 공개하기 전까지 나만 볼 수 있어요.','Albums grow here over time. Your photos stay private until you share them.')}</p></div><button className="icon-button" aria-label={text('그룹 관리','Manage group')} onClick={manage}><Settings size={20}/></button></div>}
+  {group&&<MembersPanel key={group.id} groupId={group.id} ko={ko}/>}
+  {error&&!dialog&&<p role="alert">{error}<button onClick={()=>void load().then(()=>setError('')).catch(()=>{})}>{text('다시 시도','Retry')}</button></p>}
+  {dialog&&<div className="modal-backdrop"><section className="modal group-dialog" role="dialog" aria-modal="true" aria-label={dialog==='create'?text('그룹 만들기','New group'):text('그룹 관리','Manage group')}><button disabled={busy} className="close-modal icon-button" onClick={()=>{setDialog(null);setConfirm(null);}} aria-label={text('닫기','Close')}><X/></button>
+   {dialog==='create'?<form onSubmit={create}><div className="modal-symbol"><Users/></div><h2>{text('누구와 추억을 쌓을까요?','Who are your people?')}</h2><p>{text('단톡방과 같은 이름으로 만들어 보세요. 대화방이 바뀌어도 이 그룹의 기록은 이어집니다.','After the trip, at the next birthday—add another album to the same group.')}</p><label>{text('그룹 이름','Group name')}<input required maxLength={80} value={name} onChange={e=>setName(e.target.value)} placeholder={text('예: 대학 친구들 단톡방, 우리 가족','e.g. College friends, Our family')}/></label><button className="primary-button full" disabled={busy||!name.trim()}>{text('우리 그룹 만들기','Create our group')}</button></form>:<><h2>{group?.name}</h2>
+    <label className="group-toggle"><input type="checkbox" checked={group?.muted??false} disabled={busy} onChange={e=>void action('mute',{muted:e.target.checked})}/>{text('이 그룹의 푸시 알림 끄기','Mute push notifications for this group')}</label>
+    {group?.mine&&<><form onSubmit={e=>{e.preventDefault();if(name.trim())void action('rename',{name});}}><label>{text('그룹 이름 변경','Rename group')}<input maxLength={80} value={name} placeholder={group.name} onChange={e=>setName(e.target.value)}/></label><button className="text-button" disabled={busy||!name.trim()}>{text('이름 저장','Save name')}</button></form><button disabled={busy} className="primary-button full" onClick={()=>void action('invite')}>{text('초대 링크 · QR 만들기','Create invite link & QR')}</button><p className="group-hint">{text('초대는 7일간 유효해요. 참여하면 이 그룹의 기존·새 앨범에 접근하며, 공개된 사진만 볼 수 있어요. 새 링크를 만들면 이전 링크는 만료됩니다.','Invites last 7 days. Members can access existing and future albums, and only shared photos. A new link replaces the previous one.')}</p>{invite&&<div className="group-invite"><img src={qr} width={180} height={180} alt={text('그룹 초대 QR','Group invite QR')}/><input readOnly value={invite} aria-label={text('초대 링크','Invite link')}/><button className="secondary-button" onClick={()=>void navigator.clipboard.writeText(invite).catch(()=>setError(text('링크를 직접 복사해 주세요.','Please copy the link manually.')))}><Copy size={14}/>{text('링크 복사','Copy link')}</button></div>}<button disabled={busy} className="text-button" onClick={()=>void action('revoke')}>{text('모든 초대 링크 만료시키기','Revoke invite links')}</button></>}
+    <h3>{text('함께하는 사람들','Members')}</h3><ul className="group-members">{members.map(m=><li key={m.id}><span><strong>{m.name}</strong><small>{m.owner?text('그룹장','Owner'):m.mine?text('나','You'):text('멤버','Member')}</small></span>{group?.mine&&!m.mine&&<div><button disabled={busy} onClick={()=>setConfirm({action:'transfer',memberId:m.id,name:m.name})}>{text('그룹장 넘기기','Make owner')}</button><button disabled={busy} onClick={()=>setConfirm({action:'remove',memberId:m.id,name:m.name})}>{text('내보내기','Remove')}</button></div>}</li>)}</ul>
+    <button disabled={busy} className="text-button" onClick={()=>setConfirm({action:'leave'})}>{text('그룹 나가기','Leave group')}</button>
+    {confirm&&<div className="group-confirm"><strong>{confirm.name}</strong><p>{confirm.action==='transfer'?text('그룹 관리 권한을 이 멤버에게 넘길까요?','Transfer group ownership to this member?'):text('그룹의 모든 앨범 접근 권한이 사라집니다. 올린 사진은 남으며, 다시 참여하기 전에는 본인의 비공개 사진에도 접근할 수 없습니다. 필요한 원본을 먼저 내려받으세요.','Access to every group album will end. Uploaded photos remain; even your private photos will be inaccessible until you rejoin. Download needed originals first.')}</p><button className="primary-button" disabled={busy} onClick={()=>void action(confirm.action,{memberId:confirm.memberId})}>{text('확인','Confirm')}</button><button className="text-button" disabled={busy} onClick={()=>setConfirm(null)}>{text('취소','Cancel')}</button></div>}
+   </>}{error&&<p role="alert">{error}</p>}
+  </section></div>}
+ </section>;
+}

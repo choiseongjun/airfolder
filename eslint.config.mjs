@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "mobile/**",
     "public/mobile-preview/**",
+    "public/face-models/**",
   ]),
 ]);
 

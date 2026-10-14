@@ -5,6 +5,17 @@ export const languageStorageKey = "snaproom-language";
 // UI copy only. User-authored room names, descriptions and filenames are never translated.
 // Korean source keys are retained for compatibility with the first local workspace.
 export const english = {
+  "함께 모으는 우리의 기록.": "A shared home for our memories.",
+  "함께한 날들이,": "Days together.",
+  "이어지는 곳.": "Memories to revisit.",
+  "첫 여행부터 다음 모임까지, 각자의 사진을 모아요.": "From the first trip to the next gathering.",
+  "함께한 순간을 언제든 다시 꺼내보세요.": "Collect everyone’s photos. Come back to your moments.",
+  "우리의 공간 만들기": "Start your collection",
+  "함께 쌓는 우리의 기록.": "Our memories, together.",
+  "어떤 날을 기억할까요?": "What will you remember?",
+  "여행과 모임의 사진을 모아, 다시 보고 싶은 순간을 남기세요.": "Gather photos from trips and get-togethers. Make a collection worth revisiting.",
+  "각자 찍은 사진을 모아 함께한 날들을 기록하고, 나누고 싶은 순간만 공유하세요.": "Collect photos from your shared days and choose the moments to share.",
+
   "좋아하는 카메라는 그대로.": "Keep the camera you love.",
   "어디서 찍든,": "Shoot anywhere.",
   "한곳에.": "Gather here.",
@@ -66,7 +77,7 @@ export const english = {
   "· 7일간 유효한 초대 링크": " · Invite expires in 7 days",
   "링크를 받은 사람은 폴더에 참여할 수 있어요. 다른 기기에서는 접속 가능한 서비스 주소로 초대해 주세요.": "Anyone with this link can join. To invite another device, use a service address that it can reach.",
   "사진은 클라우드에 있어요": "Your moments live in the cloud.",
-  "사진은 비공개 클라우드에 보관됩니다. 저장용 사진은 최대 2560픽셀 JPEG로 변환됩니다.": "Photos are stored privately in the cloud as JPEG images up to 2560 pixels.",
+  "새 사진·영상은 선택한 원본 파일을 보관합니다. 서버 저장소 한도 내에서 영상 50MB·사진 20MB까지 지원하며 원본의 위치 정보 등 메타데이터도 포함될 수 있습니다. 이전 업로드의 원본은 복원되지 않습니다.": "New uploads preserve selected original photos and videos, videos up to 50 MB and photos up to 20 MB, subject to server storage limits, including metadata such as location. Originals cannot be recovered for older processed uploads.",
   "현재는 이 브라우저의 게스트 세션으로 내 사진에 접근합니다. 쿠키를 삭제하면 접근을 복구할 수 없으니 중요한 사진은 다운로드해 주세요. 계정 로그인은 아직 제공하지 않습니다.": "Access uses a guest session in this browser. Clearing its cookies loses access, so download important photos. Account sign-in is not available yet.",
   "촬영 사진은 서버에 저장되고, 공개한 사진만 초대받은 멤버와 공유됩니다.": "Photos are stored on the server. Only photos you share are visible to invited members.",
   "이 브라우저에 연결된 게스트 작업공간입니다. 사진은 서버에 저장됩니다.": "A guest workspace linked to this browser. Your photos are stored on the server.",
@@ -290,14 +301,14 @@ export const english = {
 
 export function translate(locale: Locale, key: string): string {
   const copy = locale === "en" ? english[key as keyof typeof english] ?? key : key;
-  return locale === "en" ? copy.replace(/\brooms\b/g, "folders").replace(/\broom\b/g, "folder").replace(/\bRoom\b/g, "Folder") : copy.replace(/방으로/g, "폴더로").replace(/방을/g, "폴더를").replace(/방은/g, "폴더는").replace(/방(?=[\s은을의에안으]|$)/g, "폴더");
+  return locale === "en" ? copy.replace(/\b(rooms|folders)\b/g, "albums").replace(/\b(room|folder)\b/g, "album").replace(/\b(Room|Folder)\b/g, "Album") : copy.replace(/방으로/g, "앨범으로").replace(/방을/g, "앨범을").replace(/방은/g, "앨범은").replace(/방(?=[\s은을의에안으]|$)/g, "앨범").replace(/폴더/g,"앨범");
 }
 
 export function formatCount(locale: Locale, count: number, kind: "selected" | "saved" | "sharing" | "rooms" | "photos") {
   const number = new Intl.NumberFormat(localeTag[locale]).format(count);
   const noun = new Intl.PluralRules(localeTag[locale]).select(count) === "one" ? "photo" : "photos";
   if (locale === "ko") return kind === "selected" ? `${number}장 선택됨` : kind === "saved" ? `${number}장 저장` : kind === "sharing" ? `${number}장의 공개 범위` : kind === "rooms" ? `${number}개` : `${number}장`;
-  return kind === "selected" ? `${number} ${noun} selected` : kind === "saved" ? `${number} saved` : kind === "sharing" ? `Who can see ${count === 1 ? "this photo" : `these ${number} photos`}?` : kind === "rooms" ? `${number} ${count === 1 ? "folder" : "folders"}` : `${number} ${noun}`;
+  return kind === "selected" ? `${number} ${noun} selected` : kind === "saved" ? `${number} saved` : kind === "sharing" ? `Who can see ${count === 1 ? "this photo" : `these ${number} photos`}?` : kind === "rooms" ? `${number} ${count === 1 ? "album" : "albums"}` : `${number} ${noun}`;
 }
 
 export function formatCapturedAt(locale: Locale, timestamp: number) {

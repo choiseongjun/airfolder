@@ -31,15 +31,15 @@ test("counts handle zero, one, many and grouped numbers", () => {
   assert.equal(formatCount("en", 0, "photos"), "0 photos");
   assert.equal(formatCount("en", 1, "selected"), "1 photo selected");
   assert.equal(formatCount("en", 2, "selected"), "2 photos selected");
-  assert.equal(formatCount("en", 1000, "rooms"), "1,000 folders");
+  assert.equal(formatCount("en", 1000, "rooms"), "1,000 albums");
   assert.equal(formatCount("en", 1, "sharing"), "Who can see this photo?");
   assert.equal(formatCount("ko", 2, "selected"), "2장 선택됨");
   assert.equal(formatCount("ko", 1, "saved"), "1장 저장");
 });
 
 test("Korean copy and unknown Unicode content remain intact", () => {
-  assert.equal(translate("en", "내 방"), "My folders");
-  assert.equal(translate("ko", "내 방"), "내 폴더");
+  assert.equal(translate("en", "내 방"), "My albums");
+  assert.equal(translate("ko", "내 방"), "내 앨범");
   assert.equal(translate("en", "旅行 à Paris 📷"), "旅行 à Paris 📷");
 });
 

@@ -14,6 +14,11 @@ export function storage() {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) throw new Error('Storage not configured');
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, { auth: { persistSession: false, autoRefreshToken: false } }).storage.from('snaproom-photos');
 }
+export async function storageFileLimit() {
+  const result=await createClient(process.env.SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false}}).storage.getBucket('snaproom-photos');
+  if(result.error)throw new ApiError(503,'STORAGE_UNAVAILABLE');
+  return Number(result.data.file_size_limit)||2*1024*1024*1024;
+}
 export class ApiError extends Error { constructor(public status: number, public code: string) { super(code); } }
 export function hash(token: string) { return createHash('sha256').update(token).digest('hex'); }
 export function uuid(value: unknown): string {

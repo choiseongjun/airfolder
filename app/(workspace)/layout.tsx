@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import "../workspace-split.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Memolumi — Every moment, in its place",
-  description: "Capture into purpose-built rooms. Keep photos private and share only what you choose.",
+  title: "Memolumi — Your moments. Together.",
+  description: "Collect photos from your shared days. Keep photos private and choose the moments to share.",
   robots: { index: false, follow: false },
 };
 

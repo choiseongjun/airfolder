@@ -1,0 +1,65 @@
+"use client";
+import {useEffect,useMemo,useRef,useState} from 'react';
+import {createPortal} from 'react-dom';
+import {ArrowLeft,ArrowRight,BookOpen,Maximize2,X,Flower2,Heart,Sparkles} from 'lucide-react';
+import {api} from '@/lib/client-api';
+import type {MemoryItem} from './memories';
+import MediaView from './media-view';
+import './album-book.css';
+import './album-templates.css';
+const templates=[{id:'scrapbook',ko:'추억 스크랩북',en:'Scrapbook',hintKo:'테이프와 작은 스티커',hintEn:'Tape & little keepsakes'},{id:'minimal',ko:'화이트 갤러리',en:'White gallery',hintKo:'여백과 사진에 집중',hintEn:'Space for your photos'},{id:'film',ko:'필름 아카이브',en:'Film archive',hintKo:'깊은 색감과 필름 프레임',hintEn:'Dark pages & film frames'},{id:'diary',ko:'피치 다이어리',en:'Peach diary',hintKo:'체크 종이와 다정한 기록',hintEn:'Gingham & gentle notes'}] as const;
+type TemplateId=typeof templates[number]['id'];
+
+export default function AlbumBook({folderId,title,description,locale,onPhoto}:{folderId:string;title:string;description:string;locale:'ko'|'en';onPhoto:(item:MemoryItem)=>void}){
+ const ko=locale==='ko';
+ const [template,setTemplate]=useState<TemplateId>('scrapbook'),[choosing,setChoosing]=useState(false),[templateNotice,setTemplateNotice]=useState('');
+ function chooseTemplate(id:TemplateId){setTemplate(id);try{localStorage.setItem('memolumi-book-template:'+folderId,id);setTemplateNotice(ko?'이 기기에서 이 앨범의 보기 설정을 기억해요.':'This device remembers your view for this album.');}catch{setTemplateNotice(ko?'이번 보기에는 적용됐지만 기기에 저장하지 못했어요.':'Applied for this view, but could not save on this device.');}}
+ useEffect(()=>{try{const saved=localStorage.getItem('memolumi-book-template:'+folderId);if(templates.some(t=>t.id===saved)){/* Restore this device’s album preference after hydration. */
+ // eslint-disable-next-line react-hooks/set-state-in-effect
+ setTemplate(saved as TemplateId);}}catch{}},[folderId]);
+ const [items,setItems]=useState<MemoryItem[]>([]),[loaded,setLoaded]=useState(false),[error,setError]=useState(false),[retry,setRetry]=useState(0),[page,setPage]=useState(0);
+ const [expanded,setExpanded]=useState(false),[flip,setFlip]=useState<{from:number;direction:number}|null>(null);
+ const reader=useRef<HTMLElement>(null),flipTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+ useEffect(()=>()=>{if(flipTimer.current)clearTimeout(flipTimer.current);},[]);
+ useEffect(()=>{if(!expanded)return;const focus=document.activeElement as HTMLElement|null,overflow=document.body.style.overflow;document.body.style.overflow='hidden';reader.current?.focus();return()=>{document.body.style.overflow=overflow;focus?.focus();};},[expanded]);
+ const paper=useRef<HTMLDivElement>(null);
+ const touch=useRef<{x:number;y:number}|null>(null);
+ useEffect(()=>{
+  const controller=new AbortController();
+  async function load(){try{
+   const all:MemoryItem[]=[];let more=true;
+   while(more){const data=await api<{items:MemoryItem[];hasMore:boolean}>(`/api/memories?folderId=${folderId}&offset=${all.length}&timezone=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}`,{signal:controller.signal});all.push(...data.items);more=data.hasMore;}
+   if(controller.signal.aborted)return;
+   setItems(all.reverse());setLoaded(true);setError(false);
+   const requested=Number(new URLSearchParams(window.location.search).get('bookPage')||0);setPage(Number.isSafeInteger(requested)&&requested>=0?requested:0);
+  }catch{if(!controller.signal.aborted)setError(true);}}
+  void load();return()=>controller.abort();
+ },[folderId,retry]);
+ const pages=useMemo(()=>items.flatMap(item=>{
+  const photos=item.kind==='photo'?[item]:item.photos||[];
+  const result=[];for(let i=0;i<Math.max(1,photos.length);i+=4)result.push({item,photos:photos.slice(i,i+4),continued:i>0});return result;
+ }),[items]);
+ const current=Math.min(page,pages.length);
+ function turn(next:number){const n=Math.max(0,Math.min(next,pages.length));if(n===current||flip)return;if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){setFlip({from:current,direction:n>current?1:-1});flipTimer.current=setTimeout(()=>setFlip(null),800);}setPage(n);const url=new URL(window.location.href);if(n)url.searchParams.set('bookPage',String(n));else url.searchParams.delete('bookPage');window.history.replaceState(window.history.state,'',url);if(expanded)requestAnimationFrame(()=>{reader.current?.focus({preventScroll:true});reader.current?.scrollTo({top:0});});if(!expanded)requestAnimationFrame(()=>paper.current?.scrollIntoView({block:'start',behavior:'instant'}));}
+ function sheet(index:number){const entry=pages[index-1];return <>
+   {!entry?<div className="book-cover"><div className="scrap-cover-badge" aria-hidden="true"><Flower2 size={32}/><span>little joys club</span><Heart size={17}/></div><span>MEMOLUMI · OUR LITTLE HISTORY</span><h2>{title}</h2><p>{description}</p>{pages.find(p=>p.photos.length)?.photos[0]&&<div className="book-cover-photo"><MediaView src={pages.find(p=>p.photos.length)!.photos[0].src!} name={title} mediaType={pages.find(p=>p.photos.length)!.photos[0].mediaType}/></div>}<small>{pages.length?`${pages.length} ${ko?'페이지에 담긴 우리의 순간':'pages of our moments'}`:ko?'사진이나 이야기를 추가하면 책이 채워져요.':'Add photos or stories to fill your book.'}</small>{pages.length>0&&<button className="primary-button" onClick={()=>turn(1)}>{ko?'첫 장 펼치기':'Open the book'}<ArrowRight size={16}/></button>}</div>:<article className="book-spread"><div className="book-story"><div className="scrap-chapter" aria-hidden="true"><Sparkles size={15}/><span>CHAPTER {String(index).padStart(2,"0")}</span><span className="scrap-thread"/></div><span className="book-eyebrow">{entry.item.day} · {entry.item.shared?(ko?'함께 보기':'Shared'):(ko?'나만 보기':'Only me')}</span><h2>{entry.item.title||(ko?'기억하고 싶은 순간':'A moment to remember')}</h2>{entry.continued?<p className="book-continuation">{ko?'이어서 보는 사진들':'More from this memory'}</p>:entry.item.kind==='record'&&<p className="book-prose">{entry.item.body}</p>}<small>{entry.item.mine?(ko?'내가 남긴 기록':'A memory by you'):entry.item.author}</small><div className="scrap-keepsake" aria-hidden="true"><div className="scrap-flower"><Flower2 size={49}/><span>little joys</span></div><div className="scrap-stamp"><Heart size={17}/><span>KEEP THIS<br/>MOMENT</span></div><span className="scrap-doodle">✧ · ✧</span></div></div><div className={`book-photos count-${entry.photos.length}`}>{entry.photos.map((p,photoIndex)=><button key={p.id} onClick={()=>{setExpanded(false);onPhoto(p);}} aria-label={ko?`${p.body} 크게 보기`:`Open ${p.body}`}><MediaView src={p.src!} name={p.body} mediaType={p.mediaType}/><span className="scrap-photo-note" aria-hidden="true">{["a little moment", "with love", "remember this", "our happy days"][photoIndex]} <Heart size={10}/></span></button>)}{!entry.photos.length&&<div className="book-words">“<p>{ko?'글로 남긴 순간도, 우리의 추억.':'Words hold memories, too.'}</p></div>}</div></article>}
+   <footer className="book-folio"><span>memolumi. <Heart size={10}/></span><span>{index===0?(ko?'표지':'Cover'):String(index).padStart(2,'0')}</span></footer>
+ </>;}
+ if(error)return <div role="alert" className="album-book-message">{ko?'앨범을 불러오지 못했어요.':'Could not load this album.'} <button onClick={()=>{setError(false);setRetry(n=>n+1);}}>{ko?'다시 시도':'Retry'}</button></div>;
+ if(!loaded)return <p role="status">{ko?'앨범책을 펼치고 있어요…':'Opening your photo book…'}</p>;
+ const content=<section ref={reader} className={`album-book physical-book template-${template} ${expanded?"book-expanded":""}`} role={expanded?"dialog":undefined} aria-modal={expanded||undefined} aria-label={ko?'앨범책':'Photo book'} tabIndex={0} onKeyDown={e=>{if(expanded&&e.key==='Tab'){const nodes=Array.from(reader.current?.querySelectorAll<HTMLElement>('button:not(:disabled),select,[tabindex="0"]')||[]).filter(n=>!n.closest('[inert]'));const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&(document.activeElement===first||document.activeElement===reader.current)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}if(e.key==='Escape'&&expanded){e.stopPropagation();setExpanded(false);return;}if((e.target as HTMLElement).matches('select,input,textarea'))return;if(e.key==='ArrowRight'){e.preventDefault();turn(current+1);}if(e.key==='ArrowLeft'){e.preventDefault();turn(current-1);}}}>
+  <div className="book-toolbar"><button className="book-expand" onClick={()=>{setFlip(null);setExpanded(!expanded);}}>{expanded?<X size={18}/>:<Maximize2 size={18}/>}{expanded?(ko?"책 닫기":"Close book"):(ko?"책 크게 펼치기":"Open full book")}</button><span><BookOpen size={17}/>{ko?'우리의 앨범책':'Our photo book'}</span><label>{ko?'페이지':'Page'} <select aria-label={ko?'앨범책 페이지 선택':'Choose book page'} value={current} onChange={e=>turn(Number(e.target.value))}><option value={0}>{ko?'표지':'Cover'}</option>{pages.map((p,i)=><option key={i} value={i+1}>{i+1} · {p.item.title||p.item.day}</option>)}</select></label></div>
+  <div className="template-bar"><button className="template-toggle" aria-expanded={choosing} onClick={()=>setChoosing(!choosing)}><Sparkles size={16}/>{ko?'앨범 템플릿':'Album templates'}<span>{ko?templates.find(t=>t.id===template)!.ko:templates.find(t=>t.id===template)!.en}</span></button><small>{ko?'사진은 그대로, 분위기만 새롭게':'Same memories, a different mood'}</small></div>
+  {choosing&&<div className="template-picker" aria-label={ko?'앨범 템플릿 선택':'Choose an album template'}><div className="template-options">{templates.map(t=><button key={t.id} className={`template-option sample-${t.id}`} aria-pressed={template===t.id} onClick={()=>chooseTemplate(t.id)}><span className="template-mini" aria-hidden="true"><span className="mini-story"><i/><i/><i/></span><span className="mini-photos"><i/><i/><i/><i/></span></span><strong>{ko?t.ko:t.en}</strong><small>{ko?t.hintKo:t.hintEn}</small><span className="template-selected">{template===t.id?(ko?'✓ 적용 중':'✓ Selected'):(ko?'미리보기':'Preview')}</span></button>)}</div><div className="template-picker-footer"><span role="status">{templateNotice||(ko?'선택하면 아래 앨범에 바로 적용됩니다.':'Select a style to preview it on your album.')}</span><button onClick={()=>setChoosing(false)}>{ko?'이 템플릿으로 보기':'Read with this style'}</button></div></div>}
+  <div className="book-stage"><div className={`book-paper ${current===0?"is-cover":"is-open"}`} ref={paper} onTouchStart={e=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY};}} onTouchEnd={e=>{const start=touch.current;touch.current=null;if(!start)return;const dx=e.changedTouches[0].clientX-start.x,dy=e.changedTouches[0].clientY-start.y;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)turn(current+(dx<0?1:-1));}}>
+   {sheet(current)}
+   {current>0&&<div className="book-binding" aria-hidden="true"/>}
+   {flip&&<div className={`book-turning-leaf ${flip.direction>0?'turn-forward':'turn-backward'} ${flip.from===0?'turn-cover':''}`} aria-hidden="true" inert><div className="book-leaf-front"><div className="book-leaf-content">{sheet(flip.from)}</div></div><div className="book-leaf-back"><span>memolumi.</span></div></div>}
+
+  </div>
+  </div>
+  <nav className="book-controls" aria-label={ko?'앨범책 넘기기':'Turn book pages'}><button disabled={current===0||!!flip} onClick={()=>turn(current-1)}><ArrowLeft size={17}/>{ko?'이전':'Previous'}</button><span aria-live="polite">{current} / {pages.length}</span><button disabled={current===pages.length||!!flip} onClick={()=>turn(current+1)}>{ko?'다음':'Next'}<ArrowRight size={17}/></button></nav>
+  <p className="book-hint">{ko?'버튼이나 좌우 방향키로 책장을 넘기세요. 모바일에서는 옆으로 밀어보세요.':'Turn pages with the buttons or arrow keys. Swipe on mobile.'}</p>
+ </section>;
+ return expanded?createPortal(content,document.body):content;
+}

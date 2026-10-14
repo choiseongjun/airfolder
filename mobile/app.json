@@ -30,10 +30,11 @@
       [
         "expo-media-library",
         {
-          "photosPermission": "Find photos from your chosen dates. Only selected photos are uploaded.",
+          "photosPermission": "Find photos and videos from your chosen dates. Only selected files are uploaded.",
           "savePhotosPermission": "Save photos you choose to your library.",
           "granularPermissions": [
-            "photo"
+            "photo",
+            "video"
           ],
           "isAccessMediaLocationEnabled": false
         }
@@ -41,7 +42,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Choose photos to add to a Memolumi folder.",
+          "photosPermission": "Choose original photos and videos to add to your Memolumi space.",
           "cameraPermission": "Take a photo to add to your folder.",
           "microphonePermission": false
         }
@@ -52,16 +53,19 @@
           "ios": {
             "enabled": true,
             "activationRule": {
-              "supportsImageWithMaxCount": 100
+              "supportsImageWithMaxCount": 100,
+              "supportsMovieWithMaxCount": 100
             }
           },
           "android": {
             "enabled": true,
             "singleShareMimeTypes": [
-              "image/*"
+              "image/*",
+              "video/*"
             ],
             "multipleShareMimeTypes": [
-              "image/*"
+              "image/*",
+              "video/*"
             ]
           }
         }

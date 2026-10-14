@@ -1,0 +1,29 @@
+/* The desktop app fills its half instead of sitting in a 480px phone frame. */
+@media (min-width: 980px) {
+  .app-shell:not([data-native="true"]) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .app-shell:not([data-native="true"]) > .desktop-story {
+    min-width: 0;
+  }
+  .app-shell:not([data-native="true"]) > .main-shell {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+  .app-shell:not([data-native="true"]) .modal-backdrop,
+  .app-shell:not([data-native="true"]) .lightbox {
+    width: 50vw;
+  }
+  .app-shell:not([data-native="true"]) .modal {
+    max-width: 560px;
+    margin-inline: auto;
+  }
+}
+.main-shell > main {
+  width: 100%;
+  min-width: 0;
+}
+.app-shell[data-native="true"] {
+  display: block;
+}

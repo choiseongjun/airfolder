@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
-import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { getAssetInfoAsync } from 'expo-media-library/legacy';
 import * as Crypto from 'expo-crypto';
 import { getSession } from './api';
 import { eligible, type Candidate, type QueueItem, type Session } from './model';
@@ -20,34 +20,24 @@ async function update(work: (items: QueueItem[]) => QueueItem[]) {
 async function change(id: string, values: Partial<QueueItem>) { await update(items => items.map(item => item.id === id ? { ...item, ...values } : item)); }
 export async function enqueue(candidates: Candidate[], folderId: string, session: Session) {
   await FileSystem.makeDirectoryAsync(directory(), { intermediates: true });
-  let added = 0, skipped = 0, failed = 0;
+  let added = 0, skipped = 0, failed = 0;const ids:string[]=[];
   for (const candidate of candidates) {
     const key = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, candidate.key);
-    if ((await readQueue()).some(i => i.owner === session.viewerId && i.origin === session.origin && i.folderId === folderId && i.assetKey === key)) { skipped++; continue; }
-    const id = Crypto.randomUUID(), file = `${id}.jpg`;
-    let context: ReturnType<typeof ImageManipulator.manipulate> | undefined;
-    let image: Awaited<ReturnType<NonNullable<typeof context>['renderAsync']>> | undefined;
-    let resized: typeof image;
-    let temporary: string | undefined;
+    const existing=(await readQueue()).find(i => i.owner === session.viewerId && i.origin === session.origin && i.folderId === folderId && i.assetKey === key);if(existing){ids.push(existing.id);skipped++;continue;}
+    const id = Crypto.randomUUID(), extension = candidate.name.split('.').pop()?.replace(/[^a-z0-9]/gi,'').slice(0,8) || 'media', file = `${id}.${extension}`;
     let committed = false;
     try {
-      context = ImageManipulator.manipulate(candidate.uri);
-      image = await context.renderAsync();
-      const width = image.width, height = image.height;
-      if (Math.max(width, height) > 2560) context.resize(width >= height ? { width: 2560 } : { height: 2560 });
-      resized = await context.renderAsync();
-      const saved = await resized.saveAsync({ format: SaveFormat.JPEG, compress: 0.9 });
-      temporary = saved.uri;
-      await FileSystem.copyAsync({ from: saved.uri, to: directory() + file });
-      await update(items => [...items, { id, owner: session.viewerId, origin: session.origin, folderId, assetKey: key, name: candidate.name, created: candidate.created, file, status: 'pending', attempts: 0, nextAttempt: 0 }]);
-      committed = true; added++;
+      let uri=candidate.uri;
+      if(uri.startsWith('ph://') && candidate.assetId){const info=await getAssetInfoAsync(candidate.assetId,{shouldDownloadFromNetwork:true});if(!info.localUri)throw new Error('ORIGINAL_UNAVAILABLE');uri=info.localUri;}
+      await FileSystem.copyAsync({ from: uri, to: directory() + file });
+      const info=await FileSystem.getInfoAsync(directory()+file);
+      if(!info.exists||!info.size||info.size>((candidate.mime?.startsWith('video/')||candidate.mediaType==='video')?50:20)*1024*1024)throw new Error('MEDIA_TOO_LARGE');
+      await update(items => [...items, { id, owner: session.viewerId, origin: session.origin, folderId, assetKey: key, name: candidate.name, created: candidate.created, file, mime:candidate.mime||'application/octet-stream', status: 'pending', attempts: 0, nextAttempt: 0 }]);
+      committed = true; added++;ids.push(id);
     } catch { if (!committed) { await FileSystem.deleteAsync(directory() + file, { idempotent: true }).catch(() => {}); failed++; } }
-    finally {
-      if (temporary) await FileSystem.deleteAsync(temporary, { idempotent: true }).catch(() => {});
-      try { image?.release(); resized?.release(); context?.release(); } catch {}
-    }
+
   }
-  return { added, skipped, failed };
+  return { added, skipped, failed, ids };
 }
 async function drain() {
   const session = await getSession(); if (!session || session.expiresAt <= Date.now()) return;
@@ -60,7 +50,7 @@ async function drain() {
       const result = await FileSystem.uploadAsync(session.origin + '/api/photos', directory() + item.file, {
         httpMethod: 'POST', uploadType: FileSystem.FileSystemUploadType.MULTIPART,
         sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
-        fieldName: 'file', mimeType: 'image/jpeg', headers: { Authorization: `Bearer ${session.token}` },
+        fieldName: 'file', mimeType: item.mime || 'image/jpeg', headers: { Authorization: `Bearer ${session.token}` },
         parameters: { id: item.id, folderId: item.folderId, name: item.name, created: String(item.created), shared: 'false' },
       });
       if (result.status < 200 || result.status >= 300) {
@@ -70,7 +60,7 @@ async function drain() {
       await change(item.id, { status: 'uploaded', error: undefined });
       await FileSystem.deleteAsync(directory() + item.file, { idempotent: true }).catch(() => {});
     } catch (error) {
-      await change(item.id, { status: 'failed', attempts: item.attempts + 1, nextAttempt: Date.now() + Math.min(3600000, 30000 * 2 ** item.attempts), error: error instanceof Error ? error.message : 'UPLOAD_FAILED' });
+      await change(item.id, { status: 'failed', attempts: error instanceof Error && /STORAGE_FULL|MEDIA_TOO_LARGE/.test(error.message) ? 5 : item.attempts + 1, nextAttempt: Date.now() + Math.min(3600000, 30000 * 2 ** item.attempts), error: error instanceof Error ? error.message : 'UPLOAD_FAILED' });
       if (error instanceof Error && /SESSION|TOKEN|401/.test(error.message)) break;
     }
   }

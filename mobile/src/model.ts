@@ -3,8 +3,8 @@ export type Session = { token: string; viewerId: string; expiresAt: number; orig
 export type Folder = { id: string; name: string; description: string; members: number; mine: boolean; count: number; startDate?: string | null; endDate?: string | null };
 export type Photo = { id: string; roomId: string; name: string; created: number; src: string; mine: boolean; shared: boolean };
 export type Workspace = { viewerId: string; account: { name: string; email: string | null; provider: string } | null; rooms: Folder[]; photos: Photo[] };
-export type Candidate = { key: string; uri: string; name: string; created: number; assetId?: string; width?: number; height?: number };
-export type QueueItem = { id: string; owner: string; origin: string; folderId: string; assetKey: string; name: string; created: number; file: string; status: 'pending' | 'uploading' | 'failed' | 'uploaded'; attempts: number; nextAttempt: number; error?: string };
+export type Candidate = { key: string; uri: string; name: string; created: number; assetId?: string; width?: number; height?: number; mime?: string; mediaType?: 'image'|'video' };
+export type QueueItem = { id: string; owner: string; origin: string; folderId: string; assetKey: string; name: string; created: number; file: string; mime?: string; status: 'pending' | 'uploading' | 'failed' | 'uploaded'; attempts: number; nextAttempt: number; error?: string };
 export function dateRange(start: string, end: string) {
   function parse(value: string) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error('INVALID_DATE');

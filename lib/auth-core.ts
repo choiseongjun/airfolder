@@ -30,10 +30,19 @@ export async function attachIdentity(db: PoolClient, guest: string, identity: Id
   }
   const owner = existing.rows[0].viewer_id as string;
   if (owner !== guest) {
+    await db.query('UPDATE snaproom.groups SET owner_id=$1 WHERE owner_id=$2',[owner,guest]);
+    await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id,muted) SELECT group_id,$1,muted FROM snaproom.group_members WHERE viewer_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
+    await db.query('INSERT INTO snaproom.notifications(viewer_id,folder_id,photo_id,record_id,actor_id,kind,event_key,created_at,read_at,pushed_at) SELECT $1,folder_id,photo_id,record_id,actor_id,kind,event_key,created_at,read_at,pushed_at FROM snaproom.notifications WHERE viewer_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
+    await db.query('UPDATE snaproom.notifications SET actor_id=$1 WHERE actor_id=$2',[owner,guest]);
     await db.query('UPDATE snaproom.folders SET owner_id=$1 WHERE owner_id=$2', [owner,guest]);
     await db.query('UPDATE snaproom.photos SET owner_id=$1 WHERE owner_id=$2', [owner,guest]);
     await db.query('UPDATE snaproom.invites SET created_by=$1 WHERE created_by=$2', [owner,guest]);
     await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) SELECT folder_id,$1 FROM snaproom.members WHERE viewer_id=$2 ON CONFLICT DO NOTHING', [owner,guest]);
+    await db.query('UPDATE snaproom.records SET owner_id=$1 WHERE owner_id=$2', [owner,guest]);
+    await db.query('UPDATE snaproom.comments SET owner_id=$1 WHERE owner_id=$2', [owner,guest]);
+    await db.query('INSERT INTO snaproom.reactions(id,photo_id,record_id,owner_id) SELECT gen_random_uuid(),photo_id,record_id,$1 FROM snaproom.reactions WHERE owner_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
+    await db.query('INSERT INTO snaproom.comment_reports(id,comment_id,owner_id,reason,status) SELECT gen_random_uuid(),comment_id,$1,reason,status FROM snaproom.comment_reports WHERE owner_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
+    for(const table of ['photos','records']) await db.query(`UPDATE snaproom.${table} SET recipients=ARRAY(SELECT DISTINCT unnest(array_replace(recipients,$2::uuid,$1::uuid))) WHERE $2::uuid=ANY(recipients)`,[owner,guest]);
     await db.query('DELETE FROM snaproom.viewers WHERE id=$1', [guest]);
   }
   return owner;

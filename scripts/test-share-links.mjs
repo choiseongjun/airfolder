@@ -1,0 +1,57 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {parseEnv} from 'node:util';
+import {randomUUID} from 'node:crypto';
+import pg from 'pg';
+const env=parseEnv(readFileSync('.env.local','utf8')),db=new pg.Client({connectionString:env.DATABASE_URL});await db.connect();
+const base='http://localhost:3000',users=[],folder=randomUUID(),photo=randomUUID(),other=randomUUID();let checks=0;
+async function call(path,{cookie='',method='GET',body,status=200}={}){const r=await fetch(base+path,{method,headers:{Origin:base,Cookie:cookie,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});assert.equal(r.status,status);checks++;return r;}
+async function guest(){const r=await call('/api/session',{method:'POST'}),data=await r.json();const u={id:data.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);return u;}
+try{
+ const [a,b]=await Promise.all([guest(),guest()]);
+ await db.query("INSERT INTO snaproom.folders(id,owner_id,name) VALUES($1,$2,'Disposable link test')",[folder,a.id]);
+ await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2)',[folder,a.id]);
+ for(const id of [photo,other])await db.query("INSERT INTO snaproom.photos(id,folder_id,owner_id,name,object_path,size_bytes,captured_at,preview_status) VALUES($1,$2,$3,'Fixture',$4,1,now(),'ready')",[id,folder,a.id,'fixture/'+id]);
+ const create=(u,status=201)=>call('/api/share-links',{cookie:u.cookie,method:'POST',body:{ids:[photo],access:"public"},status});
+ await create(a,403);
+ await db.query('UPDATE snaproom.photos SET shared=true,recipients=$2 WHERE id=$1',[photo,[b.id]]);await create(a,403);
+ await db.query("UPDATE snaproom.photos SET recipients='{}' WHERE id=$1",[photo]);await create(b,403);
+ const link=await (await create(a)).json(),path=`/api/photos/${photo}/content?share=${link.token}&status=1`;
+ await call(path);await call(`/api/photos/${other}/content?share=${link.token}&status=1`,{status:404});
+ const page=await call(`/s/${link.token}?lang=ko`);assert.ok((await page.text()).includes('함께 나누는 순간들'));checks++;
+ await call(`/api/photos/${photo}/content?share=${'a'.repeat(64)}&status=1`,{status:404});
+ await db.query('UPDATE snaproom.photos SET shared=false WHERE id=$1',[photo]);await call(path,{status:404});
+ await db.query('UPDATE snaproom.photos SET shared=true WHERE id=$1',[photo]);
+ await call('/api/share-links',{method:'DELETE',cookie:b.cookie,body:{id:link.id}});await call(path);
+ await call('/api/share-links',{method:'DELETE',cookie:a.cookie,body:{id:link.id}});await call(path,{status:404});
+ const second=await (await create(a)).json();await db.query("UPDATE snaproom.share_links SET expires_at=now()-interval '1 second' WHERE id=$1",[second.id]);await call(`/api/photos/${photo}/content?share=${second.token}&status=1`,{status:404});
+ const third=await (await create(a)).json();await db.query('DELETE FROM snaproom.members WHERE folder_id=$1',[folder]);await call(`/api/photos/${photo}/content?share=${third.token}&status=1`,{status:404});
+ await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2)',[folder,a.id]);
+ const memberLink=await (await call('/api/share-links',{cookie:a.cookie,method:'POST',body:{ids:[photo] },status:201})).json();
+ const memberPath=`/api/photos/${photo}/content?share=${memberLink.token}`;
+ await call(memberPath+'&status=1',{status:404});await call(memberPath+'&download=1',{status:404});
+ const gate=await call(`/s/${memberLink.token}?lang=ko`);assert.ok((await gate.text()).includes('초대 멤버만 볼 수 있어요'));checks++;
+ await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2)',[folder,b.id]);
+ await call(memberPath+'&status=1',{cookie:b.cookie,status:404});
+ await db.query("INSERT INTO snaproom.accounts(firebase_uid,viewer_id,provider,display_name) VALUES($1,$2,'google.com','Disposable fixture')",['test-share:'+randomUUID(),b.id]);
+ await call(memberPath+'&status=1',{cookie:b.cookie});
+ await db.query('UPDATE snaproom.photos SET recipients=$2 WHERE id=$1',[photo,[a.id]]);
+ await call(memberPath+'&status=1',{cookie:b.cookie,status:404});
+ await db.query('UPDATE snaproom.photos SET recipients=$2 WHERE id=$1',[photo,[b.id]]);
+ await call(memberPath+'&status=1',{cookie:b.cookie});
+ await db.query('DELETE FROM snaproom.members WHERE folder_id=$1 AND viewer_id=$2',[folder,b.id]);
+ await call(memberPath+'&status=1',{cookie:b.cookie,status:404});
+ await call('/api/share-links',{cookie:a.cookie,method:'POST',body:{ids:[photo],access:'unknown'},status:400});
+ const record=randomUUID();await db.query("UPDATE snaproom.photos SET shared=true,recipients='{}' WHERE id=$1",[photo]);
+ await db.query("INSERT INTO snaproom.records(id,folder_id,owner_id,title,body,recorded_on,shared) VALUES($1,$2,$3,'Story context','Our first day',current_date,true)",[record,folder,a.id]);
+ await db.query('INSERT INTO snaproom.record_photos(record_id,photo_id,position) VALUES($1,$2,0)',[record,photo]);
+ const storyLink=await(await call('/api/share-links',{cookie:a.cookie,method:'POST',body:{ids:[photo],recordId:record,access:'public'},status:201})).json();
+ assert.ok((await(await call(`/s/${storyLink.token}`)).text()).includes('Story context'));checks++;
+ await db.query('UPDATE snaproom.records SET shared=false WHERE id=$1',[record]);
+ await call(`/api/photos/${photo}/content?share=${storyLink.token}&status=1`,{status:404});
+ assert.ok(!(await(await call(`/s/${storyLink.token}`)).text()).includes('Story context'));checks++;
+ await db.query('UPDATE snaproom.records SET shared=true WHERE id=$1',[record]);
+ await db.query('DELETE FROM snaproom.record_photos WHERE record_id=$1',[record]);
+ await call(`/api/photos/${photo}/content?share=${storyLink.token}&status=1`,{status:404});
+ console.log(`PASS: ${checks} share link checks (ownership, selected audience, scope, expiry, revocation, membership, public page).`);
+}finally{await db.query('DELETE FROM snaproom.folders WHERE id=$1',[folder]);await db.query('DELETE FROM snaproom.accounts WHERE viewer_id=ANY($1::uuid[])',[users.map(u=>u.id)]);await db.query('DELETE FROM snaproom.viewers WHERE id=ANY($1::uuid[])',[users.map(u=>u.id)]);await db.end();}

@@ -64,3 +64,5 @@ mobile/android/
 *.apk
 *.aab
 *.ipa
+
+/mobile/dist-*/
