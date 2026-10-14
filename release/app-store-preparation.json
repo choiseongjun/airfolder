@@ -1,0 +1,101 @@
+{
+  "brand": "Memolumi",
+  "appleAppId": "6822636339",
+  "bundleId": "com.choisj2702.snaproom",
+  "status": "draft_not_submitted",
+  "deployment": "deferred_by_owner",
+  "contact": {
+    "operator": "최성준",
+    "firstName": "Seongjun",
+    "lastName": "Choi",
+    "email": "choisj2702@gmail.com",
+    "reviewPhone": "Provided privately in App Store Connect; not stored in public source"
+  },
+  "releaseMode": "manual",
+  "localizations": [
+    "en-US",
+    "ko"
+  ],
+  "publicPaths": {
+    "support": "/support",
+    "privacy": "/privacy",
+    "marketing": {
+      "en-US": "/en",
+      "ko": "/ko"
+    }
+  },
+  "screenshots": [
+    {
+      "screen": "folders",
+      "en": "A place for every memory",
+      "ko": "추억마다 제자리를",
+      "capture": "pending_signed_ios_build"
+    },
+    {
+      "screen": "collect",
+      "en": "Find moments by date",
+      "ko": "날짜로 찾아 한곳에",
+      "capture": "pending_signed_ios_build"
+    },
+    {
+      "screen": "private_photos",
+      "en": "Private until you choose",
+      "ko": "공개 전에는 나만 보기",
+      "capture": "pending_signed_ios_build"
+    },
+    {
+      "screen": "share_selection",
+      "en": "Share only what matters",
+      "ko": "필요한 순간만 함께",
+      "capture": "pending_signed_ios_build"
+    },
+    {
+      "screen": "uploads",
+      "en": "Keep track of every upload",
+      "ko": "전송 상태를 한눈에",
+      "capture": "pending_signed_ios_build"
+    }
+  ],
+  "privacyDraft": {
+    "linkedToAccount": [
+      "name",
+      "email_address",
+      "user_id",
+      "photos",
+      "folder_names_and_descriptions",
+      "device_push_token"
+    ],
+    "purpose": "app_functionality",
+    "tracking": "no_cross_app_tracking_implemented",
+    "providers": [
+      "Firebase Authentication",
+      "Supabase",
+      "Expo Push Service",
+      "Apple APNs",
+      "Google FCM"
+    ],
+    "status": "verify_sdk_and_host_data_practices_before_final_declaration"
+  },
+  "submissionRequirementsRemaining": [
+    "Deploy and verify HTTPS backend, support and privacy URLs",
+    "Finalize retention, operator processing and privacy disclosures",
+    "Configure production API origin and OAuth authorized host",
+    "Configure APNs/FCM credentials and test delivery on devices",
+    "Operate account deletion worker and verify complete deletion, including provider obligations",
+    "Validate shared-content reporting, blocking and moderation requirements",
+    "Create signed App Store iOS build and verify iPhone/iPad behavior",
+    "Capture actual iOS screenshots for supported device sizes",
+    "Provide and verify review access",
+    "Complete age rating, pricing, territories and applicable trader declarations",
+    "Review updated Apple agreement with account holder",
+    "Remove draft-only review note and select tested build before submission"
+  ],
+  "categories": {
+    "primary": "PHOTO_AND_VIDEO",
+    "secondary": "PRODUCTIVITY"
+  },
+  "subtitles": {
+    "en-US": "Collect moments. Share photos.",
+    "ko": "함께 담아두는 순간들, 사진 모으기"
+  }
+}
