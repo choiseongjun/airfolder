@@ -3,7 +3,7 @@
   "webAppId": "1:863331811763:web:7f04cd4184efbf1b654bc6",
   "publicBrand": "Memonestia",
   "authentication": "Existing Google and Apple flows use the same Firebase project; no credentials or provider configuration changed",
-  "analyticsStatus": "code_ready_measurement_id_and_console_link_pending",
+  "analyticsStatus": "linked_production_environment_configured",
   "measurementEnvironmentVariable": "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID",
   "events": {
     "login_start": "Social sign-in started",
@@ -18,13 +18,17 @@
   ],
   "collection": "Production memonestia.xyz only, browser opt-in, DNT/GPC respected, browse excluded, no Firebase UID or email sent",
   "consoleSetupRemaining": [
-    "Link Google Analytics to the existing Firebase web app",
-    "Disable Enhanced measurement on this web data stream; only explicit login events are intended",
-    "Set Google Analytics retention and record its value in the privacy notice",
-    "Set NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID in Vercel Production and redeploy",
-    "Register event-scoped custom dimensions surface and reason; method is the recommended login parameter",
-    "Verify consenting real Google and Apple login events in Realtime; no synthetic production events were emitted",
-    "Recheck store privacy declarations before enabling Analytics"
+    "Verify production deployment and consenting real Google and Apple login events in Realtime",
+    "Register event-scoped custom dimensions surface and reason for custom reports",
+    "Review store analytics-purpose disclosures"
   ],
-  "review": "Google and Apple providers and actual users verified. User approved Analytics link; enable was attempted, but console returned terms-loading and project-permission errors before success could be verified. Collection remains disabled without measurement ID."
+  "review": "Firebase Analytics linked and Enhanced Measurement confirmed disabled. Production measurement ID saved in Vercel; redeploy requested. Real consented login event receipt still requires verification.",
+  "measurementId": "G-CWV17WVMRJ",
+  "propertyId": "559121317",
+  "streamId": "16133734751",
+  "retention": {
+    "events": "2 months",
+    "users": "14 months",
+    "resetOnActivity": true
+  }
 }
