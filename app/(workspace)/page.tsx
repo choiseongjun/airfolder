@@ -1,3 +1,4 @@
+import WorkspaceLoading from '../workspace-loading';
 import { publicMetadata } from '@/lib/seo';
 import { Suspense } from 'react';
 import { requestLocale } from '@/lib/request-locale';
@@ -13,7 +14,7 @@ export async function generateMetadata({ searchParams }: Props) {
 }
 
 export default function Page(props: Props) {
-  return <Suspense fallback={<main aria-busy="true" style={{ padding: 32 }}>Memonestia</main>}>
+  return <Suspense fallback={<main><WorkspaceLoading/></main>}>
     <LocalizedWorkspace {...props} />
   </Suspense>;
 }
