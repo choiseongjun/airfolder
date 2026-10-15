@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Memolumi",
+    "name": "Memonestia",
     "slug": "snaproom",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "scheme": "snaproom",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,16 +10,23 @@
     "ios": {
       "bundleIdentifier": "com.choisj2702.snaproom",
       "supportsTablet": true,
+      "entitlements": {
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
+      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "buildNumber": "2"
     },
     "android": {
       "package": "com.choisj2702.snaproom",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#f7f5ee"
-      }
+      },
+      "versionCode": 2
     },
     "plugins": [
       "expo-dev-client",
