@@ -12,11 +12,20 @@ export async function POST(request: Request) {
     let auth;
     try { auth = firebaseAdminAuth(); } catch { throw new ApiError(503,'AUTH_NOT_CONFIGURED'); }
     let identity;
-    try { identity = identityFromVerifiedClaims(await auth.verifyIdToken(input.idToken)); }
+    try {
+      const claims = await auth.verifyIdToken(input.idToken);
+      identity = identityFromVerifiedClaims(claims, undefined, true);
+    }
     catch { throw new ApiError(401,'INVALID_TOKEN'); }
     const token = randomBytes(32).toString('hex');
     const oldToken = (await cookies()).get('snaproom_session')?.value;
     const viewerId = await transaction(async db => {
+      // Password sign-in is limited to accounts explicitly provisioned by the operator.
+      // Firebase UID, never an unverified email claim, selects the existing account.
+      if (identity.provider === 'password') {
+        const provisioned = await db.query("SELECT 1 FROM snaproom.accounts WHERE firebase_uid=$1 AND provider='password'", [identity.uid]);
+        if (!provisioned.rowCount) throw new ApiError(403, 'ACCOUNT_NOT_PROVISIONED');
+      }
       const deleting=await db.query('SELECT 1 FROM snaproom.accounts a JOIN snaproom.viewers v ON v.id=a.viewer_id WHERE a.firebase_uid=$1 AND v.deletion_requested_at IS NOT NULL',[identity.uid]);
       if(deleting.rowCount)throw new ApiError(409,'ACCOUNT_DELETION_PENDING');
       let owner;

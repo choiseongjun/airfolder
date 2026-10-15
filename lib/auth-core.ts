@@ -1,17 +1,18 @@
 import type { PoolClient } from 'pg';
 
-export type Identity = { uid: string; provider: 'google.com' | 'apple.com'; email: string | null; name: string };
+export type Identity = { uid: string; provider: 'google.com' | 'apple.com' | 'password'; email: string | null; name: string };
 
 // Only call this after Firebase Admin has verified the token's signature, issuer and audience.
 export function identityFromVerifiedClaims(token: {
   uid?: string; auth_time?: number; email?: string; email_verified?: boolean; name?: string;
   firebase?: { sign_in_provider?: string };
-}, now = Math.floor(Date.now() / 1000)): Identity {
+}, now = Math.floor(Date.now() / 1000), allowProvisionedPassword = false): Identity {
   const provider = token.firebase?.sign_in_provider;
-  if ((provider !== 'google.com' && provider !== 'apple.com') || !token.uid || token.uid.length > 128 ||
+  const password = provider === 'password' && allowProvisionedPassword;
+  if ((provider !== 'google.com' && provider !== 'apple.com' && !password) || !token.uid || token.uid.length > 128 ||
     !Number.isFinite(token.auth_time) || token.auth_time! > now + 60 || now - token.auth_time! > 300 ||
-    (token.email !== undefined && (token.email_verified !== true || token.email.length > 254))) throw new Error('INVALID_IDENTITY');
-  return { uid: token.uid, provider, email: token.email || null, name: token.name?.trim().slice(0,80) || (provider === 'apple.com' ? 'Apple user' : 'Google user') };
+    (token.email !== undefined && ((!password && token.email_verified !== true) || token.email.length > 254))) throw new Error('INVALID_IDENTITY');
+  return { uid: token.uid, provider: provider as Identity['provider'], email: token.email_verified ? token.email || null : null, name: token.name?.trim().slice(0,80) || (password ? 'Invited member' : provider === 'apple.com' ? 'Apple user' : 'Google user') };
 }
 
 // The caller owns the transaction. Never identify or merge an account by email.
