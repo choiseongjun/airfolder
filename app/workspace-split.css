@@ -27,3 +27,21 @@
 .app-shell[data-native="true"] {
   display: block;
 }
+
+/* Account sheet: neutral backdrop and a clear identity-first hierarchy. */
+.app-shell .account-backdrop{background:rgba(26,30,46,.42);backdrop-filter:blur(8px);align-items:center}
+.app-shell .profile-modal{background:#fff;border:1px solid #e9e9f1;box-shadow:0 24px 80px #171b3830;padding:38px 28px 24px;border-radius:28px}
+.profile-modal .profile-avatar.large{margin:0 auto 16px;background:#eeedff;color:#5146dc;border:6px solid #f8f7ff;width:76px;height:76px;display:grid;place-items:center;font-size:26px}
+.app-shell .profile-modal>h2,.app-shell .profile-modal>p{text-align:center}
+.profile-modal .account-identity{background:#f6f6fb;border:1px solid #ebebf3;border-radius:16px;padding:16px;color:#60617a;margin:20px 0}
+.profile-modal .account-details{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:0;margin:16px 0}
+.profile-modal .account-details>span{display:flex;flex-direction:column;align-items:center;gap:8px;background:#f8f8fc;border-radius:14px;padding:18px 10px;color:#77788b}
+.profile-modal .account-details strong{font-size:20px;color:#343449}
+.profile-modal .option-button{border-color:#ededf4;color:#55566d;min-height:54px}
+.account-settings{margin-top:20px;padding:16px;background:#f8f8fc;border:1px solid #ededf4;border-radius:16px;color:#656578;font-size:12px}
+.account-settings summary{cursor:pointer;font-weight:600;min-height:24px}
+.account-settings .legal-links{display:flex;flex-wrap:wrap;gap:10px 16px;padding:16px 0;line-height:1.7}
+.account-settings .safety-actions{border-top:1px solid #e6e6ef;padding-top:14px}
+.account-settings .safety-actions h3{font-size:12px;margin:0 0 8px}
+.account-loading{min-height:240px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#73738b;font-size:14px}
+@media(max-width:600px){.app-shell .account-backdrop{align-items:flex-end;padding:12px}.app-shell .profile-modal{padding:32px 22px 24px;border-radius:26px;max-height:calc(100dvh - 32px)}}
