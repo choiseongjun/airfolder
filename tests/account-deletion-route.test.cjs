@@ -42,6 +42,10 @@ test('Apple deletion revokes the token, records a hashed status receipt, and sig
   const receipt = api.writes.find(w => w.sql.includes('deletion_receipts'));
   assert.notEqual(receipt.params[0], result.receipt); assert.equal(receipt.params[0], crypto.createHash('sha256').update(result.receipt).digest('hex'));
   assert.ok(api.writes.some(w => w.sql.includes('DELETE FROM snaproom.sessions'))); assert.equal(api.cookieChanges.length, 1);
+  const audit = api.writes.find(w => w.sql.includes('admin_audit'));
+  assert.ok(audit.sql.includes('deletion_requested'));
+  assert.deepEqual(audit.params, ['test-viewer']);
+  assert.ok(!JSON.stringify(audit).includes('test-access'));
 });
 test('Google deletion does not require Apple credentials and confirmation remains mandatory', async () => {
   const api = route({ provider: 'google.com' }); assert.equal((await api.remove({})).status, 400); assert.equal(api.writes.length, 0);

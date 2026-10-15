@@ -2,7 +2,6 @@ import 'server-only';
 import { cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { ApiError, pool, storage } from './server';
-import { audit } from './admin';
 import { deleteRequestedAccount } from '@/scripts/account-deletion-core.mjs';
 
 export function deletionAuth() {
@@ -31,18 +30,13 @@ export async function runAccountDeletions(adminId: string | null, viewerId?: str
     let completed = 0, failed = 0;
     for (const job of jobs.rows) {
       if (Date.now() >= deadline) break;
-      await db.query('UPDATE snaproom.viewers SET deletion_attempts=deletion_attempts+1,deletion_last_attempt_at=now(),deletion_last_error=NULL WHERE id=$1', [job.id]);
-      await audit(db, adminId, 'deletion_started', job.id);
       try {
         // Validate the Firebase dependency before deleting even one stored file.
         let auth;
-        if (job.firebase_uid) { try { auth = deletionAuth(); } catch { throw new ApiError(503, 'FIREBASE_ADMIN_NOT_CONFIGURED'); } }
-        if (await deleteRequestedAccount(db, storage(), auth, job.id)) { completed++; await audit(db, adminId, 'deletion_completed', job.id); }
-      } catch (error) {
+        if (job.firebase_uid) { try { auth = deletionAuth(); } catch { /* The shared core records a safe configuration error. */ } }
+        if (await deleteRequestedAccount(db, storage(), auth, job.id, { adminId })) completed++;
+      } catch {
         failed++;
-        const code = error instanceof ApiError ? error.code : 'DELETION_RETRY_REQUIRED';
-        await db.query('UPDATE snaproom.viewers SET deletion_last_error=$2 WHERE id=$1', [job.id, code]);
-        await audit(db, adminId, 'deletion_failed', job.id, code);
       }
     }
     await db.query("DELETE FROM snaproom.deletion_receipts WHERE completed_at<now()-interval '30 days'");

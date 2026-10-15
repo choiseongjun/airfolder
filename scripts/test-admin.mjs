@@ -90,6 +90,8 @@ try {
   assert.equal((await routes.deletions.POST(request('deletions','POST',{id:author,confirm:'PROCESS_REQUESTED_DELETIONS'}))).status,503);
   assert.equal((await query('SELECT owner_id FROM snaproom.folders WHERE id=$1',[folder])).rows[0].owner_id,author);
   assert.equal(deletedAuth.length,0); storageFailure=false;
+  assert.equal((await query('SELECT deletion_last_error FROM snaproom.viewers WHERE id=$1',[author])).rows[0].deletion_last_error,'STORAGE_DELETE_FAILED');
+  assert.equal((await query("SELECT 1 FROM snaproom.admin_audit WHERE subject_id=$1 AND action='deletion_completed'",[author])).rowCount,0);
   const deleted=await routes.deletions.POST(request('deletions','POST',{id:author,confirm:'PROCESS_REQUESTED_DELETIONS'})); assert.equal(deleted.status,200); assert.equal((await deleted.json()).completed,1);
   assert.deepEqual(deletedAuth,[originalUid]); assert.equal((await query('SELECT 1 FROM snaproom.viewers WHERE id=$1',[author])).rowCount,0);
   assert.equal((await query('SELECT owner_id FROM snaproom.folders WHERE id=$1',[folder])).rows[0].owner_id,reporter);
@@ -97,6 +99,13 @@ try {
   assert.equal((await routes.deletions.POST(request('deletions','POST',{id:author,confirm:'PROCESS_REQUESTED_DELETIONS'}))).status,409);
   const events=(await query('SELECT action FROM snaproom.admin_audit WHERE admin_id=$1',[adminId])).rows.map(r=>r.action);for(const event of ['password_changed','report_hide','account_unsuspended','deletion_failed','deletion_completed'])assert.ok(events.includes(event),event);
   assert.equal((await routes.operations.GET(request('operations?view=audit'))).status,200);
+  const deletionEvents=await (await routes.operations.GET(request('operations?view=audit&category=deletion&subject='+author))).json();
+  assert.equal(deletionEvents.items.filter(e=>e.action==='deletion_completed').length,1);
+  assert.equal(deletionEvents.items.filter(e=>e.action==='deletion_retried').length,2);
+  assert.equal(deletionEvents.items.filter(e=>e.action==='deletion_failed').length,2);
+  assert.ok(deletionEvents.items.every(e=>e.subject_id===author && e.actor===username));
+  assert.equal((await routes.operations.GET(request('operations?view=audit&category=constructor'))).status,400);
+  assert.equal((await routes.operations.GET(request('operations?view=audit&subject=invalid'))).status,400);
   assert.equal((await routes.operations.GET(request('operations?view=deletions'))).status,200);
   assert.equal((await routes.operations.GET(request('operations?view=suspended'))).status,200);
   await query('UPDATE snaproom.admin_users SET disabled=true WHERE id=$1',[adminId]);assert.equal((await routes.summary.GET()).status,401);

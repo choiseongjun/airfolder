@@ -19,6 +19,7 @@ const request = (method, body, origin = 'https://test.invalid') => new Request('
 try {
   await db.connect(); await query('BEGIN');
   await query(readFileSync('db/016_safety.sql', 'utf8'));
+  await query(readFileSync('db/018_admin.sql', 'utf8'));
   modules['./memories'] = modules['@/lib/memories'] = load('lib/memories.ts');
   modules['@/lib/safety'] = load('lib/safety.ts');
   const safety = load('app/api/safety/route.ts'), policy = load('app/api/policy/route.ts');
