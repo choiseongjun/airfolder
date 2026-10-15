@@ -9,12 +9,14 @@ import LanguageSwitch from './language-switch';
 import HeroMemories from './hero-memories';
 import AlbumStory from './album-story';
 import LandingMotion from './landing-motion';
+import { isPublicLocale } from '@/lib/public-locale';
+import RegionalLanding from './regional-landing';
 
 type Props = { params: Promise<{ lang: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { lang } = await params;
-  if (!isPublicLanguage(lang)) notFound();
+  if (!isPublicLocale(lang)) notFound();
   return publicMetadata(lang);
 }
 
@@ -27,6 +29,7 @@ function Brand({ href }: { href: string }) {
 
 export default async function Landing({ params }: Props) {
   const { lang } = await params;
+  if (lang === 'en-ph' || lang === 'id') return <RegionalLanding locale={lang} />;
   if (!isPublicLanguage(lang)) notFound();
   const t = landingCopy[lang];
   const origin = publicOrigin();

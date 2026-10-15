@@ -1,8 +1,8 @@
 import { cardPalette, stickerDesigns, type CardSticker, type FrameId, type ThemeId } from './memory-card-style';
 
 /** This demo renders only the three public illustration assets in the browser. */
-export async function exportMemoryCard({ frame, theme, photos, title, caption, stickers = [] }: {
-  frame: FrameId; theme: ThemeId; photos: string[]; title: string; caption: string; stickers?: CardSticker[];
+export async function exportMemoryCard({ frame, theme, photos, title, caption, stickers = [], dateLabel = 'A SUMMER TO REMEMBER', mastheadLabel = 'GOOD DAYS, KEPT.' }: {
+  frame: FrameId; theme: ThemeId; photos: string[]; title: string; caption: string; stickers?: CardSticker[]; dateLabel?: string; mastheadLabel?: string;
 }) {
   await document.fonts.ready;
   const images = await Promise.all(photos.map(src => new Promise<HTMLImageElement>((resolve, reject) => {
@@ -26,7 +26,7 @@ export async function exportMemoryCard({ frame, theme, photos, title, caption, s
   ctx.font = '15px Arial, sans-serif';
   ctx.fillText('MEMONESTIA', 60, 49);
   ctx.textAlign = 'right';
-  ctx.fillText('GOOD DAYS, KEPT.', width - 60, 49);
+  ctx.fillText(mastheadLabel, width - 60, 49);
   ctx.textAlign = 'center';
   ctx.font = `500 ${frame === 'film' ? 36 : 47}px ${font}`;
   ctx.fillText(title, width / 2, 134, width - 100);
@@ -59,7 +59,7 @@ export async function exportMemoryCard({ frame, theme, photos, title, caption, s
   lines.slice(0, 3).forEach((text, index) => ctx.fillText(text, width / 2, height - 155 + index * 36));
   ctx.font = '14px Arial, sans-serif';
   ctx.globalAlpha = 0.6;
-  ctx.fillText('A SUMMER TO REMEMBER', width / 2, height - 47);
+  ctx.fillText(dateLabel, width / 2, height - 47);
   ctx.globalAlpha = 1;
   for (const sticker of stickers) {
     const design = stickerDesigns.find(item => item.id === sticker.id)!;

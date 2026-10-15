@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { publicLocales, publicLocaleTags, type PublicLocale } from './public-locale';
 
 // Keep preview deployments out of search, even when they inherit SITE_URL.
 export function publicOrigin(): string | undefined {
@@ -46,15 +47,22 @@ export const copy = {
 } as const;
 export type PublicLanguage = keyof typeof copy;
 export function isPublicLanguage(value: string): value is PublicLanguage { return value === 'en' || value === 'ko'; }
-export function publicMetadata(lang: PublicLanguage): Metadata {
+export function publicAlternates(origin: string) {
+  return Object.fromEntries([...publicLocales.map(locale => [publicLocaleTags[locale], `${origin}/${locale}`]), ['x-default', `${origin}/en`]]);
+}
+export const regionalMetadata = {
+  'en-ph': { title: 'Memonestia Philippines — Shared photo albums for your barkada', description: 'Collect travel, birthday and family reunion photos in one shared album. Invite your barkada with a link, choose what to share, and make photo cards in your browser.' },
+  id: { title: 'Memonestia Indonesia — Album foto bersama & kartu kenangan', description: 'Kumpulkan foto liburan, ulang tahun, dan acara keluarga dalam satu album bersama. Undang lewat tautan, pilih foto yang dibagikan, lalu buat kartu kenangan di browser.' },
+} as const;
+export function publicMetadata(lang: PublicLocale): Metadata {
   const origin = publicOrigin();
-  const text = copy[lang];
+  const text = lang === 'id' || lang === 'en-ph' ? regionalMetadata[lang] : copy[lang];
   return {
     title: text.title, description: text.description, applicationName: 'Memonestia',
     metadataBase: origin ? new URL(origin) : undefined,
     robots: { index: Boolean(origin), follow: Boolean(origin) },
-    alternates: origin ? { canonical: `${origin}/${lang}`, languages: { en: `${origin}/en`, ko: `${origin}/ko`, 'x-default': `${origin}/en` } } : undefined,
-    openGraph: { type: 'website', title: text.title, description: text.description, siteName: 'Memonestia', locale: lang === 'ko' ? 'ko_KR' : 'en_US', alternateLocale: lang === 'ko' ? 'en_US' : 'ko_KR', ...(origin ? { url: `${origin}/${lang}`, images: [{ url: `${origin}/share-card.png`, width: 1200, height: 630, alt: 'Memonestia — Your moments. Together.' }] } : {}) },
+    alternates: origin ? { canonical: `${origin}/${lang}`, languages: publicAlternates(origin) } : undefined,
+    openGraph: { type: 'website', title: text.title, description: text.description, siteName: 'Memonestia', locale: { ko: 'ko_KR', en: 'en_US', 'en-ph': 'en_PH', id: 'id_ID' }[lang], alternateLocale: publicLocales.filter(locale => locale !== lang).map(locale => ({ ko: 'ko_KR', en: 'en_US', 'en-ph': 'en_PH', id: 'id_ID' })[locale]), ...(origin ? { url: `${origin}/${lang}`, images: [{ url: `${origin}/share-card.png`, width: 1200, height: 630, alt: text.title }] } : {}) },
     twitter: { card: 'summary_large_image', title: text.title, description: text.description, ...(origin ? { images: [`${origin}/share-card.png`] } : {}) },
   };
 }

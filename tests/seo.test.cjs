@@ -11,6 +11,7 @@ function load(file, env = {}, imports = {}) {
   }).outputText;
   const loaded = { exports: {} };
   vm.runInNewContext(code, { module: loaded, exports: loaded.exports, URL, process: { env }, require(name) {
+    if (name === './public-locale' || name === '@/lib/public-locale') return load('lib/public-locale.ts');
     assert.ok(name in imports, `Unexpected import: ${name}`);
     return imports[name];
   } });
@@ -20,11 +21,13 @@ function load(file, env = {}, imports = {}) {
 test('production remains crawlable when SITE_URL is missing', () => {
   const seo = load('lib/seo.ts', { VERCEL_ENV: 'production' });
   assert.equal(seo.publicOrigin(), 'https://memonestia.xyz');
-  for (const lang of ['ko', 'en']) {
+  for (const lang of ['ko', 'en', 'en-ph', 'id']) {
     const metadata = seo.publicMetadata(lang);
     assert.equal(metadata.robots.index, true);
     assert.equal(metadata.alternates.canonical, `https://memonestia.xyz/${lang}`);
     assert.equal(metadata.alternates.languages['x-default'], 'https://memonestia.xyz/en');
+    assert.equal(metadata.alternates.languages['en-PH'], 'https://memonestia.xyz/en-ph');
+    assert.equal(metadata.alternates.languages['id-ID'], 'https://memonestia.xyz/id');
     assert.equal(metadata.openGraph.images[0].url, 'https://memonestia.xyz/share-card.png');
   }
   const imports = { '@/lib/seo': seo };
@@ -33,11 +36,28 @@ test('production remains crawlable when SITE_URL is missing', () => {
   assert.equal(robots.rules.disallow, '/api/');
   assert.equal(robots.sitemap, 'https://memonestia.xyz/sitemap.xml');
   const sitemap = load('app/sitemap.ts', {}, imports).default();
-  assert.equal(sitemap.length, 4);
+  assert.equal(sitemap.length, 6);
   assert.deepEqual(Array.from(sitemap, item => item.url).sort(), [
-    'https://memonestia.xyz/en', 'https://memonestia.xyz/en/hosts',
+    'https://memonestia.xyz/en', 'https://memonestia.xyz/en-ph', 'https://memonestia.xyz/en/hosts', 'https://memonestia.xyz/id',
     'https://memonestia.xyz/ko', 'https://memonestia.xyz/ko/hosts',
   ]);
+});
+
+test('public entry chooses Philippines and Indonesia without overriding explicit preferences', () => {
+  const { resolvePublicLocale } = load('lib/public-locale.ts');
+  const resolve = (headers = {}, options = {}) => resolvePublicLocale({ headers: new Headers(headers), ...options });
+  assert.equal(resolve({ 'x-vercel-ip-country': 'PH' }), 'en-ph');
+  assert.equal(resolve({ 'x-vercel-ip-country': 'ID' }), 'id');
+  assert.equal(resolve({ 'x-vercel-ip-country': 'KR' }), 'ko');
+  assert.equal(resolve({ 'x-vercel-ip-country': 'US', 'accept-language': 'id' }), 'en');
+  assert.equal(resolve({ 'x-vercel-ip-country': 'ID' }, { saved: 'en' }), 'en');
+  assert.equal(resolve({ 'x-vercel-ip-country': 'PH' }, { saved: 'ko', linked: 'id' }), 'id');
+  assert.equal(resolve({ 'accept-language': 'en;q=0.2,id-ID;q=0.9' }), 'id');
+  assert.equal(resolve({ 'accept-language': 'fil-PH,en;q=0.5' }), 'en-ph');
+  assert.equal(resolve({ 'accept-language': 'en-PH' }), 'en-ph');
+  assert.equal(resolve({ 'x-vercel-ip-country': 'XX', 'cf-ipcountry': 'ID' }), 'id');
+  assert.equal(resolve({ 'accept-language': 'id;q=0,ko;q=0.8' }), 'ko');
+  assert.equal(resolve({ 'accept-language': 'id;q=bogus' }), 'en');
 });
 
 test('preview and development cannot inherit production indexing', () => {
