@@ -1,6 +1,7 @@
 import { publicMetadata } from '@/lib/seo';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import PerformanceDiagnostics from "../performance-diagnostics";
 import WebAnalytics from "../web-analytics";
 import "../globals.css";
 import "../workspace-split.css";
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         {children}
-        <WebAnalytics />
+        <WebAnalytics /><PerformanceDiagnostics />
       </body>
     </html>
   );
