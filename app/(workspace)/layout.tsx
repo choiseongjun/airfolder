@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Memolumi — Your moments. Together.",
+  title: "Memonestia — Your moments. Together.",
   description: "Collect photos from your shared days. Keep photos private and choose the moments to share.",
   robots: { index: false, follow: false },
 };

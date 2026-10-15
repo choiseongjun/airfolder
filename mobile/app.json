@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Memolumi",
+    "name": "Memonestia",
     "slug": "snaproom",
     "version": "1.0.0",
     "scheme": "snaproom",
@@ -18,7 +18,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "package": "com.choisj2702.snaproom",
@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#f7f5ee"
       },
-      "versionCode": 2
+      "versionCode": 3
     },
     "plugins": [
       "expo-dev-client",
@@ -54,7 +54,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Choose original photos and videos to add to your Memolumi space.",
+          "photosPermission": "Choose original photos and videos to add to your Memonestia space.",
           "cameraPermission": "Take a photo to add to your folder.",
           "microphonePermission": false
         }

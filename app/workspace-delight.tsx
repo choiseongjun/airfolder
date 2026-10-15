@@ -6,7 +6,7 @@ import type { Locale } from './i18n';
 export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:()=>void;onHelp:()=>void}) {
   const ko=locale==='ko';
   return <aside className="desktop-story keepsake-story">
-    <div className="story-top"><Link className="brand" href="/"><span className="brand-icon"><BookOpen size={22}/></span>memolumi<span className="brand-dot">.</span></Link><span className="story-edition">A LITTLE PLACE<br/>FOR YOUR PEOPLE.</span></div>
+    <div className="story-top"><Link className="brand" href="/"><span className="brand-icon"><BookOpen size={22}/></span>memonestia<span className="brand-dot">.</span></Link><span className="story-edition">A LITTLE PLACE<br/>FOR YOUR PEOPLE.</span></div>
     <div className="keepsake-story-content">
       <span className="keepsake-kicker"><Heart size={13}/>{ko?'좋아하는 사람들과, 오래도록.':'Little moments. Closer together.'}</span>
       <h2>{ko?'우리의 별것 아닌 날도,':'Even the ordinary days,'}<br/><em>{ko?'오래 보고 싶은 추억.':'worth keeping forever.'}</em></h2>
@@ -21,7 +21,7 @@ export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:
       <div className="keepsake-story-actions"><button className="story-cta" onClick={onCreate}>{ko?'나의 첫 추억 만들기':'Make your first memory'}<ArrowRight size={17}/></button><button className="keepsake-help" onClick={onHelp}>{ko?'어떻게 사용하나요?':'How does it work?'}</button></div>
       <div className="story-note"><LockKeyhole size={13}/>{ko?'사진은 기본 비공개. 나누고 싶은 순간만 함께.':'Private by default. Share only what you choose.'}</div>
     </div>
-    <div className="story-bottom"><span>YOUR MOMENTS. TOGETHER.</span><Link href={`/${locale}`}>{ko?'메모루미 이야기':'Meet Memolumi'} ↗</Link></div>
+    <div className="story-bottom"><span>YOUR MOMENTS. TOGETHER.</span><Link href={`/${locale}`}>{ko?'메모네스티아 이야기':'Meet Memonestia'} ↗</Link></div>
   </aside>;
 }
 
@@ -29,7 +29,7 @@ export function StudioTeaser({locale,onCreate}:{locale:Locale;onCreate:()=>void}
   const ko=locale==='ko';
   return <section className="studio-invitation">
     <div className="studio-invitation-copy"><span><Sparkles size={12}/>{ko?'작은 추억 공방':'THE LITTLE MEMORY STUDIO'}</span><h2>{ko?'사진 몇 장, 예쁜 한 페이지.':'A few photos. A little magic.'}</h2><p>{ko?'네컷부터 엽서까지, 나만의 틀에 담아봐요.':'Photo strips or postcards, made yours.'}</p><button onClick={onCreate}>{ko?'추억 만들기':'Make a memory'}<ArrowRight size={15}/></button></div>
-    <div className="studio-mini-strip" aria-hidden="true"><span>MEMOLUMI</span><img src="/landing/sea.webp" alt=""/><img src="/landing/picnic.webp" alt=""/><Heart size={12}/></div>
+    <div className="studio-mini-strip" aria-hidden="true"><span>MEMONESTIA</span><img src="/landing/sea.webp" alt=""/><img src="/landing/picnic.webp" alt=""/><Heart size={12}/></div>
     <ImagePlus className="studio-invitation-spark" size={25} aria-hidden="true"/>
   </section>;
 }

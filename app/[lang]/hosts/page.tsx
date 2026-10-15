@@ -8,7 +8,7 @@ import './hosts.css';
 type Props = { params: Promise<{ lang: string }> };
 export async function generateMetadata({ params }: Props) {
   const { lang } = await params; if (!isPublicLanguage(lang)) notFound();
-  const title = lang === 'ko' ? '모임이 끝나도, 사진은 함께 | Memolumi' : 'One gathering. Every perspective. | Memolumi';
+  const title = lang === 'ko' ? '모임이 끝나도, 사진은 함께 | Memonestia' : 'One gathering. Every perspective. | Memonestia';
   const description = lang === 'ko' ? '여행과 모임의 사진을 한 앨범으로. 모임장은 초대 링크를 보내고, 멤버는 앱 설치 없이 고른 사진만 보태세요.' : 'Collect your group’s photos in one shared album. Send an invitation; guests add selected photos without installing an app.';
   const origin = publicOrigin();
   return { title, description, metadataBase: origin ? new URL(origin) : undefined,
@@ -19,7 +19,7 @@ export default async function Hosts({ params }: Props) {
   const { lang } = await params; if (!isPublicLanguage(lang)) notFound();
   const ko = lang === 'ko', t = (a: string, b: string) => ko ? a : b;
   return <div className="hosts-page"><a className="lp-skip" href="#host-main">{t('본문으로', 'Skip to content')}</a>
-    <header className="hosts-nav"><Link className="hosts-brand" href={`/${lang}`}>memolumi<span>.</span></Link><nav><a href="#how">{t('이용 방법', 'How it works')}</a><Link href={`/${ko ? 'en' : 'ko'}/hosts`} lang={ko ? 'en' : 'ko'}>{ko ? 'EN' : '한국어'}</Link><Link href={`/?lang=${lang}`}>{t('내 공간', 'My space')}<ArrowUpRight size={15} /></Link></nav></header>
+    <header className="hosts-nav"><Link className="hosts-brand" href={`/${lang}`}>memonestia<span>.</span></Link><nav><a href="#how">{t('이용 방법', 'How it works')}</a><Link href={`/${ko ? 'en' : 'ko'}/hosts`} lang={ko ? 'en' : 'ko'}>{ko ? 'EN' : '한국어'}</Link><Link href={`/?lang=${lang}`}>{t('내 공간', 'My space')}<ArrowUpRight size={15} /></Link></nav></header>
     <main id="host-main"><section className="hosts-hero"><div className="hosts-copy"><p className="hosts-kicker"><span />FOR THE ONE WHO BRINGS US TOGETHER</p>
       <h1>{t('모임은 끝나도,', 'The gathering ends.')}<br /><em>{t('우리 사진은 함께.', 'The story stays.')}</em></h1>
       <p className="hosts-intro">{t('“사진 좀 보내줘!”는 이제 그만.', 'One less “send me your photos.”')}<br />{t('모임장은 링크 하나만. 친구들은 고른 사진만.', 'One link from you. Favorite moments from everyone.')}<br />{t('서로 다른 시선이 하나의 앨범에 모여요.', 'Every perspective, together in one album.')}</p>
@@ -43,5 +43,5 @@ export default async function Hosts({ params }: Props) {
       [t('저장 용량에 제한이 있나요?', 'Are there storage limits?'), t('사진은 장당 20MB, 계정당 기본 저장 공간은 500MB입니다. 원본과 미리보기가 용량에 포함되고 전체 서비스의 남은 공간에 따라 업로드가 제한될 수 있어요. 무제한 보관 서비스는 아닙니다.', 'Photos can be up to 20 MB each, with 500 MB per account including originals and previews. Uploads also depend on available service capacity. Storage is not unlimited.')],
     ].map(([q, a]) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</section>
     <section className="hosts-end"><p className="hosts-kicker">YOUR NEXT GATHERING STARTS HERE</p><h2>{t('다음 모임의 첫 사진 공간,', 'Your next gathering,')}<br /><em>{t('지금 만들어 두세요.', 'already has a home.')}</em></h2><HostActions locale={lang} secondary /></section>
-    </main><footer className="hosts-footer"><Link className="hosts-brand" href={`/${lang}`}>memolumi.</Link><p>{t('함께한 순간을, 함께 간직해요.', 'Your moments. Together.')}</p><div><Link href="/privacy">{t('개인정보', 'Privacy')}</Link><Link href="/terms">{t('이용약관', 'Terms')}</Link><Link href="/support">{t('문의', 'Support')}</Link></div></footer></div>;
+    </main><footer className="hosts-footer"><Link className="hosts-brand" href={`/${lang}`}>memonestia.</Link><p>{t('함께한 순간을, 함께 간직해요.', 'Your moments. Together.')}</p><div><Link href="/privacy">{t('개인정보', 'Privacy')}</Link><Link href="/terms">{t('이용약관', 'Terms')}</Link><Link href="/support">{t('문의', 'Support')}</Link></div></footer></div>;
 }

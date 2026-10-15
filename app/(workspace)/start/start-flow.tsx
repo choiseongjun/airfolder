@@ -31,7 +31,7 @@ export default function StartFlow({ locale }: { locale: string }) {
     } catch { setError(text('만들기를 완료하지 못했어요. 다시 누르면 이어서 진행합니다.', 'Could not finish. Try again to continue.')); }
     finally { setBusy(false); }
   }
-  return <main className="growth-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memolumi.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
+  return <main className="growth-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
     <section className="growth-card"><div className="growth-icon">{invite ? <Check /> : <Users />}</div><p className="growth-eyebrow">{invite ? 'READY FOR YOUR PEOPLE' : 'A SMALL START, A SHARED MEMORY'}</p>
       <h1>{invite ? text('이제, 모임에 보내세요.', 'Your invitation is ready.') : text('이번 모임의 사진을 모아볼까요?', 'Give your gathering a home.')}</h1>
       <p className="growth-lead">{invite ? text('단체 채팅방에 링크를 보내거나, 현장에서 QR을 보여주세요. 초대받은 사람은 앱 설치 없이 사진을 올릴 수 있어요.', 'Send the link to your group chat or show the QR. Guests can upload without installing an app.') : text('이름 하나면 시작할 수 있어요. 앨범을 만든 뒤 초대 링크가 바로 나옵니다.', 'Start with a name. Your invitation link is ready as soon as you create the album.')}</p>

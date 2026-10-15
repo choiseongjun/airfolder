@@ -24,7 +24,7 @@ export default function Analytics() {
     }
     void load(); return () => controller.abort();
   }, [days, environment, revision]);
-  return <main className="ga-page"><header className="ga-header"><div><Link className="ga-back" href="/admin"><ArrowLeft size={14} /> 운영 관리</Link><p className="ga-eyebrow">MEMOLUMI · GROWTH</p><h1>함께 쓰고 있나요?</h1><p>초대부터 첫 사진까지, 실제 참여로 성장을 확인하세요.</p></div><Link className="ga-public" href="/ko/hosts" target="_blank">모임장 소개페이지<ArrowUpRight size={16} /></Link></header>
+  return <main className="ga-page"><header className="ga-header"><div><Link className="ga-back" href="/admin"><ArrowLeft size={14} /> 운영 관리</Link><p className="ga-eyebrow">MEMONESTIA · GROWTH</p><h1>함께 쓰고 있나요?</h1><p>초대부터 첫 사진까지, 실제 참여로 성장을 확인하세요.</p></div><Link className="ga-public" href="/ko/hosts" target="_blank">모임장 소개페이지<ArrowUpRight size={16} /></Link></header>
     <div className="ga-controls"><label>조회 기간<select value={days} onChange={e => setDays(Number(e.target.value))}>{[7,30,90].map(n => <option key={n} value={n}>최근 {n}일</option>)}</select></label><label>데이터<select value={environment} onChange={e => setEnvironment(e.target.value)}><option value="production">실서비스</option><option value="development">개발·검증</option></select></label><button disabled={loading} onClick={() => setRevision(n => n + 1)}><RefreshCw size={15} />새로고침</button></div>
     {loading && <p role="status">실제 사용 데이터를 불러오고 있어요…</p>}{error && <p className="ga-error" role="alert">{error}</p>}
     {login && <section className="ga-panel"><h2>관리자 로그인이 필요합니다.</h2><p>운영 관리에서 로그인하고 초기 비밀번호 변경을 마친 뒤 돌아와 주세요.</p><Link href="/admin">관리자 로그인 →</Link></section>}

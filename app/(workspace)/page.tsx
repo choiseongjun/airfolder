@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 type Props = { searchParams: Promise<{ lang?: string | string[]; browse?: string | string[]; invite?: string | string[] }> };
 
 export default function Page(props: Props) {
-  return <Suspense fallback={<main aria-busy="true" style={{ padding: 32 }}>Memolumi</main>}>
+  return <Suspense fallback={<main aria-busy="true" style={{ padding: 32 }}>Memonestia</main>}>
     <LocalizedWorkspace {...props} />
   </Suspense>;
 }

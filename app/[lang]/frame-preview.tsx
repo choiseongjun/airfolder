@@ -42,7 +42,7 @@ export default function FramePreview({ lang }: { lang: PublicLanguage }) {
     <div className="lp-preview-stage">
       <span className="lp-studio-label">THE LITTLE MEMORY STUDIO<span>LIVE PREVIEW</span></span>
       <div key={`${frame}-${offset}`} className={`lp-memory-card lp-memory-card--${frame} lp-card-develop`} style={{ '--card-paper': palette.paper, '--card-ink': palette.ink } as CSSProperties}>
-        <div className="lp-card-masthead"><span>MEMOLUMI</span><span>GOOD DAYS, KEPT.</span></div>
+        <div className="lp-card-masthead"><span>MEMONESTIA</span><span>GOOD DAYS, KEPT.</span></div>
         <h3>{title}</h3>
         <div className="lp-card-photos">
           {photos.map((photo, index) => <div className={`lp-card-photo lp-card-photo--${index}`} key={index}>

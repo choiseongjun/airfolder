@@ -24,7 +24,7 @@ export async function exportMemoryCard({ frame, theme, photos, title, caption }:
   ctx.fillStyle = palette.ink;
   ctx.textAlign = 'left';
   ctx.font = '15px Arial, sans-serif';
-  ctx.fillText('MEMOLUMI', 60, 49);
+  ctx.fillText('MEMONESTIA', 60, 49);
   ctx.textAlign = 'right';
   ctx.fillText('GOOD DAYS, KEPT.', width - 60, 49);
   ctx.textAlign = 'center';
@@ -64,7 +64,7 @@ export async function exportMemoryCard({ frame, theme, photos, title, caption }:
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = `memolumi-${frame}-${theme}.png`;
+  anchor.download = `memonestia-${frame}-${theme}.png`;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();

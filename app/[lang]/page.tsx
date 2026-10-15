@@ -19,9 +19,9 @@ export async function generateMetadata({ params }: Props) {
 }
 
 function Brand({ href }: { href: string }) {
-  return <Link className="lp-brand" href={href} aria-label="Memolumi">
+  return <Link className="lp-brand" href={href} aria-label="Memonestia">
     <span className="lp-brand-icon"><Camera size={21} strokeWidth={1.6} aria-hidden="true" /></span>
-    memolumi<span className="lp-brand-dot">.</span>
+    memonestia<span className="lp-brand-dot">.</span>
   </Link>;
 }
 
@@ -32,7 +32,7 @@ export default async function Landing({ params }: Props) {
   const origin = publicOrigin();
   const appHref = `/?lang=${lang}`;
   const structured = {
-    '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Memolumi',
+    '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Memonestia',
     description: copy[lang].description, url: `${origin}/${lang}`,
     applicationCategory: 'MultimediaApplication', operatingSystem: 'Web', inLanguage: lang,
     featureList: t.gatherSteps.map(step => step[0]),
@@ -106,6 +106,6 @@ export default async function Landing({ params }: Props) {
     </main>
     <footer className="lp-footer"><div><Brand href={`/${lang}`} /><p>{t.footerLine}</p></div><nav aria-label={lang === 'ko' ? '서비스 안내' : 'Service information'}>
       <Link href="/privacy">{t.privacy}</Link><Link href="/terms">{t.terms}</Link><Link href="/support">{t.support}</Link>
-    </nav><span className="lp-copyright">© 2026 Memolumi</span></footer>
+    </nav><span className="lp-copyright">© 2026 Memonestia</span></footer>
   </div>;
 }

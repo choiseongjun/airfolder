@@ -16,7 +16,7 @@ export async function notifySharedPhotos(folderIds: string[], actor: string, rec
       AND d.viewer_id<>$2 AND (cardinality($3::uuid[])=0 OR d.viewer_id=ANY($3::uuid[])) AND d.updated_at>now()-interval '90 days'`,[folderId,actor,recipients]);
     for(let i=0;i<rows.length;i+=100){
       const batch=rows.slice(i,i+100);
-      const response=await fetch('https://exp.host/--/api/v2/push/send',{method:'POST',signal:AbortSignal.timeout(10000),headers:{'Content-Type':'application/json',...(process.env.EXPO_ACCESS_TOKEN?{Authorization:`Bearer ${process.env.EXPO_ACCESS_TOKEN}`}:{})},body:JSON.stringify(batch.map(d=>({to:d.token,title:'Memolumi',body:'There are new updates in your shared memories.',data:{folderId},channelId:'photos',ttl:3600})))});
+      const response=await fetch('https://exp.host/--/api/v2/push/send',{method:'POST',signal:AbortSignal.timeout(10000),headers:{'Content-Type':'application/json',...(process.env.EXPO_ACCESS_TOKEN?{Authorization:`Bearer ${process.env.EXPO_ACCESS_TOKEN}`}:{})},body:JSON.stringify(batch.map(d=>({to:d.token,title:'Memonestia',body:'There are new updates in your shared memories.',data:{folderId},channelId:'photos',ttl:3600})))});
       if(!response.ok)throw new Error('PUSH_PROVIDER_ERROR');
       const result=await response.json();
       for(let j=0;j<(result.data?.length||0);j++){

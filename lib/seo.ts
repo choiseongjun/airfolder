@@ -13,7 +13,7 @@ export function publicOrigin(): string | undefined {
 
 export const copy = {
   en: {
-    title: 'Memolumi — Your moments. Together.',
+    title: 'Memonestia — Your moments. Together.',
     description: 'Everyone’s photos. One little story. Gather moments into shared albums, make photo strips and postcards, and choose the photos you share with your people.',
     eyebrow: 'YOUR MOMENTS. TOGETHER.',
     heading: 'Days together.\nMemories to revisit.',
@@ -24,12 +24,12 @@ export const copy = {
     usesTitle: 'For the people and days that matter.',
     uses: [['Travel', 'Keep the trip together and share your favourite moments with friends.'], ['Gatherings', 'Invite people with a link or QR code and collect shared moments in one place.'], ['Work', 'Document an installation or a cleaning job, then share the finished result.'], ['Personal', 'Keep receipts, hobbies and product photos in their own folders.']],
     faqTitle: 'Before you start',
-    faqs: [['Do guests need to install an app?', 'No. An invitation opens on the web, where guests can view shared photos, download them and add photos from their device.'], ['Are added photos automatically shared?', 'No. Photos are private to the person who added them until they choose to share.'], ['Can I use Memolumi on my own?', 'Yes. Create folders for your own photos and invite others when you want a shared space.'], ['Can I download my photos?', 'Yes. Download the photos you can access. New uploads preserve the selected original file, videos up to 50 MB and photos up to 20 MB, subject to server storage limits, with separate compressed image and video previews. Older uploads may only have a processed copy. MP4, MOV and WebM videos are supported; playback depends on device codecs.'], ['Which languages are supported?', 'The interface is available in English and Korean. Folder names and photo names stay as you write them.']],
+    faqs: [['Do guests need to install an app?', 'No. An invitation opens on the web, where guests can view shared photos, download them and add photos from their device.'], ['Are added photos automatically shared?', 'No. Photos are private to the person who added them until they choose to share.'], ['Can I use Memonestia on my own?', 'Yes. Create folders for your own photos and invite others when you want a shared space.'], ['Can I download my photos?', 'Yes. Download the photos you can access. New uploads preserve the selected original file, videos up to 50 MB and photos up to 20 MB, subject to server storage limits, with separate compressed image and video previews. Older uploads may only have a processed copy. MP4, MOV and WebM videos are supported; playback depends on device codecs.'], ['Which languages are supported?', 'The interface is available in English and Korean. Folder names and photo names stay as you write them.']],
     footer: 'Private by default. Shared by choice.',
   },
   ko: {
-    title: 'Memolumi — 함께한 날들이, 계속 이어지는 곳',
-    description: '각자의 사진을 모아, 우리만의 한 페이지로. 네컷·필름·엽서로 추억을 만들고 친구·가족과 함께 앨범에 간직하세요. 사진은 기본 비공개, 공유는 내가 선택하는 Memolumi.',
+    title: 'Memonestia — 함께한 날들이, 계속 이어지는 곳',
+    description: '각자의 사진을 모아, 우리만의 한 페이지로. 네컷·필름·엽서로 추억을 만들고 친구·가족과 함께 앨범에 간직하세요. 사진은 기본 비공개, 공유는 내가 선택하는 Memonestia.',
     eyebrow: '함께 모으고, 다시 꺼내보는 우리의 기록.',
     heading: '함께한 날들이,\n계속 이어지는 곳.',
     intro: '첫 여행부터 다음 모임까지. 각자 찍은 사진을 한곳에 모으고, 나누고 싶은 순간을 함께 간직하세요.',
@@ -49,11 +49,11 @@ export function publicMetadata(lang: PublicLanguage): Metadata {
   const origin = publicOrigin();
   const text = copy[lang];
   return {
-    title: text.title, description: text.description, applicationName: 'Memolumi',
+    title: text.title, description: text.description, applicationName: 'Memonestia',
     metadataBase: origin ? new URL(origin) : undefined,
     robots: { index: Boolean(origin), follow: Boolean(origin) },
     alternates: origin ? { canonical: `${origin}/${lang}`, languages: { en: `${origin}/en`, ko: `${origin}/ko`, 'x-default': `${origin}/en` } } : undefined,
-    openGraph: { type: 'website', title: text.title, description: text.description, siteName: 'Memolumi', locale: lang === 'ko' ? 'ko_KR' : 'en_US', alternateLocale: lang === 'ko' ? 'en_US' : 'ko_KR', ...(origin ? { url: `${origin}/${lang}`, images: [{ url: `${origin}/share-card.png`, width: 1200, height: 630, alt: 'Memolumi — Your moments. Together.' }] } : {}) },
+    openGraph: { type: 'website', title: text.title, description: text.description, siteName: 'Memonestia', locale: lang === 'ko' ? 'ko_KR' : 'en_US', alternateLocale: lang === 'ko' ? 'en_US' : 'ko_KR', ...(origin ? { url: `${origin}/${lang}`, images: [{ url: `${origin}/share-card.png`, width: 1200, height: 630, alt: 'Memonestia — Your moments. Together.' }] } : {}) },
     twitter: { card: 'summary_large_image', title: text.title, description: text.description, ...(origin ? { images: [`${origin}/share-card.png`] } : {}) },
   };
 }

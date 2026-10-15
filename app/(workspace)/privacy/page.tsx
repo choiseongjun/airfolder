@@ -1,8 +1,8 @@
 import Link from 'next/link';
 export default function Privacy(){return <main style={{maxWidth:720,margin:'40px auto',padding:24,lineHeight:1.8}}>
-  <Link href="/">← Memolumi</Link><h1>Privacy / 개인정보 처리 안내</h1><p>Updated / 개정일: 2026-10-15</p>
+  <Link href="/">← Memonestia</Link><h1>Privacy / 개인정보 처리 안내</h1><p>Updated / 개정일: 2026-10-15</p>
   <p>Operator / 운영자: 최성준 (Seongjun Choi)<br/>Contact / 개인정보 문의: <a href="mailto:choisj2702@gmail.com">choisj2702@gmail.com</a></p>
-  <p>Memolumi stores the photos you select, folder information, sharing choices, and account information from Google or Apple (account identifier, name and email when provided).</p>
+  <p>Memonestia stores the photos you select, folder information, sharing choices, and account information from Google or Apple (account identifier, name and email when provided).</p>
   <p>선택한 사진, 폴더 정보, 공개 설정과 Google·Apple 계정 식별자 및 제공되는 이름·이메일을 서비스 제공에 사용합니다. 사진 접근 권한을 허용해도 모든 사진을 자동으로 업로드하지 않습니다.</p>
   <h2>Photos / 사진</h2><p>New uploads preserve selected original photos and videos, including embedded metadata, videos up to 50 MB and photos up to 20 MB, subject to server storage limits. Separate compressed image and video previews are generated. Older uploads may only retain a processed copy. Firebase handles sign-in; Supabase stores application records and photos. Photos are private until you share them with all or selected folder members. Authorized members can download originals; copies they download remain outside our control.</p>
   <p>Firebase는 로그인을 처리하고 Supabase는 앱 데이터와 사진을 저장합니다. 새 사진·영상은 서버 저장소 한도 내에서 영상 50MB·사진 20MB까지 선택한 원본과 포함된 메타데이터를 보관하며 사진·영상 압축본은 별도로 생성합니다. 이전 업로드는 가공본만 남아 있을 수 있습니다. 공개 전에는 촬영·업로드한 사용자만 조회할 수 있습니다. 멤버가 이미 내려받은 사본은 공개 취소로 회수되지 않습니다.</p>
