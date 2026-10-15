@@ -16,29 +16,44 @@
     "productionStatus": "NOT_SUBMITTED",
     "productionRequirement": "12 testers continuously opted in for 14 days; user deferred recruitment",
     "completedStoreItems": [
-      "Privacy policy",
+      "Privacy policy and 30-day account deletion instructions",
       "Review login account",
       "English description",
       "App icon",
       "Feature graphic",
       "Two web UI phone screenshots",
       "Photography category",
-      "Support email and website"
+      "Support email and website",
+      "IARC content rating: Korea and generic 12+",
+      "Target audience: 13 and older",
+      "Data safety: 9 data types",
+      "Ads declaration",
+      "Advertising ID: not used",
+      "Government, financial and health declarations",
+      "Photo and video permissions explanation"
     ],
     "pendingStoreItems": [
-      "Content rating",
-      "Target audience",
-      "Data safety",
-      "Ads declaration",
-      "Government/financial/health declarations",
-      "Korean listing",
-      "Closed test and production access"
-    ]
+      "Optional Korean listing",
+      "Closed test tester selection and release submission",
+      "12 testers for 14 days and production access",
+      "Production country availability after access approval"
+    ],
+    "closedTrackId": "4699376096234146163",
+    "closedTrackCountries": [
+      "KR",
+      "ID",
+      "PH"
+    ],
+    "storeConfigurationStatus": "SAVED_NOT_SUBMITTED_FOR_REVIEW",
+    "basicDashboardTasksCompleted": 11
   },
   "web": {
     "memoryStudioCommit": "69cd700",
     "productionVerified": true,
-    "url": "https://memonestia.xyz"
+    "url": "https://memonestia.xyz",
+    "accountDeletionUrl": "https://memonestia.xyz/support#account-deletion",
+    "accountDeletionTurnaround": "Within 30 days after ownership verification; operator processed",
+    "deletionPolicyCommit": "ecea8e9"
   },
   "validation": {
     "mobileLint": "0 errors; 7 existing warnings",
