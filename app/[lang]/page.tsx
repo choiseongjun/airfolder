@@ -45,7 +45,7 @@ export default async function Landing({ params }: Props) {
     <header className="lp-nav">
       <Brand href={`/${lang}`} />
       <nav className="lp-nav-middle" aria-label={lang === 'ko' ? '소개페이지 메뉴' : 'Page navigation'}>
-        <a href="#our-story">{t.storyLink}</a><a href="#how-it-works">{t.howLink}</a><a href="#memory-studio">{lang === 'ko' ? '카드 스튜디오' : 'Memory studio'}</a>
+        <a href="#our-story">{t.storyLink}</a><a href="#how-it-works">{t.howLink}</a><a href="#memory-studio">{lang === 'ko' ? '카드 스튜디오' : 'Memory studio'}</a><Link href={`/${lang}/hosts`}>{lang === 'ko' ? '모임장 가이드' : 'For organizers'}</Link>
       </nav>
       <div className="lp-nav-end">
         <LanguageSwitch lang={lang} />

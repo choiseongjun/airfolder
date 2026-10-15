@@ -1,7 +1,10 @@
-import { ApiError, hash, json, safe, sameOrigin, transaction, viewer } from '@/lib/server';
+import { ApiError, hash, json, pool, safe, sameOrigin, transaction, viewer } from '@/lib/server';
+import { requireTerms } from '@/lib/safety';
+import { trackGrowth } from '@/lib/growth';
 export async function POST(request: Request) {
   return safe(async () => {
     sameOrigin(request); const who = await viewer(), body = await json(request);
+    await requireTerms(who);
     if (typeof body.token !== 'string' || !/^[a-f\d]{64}$/.test(body.token)) throw new ApiError(400, 'INVALID_INVITE');
     const joined = await transaction(async db => {
       const groupInvite=await db.query('SELECT g.id FROM snaproom.groups g JOIN snaproom.group_invites i ON i.group_id=g.id WHERE i.token_hash=$1 AND i.expires_at>now() FOR UPDATE OF g',[hash(body.token)]);
@@ -12,6 +15,14 @@ export async function POST(request: Request) {
       await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2) ON CONFLICT DO NOTHING', [id, who]);
       return {folderId:id};
     });
-    return Response.json(joined);
+    const contextId = joined.groupId || joined.folderId;
+    const albums = await pool().query(`SELECT f.id,f.name FROM snaproom.folders f
+      JOIN snaproom.members m ON m.folder_id=f.id AND m.viewer_id=$1
+      WHERE ${joined.groupId ? 'f.group_id=$2' : 'f.id=$2'} ORDER BY f.created_at DESC`, [who, contextId]);
+    const owner = await pool().query(`SELECT owner_id FROM snaproom.${joined.groupId ? 'groups' : 'folders'} WHERE id=$1`, [contextId]);
+    if (owner.rows[0]?.owner_id !== who) trackGrowth({ event: 'invite_joined', who, contextId,
+      key: `invite_joined:${who}:${contextId}:${new Date().toISOString().slice(0,10)}`,
+      properties: { source: 'guest', invite_type: joined.groupId ? 'group' : 'album' } });
+    return Response.json({ ...joined, albums: albums.rows }, { headers: { 'Cache-Control': 'private, no-store' } });
   });
 }

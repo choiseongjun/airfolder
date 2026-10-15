@@ -1,4 +1,5 @@
 import {requireTerms} from '@/lib/safety';
+import {trackGrowth} from '@/lib/growth';
 import { notifySharedPhotos } from '@/lib/push';
 import {checkStorageQuota} from '@/lib/storage-quota';
 import {imagePreview} from '@/lib/image-preview';
@@ -39,12 +40,12 @@ export async function POST(request: Request) {
     }
     const objectPath = `${who}/${folder}/${id}.${type.ext}`, previewPath = preview ? `${who}/${folder}/${id}.preview.jpg` : null;
     const shared = data.get('shared') === 'true';
-    await transaction(async db => {
+    const inserted = await transaction(async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['media:'+id]);
       const existing = await db.query('SELECT owner_id,folder_id FROM snaproom.photos WHERE id=$1',[id]);
       if (existing.rowCount) {
         if (existing.rows[0].owner_id!==who || existing.rows[0].folder_id!==folder) throw new ApiError(409,'PHOTO_CONFLICT');
-        return;
+        return false;
       }
       const membership = await db.query('SELECT 1 FROM snaproom.members WHERE folder_id=$1 AND viewer_id=$2 FOR SHARE',[folder,who]);
       if (!membership.rowCount) throw new ApiError(404,'FOLDER_NOT_FOUND');
@@ -61,7 +62,10 @@ export async function POST(request: Request) {
         if(preview)await db.query('UPDATE snaproom.photos SET preview_size_bytes=$2 WHERE id=$1',[id,preview.length]);
         await db.query('UPDATE snaproom.folders SET updated_at=now() WHERE id=$1',[folder]);
       } catch (error) { await storage().remove([objectPath,...(previewPath?[previewPath]:[])]); throw error; }
+      return true;
     });
+    if(inserted) trackGrowth({event:'upload_succeeded',who,key:`upload_succeeded:${id}`,contextId:folder,
+      properties:{media_type:type.mime.startsWith('image/')?'image':'video',shared}});
     if(staged)await pool().query('DELETE FROM snaproom.upload_sessions WHERE id=$1 AND owner_id=$2',[id,who]);
     if (shared) await notifySharedPhotos([folder],who).catch(()=>console.error('Push notification delivery failed'));
     return Response.json({id},{status:201});

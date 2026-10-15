@@ -2,6 +2,7 @@ import {requireTerms} from '@/lib/safety';
 import { randomUUID } from 'node:crypto';
 import { ApiError, json, pool, safe, sameOrigin, transaction, uuid, viewer } from '@/lib/server';
 import { folderDates } from '@/lib/folder-dates';
+import { trackGrowth } from '@/lib/growth';
 export async function PATCH(request:Request){return safe(async()=>{
   sameOrigin(request);const who=await viewer(),body=await json(request),id=uuid(body.id),groupId=uuid(body.groupId);await requireTerms(who);
   await transaction(async db=>{
@@ -24,15 +25,21 @@ export async function POST(request: Request) {
     if (typeof body.name !== 'string' || !body.name.trim() || body.name.trim().length > 80 || typeof (body.description ?? '') !== 'string' || (body.description ?? '').length > 500) throw new ApiError(400, 'INVALID_FOLDER');
     const count = await pool().query('SELECT count(*) FROM snaproom.folders WHERE owner_id=$1', [who]);
     if (Number(count.rows[0].count) >= 100) throw new ApiError(409, 'FOLDER_LIMIT');
-    const id = randomUUID(); const category = ['여행','모임','업무','개인'].includes(body.category) ? body.category : '개인';
+    const id = body.source === 'organizer' && body.creationId ? uuid(body.creationId) : randomUUID(); const category = ['여행','모임','업무','개인'].includes(body.category) ? body.category : '개인';
     let dates: [string | null, string | null];
     try { dates = folderDates(body.startDate, body.endDate); } catch { throw new ApiError(400, 'INVALID_DATE_RANGE'); }
     const groupId=body.groupId?uuid(body.groupId):null;
-    await transaction(async db => {
+    const created = await transaction(async db => {
+      await db.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['folder-create:'+id]);
+      const existing = await db.query('SELECT owner_id FROM snaproom.folders WHERE id=$1', [id]);
+      if (existing.rowCount) { if (existing.rows[0].owner_id !== who) throw new ApiError(409, 'FOLDER_CONFLICT'); return false; }
       if(groupId){await db.query('SELECT id FROM snaproom.groups WHERE id=$1 FOR UPDATE',[groupId]);const m=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[groupId,who]);if(!m.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');}
       await db.query('INSERT INTO snaproom.folders(id,owner_id,name,category,description,starts_on,ends_on,group_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [id, who, body.name.trim(), category, body.description || '', ...dates,groupId]);
       await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2) ON CONFLICT DO NOTHING', [id, who]);
+      return true;
     });
+    if (created) trackGrowth({ event: 'album_created', who, key: `album_created:${id}`, contextId: id,
+      properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace' } });
     return Response.json({ id }, { status: 201 });
   });
 }

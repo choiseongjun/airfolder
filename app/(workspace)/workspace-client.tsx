@@ -199,6 +199,7 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
           setModal("account");
         }
         const requestedGroup=new URLSearchParams(window.location.search).get("group");if(requestedGroup&&/^[a-f0-9-]{36}$/i.test(requestedGroup))setActiveGroup(requestedGroup);
+        const requestedRoom=new URLSearchParams(window.location.search).get("room");if(requestedRoom&&data.rooms.some(r=>r.id===requestedRoom)){setActiveRoom(requestedRoom);setPage("rooms");}
         const token = new URLSearchParams(window.location.search).get("invite");
         if (token) { setJoinToken(token); setModal("join"); }
       } catch { if (!cancelled) { setServerError(true); setReady(false); } }
@@ -277,7 +278,7 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
   }
   async function invite(id: string) {
     setCameraRoom(id); setModal("invite"); setQr(""); setInviteUrl("");
-    try { const result=await api<{token:string}>("/api/invites",{method:"POST",body:JSON.stringify({folderId:id})}); const url=new URL(window.location.origin); url.searchParams.set("invite",result.token); setInviteUrl(url.toString()); setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1,color:{dark:"#34382e",light:"#ffffff"}})); }
+    try { const result=await api<{token:string}>("/api/invites",{method:"POST",body:JSON.stringify({folderId:id})}); const url=new URL(`/join/${result.token}`,window.location.origin); url.searchParams.set("lang",locale); setInviteUrl(url.toString()); setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1,color:{dark:"#34382e",light:"#ffffff"}})); }
     catch { setToast("초대 링크를 만들지 못했어요. 폴더 소유자만 초대할 수 있어요."); }
   }
   async function joinFolder() {

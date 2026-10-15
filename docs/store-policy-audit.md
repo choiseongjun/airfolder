@@ -4,6 +4,8 @@ This is a source/configuration audit, not a store approval or a legal certificat
 
 The safety schema (migration 016) was applied to the configured database. Web and native source changes have **not** been deployed or submitted. Verification passed: production Next build, root unit tests (35), rollback-only safety/deletion integration, memory API integration (63 checks), mobile unit tests/type checking, and iOS/Android Expo exports. Exports do not verify signed binaries or actual devices. Existing integration fixtures now explicitly accept the current policy as disposable test identities.
 
+The subsequent admin-console implementation applied migration 018 and provisioned a separate administrator requiring a first-login password change. It adds scoped report previews, decisions and appeals, suspension controls, deletion retries, and a 30-day action audit. Updated verification passed 37 unit tests, rollback-only admin/safety SQL integration, TypeScript, scoped ESLint, and a production build. Temporary browser-test identities and reports were removed. Production Firebase deletion credentials, deployment, and live-provider deletion verification remain pending; see [admin operations](admin-operations.md).
+
 ## Implemented
 
 | Area | Change | Verification |
@@ -11,9 +13,9 @@ The safety schema (migration 016) was applied to the configured database. Web an
 | Terms before UGC | Bilingual `/terms`, affirmative consent with a version/time record, server checks before uploads and content writes | Invalid/missing consent rejected in integration test |
 | Reporting | Photos, videos, stories, comments and members can be reported to the operator, independently of album ownership | Unauthorized/private targets and cross-origin requests rejected |
 | Blocking | Member and author blocking; symmetric content access, downloads, comments, reactions and notification filtering; unblock in Account | PostgreSQL permission and API checks |
-| Moderation | Operator report queue, hide/dismiss/suspend actions; hidden photos/stories cannot be republished by changing visibility | Database trigger and suspension checks |
+| Moderation | `/admin` report queue, scoped private previews, hide/dismiss/suspend and appeal actions, separate password/session authentication, and action history; hidden photos/stories cannot be republished by changing visibility | Database trigger, authentication, rate limit, preview-scope and suspension integration checks |
 | Deletion | `/delete-account`, guest deletion, Apple token revocation before accepting an Apple request, session revocation, private completion receipt | Wrong identity and failed revocation leave sessions/data intact |
-| Data cleanup | Serialized, retryable worker removes originals/previews and account data, transfers surviving groups, preserves other members' data | Rollback-only fixtures with fake storage/auth; no real users deleted |
+| Data cleanup | Serialized, retryable worker removes originals/previews and account data, transfers surviving groups and older shared albums, preserves other members' data; admin page exposes failure/retry status | Rollback-only fixtures with fake storage/auth and storage failures; no real users deleted |
 | Recipient privacy | Removing the last selected recipient makes the content private | Integration regression check |
 | Scheduled cleanup | Protected daily Vercel job, same deletion core as CLI, failure/pending counts, expired receipt cleanup | Requires production secret/configuration and operational verification |
 | Public disclosures | Privacy and support updated for public links, embedded metadata, consent records, reporting, blocking, receipts and optional permissions | Browser preview at desktop and 390px width |

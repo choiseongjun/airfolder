@@ -3,15 +3,12 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const ts = require('typescript');
 const { timingSafeEqual } = require('node:crypto');
-function endpoint(env) {
+function endpoint(env, configured = false) {
   let accessed = false;
-  const deniedDependency = () => { accessed = true; throw new Error('Should not access deletion dependencies'); };
   const imports = {
     'node:crypto': { timingSafeEqual },
-    'firebase-admin/app': { cert: deniedDependency, getApps: deniedDependency, initializeApp: deniedDependency },
-    'firebase-admin/auth': { getAuth: deniedDependency },
-    '@/lib/server': { pool: deniedDependency, storage: deniedDependency },
-    '@/scripts/account-deletion-core.mjs': { deleteRequestedAccount: deniedDependency },
+    '@/lib/admin': { adminSafe: fn => fn() },
+    '@/lib/account-deletions': { deletionConfiguration: () => ({ firebase: configured }), runAccountDeletions: async () => { accessed = true; return { completed: 0, failed: 0, pending: 0 }; } },
   };
   const loaded = { exports: {} };
   const source = ts.transpileModule(fs.readFileSync('app/api/maintenance/account-deletions/route.ts', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
@@ -23,7 +20,11 @@ test('deletion maintenance rejects missing, short, wrong and absent secrets with
     const route = endpoint({ CRON_SECRET: secret }); assert.equal((await route.get(supplied)).status, 401); assert.equal(route.accessed(), false);
   }
 });
-test('correct maintenance secret without Firebase credentials fails closed', async () => {
+test('maintenance reports unconfigured Firebase even if there are no pending deletions', async () => {
   const secret = 's'.repeat(32), route = endpoint({ CRON_SECRET: secret });
-  assert.equal((await route.get('Bearer ' + secret)).status, 503); assert.equal(route.accessed(), false);
+  assert.equal((await route.get('Bearer ' + secret)).status, 503); assert.equal(route.accessed(), true);
+});
+test('configured maintenance returns success after the shared worker completes', async () => {
+  const secret = 's'.repeat(32), route = endpoint({ CRON_SECRET: secret }, true);
+  assert.equal((await route.get('Bearer ' + secret)).status, 200);
 });

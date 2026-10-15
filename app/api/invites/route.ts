@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { trackGrowth } from '@/lib/growth';
 import { ApiError, hash, json, pool, safe, sameOrigin, uuid, viewer } from '@/lib/server';
 export async function POST(request: Request) {
   return safe(async () => {
@@ -7,6 +8,7 @@ export async function POST(request: Request) {
     if (!result.rowCount) throw new ApiError(403, 'OWNER_REQUIRED');
     const token = randomBytes(32).toString('hex');
     await pool().query("INSERT INTO snaproom.invites(token_hash,folder_id,created_by,expires_at) VALUES($1,$2,$3,now()+interval '7 days')", [hash(token), folder, who]);
+    trackGrowth({ event: 'invite_created', who, key: `invite_created:${hash(token)}`, contextId: folder, properties: { invite_type: 'album' } });
     return Response.json({ token, expiresInDays: 7 }, { headers: { 'Cache-Control': 'no-store' } });
   });
 }

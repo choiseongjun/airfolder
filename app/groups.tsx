@@ -19,7 +19,7 @@ export default function Groups({locale,selected,onSelect,onChanged,revision}:{lo
  async function manage(){setName('');setError('');setInvite('');setQr('');setMembers([]);setDialog('manage');try{const d=await api<{members:Member[]}>('/api/groups?id='+selected);setMembers(d.members);}catch{setError(text('멤버를 불러오지 못했어요.','Could not load members.'));}}
  async function action(action:string,values:Record<string,unknown>={}){setBusy(true);setError('');try{
   const d=await api<{token?:string}>('/api/groups',{method:'PATCH',body:JSON.stringify({id:selected,action,...values})});
-  if(d.token){const url=new URL(window.location.origin);url.searchParams.set('invite',d.token);setInvite(url.toString());setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1}));}
+  if(d.token){const url=new URL(`/join/${d.token}`,window.location.origin);url.searchParams.set('lang',locale);setInvite(url.toString());setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1}));}
   else if(action==='revoke'){setInvite('');setQr('');}
   else if(action==='leave'){onSelect(null);setDialog(null);}
   else if(action==='remove'||action==='transfer'){const m=await api<{members:Member[]}>('/api/groups?id='+selected);setMembers(m.members);}

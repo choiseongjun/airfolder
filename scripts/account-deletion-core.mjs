@@ -9,6 +9,7 @@ export async function deleteRequestedAccount(db, store, auth, viewerId) {
       const result = await db.query(`SELECT v.id,a.firebase_uid FROM snaproom.viewers v LEFT JOIN snaproom.accounts a ON a.viewer_id=v.id WHERE v.id=$1 AND v.deletion_requested_at<now()-interval '5 minutes' FOR UPDATE OF v`, [viewerId]);
       if (!result.rowCount) { await db.query('ROLLBACK'); return false; }
       const job = result.rows[0];
+      if (job.firebase_uid && !auth) throw new Error('Firebase administration credentials required');
       const groups = await db.query('SELECT id FROM snaproom.groups WHERE owner_id=$1 FOR UPDATE', [job.id]);
       for (const group of groups.rows) {
         const next = await db.query('SELECT m.viewer_id FROM snaproom.group_members m JOIN snaproom.viewers v ON v.id=m.viewer_id WHERE m.group_id=$1 AND m.viewer_id<>$2 AND v.deletion_requested_at IS NULL AND v.suspended_at IS NULL ORDER BY m.joined_at,m.viewer_id LIMIT 1', [group.id, job.id]);
@@ -16,6 +17,12 @@ export async function deleteRequestedAccount(db, store, auth, viewerId) {
         else await db.query('DELETE FROM snaproom.groups WHERE id=$1', [group.id]);
       }
       await db.query('UPDATE snaproom.folders f SET owner_id=g.owner_id FROM snaproom.groups g WHERE f.group_id=g.id AND f.owner_id=$1', [job.id]);
+      // Older shared albums may have members but no group. Preserve surviving members' work too.
+      const folders = await db.query('SELECT id FROM snaproom.folders WHERE owner_id=$1 FOR UPDATE', [job.id]);
+      for (const folder of folders.rows) {
+        const next = await db.query('SELECT m.viewer_id FROM snaproom.members m JOIN snaproom.viewers v ON v.id=m.viewer_id WHERE m.folder_id=$1 AND m.viewer_id<>$2 AND v.deletion_requested_at IS NULL AND v.suspended_at IS NULL ORDER BY m.viewer_id LIMIT 1', [folder.id, job.id]);
+        if (next.rowCount) await db.query('UPDATE snaproom.folders SET owner_id=$2 WHERE id=$1', [folder.id, next.rows[0].viewer_id]);
+      }
       const files = await db.query('SELECT object_path,preview_path FROM snaproom.photos WHERE owner_id=$1 OR folder_id IN (SELECT id FROM snaproom.folders WHERE owner_id=$1)', [job.id]);
       const paths = [...new Set(files.rows.flatMap(p => [p.object_path, p.preview_path].filter(Boolean)))];
       for (let i = 0; i < paths.length; i += 100) {

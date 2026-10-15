@@ -3,5 +3,5 @@ import { publicOrigin } from '@/lib/seo';
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = publicOrigin();
   if (!origin) return [];
-  return ['en', 'ko'].map(lang => ({ url: `${origin}/${lang}`, alternates: { languages: { en: `${origin}/en`, ko: `${origin}/ko`, 'x-default': `${origin}/en` } } }));
+  return ['', '/hosts'].flatMap(path => ['en', 'ko'].map(lang => ({ url: `${origin}/${lang}${path}`, alternates: { languages: { en: `${origin}/en${path}`, ko: `${origin}/ko${path}`, 'x-default': `${origin}/en${path}` } } })));
 }

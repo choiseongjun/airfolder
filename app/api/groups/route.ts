@@ -1,4 +1,5 @@
 import {requireTerms} from '@/lib/safety';
+import {trackGrowth} from '@/lib/growth';
 import {randomUUID,randomBytes} from 'node:crypto';
 import {connection} from 'next/server';
 import {ApiError,hash,json,pool,safe,sameOrigin,transaction,uuid,viewer} from '@/lib/server';
@@ -54,5 +55,7 @@ export async function PATCH(request:Request){return safe(async()=>{
   }
   if(b.action==='rename'){await db.query('UPDATE snaproom.groups SET name=$2 WHERE id=$1',[id,textBody(b.name,80)]);return {ok:true};}
   throw new ApiError(400,'INVALID_ACTION');
- });return Response.json(data,{headers:{'Cache-Control':'no-store'}});
+ });
+ if ('token' in data && data.token) trackGrowth({event:'invite_created',who,key:`invite_created:${hash(data.token)}`,contextId:id,properties:{invite_type:'group'}});
+ return Response.json(data,{headers:{'Cache-Control':'no-store'}});
 });}
