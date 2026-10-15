@@ -3,13 +3,14 @@ import {useCallback,useEffect,useRef,useState} from 'react';
 import {Heart,MessageCircle,Plus,LockKeyhole,Users,RefreshCw} from 'lucide-react';
 import {api} from '@/lib/client-api';
 import './memories.css';
+import SafetyActions from './safety-actions';
 import MemberPicker from './member-picker';
 import MediaView from './media-view';
 import ShareLinks from './share-links';
 import './record-bundles.css';
 type Locale='ko'|'en';
 type Comment={id:string;body:string;author:string;mine:boolean;createdAt:string;revision:number;updatedAt:string};
-type DiscussionData={comments:Comment[];count:number;liked:boolean;hasMore:boolean;shared:boolean;audience?:string};
+type DiscussionData={mine?:boolean;comments:Comment[];count:number;liked:boolean;hasMore:boolean;shared:boolean;audience?:string};
 export type MemoryItem={id:string;kind:'record'|'photo';body:string;title?:string;photos?:MemoryItem[];created?:number;day:string;shared:boolean;mine:boolean;author:string;revision:number;updatedAt:string;src?:string;audience?:string;recipients?:string[];mediaType?:string;originalAvailable?:boolean;hasPreview?:boolean};
 const emptyDiscussion:DiscussionData={comments:[],count:0,liked:false,hasMore:false,shared:false};
 function errorText(error:unknown,ko:boolean){
@@ -23,13 +24,14 @@ function errorText(error:unknown,ko:boolean){
 function dayToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 export function Discussion({kind,id,locale}:{kind:'photo'|'record';id:string;locale:Locale}){
  const ko=locale==='ko',t=(a:string,b:string)=>ko?a:b;
- const [data,setData]=useState(emptyDiscussion),[loaded,setLoaded]=useState(false),[error,setError]=useState(''),[busy,setBusy]=useState(false),[text,setText]=useState(''),[edit,setEdit]=useState<Comment|null>(null),[editing,setEditing]=useState(''),[remove,setRemove]=useState(''),[report,setReport]=useState(''),[reason,setReason]=useState(''),[notice,setNotice]=useState('');
+ const [data,setData]=useState(emptyDiscussion),[loaded,setLoaded]=useState(false),[error,setError]=useState(''),[busy,setBusy]=useState(false),[text,setText]=useState(''),[edit,setEdit]=useState<Comment|null>(null),[editing,setEditing]=useState(''),[remove,setRemove]=useState(''),[notice,setNotice]=useState('');
  const draftId=useRef(''),mounted=useRef(true);
  const refresh=useCallback(async()=>{const next=await api<DiscussionData>(`/api/discussion?kind=${kind}&id=${id}`);if(mounted.current){setData(next);setLoaded(true);}},[kind,id]);
  useEffect(()=>{mounted.current=true;let active=true;api<DiscussionData>(`/api/discussion?kind=${kind}&id=${id}`).then(v=>{if(active){setData(v);setLoaded(true);}}).catch(e=>{if(active)setError(errorText(e,locale==='ko'));});return()=>{active=false;mounted.current=false;};},[kind,id,locale]);
  async function run(work:()=>Promise<void>){setBusy(true);setError('');setNotice('');try{await work();}catch(e){setError(errorText(e,ko));}finally{setBusy(false);}}
  const mutate=(method:string,body:object)=>api('/api/discussion',{method,body:JSON.stringify({kind,targetId:id,...body})});
  return <div className="discussion" aria-label={t('댓글과 공감','Comments and reactions')}>
+  {loaded&&!data.mine&&<SafetyActions kind={kind} id={id} ko={ko}/>}
   <div className="discussion-top"><button disabled={!loaded||busy} aria-pressed={data.liked} onClick={()=>run(async()=>{await mutate('POST',{action:'like',liked:!data.liked});await refresh();})}><Heart size={17} fill={data.liked?'currentColor':'none'}/>{data.count} <span>{t('공감','Like')}</span></button><span><MessageCircle size={16}/>{t('이 순간의 이야기','Stories from this moment')}</span></div>
   {error&&<p role="alert" className="memory-error">{error}<button disabled={busy} onClick={()=>run(refresh)}>{t('새로고침','Refresh')}</button></p>}
   {notice&&<p role="status">{notice}</p>}
@@ -37,9 +39,8 @@ export function Discussion({kind,id,locale}:{kind:'photo'|'record';id:string;loc
   {loaded&&!data.comments.length&&<p className="memory-muted">{t('이 순간에 얽힌 이야기를 남겨보세요.','Leave a little story about this moment.')}</p>}
   <ol className="comment-list">{data.comments.map(c=><li key={c.id}><div className="comment-meta"><strong>{c.mine?t('나','You'):c.author||t('멤버','Member')}</strong><time dateTime={c.createdAt}>{new Date(c.createdAt).toLocaleString(ko?'ko-KR':'en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time>{c.updatedAt!==c.createdAt&&<small>{t('수정됨','Edited')}</small>}</div>
    {edit?.id===c.id?<form onSubmit={e=>{e.preventDefault();run(async()=>{await mutate('PATCH',{id:c.id,body:editing,revision:edit.revision});setEdit(null);await refresh();});}}><textarea aria-label={t('댓글 수정','Edit comment')} value={editing} onChange={e=>setEditing(e.target.value)} maxLength={1000} required/><div className="memory-actions"><button disabled={busy||!editing.trim()}>{t('저장','Save')}</button><button type="button" disabled={busy} onClick={()=>setEdit(null)}>{t('취소','Cancel')}</button></div></form>:<p className="comment-body">{c.body}</p>}
-   <div className="comment-actions">{c.mine?<><button disabled={busy} onClick={()=>{setEdit(c);setEditing(c.body);setRemove('');}}>{t('수정','Edit')}</button><button disabled={busy} onClick={()=>setRemove(c.id)}>{t('삭제','Delete')}</button></>:<button disabled={busy} onClick={()=>{setReport(c.id);setReason('');}}>{t('신고','Report')}</button>}</div>
+   <div className="comment-actions">{c.mine?<><button disabled={busy} onClick={()=>{setEdit(c);setEditing(c.body);setRemove('');}}>{t('수정','Edit')}</button><button disabled={busy} onClick={()=>setRemove(c.id)}>{t('삭제','Delete')}</button></>:<SafetyActions kind="comment" id={c.id} ko={ko}/>}</div>
    {remove===c.id&&<div className="memory-confirm"><span>{t('이 댓글을 삭제할까요? 되돌릴 수 없습니다.','Delete this comment? This cannot be undone.')}</span><button disabled={busy} onClick={()=>run(async()=>{await mutate('DELETE',{id:c.id});setRemove('');await refresh();})}>{t('삭제 확인','Confirm delete')}</button><button disabled={busy} onClick={()=>setRemove('')}>{t('취소','Cancel')}</button></div>}
-   {report===c.id&&<form className="report-form" onSubmit={e=>{e.preventDefault();run(async()=>{await mutate('POST',{action:'report',commentId:c.id,reason});setReport('');setNotice(t('공간 관리자에게 신고가 전달됐어요.','Report sent to the space owner.'));});}}><label>{t('신고 사유 · 공간 관리자가 검토합니다','Reason · reviewed by the space owner')}<textarea maxLength={500} required value={reason} onChange={e=>setReason(e.target.value)}/></label><div className="memory-actions"><button disabled={busy||!reason.trim()}>{t('신고 보내기','Send report')}</button><button type="button" disabled={busy} onClick={()=>setReport('')}>{t('취소','Cancel')}</button></div></form>}
   </li>)}</ol>
   {data.hasMore&&<button disabled={busy} onClick={()=>run(async()=>{const next=await api<DiscussionData>(`/api/discussion?kind=${kind}&id=${id}&offset=${data.comments.length}`);setData(old=>({...next,comments:[...old.comments,...next.comments.filter(c=>!old.comments.some(o=>o.id===c.id))]}));})}>{t('댓글 더 보기','More comments')}</button>}
   <form className="comment-compose" onSubmit={e=>{e.preventDefault();run(async()=>{draftId.current ||= crypto.randomUUID();await mutate('POST',{action:'comment',id:draftId.current,body:text});draftId.current='';setText('');await refresh();});}}><label>{t('댓글 남기기','Leave a comment')}<textarea disabled={!loaded||busy} maxLength={1000} value={text} onChange={e=>setText(e.target.value)} placeholder={t('그날의 이야기를 들려주세요.','What do you remember?')} required/></label><div className="memory-actions"><small>{text.length}/1000 · {data.audience==='selected'?t('선택한 멤버에게 공개','Visible to selected members'):data.shared?t('공간 멤버에게 공개','Visible to space members'):t('나만 보기','Only you')}</small><button disabled={!loaded||busy||!text.trim()}>{busy?t('처리 중…','Saving…'):t('댓글 남기기','Post comment')}</button></div></form>

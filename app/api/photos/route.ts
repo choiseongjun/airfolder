@@ -1,6 +1,10 @@
+import {requireTerms} from '@/lib/safety';
 import { notifySharedPhotos } from '@/lib/push';
 import {checkStorageQuota} from '@/lib/storage-quota';
-import sharp from 'sharp';
+import {imagePreview} from '@/lib/image-preview';
+import {stagedUpload} from '@/lib/staged-upload';
+import {pool} from '@/lib/server';
+export const maxDuration = 60;
 import {uploadDisk} from '@/lib/upload-disk';
 import {VIDEO_LIMIT,mediaLimit} from '@/lib/media-limits';
 import {createReadStream} from 'node:fs';
@@ -12,11 +16,12 @@ const limit = VIDEO_LIMIT;
 const allowed = new Set(['image/jpeg','image/png','image/webp','image/gif','image/heic','image/heif','image/avif','video/mp4','video/quicktime','video/webm']);
 export async function POST(request: Request) {
   return safe(async () => {
-    sameOrigin(request); const who = await viewer();
+    sameOrigin(request); const who = await viewer();await requireTerms(who);
     if (Number(request.headers.get('content-length') || 0) > limit + 65536) throw new ApiError(413, 'MEDIA_TOO_LARGE');
     const storageLimit=await storageFileLimit();
     if(Number(request.headers.get('content-length')||0)>storageLimit+65536)throw new ApiError(413,'STORAGE_LIMIT_REQUIRES_UPGRADE');
-    const upload = await uploadDisk(request,limit);
+    const staged=request.headers.get('content-type')?.includes('application/json');
+    const upload = staged ? await stagedUpload((await json(request)).uploadId,who) : await uploadDisk(request,limit);
     try {
     const data = new Map(Object.entries(upload.fields)); const folder = uuid(data.get('folderId')), id = uuid(data.get('id'));
     await requireMember(folder, who);
@@ -29,8 +34,8 @@ export async function POST(request: Request) {
     if(upload.size>storageLimit)throw new ApiError(413,'STORAGE_LIMIT_REQUIRES_UPGRADE');
     let preview: Buffer | undefined;
     if (type.mime.startsWith('image/')) {
-      try { preview = await sharp(upload.path, { limitInputPixels: 100000000 }).rotate().resize({width:2560,height:2560,fit:'inside',withoutEnlargement:true}).jpeg({quality:85}).toBuffer(); }
-      catch { if (!['image/heic','image/heif'].includes(type.mime)) throw new ApiError(400,'INVALID_IMAGE'); }
+      try { preview = await imagePreview(upload.path,type.mime); }
+      catch { throw new ApiError(400,'INVALID_IMAGE'); }
     }
     const objectPath = `${who}/${folder}/${id}.${type.ext}`, previewPath = preview ? `${who}/${folder}/${id}.preview.jpg` : null;
     const shared = data.get('shared') === 'true';
@@ -57,6 +62,7 @@ export async function POST(request: Request) {
         await db.query('UPDATE snaproom.folders SET updated_at=now() WHERE id=$1',[folder]);
       } catch (error) { await storage().remove([objectPath,...(previewPath?[previewPath]:[])]); throw error; }
     });
+    if(staged)await pool().query('DELETE FROM snaproom.upload_sessions WHERE id=$1 AND owner_id=$2',[id,who]);
     if (shared) await notifySharedPhotos([folder],who).catch(()=>console.error('Push notification delivery failed'));
     return Response.json({id},{status:201});
     } finally {await upload.cleanup();}
@@ -64,7 +70,7 @@ export async function POST(request: Request) {
 }
 export async function PATCH(request: Request) {
   return safe(async () => {
-    sameOrigin(request); const who = await viewer(), body = await json(request);
+    sameOrigin(request); const who = await viewer(), body = await json(request);await requireTerms(who);
     if (!Array.isArray(body.ids) || !body.ids.length || body.ids.length > 200 || typeof body.shared !== 'boolean') throw new ApiError(400,'INVALID_SELECTION');
     const ids = [...new Set(body.ids.map(uuid))], recipients = parseRecipients(body.recipients,body.shared);
     const folders: string[] = [];

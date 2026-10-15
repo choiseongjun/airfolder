@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { acceptTestTerms } from './test-policy-consent.mjs';
 import {readFileSync} from 'node:fs';
 import {parseEnv} from 'node:util';
 import {randomUUID} from 'node:crypto';
@@ -6,7 +7,7 @@ import pg from 'pg';
 const env=parseEnv(readFileSync('.env.local','utf8')),db=new pg.Client({connectionString:env.DATABASE_URL});await db.connect();
 const base='http://localhost:3000',users=[],folder=randomUUID(),photo=randomUUID(),other=randomUUID();let checks=0;
 async function call(path,{cookie='',method='GET',body,status=200}={}){const r=await fetch(base+path,{method,headers:{Origin:base,Cookie:cookie,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});assert.equal(r.status,status);checks++;return r;}
-async function guest(){const r=await call('/api/session',{method:'POST'}),data=await r.json();const u={id:data.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);return u;}
+async function guest(){const r=await call('/api/session',{method:'POST'}),data=await r.json();const u={id:data.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);await acceptTestTerms(base,u.cookie);return u;}
 try{
  const [a,b]=await Promise.all([guest(),guest()]);
  await db.query("INSERT INTO snaproom.folders(id,owner_id,name) VALUES($1,$2,'Disposable link test')",[folder,a.id]);

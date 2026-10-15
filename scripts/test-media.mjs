@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { acceptTestTerms } from './test-policy-consent.mjs';
 import {readFileSync} from 'node:fs';
 import {parseEnv} from 'node:util';
 import {randomUUID,createHash} from 'node:crypto';
@@ -12,7 +13,7 @@ const db=new pg.Client({connectionString:env.DATABASE_URL});await db.connect();
 const store=createClient(env.SUPABASE_URL,env.SUPABASE_SECRET_KEY).storage.from('snaproom-photos');
 const users=[],folders=[];let checks=0;
 async function call(u,path,method='GET',body,status=200){const r=await fetch(base+path,{method,headers:{Origin:base,...(u?{Cookie:u.cookie}:{}),...(body instanceof FormData?{}:{'Content-Type':'application/json'})},body:body===undefined?undefined:body instanceof FormData?body:JSON.stringify(body)});const data=await r.json();assert.equal(r.status,status,`${method} ${path}: ${JSON.stringify(data)}`);checks++;return data;}
-async function guest(){const r=await fetch(base+'/api/session',{method:'POST',headers:{Origin:base}});assert.equal(r.status,200);const d=await r.json(),u={id:d.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);return u;}
+async function guest(){const r=await fetch(base+'/api/session',{method:'POST',headers:{Origin:base}});assert.equal(r.status,200);const d=await r.json(),u={id:d.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);await acceptTestTerms(base,u.cookie);return u;}
 async function content(u,id,suffix='',status=200,headers={}){const r=await fetch(base+`/api/photos/${id}/content${suffix}`,{headers:{...headers,...(u?{Cookie:u.cookie}:{})}});assert.equal(r.status,status);checks++;return r;}
 const digest=b=>createHash('sha256').update(b).digest('hex');
 try{

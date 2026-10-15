@@ -1,3 +1,4 @@
+import {requireTerms} from '@/lib/safety';
 import {randomUUID,randomBytes} from 'node:crypto';
 import {connection} from 'next/server';
 import {ApiError,hash,json,pool,safe,sameOrigin,transaction,uuid,viewer} from '@/lib/server';
@@ -18,7 +19,7 @@ export async function GET(request:Request){await connection();return safe(async(
  return Response.json({groups:result.rows},{headers:{'Cache-Control':'private, no-store'}});
 });}
 export async function POST(request:Request){return safe(async()=>{
- sameOrigin(request);const who=await viewer(),b=await json(request);
+ sameOrigin(request);const who=await viewer(),b=await json(request);await requireTerms(who);
  const id=await transaction(async db=>{
   await db.query('SELECT pg_advisory_xact_lock(hashtext($1))',['group-create:'+who]);
   const count=await db.query('SELECT count(*)::int n FROM snaproom.groups WHERE owner_id=$1',[who]);if(count.rows[0].n>=50)throw new ApiError(409,'GROUP_LIMIT');
@@ -27,7 +28,7 @@ export async function POST(request:Request){return safe(async()=>{
  });return Response.json({id},{status:201});
 });}
 export async function PATCH(request:Request){return safe(async()=>{
- sameOrigin(request);const who=await viewer(),b=await json(request),id=uuid(b.id);
+ sameOrigin(request);const who=await viewer(),b=await json(request),id=uuid(b.id);await requireTerms(who);
  const data=await transaction(async db=>{
   const rows=await db.query('SELECT * FROM snaproom.groups WHERE id=$1 FOR UPDATE',[id]);if(!rows.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');const group=rows.rows[0];
   const membership=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[id,who]);if(!membership.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');

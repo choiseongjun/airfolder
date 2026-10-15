@@ -11,7 +11,7 @@ export async function notifySharedPhotos(folderIds: string[], actor: string, rec
       JOIN snaproom.sessions s ON s.token_hash=d.session_hash AND s.expires_at>now()
       JOIN snaproom.folders f ON f.id=m.folder_id
       LEFT JOIN snaproom.group_members gm ON gm.group_id=f.group_id AND gm.viewer_id=d.viewer_id
-      WHERE NOT COALESCE(gm.muted,false) AND EXISTS(SELECT 1 FROM snaproom.notifications n LEFT JOIN snaproom.photos p ON p.id=n.photo_id LEFT JOIN snaproom.records r ON r.id=n.record_id WHERE n.viewer_id=d.viewer_id AND n.folder_id=$1 AND n.actor_id=$2 AND n.pushed_at IS NULL AND n.created_at>now()-interval '1 day' AND ((p.id IS NOT NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,d.viewer_id)) OR (r.id IS NOT NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,d.viewer_id))))
+      WHERE snaproom.interaction_allowed($2,d.viewer_id) AND NOT COALESCE(gm.muted,false) AND EXISTS(SELECT 1 FROM snaproom.notifications n LEFT JOIN snaproom.photos p ON p.id=n.photo_id LEFT JOIN snaproom.records r ON r.id=n.record_id WHERE n.viewer_id=d.viewer_id AND n.folder_id=$1 AND n.actor_id=$2 AND n.pushed_at IS NULL AND n.created_at>now()-interval '1 day' AND ((p.id IS NOT NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,d.viewer_id)) OR (r.id IS NOT NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,d.viewer_id))))
       AND NOT EXISTS(SELECT 1 FROM snaproom.notifications n WHERE n.viewer_id=d.viewer_id AND n.folder_id=$1 AND n.pushed_at>now()-interval '5 minutes')
       AND d.viewer_id<>$2 AND (cardinality($3::uuid[])=0 OR d.viewer_id=ANY($3::uuid[])) AND d.updated_at>now()-interval '90 days'`,[folderId,actor,recipients]);
     for(let i=0;i<rows.length;i+=100){

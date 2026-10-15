@@ -4,6 +4,7 @@ import {useCallback,useEffect,useState} from 'react';
 import {Users,Plus,ArrowRight,Settings,LockKeyhole,X,Copy} from 'lucide-react';
 import QRCode from 'qrcode';
 import {api} from '@/lib/client-api';
+import {isBrowse} from '@/lib/browse-data';
 import type {Locale} from './i18n';
 import './group-space.css';
 import MembersPanel from './members-panel';
@@ -18,7 +19,7 @@ export default function Groups({locale,selected,onSelect,onChanged,revision}:{lo
  async function manage(){setName('');setError('');setInvite('');setQr('');setMembers([]);setDialog('manage');try{const d=await api<{members:Member[]}>('/api/groups?id='+selected);setMembers(d.members);}catch{setError(text('멤버를 불러오지 못했어요.','Could not load members.'));}}
  async function action(action:string,values:Record<string,unknown>={}){setBusy(true);setError('');try{
   const d=await api<{token?:string}>('/api/groups',{method:'PATCH',body:JSON.stringify({id:selected,action,...values})});
-  if(d.token){const url=new URL(window.location.origin);url.searchParams.set('invite',d.token);url.searchParams.set('lang',locale);setInvite(url.toString());setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1}));}
+  if(d.token){const url=new URL(window.location.origin);url.searchParams.set('invite',d.token);setInvite(url.toString());setQr(await QRCode.toDataURL(url.toString(),{width:220,margin:1}));}
   else if(action==='revoke'){setInvite('');setQr('');}
   else if(action==='leave'){onSelect(null);setDialog(null);}
   else if(action==='remove'||action==='transfer'){const m=await api<{members:Member[]}>('/api/groups?id='+selected);setMembers(m.members);}
@@ -26,8 +27,8 @@ export default function Groups({locale,selected,onSelect,onChanged,revision}:{lo
  }catch(e){setError(e instanceof Error&&e.message==='TRANSFER_OWNERSHIP_FIRST'?text('다른 멤버에게 그룹장을 넘긴 뒤 나갈 수 있어요.','Transfer ownership before leaving.'):text('변경하지 못했어요. 다시 시도해 주세요.','Could not save. Please retry.'));}finally{setBusy(false);}}
  async function create(e:React.FormEvent){e.preventDefault();setBusy(true);setError('');try{const d=await api<{id:string}>('/api/groups',{method:'POST',body:JSON.stringify({name})});await load();onSelect(d.id);setDialog(null);setName('');await onChanged();}catch{setError(text('그룹을 만들지 못했어요. 다시 시도해 주세요.','Could not create group. Please retry.'));}finally{setBusy(false);}}
  return <section className="groups-section" aria-label={text('우리 그룹','Our groups')}>
-  <div className="groups-heading"><div><span className="eyebrow">OUR CIRCLES</span><h2>{text('추억은 쌓이고, 우리는 이어지고.','More memories. Same people.')}</h2></div><button className="secondary-button" onClick={()=>{setName('');setError('');setDialog('create');}}><Plus size={16}/>{text('그룹 만들기','New group')}</button></div>
-  <div className="group-list"><button className={'group-card personal '+(!selected?'active':'')} onClick={()=>onSelect(null)} aria-pressed={!selected}><LockKeyhole size={22}/><strong>{text('내 공간','My space')}</strong><small>{text('개인 앨범 · 기존 공유 앨범','Personal & existing shared albums')}</small></button>
+  <div className="groups-heading"><div><span className="eyebrow">OUR CIRCLES</span><h2>{text('추억은 쌓이고, 우리는 이어지고.','More memories. Same people.')}</h2></div><button disabled={isBrowse()} className="secondary-button" onClick={()=>{setName('');setError('');setDialog('create');}}><Plus size={16}/>{text('그룹 만들기','New group')}</button></div>
+  <div className="group-list"><button className={'group-card personal '+(!selected?'active':'')} onClick={()=>onSelect(null)} aria-pressed={!selected}><LockKeyhole size={22}/><strong>{isBrowse()?text('전체 앨범','All albums'):text('내 공간','My space')}</strong><small>{text('개인 앨범 · 기존 공유 앨범','Personal & existing shared albums')}</small></button>
    {groups.map((g,i)=><button key={g.id} className={'group-card '+(selected===g.id?'active':'')} onClick={()=>onSelect(g.id)} aria-pressed={selected===g.id}><span className={'group-symbol tone-'+i%3}><Users size={22}/></span><strong>{g.name}</strong><small>{ko?`${g.members}명 · 앨범 ${g.albums}개`:`${g.members} ${g.members===1?"member":"members"} · ${g.albums} ${g.albums===1?"album":"albums"}`}</small><ArrowRight size={15}/></button>)}
   </div>
   {!groups.length&&<p className="group-hint">{text('같은 사람들과 다음 추억도 함께. 그룹을 만들면 멤버를 다시 초대하지 않아도 돼요. 혼자라면 내 공간에서 시작하세요.','Keep the same people together for your next memory. Or start on your own in My space.')}</p>}

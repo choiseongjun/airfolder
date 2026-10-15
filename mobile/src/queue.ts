@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
 import { getAssetInfoAsync } from 'expo-media-library/legacy';
 import * as Crypto from 'expo-crypto';
-import { getSession } from './api';
+import { getSession, request } from './api';
 import { eligible, type Candidate, type QueueItem, type Session } from './model';
 
 const storageKey = 'snaproom-uploads-v1';
@@ -47,15 +47,24 @@ async function drain() {
     if (!(await readQueue()).some(i => i.id === item.id && eligible(i, session))) continue;
     await change(item.id, { status: 'uploading', error: undefined });
     try {
-      const result = await FileSystem.uploadAsync(session.origin + '/api/photos', directory() + item.file, {
-        httpMethod: 'POST', uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-        sessionType: FileSystem.FileSystemSessionType.BACKGROUND,
-        fieldName: 'file', mimeType: item.mime || 'image/jpeg', headers: { Authorization: `Bearer ${session.token}` },
-        parameters: { id: item.id, folderId: item.folderId, name: item.name, created: String(item.created), shared: 'false' },
-      });
-      if (result.status < 200 || result.status >= 300) {
-        let code = `HTTP_${result.status}`; try { code = JSON.parse(result.body).error || code; } catch {}
-        throw new Error(code);
+      const info=await FileSystem.getInfoAsync(directory()+item.file);
+      if(!info.exists)throw new Error('MISSING_FILE');
+      const upload=await request<{complete:boolean;chunkSize:number;parts:number[]}>('/api/photos/uploads',{method:'POST',body:JSON.stringify({id:item.id,folderId:item.folderId,name:item.name,created:item.created,shared:false,size:info.size,mime:item.mime})},session);
+      if(!upload.complete){
+        for(let part=0;part<Math.ceil(info.size/upload.chunkSize);part++){
+          if(upload.parts.includes(part))continue;
+          const chunk=directory()+item.id+'.chunk';
+          try{
+            const data=await FileSystem.readAsStringAsync(directory()+item.file,{encoding:FileSystem.EncodingType.Base64,position:part*upload.chunkSize,length:Math.min(upload.chunkSize,info.size-part*upload.chunkSize)});
+            await FileSystem.writeAsStringAsync(chunk,data,{encoding:FileSystem.EncodingType.Base64});
+            const result=await FileSystem.uploadAsync(`${session.origin}/api/photos/uploads?id=${item.id}&part=${part}`,chunk,{
+              httpMethod:'PUT',uploadType:FileSystem.FileSystemUploadType.BINARY_CONTENT,sessionType:FileSystem.FileSystemSessionType.BACKGROUND,
+              headers:{Authorization:`Bearer ${session.token}`,'Content-Type':'application/octet-stream'},
+            });
+            if(result.status<200||result.status>=300){let code=`HTTP_${result.status}`;try{code=JSON.parse(result.body).error||code;}catch{}throw new Error(code);}
+          }finally{await FileSystem.deleteAsync(chunk,{idempotent:true}).catch(()=>{});}
+        }
+        await request('/api/photos',{method:'POST',body:JSON.stringify({uploadId:item.id})},session);
       }
       await change(item.id, { status: 'uploaded', error: undefined });
       await FileSystem.deleteAsync(directory() + item.file, { idempotent: true }).catch(() => {});

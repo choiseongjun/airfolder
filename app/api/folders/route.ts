@@ -1,8 +1,9 @@
+import {requireTerms} from '@/lib/safety';
 import { randomUUID } from 'node:crypto';
 import { ApiError, json, pool, safe, sameOrigin, transaction, uuid, viewer } from '@/lib/server';
 import { folderDates } from '@/lib/folder-dates';
 export async function PATCH(request:Request){return safe(async()=>{
-  sameOrigin(request);const who=await viewer(),body=await json(request),id=uuid(body.id),groupId=uuid(body.groupId);
+  sameOrigin(request);const who=await viewer(),body=await json(request),id=uuid(body.id),groupId=uuid(body.groupId);await requireTerms(who);
   await transaction(async db=>{
     await db.query('SELECT id FROM snaproom.groups WHERE id=$1 FOR UPDATE',[groupId]);
     const member=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[groupId,who]);if(!member.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');
@@ -19,7 +20,7 @@ export async function PATCH(request:Request){return safe(async()=>{
 });}
 export async function POST(request: Request) {
   return safe(async () => {
-    sameOrigin(request); const who = await viewer(); const body = await json(request);
+    sameOrigin(request); const who = await viewer();await requireTerms(who); const body = await json(request);
     if (typeof body.name !== 'string' || !body.name.trim() || body.name.trim().length > 80 || typeof (body.description ?? '') !== 'string' || (body.description ?? '').length > 500) throw new ApiError(400, 'INVALID_FOLDER');
     const count = await pool().query('SELECT count(*) FROM snaproom.folders WHERE owner_id=$1', [who]);
     if (Number(count.rows[0].count) >= 100) throw new ApiError(409, 'FOLDER_LIMIT');

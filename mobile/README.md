@@ -2,6 +2,10 @@
 
 Public brand: **Memolumi**. Existing bundle IDs, storage keys and EAS project identity remain stable.
 
+## Policy update (2026-10-15)
+
+See [the store policy audit](../docs/store-policy-audit.md) for the implemented safeguards and remaining release checks. Terms acceptance, operator reporting, user blocking, web account deletion, Apple-token revocation and deletion status receipts are included. A new native build is required: the iOS incoming share extension is disabled, unused permissions are removed from production/preview configurations, and account deletion opens the authenticated deletion flow. Android incoming sharing and outgoing sharing remain. The production Vercel deletion job requires server-only `CRON_SECRET` and `FIREBASE_SERVICE_ACCOUNT_JSON`; these were not present in the inspected local configuration. Native device behavior and cloud schedule execution are not verified by the local tests below.
+
 ## Release preparation (2026-10-14)
 
 - Android back closes previews/dialogs, clears photo selection, returns to folders, then exits at the root. Camera and photo picker additions accumulate without discarding previously selected images; cancelling preserves the current selection.

@@ -43,10 +43,14 @@ async function drain() {
     await write({ ...item, status: 'uploading' });
     try {
       if (!item.blob) throw new Error('MISSING_FILE');
-      const form = new FormData();
-      for (const [key, value] of Object.entries({ id: item.id, folderId: item.folderId, name: item.name, created: String(item.created), shared: 'false' })) form.set(key, value);
-      form.set('file', item.blob, item.name);
-      await request('/api/photos', { method: 'POST', body: form });
+      const upload=await request<{complete:boolean;chunkSize:number;parts:number[]}>('/api/photos/uploads',{method:'POST',body:JSON.stringify({id:item.id,folderId:item.folderId,name:item.name,created:item.created,shared:false,size:item.blob.size,mime:item.blob.type})});
+      if(!upload.complete){
+        for(let part=0;part<Math.ceil(item.blob.size/upload.chunkSize);part++){
+          if(upload.parts.includes(part))continue;
+          await request(`/api/photos/uploads?id=${item.id}&part=${part}`,{method:'PUT',headers:{'Content-Type':'application/octet-stream'},body:item.blob.slice(part*upload.chunkSize,(part+1)*upload.chunkSize)});
+        }
+        await request('/api/photos',{method:'POST',body:JSON.stringify({uploadId:item.id})});
+      }
       await write({ ...item, blob: undefined, status: 'uploaded', error: undefined });
     } catch (error) { await write({ ...item, status: 'failed', attempts: item.attempts + 1, nextAttempt: Date.now() + Math.min(3600000, 30000 * 2 ** item.attempts), error: error instanceof Error ? error.message : 'UPLOAD_FAILED' }); }
   }

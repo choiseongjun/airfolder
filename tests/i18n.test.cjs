@@ -13,7 +13,7 @@ new Function("module", "exports", compiled)(loaded, loaded.exports);
 const { english, translate, formatCount, formatCapturedAt } = loaded.exports;
 
 test("every static translation reference has English copy", () => {
-  const page = ts.createSourceFile("page.tsx", fs.readFileSync(path.join(root, "app/(workspace)/page.tsx"), "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const page = ts.createSourceFile("workspace-client.tsx", fs.readFileSync(path.join(root, "app/(workspace)/workspace-client.tsx"), "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
   let references = 0;
   function visit(node) {
     if (ts.isCallExpression(node) && node.expression.getText(page) === "t" && ts.isStringLiteral(node.arguments[0])) {

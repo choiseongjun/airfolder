@@ -21,6 +21,9 @@ try {
   await db.query(readFileSync(new URL('../db/012_share_access.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/013_member_names.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/014_record_bundles.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/015_provisioned_password_accounts.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/016_safety.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/017_upload_sessions.sql', import.meta.url), 'utf8'));
   await db.query('COMMIT');
   const storage = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } }).storage;
   const bucket = env.SUPABASE_STORAGE_BUCKET;

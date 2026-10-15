@@ -1,0 +1,19 @@
+{
+  "purpose": "Original illustrative lifestyle photography for the Memolumi introduction page. These do not depict real customers or testimonials.",
+  "tool": "Built-in image_gen.imagegen; no CLI fallback",
+  "processing": "Converted to WebP quality 82 for web delivery; no visual compositing or retouching. Originals retained in the image generator's output directory.",
+  "assets": [
+    {
+      "path": "public/landing/friends.webp",
+      "prompt": "Use case: photorealistic-natural. Asset type: original lifestyle photograph for the Memolumi photo-memory app landing page, used inside a polaroid; NOT a page design. A candid 35mm film snapshot of four Korean adult friends in their mid 20s to early 30s on a breezy Korean seaside vacation: two women and two men relaxing and laughing on a low concrete sea wall, casual white and blue shirts, one holds a small compact digital camera. A vivid pale turquoise sea and sunlit blue sky behind them. Intimate spontaneous joy, believable candid body language, slightly imperfect analog composition, rich warm sun, subtle natural film grain. Medium-wide landscape composition, all friends in middle frame with room around them for a portrait crop. Editorial travel journal photography, warm ivory highlights, coral and faded blue accents. No posing at camera, no luxury styling, no logos, no text, no border, no UI. Produce one photograph in a 4:3 landscape ratio."
+    },
+    {
+      "path": "public/landing/picnic.webp",
+      "prompt": "Use case: photorealistic-natural. Asset type: original editorial lifestyle photograph for the Memolumi photo-memory app landing page, NOT a website mockup. Overhead candid 35mm film photograph of a small sunlit picnic in a green meadow: a rumpled ivory gingham blanket, a plate of fresh tangerines, two glasses of sparkling orange juice, strawberries in a simple paper basket, a small bunch of daisies, someone's hand reaches for a strawberry from the lower right edge. Cropped sneakers and a casual tote at an edge, naturally arranged with breathing room. Beautiful dappled afternoon sunlight, true-to-life food, fresh grassy greens and soft orange, nostalgic analog texture with fine grain. A real quiet Sunday with friends, not a commercial food arrangement. Square composition. No letters, no logos, no frame, no text, no graphic design."
+    },
+    {
+      "path": "public/landing/sea.webp",
+      "prompt": "Use case: photorealistic-natural. Asset type: original quiet travel photograph for the Memolumi photo-memory app landing page, NOT a website mockup. Candid 35mm film photograph from behind of a young adult couple in loose summer clothing walking barefoot toward the waves on a quiet Korean beach at sunset. They are small in the scene, positioned below the middle. Pale orange-pink evening sky, glassy sage-blue sea, distant small island, gentle little waves catching golden light, warm sandy foreground. Peaceful ordinary human moment with a nostalgic analog film feel, editorial photography, natural atmospheric grain, realistic anatomy. Portrait 3:4 composition with plenty of sky and sea. No text, no logos, no border, no UI."
+    }
+  ]
+}

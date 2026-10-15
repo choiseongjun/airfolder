@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { acceptTestTerms } from './test-policy-consent.mjs';
 import {readFileSync} from 'node:fs';import {parseEnv} from 'node:util';import {randomUUID} from 'node:crypto';import pg from 'pg';import sharp from 'sharp';import {createClient} from '@supabase/supabase-js';
 const env=parseEnv(readFileSync('.env.local','utf8')),db=new pg.Client({connectionString:env.DATABASE_URL});await db.connect();
 const base='http://localhost:3000',r=await fetch(base+'/api/session',{method:'POST',headers:{Origin:base}}),user=await r.json(),cookie=r.headers.get('set-cookie').split(';')[0],folder=randomUUID(),filler=randomUUID();
@@ -7,6 +8,7 @@ async function caps(){return(await fetch(base+'/api/media-limits',{headers:{Cook
 const bytes=await sharp({create:{width:20,height:20,channels:3,background:'#123456'}}).png().toBuffer();const preview=await sharp(bytes).rotate().resize({width:2560,height:2560,fit:'inside',withoutEnlargement:true}).jpeg({quality:85}).toBuffer();
 async function upload(){const id=randomUUID(),body=new FormData();for(const[k,v]of Object.entries({id,folderId:folder,name:'quota.png',created:String(Date.now()),shared:'false'}))body.set(k,v);body.set('file',new Blob([bytes],{type:'image/png'}),'quota.png');return fetch(base+'/api/photos',{method:'POST',headers:{Cookie:cookie,Origin:base},body});}
 try{
+ await acceptTestTerms(base,cookie);
  await db.query("INSERT INTO snaproom.folders(id,owner_id,name) VALUES($1,$2,'Disposable quota test')",[folder,user.viewerId]);await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2)',[folder,user.viewerId]);
  await db.query("INSERT INTO snaproom.photos(id,folder_id,owner_id,name,object_path,size_bytes,captured_at,preview_size_bytes) VALUES($1,$2,$3,'quota fixture','quota-fixture', $4,now(),0)",[filler,folder,user.viewerId,500*1048576]);
  let c=await caps();assert.equal(c.remaining,0);assert.equal(c.video,50*1048576);assert.equal(c.image,20*1048576);

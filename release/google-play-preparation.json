@@ -71,5 +71,12 @@
     "realDevice": "not verified",
     "webBuild": "passed",
     "mobileTypecheck": "passed"
+  },
+  "policyAudit": {
+    "date": "2026-10-15",
+    "report": "../docs/store-policy-audit.md",
+    "status": "code_verified_release_actions_pending",
+    "newNativeBuildRequired": true,
+    "storeDeclarationsReverificationRequired": true
   }
 }

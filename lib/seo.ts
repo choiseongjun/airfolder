@@ -14,7 +14,7 @@ export function publicOrigin(): string | undefined {
 export const copy = {
   en: {
     title: 'Memolumi — Your moments. Together.',
-    description: 'Collect photos from the days you share. Build a shared collection with friends and family, keep photos private, and choose what to share.',
+    description: 'Everyone’s photos. One little story. Gather moments into shared albums, make photo strips and postcards, and choose the photos you share with your people.',
     eyebrow: 'YOUR MOMENTS. TOGETHER.',
     heading: 'Days together.\nMemories to revisit.',
     intro: 'Bring everyone’s photos into a shared space. From the first trip to the next gathering, keep collecting the moments you want to come back to.',
@@ -29,7 +29,7 @@ export const copy = {
   },
   ko: {
     title: 'Memolumi — 함께한 날들이, 계속 이어지는 곳',
-    description: '각자 찍은 사진을 모아 함께한 날들을 기록하세요. 친구·가족·모임의 사진을 한곳에 담고, 나누고 싶은 순간만 공유하는 공동 사진 공간입니다.',
+    description: '각자의 사진을 모아, 우리만의 한 페이지로. 네컷·필름·엽서로 추억을 만들고 친구·가족과 함께 앨범에 간직하세요. 사진은 기본 비공개, 공유는 내가 선택하는 Memolumi.',
     eyebrow: '함께 모으고, 다시 꺼내보는 우리의 기록.',
     heading: '함께한 날들이,\n계속 이어지는 곳.',
     intro: '첫 여행부터 다음 모임까지. 각자 찍은 사진을 한곳에 모으고, 나누고 싶은 순간을 함께 간직하세요.',

@@ -1,5 +1,6 @@
 // Integration test against the configured server. Creates and removes only its own fixtures.
 import assert from 'node:assert/strict';
+import { acceptTestTerms } from './test-policy-consent.mjs';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
@@ -18,7 +19,7 @@ async function call(user, path, method = 'GET', body, status = 200, origin = bas
 async function guest() {
   const response = await call(null, '/api/session', 'POST');
   const { viewerId } = await response.json();
-  const user = { id: viewerId, cookie: response.headers.get('set-cookie').split(';')[0] }; users.push(user); return user;
+  const user = { id: viewerId, cookie: response.headers.get('set-cookie').split(';')[0] }; users.push(user); await acceptTestTerms(base,user.cookie); return user;
 }
 const workspace = async user => (await call(user, '/api/workspace')).json();
 async function upload(user, folder, id, image, status = 201) {

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { acceptTestTerms } from './test-policy-consent.mjs';
 import {readFileSync} from 'node:fs';
 import {parseEnv} from 'node:util';
 import {randomUUID,randomBytes,createHash} from 'node:crypto';
@@ -8,7 +9,7 @@ const env={...parseEnv(readFileSync('.env.local','utf8')),...process.env};
 const db=new pg.Client({connectionString:env.DATABASE_URL});await db.connect();
 const users=[],folders=[];let checks=0;
 async function call(u,path,method='GET',body,status=200,origin=base){const r=await fetch(base+path,{method,headers:{Origin:origin,...(u?{Cookie:u.cookie}:{}),'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const data=await r.json();assert.equal(r.status,status,`${method} ${path}: ${JSON.stringify(data)}`);checks++;return data;}
-async function guest(){const r=await fetch(base+'/api/session',{method:'POST',headers:{Origin:base}});assert.equal(r.status,200);const d=await r.json();const u={id:d.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);return u;}
+async function guest(){const r=await fetch(base+'/api/session',{method:'POST',headers:{Origin:base}});assert.equal(r.status,200);const d=await r.json();const u={id:d.viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};users.push(u);await acceptTestTerms(base,u.cookie);return u;}
 try{
  const a=await guest(),b=await guest(),c=await guest();
  const f=await call(a,'/api/folders','POST',{name:'Memory integration fixture'},201);folders.push(f.id);

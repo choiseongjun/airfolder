@@ -44,6 +44,10 @@ export async function attachIdentity(db: PoolClient, guest: string, identity: Id
     await db.query('INSERT INTO snaproom.reactions(id,photo_id,record_id,owner_id) SELECT gen_random_uuid(),photo_id,record_id,$1 FROM snaproom.reactions WHERE owner_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
     await db.query('INSERT INTO snaproom.comment_reports(id,comment_id,owner_id,reason,status) SELECT gen_random_uuid(),comment_id,$1,reason,status FROM snaproom.comment_reports WHERE owner_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
     for(const table of ['photos','records']) await db.query(`UPDATE snaproom.${table} SET recipients=ARRAY(SELECT DISTINCT unnest(array_replace(recipients,$2::uuid,$1::uuid))) WHERE $2::uuid=ANY(recipients)`,[owner,guest]);
+    await db.query('INSERT INTO snaproom.user_blocks(owner_id,blocked_id) SELECT $1,blocked_id FROM snaproom.user_blocks WHERE owner_id=$2 AND blocked_id<>$1 ON CONFLICT DO NOTHING',[owner,guest]);
+    await db.query('INSERT INTO snaproom.user_blocks(owner_id,blocked_id) SELECT owner_id,$1 FROM snaproom.user_blocks WHERE blocked_id=$2 AND owner_id<>$1 ON CONFLICT DO NOTHING',[owner,guest]);
+    await db.query('INSERT INTO snaproom.safety_reports(id,reporter_id,photo_id,record_id,comment_id,target_user_id,reason,status,created_at,resolved_at) SELECT gen_random_uuid(),$1,photo_id,record_id,comment_id,target_user_id,reason,status,created_at,resolved_at FROM snaproom.safety_reports WHERE reporter_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
+    await db.query('INSERT INTO snaproom.safety_reports(id,reporter_id,target_user_id,reason,status,created_at,resolved_at) SELECT gen_random_uuid(),reporter_id,$1,reason,status,created_at,resolved_at FROM snaproom.safety_reports WHERE target_user_id=$2 AND reporter_id<>$1 ON CONFLICT DO NOTHING',[owner,guest]);
     await db.query('DELETE FROM snaproom.viewers WHERE id=$1', [guest]);
   }
   return owner;

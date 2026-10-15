@@ -2,8 +2,28 @@
   "brand": "Memolumi",
   "appleAppId": "6822636339",
   "bundleId": "com.choisj2702.snaproom",
-  "status": "draft_not_submitted",
-  "deployment": "deferred_by_owner",
+  "status": "waiting_for_review",
+  "listingUpdatedAt": "2026-10-15",
+  "listingPreparation": {
+    "scope": "iOS App Store review submitted; Android deferred by owner",
+    "copy": "app-store-copy.json",
+    "savedLocales": [
+      "en-US",
+      "ko"
+    ],
+    "uploadedAssets": {
+      "header": "Each locale: 3840x1646 PNG",
+      "searchResults": "Each locale: 1920x1280 JPEG",
+      "iphoneScreenshots": "2 JPEG web UI captures, 1179x2556",
+      "ipadScreenshots": "1 JPEG web UI capture, 2064x2752"
+    },
+    "assetSource": "Owner-authorized captures of production WebView content; not native-device verification",
+    "localAssets": "artifacts/store-release/ (gitignored)",
+    "icon": "Included in uploaded build 2 and visible in App Store Connect",
+    "binaryUploaded": true,
+    "reviewSubmitted": true
+  },
+  "deployment": "https://memonestia.xyz",
   "contact": {
     "operator": "최성준",
     "firstName": "Seongjun",
@@ -60,10 +80,12 @@
     "linkedToAccount": [
       "name",
       "email_address",
+      "photos_or_videos",
+      "customer_support",
+      "other_user_content",
       "user_id",
-      "photos",
-      "folder_names_and_descriptions",
-      "device_push_token"
+      "device_id",
+      "other_diagnostic_data"
     ],
     "purpose": "app_functionality",
     "tracking": "no_cross_app_tracking_implemented",
@@ -74,28 +96,63 @@
       "Apple APNs",
       "Google FCM"
     ],
-    "status": "verify_sdk_and_host_data_practices_before_final_declaration"
+    "status": "published_with_owner_confirmation"
   },
-  "submissionRequirementsRemaining": [
-    "Deploy and verify HTTPS backend, support and privacy URLs",
-    "Finalize retention, operator processing and privacy disclosures",
-    "Configure production API origin and OAuth authorized host",
-    "Configure APNs/FCM credentials and test delivery on devices",
-    "Operate account deletion worker and verify complete deletion, including provider obligations",
-    "Validate shared-content reporting, blocking and moderation requirements",
-    "Create signed App Store iOS build and verify iPhone/iPad behavior",
-    "Capture actual iOS screenshots for supported device sizes",
-    "Provide and verify review access",
-    "Complete age rating, pricing, territories and applicable trader declarations",
-    "Review updated Apple agreement with account holder",
-    "Remove draft-only review note and select tested build before submission"
-  ],
+  "submissionRequirementsRemaining": [],
   "categories": {
     "primary": "PHOTO_AND_VIDEO",
     "secondary": "PRODUCTIVITY"
   },
   "subtitles": {
-    "en-US": "Collect moments. Share photos.",
-    "ko": "함께 담아두는 순간들, 사진 모으기"
+    "en-US": "Shared albums. Lasting stories",
+    "ko": "함께 모으고, 앨범책으로 간직하는 추억"
+  },
+  "iosSubmission": {
+    "buildId": "ce92af09-5dd5-431f-9925-34601579f5f1",
+    "submissionId": "61b91fc4-57db-45c1-a7bf-aaa83957c90a",
+    "version": "1.0.0",
+    "buildNumber": "2",
+    "uploadedAt": "2026-10-15T03:30:10.755Z",
+    "status": "waiting_for_review",
+    "reviewAccess": "provisioned_firebase_password_account_verified",
+    "reviewSubmissionId": "f6b8c8d1-9ca3-45b8-a6ef-dbb4ce40c466",
+    "reviewSubmittedAt": "2026-10-15T03:56:29.597Z"
+  },
+  "reviewAccessValidation": {
+    "albums": 3,
+    "photos": 12,
+    "webLogin": true,
+    "photoContent": true,
+    "nativeTokenExchange": true,
+    "nativeWorkspace": true,
+    "invalidTokenRejected": true,
+    "crossOriginRejected": true
+  },
+  "appleValidationRemaining": [],
+  "ageRating": {
+    "global": "13+",
+    "korea": "12+"
+  },
+  "pricing": {
+    "download": "free",
+    "baseCurrency": "USD",
+    "basePrice": 0
+  },
+  "availability": {
+    "selectedTerritories": 175
+  },
+  "postSubmissionValidationRemaining": [
+    "Native device camera, gallery, share extension and push delivery have not been verified end-to-end",
+    "Verify operation of account deletion processing and complete deletion",
+    "Production video transcoding worker operation remains unverified",
+    "Review regional compliance requirements before manual release"
+  ],
+  "proof": "artifacts/store-release/ios-review-submitted.jpg",
+  "policyAudit": {
+    "date": "2026-10-15",
+    "report": "../docs/store-policy-audit.md",
+    "status": "code_verified_release_actions_pending",
+    "newNativeBuildRequired": true,
+    "storeDeclarationsReverificationRequired": true
   }
 }

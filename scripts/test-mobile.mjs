@@ -1,5 +1,6 @@
 // Real API interop with synthetic identities; no third-party login or user data is modified.
 import assert from 'node:assert/strict';
+import { acceptTestTerms } from './test-policy-consent.mjs';
 import { randomBytes, randomUUID, createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { parseEnv } from 'node:util';
@@ -18,7 +19,9 @@ async function call(path, {cookie, token, origin, method='GET', body, status=200
 async function guest() {
   const r = await call('/api/session',{method:'POST',origin:base});
   const {viewerId} = await r.json(); users.push(viewerId);
-  return {id:viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};
+  const user = {id:viewerId,cookie:r.headers.get('set-cookie').split(';')[0]};
+  await acceptTestTerms(base,user.cookie);
+  return user;
 }
 const hex = () => randomBytes(32).toString('hex');
 try {

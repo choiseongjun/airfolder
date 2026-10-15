@@ -24,6 +24,14 @@ All browser requests use the Next.js API. Database and Supabase secrets remain o
 - Folder owners can create invitation links and QR codes valid for seven days. Anyone holding the link can choose to join. Member updates poll every 15 seconds.
 - Downloads use the authorized image endpoint. English/Korean labels and date/number formats are supported. User-written names are preserved.
 
+## Automatic language
+
+The workspace and photo-sharing pages choose their initial language on the server: an explicit `?lang=en|ko` override, then the visitor's saved language cookie, then the connection country, then the browser's weighted `Accept-Language` preferences, and finally English. Korea (`KR`) uses Korean; other countries use English because these are the two supported translations. `/en` and `/ko` remain explicit public landing pages. Help/privacy pages retain their bilingual content.
+
+Manual choices persist for one year in a `snaproom-language` cookie and in localStorage. Existing localStorage preferences migrate on the next workspace visit. Automatic country detection is not saved as a manual preference. New album/group invitations and photo-sharing links omit the sender's language so recipients get their own language.
+
+Country detection reads Vercel's `x-vercel-ip-country` or Cloudflare's `cf-ipcountry` request header. The deployment's trusted proxy must supply/overwrite these headers (enable IP Geolocation on Cloudflare). Plain localhost and hosts without geolocation headers use browser language; no GPS permission or third-party IP lookup is requested. Headers are used only for UI language, never access control. See [Vercel request headers](https://vercel.com/docs/headers/request-headers) and [Cloudflare IP geolocation](https://developers.cloudflare.com/network/ip-geolocation/).
+
 ## Current limits
 
 Guest access depends on this browser's cookie and expires after one year. Google/Apple login and guest-to-account migration are implemented. Both providers are enabled in the dedicated Firebase project; see AUTH_SETUP.md for deployment configuration and remaining real-login verification. Clearing cookies before connecting an account loses guest access. Invitations permit participation; they do not restore the original identity.
@@ -33,6 +41,8 @@ Private, whole-folder and selected-member sharing are implemented for media and 
 Public hosting is not configured. Deploy the Next.js server with its private environment settings and a reachable HTTPS address for camera capture and invitations across devices. Localhost links only work on the originating machine.
 
 ## Public discovery and launch
+
+The public introduction at `/ko` and `/en` includes a photo-led landing page, a shared-album illustration, an interactive three-frame memory-card preview, privacy information and FAQs. `/about` selects the introduction language using the same saved preference, country and browser-language rules as the workspace. Language-switch links remember the selection. All start buttons open the existing workspace. Original illustrative photos are served locally from `public/landing/`; their generation prompts are recorded in `docs/landing-assets.json`.
 
 Public, server-rendered product pages are available at `/en` and `/ko`, with localized HTML language, headings, descriptions, canonical/hreflang links, Open Graph/Twitter metadata, a share image and WebApplication structured data. `/` remains the private workspace and is marked noindex; API responses also carry X-Robots-Tag. Robots directives are crawl guidance, not access control; existing session authorization still protects photos.
 

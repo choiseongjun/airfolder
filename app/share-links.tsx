@@ -10,7 +10,7 @@ export default function ShareLinks({ids,ko,restricted=false,recordId}:{ids:strin
  useEffect(()=>{let active=true;api<{links:LinkItem[]}>('/api/share-links').then(d=>{if(active)setLinks(d.links);}).catch(()=>{if(active)setMessage(ko?'링크 목록을 불러오지 못했어요.':'Could not load links.');});return()=>{active=false;};},[ko]);
  async function create(){setBusy(true);setMessage('');try{
   const result=await api<{token:string}>('/api/share-links',{method:'POST',body:JSON.stringify({ids,access,recordId})});
-  setUrl(`${window.location.origin}/s/${result.token}?lang=${ko?'ko':'en'}`);await refresh();
+  setUrl(`${window.location.origin}/s/${result.token}`);await refresh();
  }catch{setMessage(ko?'공개된 내 사진만 공유할 수 있어요. 선택 공개 사진은 초대 멤버 전용 링크를 사용해 주세요.':'Share only your published photos. Restricted photos require a members-only link.');}finally{setBusy(false);}}
  async function copy(){try{await navigator.clipboard.writeText(url);setMessage(ko?'링크를 복사했어요.':'Link copied.');}catch{setMessage(ko?'아래 주소를 길게 눌러 복사해 주세요.':'Select the address below to copy it.');}}
  return <><h2>{ko?'링크로 사진 보내기':'Share photos by link'}</h2><p>{access==='members'?(ko?'Google·Apple 로그인과 앨범 초대 수락이 모두 필요해요. 선택 공개 사진은 지정된 멤버에게만 보여요.':'Requires Google/Apple sign-in and accepted album membership. Restricted photos remain visible only to their selected recipients.'):(ko?'링크를 가진 누구나 로그인 없이 선택한 사진을 보고 다운로드할 수 있어요.':'Anyone with the link can view and download selected photos without signing in.')}</p><p>{ko?'7일 후 만료되며, 언제든 링크를 중지할 수 있어요. 비공개로 바꾼 사진은 보이지 않아요.':'Expires in 7 days. Revoke anytime. Private photos are never shown.'}</p>

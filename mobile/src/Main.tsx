@@ -2,8 +2,10 @@ import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {ActivityIndicator,Alert,AppState,BackHandler,FlatList,Image,Linking,Modal,Pressable,ScrollView,Share,StyleSheet,Text,TextInput,View} from 'react-native';
 import {SafeAreaProvider,SafeAreaView} from 'react-native-safe-area-context';
 import {WebView,type WebViewMessageEvent} from 'react-native-webview';
+import * as WebBrowser from 'expo-web-browser';
+import * as Crypto from 'expo-crypto';
 import {getLocales} from 'expo-localization';
-import {connectAccount,disconnectAccount,forgetSession,getSession,request,sessionHeaders} from './api';
+import {connectAccount,disconnectAccount,forgetSession,getSession,request,sessionHeaders,serverOrigin} from './api';
 import {useIncomingShare} from './sharing';
 import {enableNotifications,disableNotifications,observeNotifications} from './notifications';
 import {pickPhotos,recommend} from './gallery';
@@ -50,9 +52,18 @@ function Shell(){
     case 'NOTIFICATIONS_OFF':await disableNotifications();emit({type:'NOTICE',message:t('Notifications disabled.','알림을 껐어요.')});break;
     case 'DOWNLOAD':await exportPhoto({id:cmd.photoId!,src:'/api/photos/'+cmd.photoId+'/content',name:'Photo',roomId:'',created:0,mine:false,shared:false},session);break;
     case 'DELETE_ACCOUNT':{
-      if(queueIsRunning()||(await readQueue()).some(q=>q.owner===session.viewerId&&q.status!=='uploaded'))throw new Error('QUEUED_ACCOUNT_MISMATCH');
-      const confirmed=await new Promise<boolean>(resolve=>Alert.alert(t('Request account deletion','계정 삭제 요청'),t('Delete your account, records and owned folders? This signs out every device. The operator processes the deletion.','계정·기록·소유 폴더 삭제를 요청할까요? 모든 기기에서 로그아웃되며 운영자가 삭제를 처리합니다.'),[{text:t('Cancel','취소'),style:'cancel',onPress:()=>resolve(false)},{text:t('Request deletion','삭제 요청'),style:'destructive',onPress:()=>resolve(true)}],{cancelable:true,onDismiss:()=>resolve(false)}));
-      if(confirmed){await request('/api/account',{method:'DELETE',body:JSON.stringify({confirm:'DELETE'})},session);await forgetSession();await clearAccountHistory(session).catch(()=>{});ready.current=false;setSession(null);}
+      if(queueIsRunning())throw new Error('UPLOAD_IN_PROGRESS');
+      const state=Array.from(Crypto.getRandomBytes(32),b=>b.toString(16).padStart(2,'0')).join('');
+      const result=await WebBrowser.openAuthSessionAsync(session.origin+'/delete-account?lang='+locale+'&viewer='+session.viewerId+'&state='+state,'snaproom://account-deleted');
+      if(result.type==='success'){
+        const callback=new URL(result.url);
+        if(callback.protocol!=='snaproom:'||callback.hostname!=='account-deleted'||callback.searchParams.get('state')!==state)throw new Error('INVALID_AUTH_RESPONSE');
+        let revoked=false;
+        try{await request('/api/workspace',{},session);}catch(error){if(error instanceof Error&&['SESSION_EXPIRED','SESSION_REQUIRED'].includes(error.message))revoked=true;else throw error;}
+        if(!revoked)throw new Error('DELETION_NOT_CONFIRMED');
+        await clearAccountHistory(session);await forgetSession();ready.current=false;setSession(null);
+        Alert.alert(t('Deletion requested','삭제 요청 접수'),t('All devices are signed out. Your account and associated data will be deleted within 30 days.','모든 기기에서 로그아웃되었으며 계정과 관련 데이터는 30일 이내 삭제됩니다.'));
+      }
       break;
     }
     case 'LOGIN':await login();break;
@@ -61,7 +72,7 @@ function Shell(){
   });
  }
  async function loadDates(append=false){const result=await recommend(start,end,append?offset:0);setCandidates(old=>append?[...old,...result.candidates.filter(p=>!old.some(v=>v.key===p.key))]:result.candidates);if(!append)setSelected([]);setOffset(result.nextOffset);setMore(result.more);setLimited(result.limited);}
- return <SafeAreaView style={s.safe}>{loading?<ActivityIndicator/>:!session?<View style={s.welcome}><Text style={s.brand}>memolumi.</Text><Text style={s.title}>{t('Your moments. Together.','함께한 날들이, 이어지는 곳.')}</Text><Text style={s.body}>{t('Connect your existing account to open your shared space.','기존 계정을 연결하고 함께 쌓은 기록을 열어보세요.')}</Text>{<Action label={t('Connect with Google or Apple','Google · Apple 계정 연결')} onPress={()=>perform(login)} disabled={busy || (false)}/>}</View>:<>
+ return <SafeAreaView style={s.safe}>{loading?<ActivityIndicator/>:!session?<View style={s.welcome}><Text style={s.brand}>memolumi.</Text><Text style={s.title}>{t('Your moments. Together.','함께한 날들이, 이어지는 곳.')}</Text><Text style={s.body}>{t('Connect your existing account to open your shared space.','기존 계정을 연결하고 함께 쌓은 기록을 열어보세요.')}</Text>{<Action label={t('Connect with Google or Apple','Google · Apple 계정 연결')} onPress={()=>perform(login)} disabled={busy || (false)}/>}<View style={s.panel}>{['privacy','terms','support','delete-account'].map((path,i)=><Pressable key={path} accessibilityRole="link" onPress={()=>Linking.openURL(serverOrigin()+'/'+path).catch(()=>{})}><Text style={s.body}>{[t('Privacy','개인정보 처리 안내'),t('Terms & community rules','이용약관 · 커뮤니티 규칙'),t('Support','도움말'),t('Delete account','계정 삭제')][i]}</Text></Pressable>)}</View></View>:<>
   {source&&<WebView key={generation} ref={web} source={source} style={{flex:1}} sharedCookiesEnabled thirdPartyCookiesEnabled={false} originWhitelist={['*']} javaScriptCanOpenWindowsAutomatically={false} setSupportMultipleWindows onOpenWindow={e=>{const url=e.nativeEvent.targetUrl;if(/^https?:\/\//.test(url))Linking.openURL(url).catch(()=>{});}} allowFileAccess={false} allowFileAccessFromFileURLs={false} allowUniversalAccessFromFileURLs={false} mixedContentMode="never" startInLoadingState renderLoading={()=><ActivityIndicator style={s.loading}/>} applicationNameForUserAgent="MemolumiApp/1" injectedJavaScriptBeforeContentLoaded="window.__MEMOLUMI_NATIVE__=true;true;" onMessage={onMessage} onNavigationStateChange={n=>{pageUrl.current=n.url;}} onLoadStart={e=>{pageUrl.current=e.nativeEvent.url;ready.current=false;}} onLoadEnd={()=>{if(isTrustedPage(pageUrl.current,session.origin)){web.current?.injectJavaScript("window.__MEMOLUMI_NATIVE__=true;window.dispatchEvent(new Event('memolumi:ready'));true;");}}} onShouldStartLoadWithRequest={req=>{if(isTrustedPage(req.url,session.origin))return true;if(/^https?:\/\//.test(req.url)||req.url.startsWith('mailto:'))Linking.openURL(req.url).catch(()=>{});return false;}} onError={()=>setWebError(true)} onHttpError={e=>{if(e.nativeEvent.statusCode===401){setWebError(true);setError(t('Your session expired. Reconnect your account.','로그인이 만료됐어요. 계정을 다시 연결해 주세요.'));}}} onContentProcessDidTerminate={()=>setGeneration(n=>n+1)} onRenderProcessGone={()=>setGeneration(n=>n+1)}/>}
   {webError&&<View style={s.panel}><Text style={s.body}>{t('Could not open your space.','화면을 열지 못했어요.')}</Text>{<Action label={t('Retry','다시 열기')} onPress={()=>{setWebError(false);setGeneration(n=>n+1);}} disabled={busy || (false)}/>}{<Action label={t('Reconnect account','계정 다시 연결')} onPress={()=>perform(login)} disabled={busy || (false)}/>}</View>}
  </>}{busy&&<ActivityIndicator style={s.loading}/>} {!!error&&<View style={s.panel}><Text style={s.body}>{error}</Text>{<Action label={t('Phone settings','휴대폰 설정')} onPress={()=>Linking.openSettings()} disabled={busy || (false)}/>}{<Action label={t('Close','닫기')} onPress={()=>setError('')} disabled={busy || (false)}/>}</View>}

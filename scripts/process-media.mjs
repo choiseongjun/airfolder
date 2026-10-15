@@ -7,7 +7,8 @@ import {spawn} from 'node:child_process';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import pg from 'pg';
-import sharp from 'sharp';
+import {imagePreview} from '../lib/image-preview.ts';
+import {writeFile} from 'node:fs/promises';
 import ffmpeg from 'ffmpeg-static';
 import {createClient} from '@supabase/supabase-js';
 
@@ -54,7 +55,7 @@ async function processOne(){
       if(!response.ok||!response.body)throw new Error('ORIGINAL_UNAVAILABLE');
       await pipeline(Readable.fromWeb(response.body),createWriteStream(input));
       if(video)await transcode(input,output);
-      else await sharp(input,{limitInputPixels:100000000}).rotate().resize({width:2560,height:2560,fit:'inside',withoutEnlargement:true}).jpeg({quality:85}).toFile(output);
+      else await writeFile(output,await imagePreview(input,photo.mime));
       if((await stat(output)).size>Math.max(Number(photo.size_bytes),1048576))throw new Error('PREVIEW_BUDGET_EXCEEDED');
       const mime=video?'video/mp4':'image/jpeg';
       previewPath=photo.object_path.replace(/\.[^.]+$/,video?'.preview.mp4':'.preview.jpg');
