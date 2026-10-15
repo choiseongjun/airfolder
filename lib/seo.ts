@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 
-// Set only to the verified production origin. Never publish localhost canonicals.
+// Keep preview deployments out of search, even when they inherit SITE_URL.
 export function publicOrigin(): string | undefined {
-  const value = process.env.SITE_URL;
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') return undefined;
+  const value = process.env.SITE_URL || (process.env.VERCEL_ENV === 'production' ? 'https://memonestia.xyz' : undefined);
   if (!value) return undefined;
   const url = new URL(value);
   if (url.protocol !== 'https:' || url.hostname === 'localhost' || url.pathname !== '/' || url.search || url.hash || url.username || url.password) {
@@ -13,7 +14,7 @@ export function publicOrigin(): string | undefined {
 
 export const copy = {
   en: {
-    title: 'Memonestia — Your moments. Together.',
+    title: 'Memonestia — Shared photo albums & memory cards',
     description: 'Everyone’s photos. One little story. Gather moments into shared albums, make photo strips and postcards, and choose the photos you share with your people.',
     eyebrow: 'YOUR MOMENTS. TOGETHER.',
     heading: 'Days together.\nMemories to revisit.',
@@ -28,7 +29,7 @@ export const copy = {
     footer: 'Private by default. Shared by choice.',
   },
   ko: {
-    title: 'Memonestia — 함께한 날들이, 계속 이어지는 곳',
+    title: 'Memonestia — 사진 공유 앨범과 네컷 추억 카드',
     description: '각자의 사진을 모아, 우리만의 한 페이지로. 네컷·필름·엽서로 추억을 만들고 친구·가족과 함께 앨범에 간직하세요. 사진은 기본 비공개, 공유는 내가 선택하는 Memonestia.',
     eyebrow: '함께 모으고, 다시 꺼내보는 우리의 기록.',
     heading: '함께한 날들이,\n계속 이어지는 곳.',

@@ -1,8 +1,8 @@
-import { cardPalette, type FrameId, type ThemeId } from './memory-card-style';
+import { cardPalette, stickerDesigns, type CardSticker, type FrameId, type ThemeId } from './memory-card-style';
 
 /** This demo renders only the three public illustration assets in the browser. */
-export async function exportMemoryCard({ frame, theme, photos, title, caption }: {
-  frame: FrameId; theme: ThemeId; photos: string[]; title: string; caption: string;
+export async function exportMemoryCard({ frame, theme, photos, title, caption, stickers = [] }: {
+  frame: FrameId; theme: ThemeId; photos: string[]; title: string; caption: string; stickers?: CardSticker[];
 }) {
   await document.fonts.ready;
   const images = await Promise.all(photos.map(src => new Promise<HTMLImageElement>((resolve, reject) => {
@@ -60,6 +60,21 @@ export async function exportMemoryCard({ frame, theme, photos, title, caption }:
   ctx.font = '14px Arial, sans-serif';
   ctx.globalAlpha = 0.6;
   ctx.fillText('A SUMMER TO REMEMBER', width / 2, height - 47);
+  ctx.globalAlpha = 1;
+  for (const sticker of stickers) {
+    const design = stickerDesigns.find(item => item.id === sticker.id)!;
+    const size = width * 0.17;
+    ctx.save();
+    ctx.translate(width * sticker.x / 100 - size / 2, height * sticker.y / 100 - size / 2);
+    ctx.scale(size / 100, size / 100);
+    ctx.fillStyle = design.color;
+    ctx.strokeStyle = '#fffdf3';
+    ctx.lineWidth = 5;
+    const shape = new Path2D(design.path);
+    ctx.stroke(shape);
+    ctx.fill(shape);
+    ctx.restore();
+  }
   const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error('Image export failed')), 'image/png'));
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
