@@ -45,3 +45,5 @@
 .account-settings .safety-actions h3{font-size:12px;margin:0 0 8px}
 .account-loading{min-height:240px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#73738b;font-size:14px}
 @media(max-width:600px){.app-shell .account-backdrop{align-items:flex-end;padding:12px}.app-shell .profile-modal{padding:32px 22px 24px;border-radius:26px;max-height:calc(100dvh - 32px)}}
+
+.photo-selection-tools{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:12px 14px;margin-bottom:16px;background:#f5f4fb;border:1px solid #e7e4f1;border-radius:14px;font-size:12px;color:#7a7788}.photo-selection-tools button{display:flex;align-items:center;gap:7px;min-height:36px;color:#6253a0;font-weight:600}.photo-selection-tools strong{margin-left:auto;color:#6253a0}
