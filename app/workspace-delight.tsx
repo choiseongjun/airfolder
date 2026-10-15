@@ -3,6 +3,18 @@ import Link from 'next/link';
 import { ArrowRight, BookOpen, Heart, ImagePlus, LockKeyhole, Sparkles } from 'lucide-react';
 import type { Locale } from './i18n';
 
+export function EmptyBookshelf({locale,onCreate,onStudio}:{locale:Locale;onCreate:()=>void;onStudio:()=>void}) {
+  const ko=locale==='ko';
+  return <section className="empty-bookshelf" aria-labelledby="first-book-title">
+    <div className="sample-books" aria-label={ko?'앨범 디자인 예시':'Sample album designs'}>
+      <div className="sample-book"><img src="/landing/sea.webp" alt=""/><span>SEA, YOU & ME</span><small>{ko?'여행 앨범 예시':'Travel album example'}</small></div>
+      <div className="sample-book"><img src="/landing/friends.webp" alt=""/><span>THE GOOD DAYS</span><small>{ko?'친구 앨범 예시':'Friends album example'}</small></div>
+      <span className="shelf-sample-sticker" aria-hidden="true"><Heart size={21}/> made with love</span>
+    </div>
+    <div className="first-book-copy"><span className="shelf-kicker">A PLACE FOR YOUR STORIES</span><h3 id="first-book-title">{ko?'우리의 첫 번째 책은,':'Your first book starts'}<br/>{ko?'어떤 날일까요?':'with a little moment.'}</h3><p>{ko?'거창한 여행이 아니어도 좋아요. 함께 먹은 저녁, 웃었던 오후부터 한 권씩 채워봐요.':'A shared dinner. An afternoon of laughter. The ordinary days deserve a place here, too.'}</p><ol><li>{ko?'앨범에 이름 붙이기':'Give your album a name'}</li><li>{ko?'좋아하는 사진 담기':'Add your favorite photos'}</li><li>{ko?'한 줄 남기고 펼쳐보기':'Leave a note and turn the page'}</li></ol><button className="primary-button" onClick={onCreate}><BookOpen size={16}/>{ko?'첫 앨범 만들기':'Create your first album'}<ArrowRight size={16}/></button><button className="text-button" onClick={onStudio}>{ko?'사진으로 카드부터 만들어볼래요':'Start with a photo card'}<ArrowRight size={14}/></button></div>
+  </section>;
+}
+
 export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:()=>void;onHelp:()=>void}) {
   const ko=locale==='ko';
   return <aside className="desktop-story keepsake-story">
