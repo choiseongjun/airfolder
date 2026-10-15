@@ -1,15 +1,16 @@
 {
-  "brand": "Memolumi",
+  "brand": "Memonestia",
   "appleAppId": "6822636339",
   "bundleId": "com.choisj2702.snaproom",
   "status": "waiting_for_review",
   "listingUpdatedAt": "2026-10-15",
   "listingPreparation": {
-    "scope": "iOS App Store review submitted; Android deferred by owner",
+    "scope": "Memonestia rename, refreshed assets and iOS build 3 submitted for review",
     "copy": "app-store-copy.json",
     "savedLocales": [
       "en-US",
-      "ko"
+      "ko",
+      "id"
     ],
     "uploadedAssets": {
       "header": "Each locale: 3840x1646 PNG",
@@ -19,7 +20,7 @@
     },
     "assetSource": "Owner-authorized captures of production WebView content; not native-device verification",
     "localAssets": "artifacts/store-release/ (gitignored)",
-    "icon": "Included in uploaded build 2 and visible in App Store Connect",
+    "icon": "Included in uploaded build 3; unchanged icon artwork",
     "binaryUploaded": true,
     "reviewSubmitted": true
   },
@@ -34,7 +35,8 @@
   "releaseMode": "manual",
   "localizations": [
     "en-US",
-    "ko"
+    "ko",
+    "id"
   ],
   "publicPaths": {
     "support": "/support",
@@ -108,15 +110,15 @@
     "ko": "함께 모으고, 앨범책으로 간직하는 추억"
   },
   "iosSubmission": {
-    "buildId": "ce92af09-5dd5-431f-9925-34601579f5f1",
-    "submissionId": "61b91fc4-57db-45c1-a7bf-aaa83957c90a",
+    "buildId": "461d55a5-5b2a-47b5-b613-d13ca3344633",
+    "submissionId": "1cf9014b-1864-4ce5-8b17-afe99608f365",
     "version": "1.0.0",
-    "buildNumber": "2",
-    "uploadedAt": "2026-10-15T03:30:10.755Z",
+    "buildNumber": "3",
+    "uploadedAt": "2026-10-15T08:20:11.540Z",
     "status": "waiting_for_review",
     "reviewAccess": "provisioned_firebase_password_account_verified",
-    "reviewSubmissionId": "f6b8c8d1-9ca3-45b8-a6ef-dbb4ce40c466",
-    "reviewSubmittedAt": "2026-10-15T03:56:29.597Z"
+    "reviewSubmissionId": "85235181-92ed-4077-9761-5de88af879e7",
+    "reviewSubmittedAt": "2026-10-15T08:37:00Z"
   },
   "reviewAccessValidation": {
     "albums": 3,
@@ -147,7 +149,7 @@
     "Production video transcoding worker operation remains unverified",
     "Review regional compliance requirements before manual release"
   ],
-  "proof": "artifacts/store-release/ios-review-submitted.jpg",
+  "proof": "artifacts/memonestia-ios-review.png",
   "policyAudit": {
     "date": "2026-10-15",
     "report": "../docs/store-policy-audit.md",
