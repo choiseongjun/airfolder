@@ -400,3 +400,9 @@ html{scroll-padding-top:115px}
  html{scroll-behavior:auto}.lp-page *,.lp-page *::before,.lp-page *::after{animation:none!important;transition:none!important}
  .lp-will-reveal{opacity:1;translate:none}.lp-photo-fan--interactive .lp-polaroid{transform:translate(var(--x),var(--y)) rotate(var(--angle))}.lp-privacy-photo img{transform:none}
 }
+
+/* Memonestia shared-photo identity */
+.lp-brand .lp-brand-icon{background:transparent;transform:none;border-radius:0;padding:0;box-shadow:none;color:#3949e7}
+.lp-brand .lp-brand-icon svg{width:100%;height:100%}
+.lp-brand{font-family:Arial,var(--font-geist-sans),sans-serif;font-weight:750;letter-spacing:-1.1px}
+.lp-brand-dot{color:#3949e7}

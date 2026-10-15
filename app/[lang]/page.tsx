@@ -1,3 +1,4 @@
+import BrandMark from '@/app/brand-mark';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowDown, ArrowRight, ArrowUpRight, Camera, Check, LockKeyhole, Plus, Sparkles } from 'lucide-react';
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
 
 function Brand({ href }: { href: string }) {
   return <Link className="lp-brand" href={href} aria-label="Memonestia">
-    <span className="lp-brand-icon"><Camera size={21} strokeWidth={1.6} aria-hidden="true" /></span>
+    <span className="lp-brand-icon"><BrandMark/></span>
     memonestia<span className="lp-brand-dot">.</span>
   </Link>;
 }

@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element -- Local decorative photographs do not need remote optimization. */
+import BrandMark from '@/app/brand-mark';
 import Link from 'next/link';
 import { ArrowRight, BookOpen, Heart, ImagePlus, LockKeyhole, Sparkles } from 'lucide-react';
 import type { Locale } from './i18n';
@@ -18,7 +19,7 @@ export function EmptyBookshelf({locale,onCreate,onStudio}:{locale:Locale;onCreat
 export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:()=>void;onHelp:()=>void}) {
   const ko=locale==='ko';
   return <aside className="desktop-story keepsake-story">
-    <div className="story-top"><Link className="brand" href="/"><span className="brand-icon"><BookOpen size={22}/></span>memonestia<span className="brand-dot">.</span></Link><span className="story-edition">A LITTLE PLACE<br/>FOR YOUR PEOPLE.</span></div>
+    <div className="story-top"><Link className="brand" href="/"><span className="brand-icon"><BrandMark/></span>memonestia<span className="brand-dot">.</span></Link><span className="story-edition">A LITTLE PLACE<br/>FOR YOUR PEOPLE.</span></div>
     <div className="keepsake-story-content">
       <span className="keepsake-kicker"><Heart size={13}/>{ko?'좋아하는 사람들과, 오래도록.':'Little moments. Closer together.'}</span>
       <h2>{ko?'우리의 별것 아닌 날도,':'Even the ordinary days,'}<br/><em>{ko?'오래 보고 싶은 추억.':'worth keeping forever.'}</em></h2>

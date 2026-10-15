@@ -1,3 +1,4 @@
+import { publicMetadata } from '@/lib/seo';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import WebAnalytics from "../web-analytics";
@@ -15,6 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  ...publicMetadata("en"),
+  alternates: undefined,
   title: "Memonestia — Your moments. Together.",
   description: "Collect photos from your shared days. Keep photos private and choose the moments to share.",
   robots: { index: false, follow: false },

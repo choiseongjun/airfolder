@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: Props) {
   const origin = publicOrigin();
   return { title, description, metadataBase: origin ? new URL(origin) : undefined,
     ...(origin ? { alternates: { canonical: `${origin}/${lang}/hosts`, languages: { ko: `${origin}/ko/hosts`, en: `${origin}/en/hosts` } } } : {}),
-    openGraph: { title, description, ...(origin ? { images: [`${origin}/landing/friends.webp`] } : {}) } };
+    openGraph: { title, description, ...(origin ? { images: [`${origin}/brand/og-${lang === "ko" ? "ko" : "en"}.png`] } : {}) } };
 }
 export default async function Hosts({ params }: Props) {
   const { lang } = await params; if (!isPublicLanguage(lang)) notFound();

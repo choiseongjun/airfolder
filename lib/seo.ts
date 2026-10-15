@@ -62,7 +62,7 @@ export function publicMetadata(lang: PublicLocale): Metadata {
     metadataBase: origin ? new URL(origin) : undefined,
     robots: { index: Boolean(origin), follow: Boolean(origin) },
     alternates: origin ? { canonical: `${origin}/${lang}`, languages: publicAlternates(origin) } : undefined,
-    openGraph: { type: 'website', title: text.title, description: text.description, siteName: 'Memonestia', locale: { ko: 'ko_KR', en: 'en_US', 'en-ph': 'en_PH', id: 'id_ID' }[lang], alternateLocale: publicLocales.filter(locale => locale !== lang).map(locale => ({ ko: 'ko_KR', en: 'en_US', 'en-ph': 'en_PH', id: 'id_ID' })[locale]), ...(origin ? { url: `${origin}/${lang}`, images: [{ url: `${origin}/share-card.png`, width: 1200, height: 630, alt: text.title }] } : {}) },
-    twitter: { card: 'summary_large_image', title: text.title, description: text.description, ...(origin ? { images: [`${origin}/share-card.png`] } : {}) },
+    openGraph: { type: 'website', title: text.title, description: text.description, siteName: 'Memonestia', locale: { ko: 'ko_KR', en: 'en_US', 'en-ph': 'en_PH', id: 'id_ID' }[lang], alternateLocale: publicLocales.filter(locale => locale !== lang).map(locale => ({ ko: 'ko_KR', en: 'en_US', 'en-ph': 'en_PH', id: 'id_ID' })[locale]), ...(origin ? { url: `${origin}/${lang}`, images: [{ url: `${origin}/brand/og-${lang === "en-ph" ? "en" : lang}.png`, width: 1200, height: 630, alt: text.title }] } : {}) },
+    twitter: { card: 'summary_large_image', title: text.title, description: text.description, ...(origin ? { images: [`${origin}/brand/og-${lang === "en-ph" ? "en" : lang}.png`] } : {}) },
   };
 }

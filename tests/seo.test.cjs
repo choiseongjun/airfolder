@@ -28,7 +28,7 @@ test('production remains crawlable when SITE_URL is missing', () => {
     assert.equal(metadata.alternates.languages['x-default'], 'https://memonestia.xyz/en');
     assert.equal(metadata.alternates.languages['en-PH'], 'https://memonestia.xyz/en-ph');
     assert.equal(metadata.alternates.languages['id-ID'], 'https://memonestia.xyz/id');
-    assert.equal(metadata.openGraph.images[0].url, 'https://memonestia.xyz/share-card.png');
+    assert.equal(metadata.openGraph.images[0].url, `https://memonestia.xyz/brand/og-${lang === "en-ph" ? "en" : lang}.png`);
   }
   const imports = { '@/lib/seo': seo };
   const robots = load('app/robots.ts', {}, imports).default();

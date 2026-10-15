@@ -1,6 +1,7 @@
+import BrandMark from '@/app/brand-mark';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, Camera, Check, Plus } from 'lucide-react';
+import { ArrowUpRight, Check, Plus } from 'lucide-react';
 import { publicOrigin, regionalMetadata } from '@/lib/seo';
 import { publicLocaleTags } from '@/lib/public-locale';
 import LanguageSwitch from './language-switch';
@@ -14,7 +15,7 @@ export default function RegionalLanding({ locale }: { locale: RegionalLocale }) 
   const origin = publicOrigin();
   const appHref = '/?lang=en';
   const schema = { '@context': 'https://schema.org', '@type': 'WebPage', name: regionalMetadata[locale].title, url: `${origin}/${locale}`, inLanguage: publicLocaleTags[locale], description: regionalMetadata[locale].description, about: { '@type': 'WebApplication', name: 'Memonestia', applicationCategory: 'MultimediaApplication', operatingSystem: 'Web', inLanguage: ['en', 'ko'] } };
-  const brand = <><span className="lp-brand-icon"><Camera size={21} strokeWidth={1.6} aria-hidden="true" /></span>memonestia<span className="lp-brand-dot">.</span></>;
+  const brand = <><span className="lp-brand-icon"><BrandMark/></span>memonestia<span className="lp-brand-dot">.</span></>;
   return <div className="lp-page regional-page">
     <LandingMotion />{origin && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />}
     <a className="lp-skip" href="#main">{t.skip}</a>
