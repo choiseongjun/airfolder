@@ -20,24 +20,24 @@ export function deletionConfiguration() {
 }
 export async function runAccountDeletions(adminId: string | null, viewerId?: string) {
   const db = await pool().connect();
-  let locked = false;
   try {
-    locked = (await db.query("SELECT pg_try_advisory_lock(hashtext('snaproom-deletion-worker')) AS locked")).rows[0].locked;
-    if (!locked) throw new ApiError(409, 'DELETION_ALREADY_RUNNING');
     const jobs = await db.query(`SELECT v.id,a.firebase_uid FROM snaproom.viewers v LEFT JOIN snaproom.accounts a ON a.viewer_id=v.id WHERE v.deletion_requested_at<now()-interval '5 minutes' ${viewerId ? 'AND v.id=$1' : ''} ORDER BY v.deletion_requested_at LIMIT 10`, viewerId ? [viewerId] : []);
     if (viewerId && !jobs.rowCount) throw new ApiError(409, 'DELETION_NOT_READY');
     const deadline = Date.now() + 240000;
     let completed = 0, failed = 0;
     for (const job of jobs.rows) {
       if (Date.now() >= deadline) break;
+      let skipped = false;
       try {
         // Validate the Firebase dependency before deleting even one stored file.
         let auth;
         if (job.firebase_uid) { try { auth = deletionAuth(); } catch { /* The shared core records a safe configuration error. */ } }
         if (await deleteRequestedAccount(db, storage(), auth, job.id, { adminId })) completed++;
+        else skipped = true;
       } catch {
         failed++;
       }
+      if (skipped && viewerId) throw new ApiError(409, 'DELETION_ALREADY_RUNNING');
     }
     await db.query("DELETE FROM snaproom.deletion_receipts WHERE completed_at<now()-interval '30 days'");
     await db.query("DELETE FROM snaproom.admin_audit WHERE created_at<now()-interval '30 days'");
@@ -46,7 +46,6 @@ export async function runAccountDeletions(adminId: string | null, viewerId?: str
     const pending = await db.query('SELECT count(*)::int AS count FROM snaproom.viewers WHERE deletion_requested_at IS NOT NULL');
     return { completed, failed, pending: pending.rows[0].count };
   } finally {
-    if (locked) await db.query("SELECT pg_advisory_unlock(hashtext('snaproom-deletion-worker'))");
     db.release();
   }
 }

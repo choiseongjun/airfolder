@@ -4,21 +4,21 @@ export function deletionErrorCode(error) {
 }
 /** @param {{ adminId?: string | null }} options */
 export async function deleteRequestedAccount(db, store, auth, viewerId, options = {}) {
-  const key = `account-deletion:${viewerId}`;
-  const lock = await db.query('SELECT pg_try_advisory_lock(hashtext($1)) AS locked', [key]);
-  if (!lock.rows[0].locked) return false;
-  const log = (action, note = '') => db.query('INSERT INTO snaproom.admin_audit(admin_id,action,subject_id,note) VALUES($1,$2,$3,$4)', [options.adminId ?? null, action, viewerId, note]);
-  let attempted = false;
+  const log = (action, note = '') => db.query('INSERT INTO snaproom.admin_audit(admin_id,action,subject_id,note,created_at) VALUES($1,$2,$3,$4,clock_timestamp())', [options.adminId ?? null, action, viewerId, note]);
+  await db.query('BEGIN');
+  let committed = false;
   try {
+    // Transaction locks stay on one backend through poolers and release on commit/crash.
+    // Serialize ownership transfers too; separate deleting members can share the same albums.
+    const lock = await db.query("SELECT pg_try_advisory_xact_lock(hashtext('snaproom-deletion-worker-v2')) AS locked");
+    if (!lock.rows[0].locked) { await db.query('ROLLBACK'); return false; }
+    const result = await db.query(`SELECT v.id,a.firebase_uid FROM snaproom.viewers v LEFT JOIN snaproom.accounts a ON a.viewer_id=v.id WHERE v.id=$1 AND v.deletion_requested_at<now()-interval '5 minutes' FOR UPDATE OF v SKIP LOCKED`, [viewerId]);
+    if (!result.rowCount) { await db.query('ROLLBACK'); return false; }
+    const job = result.rows[0];
     const attempt = await db.query("UPDATE snaproom.viewers SET deletion_attempts=deletion_attempts+1,deletion_last_attempt_at=now(),deletion_last_error=NULL WHERE id=$1 AND deletion_requested_at<now()-interval '5 minutes' RETURNING deletion_attempts", [viewerId]);
-    if (!attempt.rowCount) return false;
-    attempted = true;
     await log(attempt.rows[0].deletion_attempts > 1 ? 'deletion_retried' : 'deletion_started', `${attempt.rows[0].deletion_attempts}회차`);
-    await db.query('BEGIN');
+    await db.query('SAVEPOINT deletion_changes');
     try {
-      const result = await db.query(`SELECT v.id,a.firebase_uid FROM snaproom.viewers v LEFT JOIN snaproom.accounts a ON a.viewer_id=v.id WHERE v.id=$1 AND v.deletion_requested_at<now()-interval '5 minutes' FOR UPDATE OF v`, [viewerId]);
-      if (!result.rowCount) { await db.query('ROLLBACK'); return false; }
-      const job = result.rows[0];
       if (job.firebase_uid && !auth) throw Object.assign(new Error('Firebase administration credentials required'), { code: 'FIREBASE_ADMIN_NOT_CONFIGURED' });
       const groups = await db.query('SELECT id FROM snaproom.groups WHERE owner_id=$1 FOR UPDATE', [job.id]);
       for (const group of groups.rows) {
@@ -53,14 +53,20 @@ export async function deleteRequestedAccount(db, store, auth, viewerId, options 
       // The completion log commits with the deleted data, so a crash cannot lose this record.
       await log('deletion_completed');
       await db.query('COMMIT');
+      committed = true;
       return true;
-    } catch (error) { await db.query('ROLLBACK'); throw error; }
-  } catch (error) {
-    if (attempted) {
+    } catch (error) {
+      // Keep attempt/failure logs while rolling back data changes that need a retry.
+      await db.query('ROLLBACK TO SAVEPOINT deletion_changes');
       const code = deletionErrorCode(error);
       await db.query('UPDATE snaproom.viewers SET deletion_last_error=$2 WHERE id=$1', [viewerId, code]);
       await log('deletion_failed', code);
+      await db.query('COMMIT');
+      committed = true;
+      throw error;
     }
+  } catch (error) {
+    if (!committed) await db.query('ROLLBACK');
     throw error;
-  } finally { await db.query('SELECT pg_advisory_unlock(hashtext($1))', [key]); }
+  }
 }
