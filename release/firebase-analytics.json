@@ -1,0 +1,30 @@
+{
+  "projectId": "snaproom-ad17b",
+  "webAppId": "1:863331811763:web:7f04cd4184efbf1b654bc6",
+  "publicBrand": "Memonestia",
+  "authentication": "Existing Google and Apple flows use the same Firebase project; no credentials or provider configuration changed",
+  "analyticsStatus": "code_ready_measurement_id_and_console_link_pending",
+  "measurementEnvironmentVariable": "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID",
+  "events": {
+    "login_start": "Social sign-in started",
+    "login": "Firebase credential exchanged for a service session",
+    "sign_up": "Successful service session for a new Firebase user",
+    "login_failed": "Coarse reason only; no raw error messages"
+  },
+  "dimensions": [
+    "method: google or apple",
+    "surface: web or app_connect",
+    "reason: cancelled, popup_blocked, network, other"
+  ],
+  "collection": "Production memonestia.xyz only, browser opt-in, DNT/GPC respected, browse excluded, no Firebase UID or email sent",
+  "consoleSetupRemaining": [
+    "Link Google Analytics to the existing Firebase web app",
+    "Disable Enhanced measurement on this web data stream; only explicit login events are intended",
+    "Set Google Analytics retention and record its value in the privacy notice",
+    "Set NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID in Vercel Production and redeploy",
+    "Register event-scoped custom dimensions surface and reason; method is the recommended login parameter",
+    "Verify consenting real Google and Apple login events in Realtime; no synthetic production events were emitted",
+    "Recheck store privacy declarations before enabling Analytics"
+  ],
+  "review": "Google and Apple providers and actual users verified. User approved Analytics link; enable was attempted, but console returned terms-loading and project-permission errors before success could be verified. Collection remains disabled without measurement ID."
+}
