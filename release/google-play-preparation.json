@@ -14,7 +14,7 @@
     "testerCount": 1,
     "testUrl": "https://play.google.com/apps/internaltest/4701544303514286577",
     "productionStatus": "NOT_SUBMITTED",
-    "productionRequirement": "12 testers continuously opted in for 14 days; user deferred recruitment",
+    "productionRequirement": "At least 12 testers opted in continuously for 14 days after closed test publication; participation not yet verified",
     "completedStoreItems": [
       "Privacy policy and 30-day account deletion instructions",
       "Review login account",
@@ -33,10 +33,11 @@
       "Photo and video permissions explanation"
     ],
     "pendingStoreItems": [
-      "Optional Korean listing",
-      "Closed test tester selection and release submission",
+      "Closed test review approval",
+      "Tester participation and real feedback collection",
       "12 testers for 14 days and production access",
-      "Production country availability after access approval"
+      "Production country availability after access approval",
+      "Optional Korean listing"
     ],
     "closedTrackId": "4699376096234146163",
     "closedTrackCountries": [
@@ -44,8 +45,18 @@
       "ID",
       "PH"
     ],
-    "storeConfigurationStatus": "SAVED_NOT_SUBMITTED_FOR_REVIEW",
-    "basicDashboardTasksCompleted": 11
+    "storeConfigurationStatus": "SUBMITTED_AUTOMATIC_CHECKS_RUNNING",
+    "basicDashboardTasksCompleted": 11,
+    "closedTestStatus": "SUBMITTED_AUTOMATIC_CHECKS_RUNNING",
+    "closedTestSubmittedAt": "2026-10-15",
+    "closedTestRelease": "1.0.0 (2) - Closed testing",
+    "closedTesterLists": [
+      "Memolumi Zardu CSV 20260802",
+      "Memolumi owner testing"
+    ],
+    "vendorTesterCount": 33,
+    "closedTestOptInUrl": "https://play.google.com/apps/testing/com.choisj2702.snaproom",
+    "closedTestInstallUrl": "https://play.google.com/store/apps/details?id=com.choisj2702.snaproom"
   },
   "web": {
     "memoryStudioCommit": "69cd700",
