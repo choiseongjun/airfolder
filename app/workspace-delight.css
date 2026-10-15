@@ -1,0 +1,187 @@
+/* A quiet paper-and-photo theme for the existing workspace. */
+.app-shell{--orange:#c85d40;--background:#fcfaf6;--foreground:#33473d;--line:#e9e5db;font-family:var(--font-geist-sans),Arial,"Malgun Gothic",sans-serif}
+.app-shell .main-shell{background:var(--background)}
+.app-shell button,.app-shell a{touch-action:manipulation}
+.app-shell button:focus-visible,.app-shell a:focus-visible{outline:3px solid #8b9c72;outline-offset:3px}
+.app-shell .primary-button{border-radius:13px;background:#c85d40;box-shadow:0 3px 0 #ac4f3314;min-height:44px}
+.app-shell .primary-button:hover{background:#ad4b32;transform:translateY(-1px)}
+.app-shell .secondary-button{border-radius:12px;min-height:40px}
+.app-shell .brand{letter-spacing:-1.1px;color:#314b3d}
+.app-shell .brand-icon{background:#d36c50;border-radius:11px;box-shadow:inset 0 0 0 3px #ffffff22}
+.app-shell .topbar{height:68px;min-height:68px;border-bottom:1px solid #e9e5db;background:#fcfaf6ed;padding-inline:26px}
+.app-shell .header-tools .icon-button{border:1px solid #e8e5dd;border-radius:50%;width:36px;height:36px;min-height:36px;color:#667264}
+.app-shell main{padding:22px 26px 30px;scroll-behavior:smooth}
+.app-shell .browse-ribbon{display:flex;align-items:center;gap:5px;margin:-3px 0 12px;color:#6a7764;font-size:11px}
+.browse-ribbon>span{display:flex;align-items:center;gap:7px}
+.browse-ribbon>button{display:grid;place-items:center;width:32px;height:32px;color:#788271}
+.browse-ribbon>a{margin-left:auto;display:flex;align-items:center;gap:6px;padding:8px 11px;border-radius:20px;background:#edf0e5;color:#4d6144;font-weight:600}
+.app-shell .page-heading,.app-shell[lang=en] .page-heading{display:flex;align-items:center;gap:12px;margin-bottom:23px}
+.app-shell .page-heading>div{flex:1;min-width:0}
+.app-shell .eyebrow{display:flex;align-items:center;gap:5px;font-size:9px;letter-spacing:1.6px;color:#8b8d75;margin-bottom:9px}
+.app-shell h1,.app-shell[lang=en] h1{font-size:27px;line-height:1.4;letter-spacing:-1px;font-weight:750;color:#344a3e;margin:0}
+.app-shell .page-heading p,.app-shell[lang=en] .page-heading p{font-size:12px;color:#7a8072;line-height:1.7;margin-top:6px;max-width:none}
+.app-shell .page-heading>.primary-button,.app-shell[lang=en] .page-heading>.primary-button{margin:0;padding:10px 13px;font-size:12px;flex-shrink:0}
+.app-shell .page-heading .back-button{border:1px solid #e5e4d9;width:35px;height:35px;border-radius:50%;flex:none;background:#fffdf8}
+.studio-invitation{display:flex;align-items:center;min-height:136px;position:relative;isolation:isolate;border:1px solid #e6e4d3;background:#eef1e5;border-radius:20px;padding:16px 20px;margin-bottom:0;overflow:hidden}
+.studio-invitation-copy{position:relative;z-index:2;padding-right:102px}
+.studio-invitation-copy>span{display:flex;align-items:center;gap:5px;color:#758268;font-size:10px;font-weight:600;letter-spacing:.3px}
+.studio-invitation-copy h2{font-size:20px;font-weight:700;letter-spacing:-.7px;line-height:1.4;margin:6px 0 4px;color:#3f543c}
+.studio-invitation-copy p{font-size:11px;color:#77816a;margin:0;line-height:1.6}
+.studio-invitation-copy button{display:flex;gap:18px;align-items:center;font-size:11px;font-weight:700;background:#fffdf5;border:1px solid #dce1ce;border-radius:9px;margin-top:10px;padding:8px 11px;color:#496040;min-height:34px}
+.studio-invitation-copy button:hover{background:#fff;transform:translateX(2px)}
+.studio-mini-strip{position:absolute;right:24px;top:-9px;width:92px;background:#fffbf0;padding:9px 7px 10px;display:flex;align-items:center;gap:6px;flex-direction:column;transform:rotate(12deg);box-shadow:0 7px 18px #48563a20;border:1px solid #e6e3d6;z-index:1}
+.studio-mini-strip>span{font-size:6px;letter-spacing:1.4px;color:#958572}
+.studio-mini-strip img{width:100%;height:62px;object-fit:cover;border-radius:2px}
+.studio-mini-strip>svg{color:#cb866b;margin-top:2px}
+.studio-invitation-spark{position:absolute;bottom:17px;right:122px;transform:rotate(-13deg);color:#93a075;opacity:.7}
+.workspace-guide-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:5px 0 14px;flex-wrap:wrap}
+.workspace-guide-row a,.workspace-guide-row button{display:flex;align-items:center;gap:6px;min-height:36px;font-size:11px;color:#7a806e;padding:3px 1px}
+.app-shell .groups-section{margin:0 0 18px}
+.app-shell .groups-heading{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.app-shell .groups-heading .eyebrow{display:none}
+.app-shell .groups-heading h2{font-size:15px;letter-spacing:-.3px;margin:0;color:#455446}
+.app-shell .groups-heading>.secondary-button{background:none;border:0;color:#7c856e;font-size:11px;padding:4px 0;min-height:30px}
+.app-shell .group-list{display:flex;gap:8px;overflow-x:auto;padding:2px 1px 4px;scrollbar-width:none;scroll-snap-type:x proximity}
+.app-shell .group-list::-webkit-scrollbar{display:none}
+.app-shell .group-card{flex:0 0 auto;min-width:116px;max-width:154px;min-height:68px;padding:9px 11px;border-radius:14px;background:#fffdf8;border:1px solid #e8e7dc;display:grid;grid-template-columns:24px 1fr;gap:4px 7px;align-content:center;align-items:center;text-align:left;scroll-snap-align:start;position:relative;box-shadow:none}
+.app-shell .group-card.active{background:#f0f3e7;border-color:#9eae8b;box-shadow:inset 0 0 0 1px #a8b99433}
+.app-shell .group-card strong{font-size:11px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:97px}
+.app-shell .group-card small{grid-column:1/-1;font-size:9px;color:#808775;margin:0;white-space:nowrap}
+.app-shell .group-card>.group-symbol{margin:0;display:grid;place-items:center;width:25px;height:25px;border-radius:9px;background:#f2e5db;color:#a37658}
+.app-shell .group-card>.group-symbol.tone-1{background:#e9e4f0;color:#9485a8}
+.app-shell .group-card>.group-symbol.tone-2{background:#e4ede6;color:#7b997d}
+.app-shell .group-card>.group-symbol svg,.app-shell .group-card.personal>svg{width:16px;height:16px}
+.app-shell .group-card.personal>svg{color:#879571;margin:3px 4px}
+.app-shell .group-card>svg:last-child:not(:first-child){display:none}
+.app-shell .group-current{padding:15px;border-radius:14px;background:#f2f4ec;margin-top:12px}
+.app-shell .group-current h3{font-size:15px}
+.app-shell .group-current p{font-size:11px;line-height:1.7}
+.app-shell .section-heading{margin-bottom:12px}
+.app-shell .section-heading h2{font-size:17px;font-weight:750;color:#3d4c3f;letter-spacing:-.4px}
+.app-shell .section-heading h2>span{font-size:11px;background:#eeede4;border-radius:7px;color:#868a74;padding:3px 6px;font-weight:600}
+.app-shell .section-actions select{font-size:10px;color:#7b8071}
+.app-shell .filter-row{gap:11px;margin-bottom:19px}
+.app-shell .tabs{gap:5px}
+.app-shell .tab,.app-shell[lang=en] .tab{padding:7px 13px;min-height:34px;font-size:11px;border-radius:20px;color:#78816e;border:1px solid transparent}
+.app-shell .selected-tab,.app-shell[lang=en] .selected-tab{background:#e8eddf;border-color:#dce4cf;color:#4b6040}
+.app-shell .tab span{border-radius:5px;background:#dce5ce}
+.app-shell .search,.app-shell[lang=en] .search{height:42px;border-radius:12px;background:#f5f3ed;border-color:#eeebe3;padding-inline:13px;color:#9a9d8c}
+.app-shell .search input{font-size:11px}
+.app-shell .room-grid,.app-shell[lang=en] .room-grid{gap:18px 15px}
+.app-shell .room-card{border:1px solid #e9e4d8;border-radius:7px 16px 16px 7px;background:#fffdf8;box-shadow:2px 3px 0 #e9e4d980,0 5px 14px #433e2d05;position:relative;padding:8px 8px 0;overflow:visible}
+.app-shell .room-card:before{content:"";position:absolute;left:2px;top:4px;bottom:4px;width:2px;background:#eae5d9;border-radius:2px;pointer-events:none}
+.app-shell .room-card:hover{box-shadow:2px 4px 0 #e4dfd1,0 10px 25px #433e2d0d;transform:translateY(-3px)}
+.app-shell .room-cover{height:auto;aspect-ratio:1.3;border-radius:3px 10px 5px 3px;background:#e9eddf;overflow:hidden}
+.app-shell .category-badge{font-size:9px;top:9px;left:9px;padding:5px 8px;border:1px solid #ffffff80;border-radius:7px;backdrop-filter:blur(4px)}
+.app-shell .cover-arrow{opacity:1;background:#fffcf3e6;bottom:9px;right:9px;color:#67705a;width:26px;height:26px}
+.app-shell .room-card-body{padding:12px 4px 0 5px}
+.app-shell .room-card-title>button:first-child,.app-shell[lang=en] .room-card-title>button:first-child{font-size:14px;font-weight:700;letter-spacing:-.5px;line-height:1.5;color:#45503f}
+.app-shell .room-card-title .icon-button{min-height:30px;min-width:26px;color:#969b8c}
+.app-shell .room-card-body>p,.app-shell[lang=en] .room-card-body>p{font-size:10px;line-height:1.6;margin:2px 0 12px;color:#8b8e7e}
+.app-shell .room-card-footer{margin-bottom:9px}
+.app-shell .room-metrics{color:#7c876f;gap:12px;font-size:10px}
+.app-shell .room-updated{font-size:9px;color:#959787;border-top:1px dashed #e8e4d8;padding:10px 0}
+.app-shell .folder-capture-button{color:#718063;background:#f5f5ed;border:0;border-top:1px solid #efeee4;border-radius:0 0 12px 3px;font-size:10px;min-height:35px;margin-inline:-4px;width:calc(100% + 8px)}
+.app-shell .room-list{grid-template-columns:1fr}
+.app-shell .room-list .room-cover{flex:0 0 39%;height:auto;min-height:170px;aspect-ratio:auto}
+.app-shell .photo-open{border:5px solid #fffdf8;box-shadow:0 2px 6px #423d2a0c;border-radius:12px}
+.app-shell .photo-caption{color:#707c67;font-size:10px}
+.app-shell .folder-view-tabs{display:flex;background:#eeeee4;border:1px solid #e5e6db;padding:5px;border-radius:14px;gap:5px;margin:16px 0 23px}
+.app-shell .folder-view-tabs button{flex:1;border:0;border-radius:10px;font-size:12px;min-height:40px;padding:8px 5px;color:#7f8774;background:transparent}
+.app-shell .folder-view-tabs button[aria-pressed=true]{background:#fffdf7;color:#4c6344;box-shadow:0 2px 6px #3e4f3210;font-weight:700}
+.app-shell .members-panel{border-radius:16px;background:#f9f8f1;border-color:#e9e7da;padding:15px 17px}
+.app-shell .members-panel h2{font-size:14px}
+.app-shell .member-privacy-note{font-size:10px!important}
+.app-shell .mobile-tabs{height:calc(78px + env(safe-area-inset-bottom));padding:7px 12px calc(7px + env(safe-area-inset-bottom));background:#fffdf9f5;border-top:1px solid #e9e6dd;box-shadow:0 -8px 24px #50432e04;backdrop-filter:blur(16px)}
+.app-shell .mobile-tabs>button{font-size:10px;color:#8a8d7d;gap:5px}
+.app-shell .mobile-tabs>button[aria-current]{color:#557047;background:#eff2e7}
+.app-shell .mobile-tabs>button[aria-current]>svg{fill:none}
+.app-shell .mobile-tabs .tab-camera{color:#bc634a}
+.app-shell .tab-camera>span{width:43px;height:37px;border-radius:14px;background:#cf6d50;box-shadow:0 3px 0 #ad573824}
+.app-shell .tab-account{background:#f0e4d8;color:#a17c60}
+.app-shell .modal{border:1px solid #e8e4d8;background:#fffdf7;box-shadow:0 15px 60px #25382b24}
+.app-shell .modal-symbol{background:#ecf0e1;color:#84946f;border-radius:16px;transform:rotate(-5deg)}
+.app-shell .guide-step{background:#f7f6ed;border:1px solid #eeecdf;border-radius:13px;margin-bottom:9px;padding:13px}
+.app-shell .guide-step>b{color:#ab8b63;background:#eee5d5;border-radius:10px;padding:8px;font-size:12px}
+.app-shell .guide-step strong{font-size:13px}
+.app-shell .guide-step p{font-size:11px;line-height:1.7;color:#7c826e}
+.app-shell .info-box{border-radius:12px;line-height:1.8}
+.app-shell .main-footer{color:#909781;border-top:1px dashed #e3e4d7;padding-top:22px;font-size:10px}
+
+/* The desktop companion is a scrapbook, while the app keeps its own scrolling pane. */
+.app-shell .keepsake-story{background:#f1efe4;color:#394e3f;padding:34px clamp(28px,4.3vw,76px) 26px;border-right:1px solid #e5e3d6;gap:18px;background-image:radial-gradient(#a9b49822 .7px,transparent .7px);background-size:9px 9px}
+.keepsake-story .story-top .brand{color:#344d3c;font-size:25px}
+.keepsake-story .story-edition{color:#9b9b85;font-size:7px;letter-spacing:1.6px}
+.keepsake-story-content{width:100%;max-width:515px;margin:auto 0}
+.keepsake-kicker{display:flex;align-items:center;gap:7px;color:#8a9878;font-size:11px;font-weight:600;letter-spacing:.3px}
+.keepsake-story-content h2{font-size:clamp(27px,3vw,45px);letter-spacing:-1.8px;font-weight:650;line-height:1.45;margin:16px 0 13px;color:#3d5344;word-break:keep-all}
+.keepsake-story-content h2 em{font-style:normal;color:#7e9265;position:relative}
+.keepsake-story-content>p{font-size:12px;line-height:1.95;color:#8b907a;word-break:keep-all;margin:0}
+.keepsake-collage{height:300px;position:relative;margin:17px 0 20px;width:100%;max-width:460px;isolation:isolate}
+.keepsake-paper{position:absolute;inset:36px 20px 14px 26px;background:#fffcf3;border:1px solid #e7e1ce;transform:rotate(-3deg);box-shadow:0 8px 24px #6d684810;padding:17px 21px}
+.keepsake-paper>span:first-child{font-size:7px;letter-spacing:2.6px;color:#9d9f85}
+.keepsake-paper-lines{position:absolute;inset:40px 20px 20px;background:repeating-linear-gradient(transparent,transparent 27px,#dadcc34d 27px,#dadcc34d 28px)}
+.keepsake-handwriting{position:absolute;bottom:13px;left:20px;font-family:Georgia,serif;font-size:12px;color:#a5a78b;font-style:italic}
+.keepsake-photo{position:absolute;background:#fffdf7;padding:9px 9px 0;margin:0;border:1px solid #e9e3d5;box-shadow:0 9px 20px #5a553e17;transition:transform .35s}
+.keepsake-photo:before{content:"";position:absolute;width:55px;height:21px;top:-10px;left:calc(50% - 27px);background:repeating-linear-gradient(100deg,#e0aa8e70 0 5px,#eac7ac80 5px 7px);transform:rotate(-6deg);z-index:2}
+.keepsake-photo img{width:100%;height:calc(100% - 35px);object-fit:cover}
+.keepsake-photo figcaption{display:flex;align-items:center;justify-content:space-between;height:35px;font-size:12px;font-style:italic;font-family:Georgia,serif;color:#9c927a;padding-inline:3px}
+.keepsake-photo-one{width:51%;height:217px;left:0;top:33px;transform:rotate(-10deg)}
+.keepsake-photo-two{width:49%;height:227px;right:2px;top:21px;transform:rotate(8deg)}
+.keepsake-photo-two:before{background:repeating-linear-gradient(80deg,#a6bb9b77 0 5px,#c5d3b288 5px 7px);transform:rotate(3deg)}
+.keepsake-collage:hover .keepsake-photo-one{transform:rotate(-8deg) translateY(-3px)}
+.keepsake-collage:hover .keepsake-photo-two{transform:rotate(6deg) translateY(-3px)}
+.keepsake-sticker{display:flex;align-items:center;justify-content:center;gap:6px;position:absolute;bottom:7px;right:1px;padding:12px 17px;border-radius:50%;background:#e4e9cc;border:2px solid #faf9ed;color:#899668;transform:rotate(-10deg);box-shadow:0 4px 8px #5e694012}
+.keepsake-sticker>span{font-family:Georgia,serif;font-style:italic;line-height:1.2;font-size:12px}
+.keepsake-caption{position:absolute;left:10px;bottom:4px;font-size:11px;color:#9b9b82;transform:rotate(-3deg)}
+.keepsake-story-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.keepsake-story .story-cta{background:#6b8059;color:#fffdf6;border:1px solid #62764e;border-radius:12px;box-shadow:0 4px 0 #61754714;font-size:12px;min-height:46px;padding:12px 18px;gap:22px}
+.keepsake-story .story-cta:hover{background:#596e48;color:#fff}
+.keepsake-help{font-size:11px;color:#939781;min-height:40px;padding:0}
+.keepsake-story .story-note{color:#92977f;font-size:10px;margin-top:14px}
+.keepsake-story .story-bottom{color:#969b83;border-top:1px solid #dedfcd;font-size:9px;padding-top:18px;letter-spacing:.6px}
+@media(min-width:1450px){.app-shell main{padding-inline:38px}.app-shell .room-cover{aspect-ratio:1.5}.app-shell .studio-invitation{min-height:165px}.keepsake-collage{height:345px}.keepsake-photo-one{height:250px}.keepsake-photo-two{height:267px}}
+@media(min-width:980px) and (max-height:760px){.app-shell .keepsake-story{padding-top:25px;padding-bottom:19px;gap:15px}.keepsake-story-content h2{font-size:31px;margin:12px 0 10px}.keepsake-collage{height:245px;margin:10px 0 15px;max-width:390px}.keepsake-photo-one{height:179px}.keepsake-photo-two{height:186px}.keepsake-paper{inset:28px 20px 10px}.keepsake-story-content>p{font-size:11px}}
+@media(max-width:979px){.app-shell .keepsake-story{display:none}.app-shell .main-shell{max-width:560px}.app-shell .modal-backdrop,.app-shell .lightbox{width:min(560px,100vw)}}
+@media(max-width:480px){.app-shell .topbar{padding-inline:20px;height:62px;min-height:62px}.app-shell main{padding:18px 18px 26px}.app-shell .app-brand{font-size:21px}.app-shell .page-heading,.app-shell[lang=en] .page-heading{gap:8px;margin-bottom:20px}.app-shell h1,.app-shell[lang=en] h1{font-size:24px;letter-spacing:-.8px}.app-shell .page-heading p,.app-shell[lang=en] .page-heading p{font-size:11px}.app-shell .page-heading>.primary-button,.app-shell[lang=en] .page-heading>.primary-button{padding:9px 10px;font-size:10px;gap:4px;min-height:39px}.app-shell .page-heading>.primary-button svg{width:15px}.app-shell .eyebrow{font-size:8px;letter-spacing:1px}.app-shell .browse-ribbon{margin-bottom:16px}.studio-invitation{padding:18px;min-height:156px;border-radius:17px}.studio-invitation-copy{padding-right:70px}.studio-invitation-copy h2{font-size:18px;max-width:210px;word-break:keep-all}.studio-invitation-copy p{font-size:10px;max-width:185px}.studio-mini-strip{right:15px;width:76px;top:2px}.studio-mini-strip img{height:53px}.studio-invitation-spark{display:none}.workspace-guide-row{margin-bottom:19px}.workspace-guide-row button,.workspace-guide-row a{font-size:10px}.app-shell .groups-section{margin-bottom:20px}.app-shell .group-card{min-width:112px;min-height:76px;padding:10px}.app-shell .room-grid,.app-shell[lang=en] .room-grid{gap:14px 11px}.app-shell .room-cover{aspect-ratio:1.12}.app-shell .room-card{padding:6px 6px 0}.app-shell .room-card-body{padding:8px 3px 0 4px}.app-shell .room-card-title>button:first-child,.app-shell[lang=en] .room-card-title>button:first-child{font-size:12px}.app-shell .room-card-body>p{font-size:9px}.app-shell .room-metrics{font-size:9px}.app-shell .room-updated{font-size:8px}.app-shell .category-badge{font-size:8px;padding:4px 6px;top:7px;left:7px}.app-shell .folder-capture-button{font-size:9px}.app-shell .mobile-tabs{padding-inline:8px}.app-shell .folder-view-tabs button{font-size:11px}.app-shell .members-panel{padding:13px}.app-shell .modal{border-radius:22px;padding:28px 20px}}
+@media(max-width:350px){.app-shell main{padding-inline:13px}.app-shell h1,.app-shell[lang=en] h1{font-size:21px}.studio-invitation-copy h2{font-size:16px}.studio-invitation-copy{padding-right:65px}.app-shell .tab{padding-inline:11px}.app-shell .page-heading{flex-wrap:wrap}.app-shell .room-card-title>button:first-child{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.app-shell main{scroll-behavior:auto}.app-shell *{animation-duration:.01ms!important;transition-duration:.01ms!important}.app-shell .room-card:hover,.keepsake-collage:hover .keepsake-photo{transform:none}}
+
+/* Keep the collection in view, even on shorter phones. */
+.app-shell .studio-invitation{min-height:112px;padding:14px 18px}
+.app-shell .studio-invitation-copy h2{font-size:18px;margin:5px 0}
+.app-shell .studio-invitation-copy p{display:none}
+.app-shell .studio-invitation-copy button{margin-top:8px;padding:6px 10px;min-height:32px}
+.app-shell[data-browsing=true] .studio-invitation{margin-bottom:20px}
+.app-shell .studio-mini-strip{width:79px;right:23px;top:-28px}
+.app-shell .studio-mini-strip img{height:53px}
+.app-shell .studio-invitation-spark{right:115px;bottom:17px;width:20px}
+.app-shell .page-heading p,.app-shell .room-card-body>p,.app-shell[lang=en] .room-card-body>p{color:#707867}
+.app-shell .workspace-guide-row a,.app-shell .workspace-guide-row button{color:#69775e}
+.app-shell .group-card small{color:#6d7962}
+.app-shell .group-card{min-height:68px}
+.app-shell .group-list{padding-bottom:3px}
+.app-shell .room-metrics{color:#647359}
+.keepsake-story-content>p{color:#747e65}
+.keepsake-story .story-note{color:#727f62}
+.app-shell .album-people{border:1px solid #e5e6d9;border-radius:14px;background:#f6f6ee;margin:17px 0}
+.album-people summary{display:flex;align-items:center;gap:10px;cursor:pointer;padding:13px 15px;list-style:none;font-size:12px;font-weight:600;color:#5a6a4e}
+.album-people summary::-webkit-details-marker{display:none}
+.album-people summary>span:nth-child(2){flex:1}
+.album-people summary small{display:block;font-size:10px;font-weight:400;color:#7d846f;margin-top:3px}
+.album-people-icon{display:grid;place-items:center;width:33px;height:33px;background:#e8eddc;border-radius:11px}
+.album-people[open] summary>svg{transform:rotate(90deg)}
+.app-shell .album-people .members-panel{border:0;border-top:1px dashed #dedfce;margin:0;background:transparent;border-radius:0}
+.app-shell .memory-toolbar h2{font-size:17px;color:#41533d}
+.app-shell .memory-toolbar p{font-size:11px;color:#78816c;margin-bottom:0}
+.app-shell .record-date{display:table;background:#edf0e2;color:#7a8963;border-radius:8px;padding:7px 10px;font-size:10px;font-weight:600;margin-top:20px}
+.app-shell .record-card{border-color:#e7e3d6;border-radius:17px;background:#fffdf7;box-shadow:0 4px 13px #4a48250a}
+.app-shell .record-card>header{padding:16px 18px 13px;color:#8b907d;font-size:11px}
+.app-shell .record-card>h3{font-size:19px;letter-spacing:-.5px;margin:0 18px 10px;color:#42513d;line-height:1.6}
+.app-shell .record-body{padding:0 18px 12px;font-size:12px;line-height:1.9;color:#7b806e}
+.app-shell .bundle-grid{margin:0 14px 14px;gap:7px}
+.app-shell .bundle-grid .record-photo{border:4px solid #f4f0e5;border-radius:8px}
+.app-shell .record-actions{border-top:1px dashed #e6e3d5;background:#fbf9f0;color:#77846b}
+.app-shell .book-toolbar{background:#f4f3e9;padding:11px;border-radius:12px;font-size:11px}
+.app-shell .book-toolbar select{font-size:11px;border-radius:8px;padding:8px;background:#fffdf6}
+@media(max-width:480px){.app-shell .studio-invitation-copy h2{font-size:17px}.app-shell .studio-invitation-copy{padding-right:65px}.app-shell .studio-mini-strip{right:16px}.app-shell .page-heading{margin-bottom:18px}.app-shell .studio-invitation{min-height:110px}.app-shell .groups-section{margin-bottom:15px}.app-shell .groups-heading{margin-bottom:6px}.app-shell .filter-row{margin-bottom:15px}.app-shell .group-card{min-height:64px}.app-shell .group-list{padding-bottom:2px}}
