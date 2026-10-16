@@ -1,10 +1,13 @@
 import type {MemoryItem} from '../app/memories';
-export type BookPage={item:MemoryItem;photos:MemoryItem[];continued:boolean;stories:MemoryItem[]};
+export type BookPage={item:MemoryItem;photos:MemoryItem[];continued:boolean;stories:MemoryItem[];card?:boolean};
 export function buildBookPages(items:MemoryItem[],size:2|4|8):BookPage[]{
  const pages:BookPage[]=[];
  let pending:BookPage|undefined;
  const flush=()=>{if(pending){pages.push(pending);pending=undefined;}};
  for(const item of items){
+  // Studio records deliberately share their ID with the rendered card photo.
+  const card=item.kind==='record'?item.photos?.find(photo=>photo.id===item.id):undefined;
+  if(card){flush();pages.push({item,photos:[card],continued:false,stories:[item],card:true});continue;}
   const photos=item.kind==='photo'?[item]:item.photos||[];
   if(!photos.length){flush();pages.push({item,photos:[],continued:false,stories:[item]});continue;}
   photos.forEach((photo,index)=>{
