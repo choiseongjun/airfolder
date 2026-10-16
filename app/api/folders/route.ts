@@ -3,16 +3,23 @@ import { randomUUID } from 'node:crypto';
 import { ApiError, json, pool, safe, sameOrigin, transaction, uuid, viewer } from '@/lib/server';
 import { folderDates } from '@/lib/folder-dates';
 import { trackGrowth } from '@/lib/growth';
-import { deleteAlbum } from '@/lib/album-deletion';
-import { cleanupDeletedStorage } from '@/lib/storage-deletions';
+import { deleteAlbum, restoreAlbum } from '@/lib/album-deletion';
+export async function GET(){return safe(async()=>{
+  const who=await viewer();
+  const result=await pool().query(`SELECT id,name,deleted_at,deleted_at+interval '30 days' AS expires_at,deleted_at<=now()-interval '30 days' AS expired FROM snaproom.folders WHERE owner_id=$1 AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,[who]);
+  return Response.json({albums:result.rows},{headers:{'Cache-Control':'private, no-store'}});
+});}
+export async function PUT(request:Request){return safe(async()=>{
+  sameOrigin(request);const who=await viewer(),body=await json(request);
+  if(body.action!=='restore')throw new ApiError(400,'INVALID_ACTION');
+  await transaction(db=>restoreAlbum(db,uuid(body.id),who));return Response.json({ok:true});
+});}
 export async function DELETE(request: Request) {
   return safe(async () => {
     sameOrigin(request);
     const who = await viewer(), body = await json(request), id = uuid(body.id);
     if (body.confirm !== 'DELETE_ALBUM') throw new ApiError(400,'CONFIRMATION_REQUIRED');
     await transaction(db => deleteAlbum(db,id,who,body.name));
-    // The durable queue remains available to maintenance if storage is unavailable.
-    await cleanupDeletedStorage().catch(() => console.error('Album storage cleanup pending'));
     return Response.json({ok:true});
   });
 }
@@ -21,7 +28,7 @@ export async function PATCH(request:Request){return safe(async()=>{
   await transaction(async db=>{
     await db.query('SELECT id FROM snaproom.groups WHERE id=$1 FOR UPDATE',[groupId]);
     const member=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[groupId,who]);if(!member.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');
-    const f=await db.query('SELECT * FROM snaproom.folders WHERE id=$1 AND owner_id=$2 FOR UPDATE',[id,who]);if(!f.rowCount)throw new ApiError(403,'OWNER_REQUIRED');
+    const f=await db.query('SELECT * FROM snaproom.folders WHERE id=$1 AND owner_id=$2 AND deleted_at IS NULL FOR UPDATE',[id,who]);if(!f.rowCount)throw new ApiError(403,'OWNER_REQUIRED');
     if(f.rows[0].group_id===groupId)return;
     if(f.rows[0].group_id)throw new ApiError(409,'ALREADY_IN_GROUP');
     const others=await db.query(`SELECT EXISTS(SELECT 1 FROM snaproom.members WHERE folder_id=$1 AND viewer_id<>$2)

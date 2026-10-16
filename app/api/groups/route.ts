@@ -15,7 +15,7 @@ export async function GET(request:Request){await connection();return safe(async(
  }
  const result=await pool().query(`SELECT g.id,g.name,g.description,g.owner_id=$1 mine,m.muted,
  (SELECT count(*)::int FROM snaproom.group_members WHERE group_id=g.id) members,
- (SELECT count(*)::int FROM snaproom.folders WHERE group_id=g.id) albums
+ (SELECT count(*)::int FROM snaproom.folders WHERE group_id=g.id AND deleted_at IS NULL) albums
  FROM snaproom.groups g JOIN snaproom.group_members m ON m.group_id=g.id AND m.viewer_id=$1 ORDER BY g.created_at DESC`,[who]);
  return Response.json({groups:result.rows},{headers:{'Cache-Control':'private, no-store'}});
 });}

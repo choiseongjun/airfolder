@@ -63,7 +63,7 @@ export async function ensureSession(request: Request) {
   return id;
 }
 export async function requireMember(folder: string, who: string) {
-  const result = await pool().query('SELECT 1 FROM snaproom.members WHERE folder_id=$1 AND viewer_id=$2', [folder, who]);
+  const result = await pool().query('SELECT 1 FROM snaproom.members WHERE folder_id=$1 AND viewer_id=$2 AND snaproom.album_active(folder_id)', [folder, who]);
   if (!result.rowCount) throw new ApiError(404, 'FOLDER_NOT_FOUND');
 }
 export async function safe(work: () => Promise<Response>) {

@@ -16,7 +16,7 @@ export async function linkedPhotos(token:string,id?:string){
  LEFT JOIN snaproom.records r ON r.id=l.record_id
  LEFT JOIN snaproom.record_photos rp_order ON rp_order.record_id=l.record_id AND rp_order.photo_id=p.id
  JOIN snaproom.members m ON m.folder_id=p.folder_id AND m.viewer_id=l.owner_id
- WHERE l.token_hash=$1 AND l.revoked_at IS NULL AND l.expires_at>now()
+ WHERE snaproom.album_active(p.folder_id) AND l.token_hash=$1 AND l.revoked_at IS NULL AND l.expires_at>now()
  AND p.owner_id=l.owner_id AND p.shared AND snaproom.interaction_allowed(p.owner_id,$3)
  AND (l.record_id IS NULL OR EXISTS(SELECT 1 FROM snaproom.records r JOIN snaproom.record_photos rp ON rp.record_id=r.id AND rp.photo_id=p.id WHERE r.id=l.record_id AND r.shared AND ((l.access='public' AND cardinality(r.recipients)=0) OR (l.access='members' AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$3)))))
  AND ((l.access='public' AND cardinality(p.recipients)=0) OR

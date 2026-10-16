@@ -9,7 +9,7 @@ export async function notifySharedPhotos(folderIds: string[], actor: string, rec
     const {rows}=await pool().query(`SELECT DISTINCT d.token,d.viewer_id FROM snaproom.push_devices d
       JOIN snaproom.members m ON m.viewer_id=d.viewer_id AND m.folder_id=$1
       JOIN snaproom.sessions s ON s.token_hash=d.session_hash AND s.expires_at>now()
-      JOIN snaproom.folders f ON f.id=m.folder_id
+      JOIN snaproom.folders f ON f.id=m.folder_id AND f.deleted_at IS NULL
       LEFT JOIN snaproom.group_members gm ON gm.group_id=f.group_id AND gm.viewer_id=d.viewer_id
       WHERE snaproom.interaction_allowed($2,d.viewer_id) AND NOT COALESCE(gm.muted,false) AND EXISTS(SELECT 1 FROM snaproom.notifications n LEFT JOIN snaproom.photos p ON p.id=n.photo_id LEFT JOIN snaproom.records r ON r.id=n.record_id WHERE n.viewer_id=d.viewer_id AND n.folder_id=$1 AND n.actor_id=$2 AND n.pushed_at IS NULL AND n.created_at>now()-interval '1 day' AND ((p.id IS NOT NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,d.viewer_id)) OR (r.id IS NOT NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,d.viewer_id))))
       AND NOT EXISTS(SELECT 1 FROM snaproom.notifications n WHERE n.viewer_id=d.viewer_id AND n.folder_id=$1 AND n.pushed_at>now()-interval '5 minutes')

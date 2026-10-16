@@ -3,7 +3,7 @@ import {ApiError,json,pool,safe,sameOrigin,uuid,viewer} from '@/lib/server';
 export async function GET(){await connection();return safe(async()=>{
  const who=await viewer();
  const result=await pool().query(`SELECT n.id,n.folder_id,n.kind,n.created_at,n.read_at,f.name FROM snaproom.notifications n
- JOIN snaproom.folders f ON f.id=n.folder_id JOIN snaproom.members m ON m.folder_id=f.id AND m.viewer_id=$1
+ JOIN snaproom.folders f ON f.deleted_at IS NULL AND f.id=n.folder_id JOIN snaproom.members m ON m.folder_id=f.id AND m.viewer_id=$1
  LEFT JOIN snaproom.photos p ON p.id=n.photo_id LEFT JOIN snaproom.records r ON r.id=n.record_id
  WHERE n.viewer_id=$1 AND snaproom.interaction_allowed(n.actor_id,$1) AND n.created_at>now()-interval '90 days'
  AND ((p.id IS NOT NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)) OR (r.id IS NOT NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$1)))

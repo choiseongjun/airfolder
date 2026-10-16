@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         if (existing.rows[0].owner_id!==who || existing.rows[0].folder_id!==folder) throw new ApiError(409,'PHOTO_CONFLICT');
         return false;
       }
-      const membership = await db.query('SELECT 1 FROM snaproom.members WHERE folder_id=$1 AND viewer_id=$2 FOR SHARE',[folder,who]);
+      const membership = await db.query('SELECT 1 FROM snaproom.members WHERE folder_id=$1 AND viewer_id=$2 AND snaproom.album_active(folder_id) FOR SHARE',[folder,who]);
       if (!membership.rowCount) throw new ApiError(404,'FOLDER_NOT_FOUND');
       await checkStorageQuota(db,who,upload.size+(preview?.length??Math.max(upload.size,1048576)));
       const uploaded = await storage().upload(objectPath,createReadStream(upload.path),{contentType:type.mime,upsert:true});
@@ -79,7 +79,7 @@ export async function PATCH(request: Request) {
     const ids = [...new Set(body.ids.map(uuid))], recipients = parseRecipients(body.recipients,body.shared);
     const folders: string[] = [];
     await transaction(async db => {
-      const rows = await db.query('SELECT p.id,p.folder_id FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id AND m.viewer_id=$2 WHERE p.id=ANY($1::uuid[]) AND p.owner_id=$2 FOR UPDATE OF p',[ids,who]);
+      const rows = await db.query('SELECT p.id,p.folder_id FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id AND m.viewer_id=$2 WHERE snaproom.album_active(p.folder_id) AND p.id=ANY($1::uuid[]) AND p.owner_id=$2 FOR UPDATE OF p',[ids,who]);
       if (rows.rowCount!==ids.length) throw new ApiError(403,'PHOTO_NOT_OWNED');
       folders.push(...rows.rows.map(p=>p.folder_id));
       await checkRecipients(db,folders,recipients);

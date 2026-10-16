@@ -18,12 +18,25 @@ test('album deletion rejects non-owner, missing album and wrong confirmation nam
   await assert.rejects(mod.exports.deleteAlbum(db,'album',who,name),e=>e.status===status);assert.equal(db.writes.length,0);
  }
 });
-test('originals and previews are durably queued before album removal',async()=>{
+test('moving to trash retains originals and sets an idempotent retention timestamp',async()=>{
  const db=database();await mod.exports.deleteAlbum(db,'album','owner','Trip');
- assert.match(db.writes[0].sql,/storage_deletions/);assert.deepEqual(db.writes[0].params,[['a','b','c']]);
- assert.match(db.writes[1].sql,/DELETE FROM snaproom.folders/);assert.deepEqual(db.writes[1].params,['album','owner']);
+ assert.equal(db.writes.length,1);assert.match(db.writes[0].sql,/deleted_at=COALESCE\(deleted_at,now\(\)\)/);
+ assert.equal(db.writes.some(w=>/DELETE|storage_deletions/.test(w.sql)),false);
 });
-test('failed cleanup enqueue does not delete album',async()=>{
- const db=database('owner',true,true);await assert.rejects(mod.exports.deleteAlbum(db,'album','owner','Trip'));
- assert.equal(db.writes.some(w=>w.sql.startsWith('DELETE')),false);
+test('restore is owner-scoped and enforces the 30 day cutoff on the server',async()=>{
+ let query;const db={query:async(sql,params)=>{query={sql,params};return {rowCount:0};}};
+ await assert.rejects(mod.exports.restoreAlbum(db,'album','guest'),e=>e.status===404);
+ assert.match(query.sql,/owner_id=\$2/);assert.match(query.sql,/deleted_at>now\(\)-interval '30 days'/);assert.deepEqual(query.params,['album','guest']);
+});
+test('purge skips albums which are not expired, including restored albums',async()=>{
+ const queries=[];await mod.exports.purgeExpiredAlbum({query:async sql=>{queries.push(sql);return {rowCount:0};}},'album');
+ assert.equal(queries.length,1);assert.match(queries[0],/deleted_at<=now\(\)-interval '30 days'/);
+});
+test('expired album is queued before deletion and queue failures preserve album',async()=>{
+ for(const fail of [false,true]){
+  const db=database('owner',true,fail);const query=db.query;db.query=async(sql,p)=>sql.startsWith('SELECT id')?{rowCount:1}:query(sql,p);
+  if(fail)await assert.rejects(mod.exports.purgeExpiredAlbum(db,'album'));else await mod.exports.purgeExpiredAlbum(db,'album');
+  assert.match(db.writes[0].sql,/storage_deletions/);assert.deepEqual(db.writes[0].params,[['a','b','c']]);
+  assert.equal(db.writes.some(w=>w.sql.startsWith('DELETE')),!fail);
+ }
 });

@@ -10,7 +10,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     const sharedToken=query.get('share');
     const who=sharedToken?null:await viewer();
     const rows = sharedToken?{rows:await linkedPhotos(sharedToken,id),rowCount:0}:await pool().query(`SELECT p.* FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id
-      WHERE p.id=$1 AND m.viewer_id=$2 AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)`,[id,who]);
+      WHERE snaproom.album_active(p.folder_id) AND p.id=$1 AND m.viewer_id=$2 AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)`,[id,who]);
     if (!rows.rows.length) throw new ApiError(404,'PHOTO_NOT_FOUND');
     const authorized=performance.now();
     const media = rows.rows[0], original = query.get('original')==='1'||query.get('download')==='1';
