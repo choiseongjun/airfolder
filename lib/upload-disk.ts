@@ -11,7 +11,8 @@ import {ApiError} from './server';
 export async function uploadDisk(request: Request, limit: number) {
   if(!request.body)throw new ApiError(400,'INVALID_UPLOAD');
   const dir=await mkdtemp(join(tmpdir(),'memolumi-upload-')), path=join(dir,'original');
-  const cleanup=()=>rm(dir,{recursive:true,force:true});
+  // A locked handle (e.g. Windows holding the file briefly after a read stream closes) must never mask an otherwise-successful response.
+  const cleanup=()=>rm(dir,{recursive:true,force:true}).catch(()=>{});
   const fields:Record<string,string>={};let filename='',seen=false,invalid=false,oversize=false,total=0;
   const writes:Promise<void>[]=[];
   try {
