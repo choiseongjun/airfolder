@@ -10,6 +10,7 @@ import Link from "next/link";
 import PolicyGate from '../policy-gate';
 import {BlockedUsers} from '../safety-actions';
 import EmailLogin from "../email-login";
+import AccountNudge from "../account-nudge";
 import MemoryStudio from "../memory-studio";
 import { ArrowDownToLine, ArrowLeft, ArrowRight, Bell, BookOpen, Camera, Heart, Check, ChevronRight, CircleHelp, CloudCheck, Copy, Globe2, FolderOpen, Grid2X2, ImagePlus, Images, Link2, List, LockKeyhole, MoreHorizontal, Plus, Search, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 import QRCode from "qrcode";
@@ -366,7 +367,8 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
       <button onClick={()=>browsing?window.location.assign(`/?lang=${locale}&login=1`):setModal("profile")}><span className="tab-account">{!ready ? <span className="activity-spinner"/> : account?.name.slice(0,1).toUpperCase() || "M"}</span><span>{t("내 계정")}</span></button>
     </nav>
     </div>
-    {studio&&<MemoryStudio ko={locale==="ko"} albums={rooms} photos={photos} initialAlbum={activeRoom} onClose={closeStudio} onSaved={id=>{closeStudio();void refreshWorkspace().then(()=>{setActiveRoom(id);setPage("rooms");setFolderView("book");setDraftVersion(v=>v+1);}).catch(()=>setServerError(true));}}/>}
+    {ready&&!browsing&&!account&&photos.some(p=>p.mine!==false&&p.uploadStatus==="uploaded")&&<AccountNudge ko={locale==="ko"} viewerId={viewerId} onConnect={()=>setModal("profile")}/>}
+    {studio&&<MemoryStudio ko={locale==="ko"} guest={!account} onConnect={()=>{closeStudio();setModal("profile");}} albums={rooms} photos={photos} initialAlbum={activeRoom} onClose={closeStudio} onSaved={id=>{closeStudio();void refreshWorkspace().then(()=>{setActiveRoom(id);setPage("rooms");setFolderView("book");setDraftVersion(v=>v+1);}).catch(()=>setServerError(true));}}/>}
     {selected.length > 0 && <div className="selection-bar"><button onClick={() => setSelected([])} aria-label={t("선택 해제")}><X size={17}/></button><strong>{formatCount(locale, selected.length, "selected")}</strong><button disabled={new Set(photos.filter(p=>selected.includes(p.id)).map(p=>p.roomId)).size!==1} onClick={()=>{const p=photos.find(p=>selected.includes(p.id));if(p)beginStory(selected,p.roomId);}}>{locale==="ko"?"기록으로 묶기":"Create story"}</button><button onClick={() => { setAudience("방 전체"); setRecipients([]); setModal("share"); }}><Users size={16}/>{t("공개 설정")}</button><button onClick={async () => { for (const p of photos.filter(p => selected.includes(p.id))) await download(p); }}><ArrowDownToLine size={16}/>{t("다운로드")}</button></div>}
     {toast && <div className="toast" role="status"><Check size={17}/>{t(toast)}</div>}
     {saveError && <div className="save-error" role="alert">{t("기기에 저장하지 못했어요.")}<button onClick={() => saveWorkspace(rooms, photos, viewerId).then(() => setSaveError(false)).catch(() => setToast("저장공간을 확인해 주세요"))}>{t("다시 시도")}</button></div>}
