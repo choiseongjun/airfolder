@@ -1,0 +1,8 @@
+.story-ticket-backdrop{position:fixed;inset:0;background:#283d35b8;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.story-ticket{position:relative;max-width:360px;width:100%;max-height:92vh;overflow:auto;background:#fbf9f3;border-radius:22px;padding:24px;color:#30473b;text-align:center}
+.story-ticket h2{display:flex;align-items:center;justify-content:center;gap:8px;font-size:17px;margin:0 0 14px}
+.story-ticket-close{position:absolute;top:14px;right:14px;background:none;border:0;cursor:pointer;color:#30473b}
+.story-ticket canvas{width:100%;height:auto;border-radius:12px;box-shadow:0 10px 25px #30473b25;opacity:0;transition:opacity .2s}
+.story-ticket canvas.is-ready{opacity:1}
+.story-ticket p[role=status],.story-ticket p[role=alert]{font-size:13px;color:#788274;margin:14px 0}
+.story-ticket .primary-button{margin-top:16px}

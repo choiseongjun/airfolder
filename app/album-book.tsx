@@ -1,11 +1,12 @@
 "use client";
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
-import {ArrowLeft,ArrowRight,BookOpen,Maximize2,X,Flower2,Heart,Sparkles,ChevronDown,Check,ImagePlus} from 'lucide-react';
+import {ArrowLeft,ArrowRight,BookOpen,Maximize2,X,Flower2,Heart,Sparkles,ChevronDown,Check,ImagePlus,Ticket} from 'lucide-react';
 import {api} from '@/lib/client-api';
 import {buildBookPages,findBookPage} from '@/lib/book-pages';
 import type {MemoryItem} from './memories';
 import MediaView from './media-view';
+import StoryTicket from './story-ticket';
 import {useBookPreviews} from './use-book-previews';
 import './album-book.css';
 import './album-templates.css';
@@ -42,6 +43,8 @@ export default function AlbumBook({folderId,title,description,locale,onPhoto,onA
  },[folderId,retry]);
  const pages=useMemo(()=>buildBookPages(items,pageSize),[items,pageSize]);
  const current=Math.min(page,pages.length);
+ const [ticket,setTicket]=useState(false);
+ const totalPhotos=useMemo(()=>pages.reduce((n,p)=>n+p.photos.length,0),[pages]);
  const previewSources=useMemo(()=>{
   const indices=[current,current+1,current+2,current-1,...(flip?[flip.from]:[])];
   return [...new Set(indices.flatMap(index=>index===0?pages.find(p=>p.photos.length)?.photos.slice(0,1)||[]:pages[index-1]?.photos||[]).filter(p=>p.mediaType!=='video'&&p.src).map(p=>p.src!))];
@@ -57,7 +60,7 @@ export default function AlbumBook({folderId,title,description,locale,onPhoto,onA
  if(error)return <div role="alert" className="album-book-message">{ko?'앨범을 불러오지 못했어요.':'Could not load this album.'} <button onClick={()=>{setError(false);setRetry(n=>n+1);}}>{ko?'다시 시도':'Retry'}</button></div>;
  if(!loaded)return <div className="book-opening" role="status" aria-live="polite"><div className="book-opening-art" aria-hidden="true"><i/><i/><i/><Heart size={23}/></div><strong>{ko?'우리의 앨범책을 펼치고 있어요':'Opening your little book'}</strong><p>{ko?'사진과 이야기를 한 장씩 모으는 중이에요.':'Gathering the photos and stories, page by page.'}</p><span className="book-loading-dots" aria-hidden="true"><i/><i/><i/></span></div>;
  const content=<section ref={reader} className={`album-book physical-book template-${template} ${expanded?"book-expanded":""}`} role={expanded?"dialog":undefined} aria-modal={expanded||undefined} aria-label={ko?'앨범책':'Photo book'} tabIndex={0} onKeyDown={e=>{if(expanded&&e.key==='Tab'){const nodes=Array.from(reader.current?.querySelectorAll<HTMLElement>('button:not(:disabled),select,[tabindex="0"]')||[]).filter(n=>!n.closest('[inert]'));const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&(document.activeElement===first||document.activeElement===reader.current)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}if(e.key==='Escape'&&expanded){e.stopPropagation();setExpanded(false);return;}if((e.target as HTMLElement).matches('select,input,textarea'))return;if(e.key==='ArrowRight'){e.preventDefault();turn(current+1);}if(e.key==='ArrowLeft'){e.preventDefault();turn(current-1);}}}>
-  <div className="book-toolbar"><button className="book-expand" onClick={()=>{setFlip(null);setExpanded(!expanded);}}>{expanded?<X size={18}/>:<Maximize2 size={18}/>}{expanded?(ko?"책 닫기":"Close book"):(ko?"책 크게 펼치기":"Open full book")}</button><span><BookOpen size={17}/>{ko?'우리의 앨범책':'Our photo book'}</span>{onAdd&&<button className="book-add-photo" onClick={()=>{setExpanded(false);onAdd();}}><ImagePlus size={16}/>{ko?'사진 추가':'Add photos'}</button>}<button className="book-page-trigger" aria-expanded={pagePicker} aria-controls="book-page-picker" onClick={()=>setPagePicker(v=>!v)}><span><small>{ko?'지금 펼친 페이지':'YOU ARE READING'}</small><strong>{current===0?(ko?'표지':'The cover'):`${String(current).padStart(2,'0')} / ${pages.length}`}</strong></span><ChevronDown size={17}/></button></div>
+  <div className="book-toolbar"><button className="book-expand" onClick={()=>{setFlip(null);setExpanded(!expanded);}}>{expanded?<X size={18}/>:<Maximize2 size={18}/>}{expanded?(ko?"책 닫기":"Close book"):(ko?"책 크게 펼치기":"Open full book")}</button><span><BookOpen size={17}/>{ko?'우리의 앨범책':'Our photo book'}</span>{onAdd&&<button className="book-add-photo" onClick={()=>{setExpanded(false);onAdd();}}><ImagePlus size={16}/>{ko?'사진 추가':'Add photos'}</button>}{totalPhotos>=4&&<button className="book-add-photo" onClick={()=>setTicket(true)}><Ticket size={16}/>{ko?'인스타 스토리용 티켓 뽑기':'Make a story ticket'}</button>}<button className="book-page-trigger" aria-expanded={pagePicker} aria-controls="book-page-picker" onClick={()=>setPagePicker(v=>!v)}><span><small>{ko?'지금 펼친 페이지':'YOU ARE READING'}</small><strong>{current===0?(ko?'표지':'The cover'):`${String(current).padStart(2,'0')} / ${pages.length}`}</strong></span><ChevronDown size={17}/></button></div>
   {pages.some(p=>!p.card&&p.photos.length>0)&&!pages[current-1]?.card?<div className="book-density" role="group" aria-label={ko?'페이지당 사진 수':'Photos per page'}><span>{ko?'한 페이지에':'Per page'}</span>{([2,4,8] as const).map(size=><button key={size} aria-pressed={pageSize===size} onClick={()=>changePageSize(size)}>{ko?`${size}장씩`:`${size} photos`}</button>)}<small>{ko?'일반 사진만 묶어 보여줘요. 완성된 카드는 한 장씩 펼쳐요.':'Applies to individual photos. Finished cards keep their own layout.'}</small></div>:<p className="book-hint">{ko?"완성된 추억 카드는 한 장씩 크게 펼쳐요.":"Finished memory cards are displayed one per page."}</p>}
   {pagePicker&&<div id="book-page-picker" className="book-page-picker"><header><div><strong>{ko?'어느 순간을 펼쳐볼까요?':'Find a little moment'}</strong><p>{ko?'사진을 보고 원하는 페이지로 바로 이동하세요.':'Choose a page by its photo.'}</p></div><button aria-label={ko?'페이지 목록 닫기':'Close page list'} onClick={()=>setPagePicker(false)}><X size={18}/></button></header><div className="book-page-list">{[null,...pages].map((entry,i)=><button key={i} className={current===i?'is-current':''} aria-current={current===i?'page':undefined} disabled={!!flip} onClick={()=>{turn(i);setPagePicker(false);}}><span className="book-page-thumb">{entry?.photos[0]?.src?<MediaView src={entry.photos[0].src} name={entry.item.title||entry.item.day} mediaType={entry.photos[0].mediaType}/>:<BookOpen size={26}/>}<b>{i===0?(ko?'표지':'COVER'):String(i).padStart(2,'0')}</b>{current===i&&<Check size={16}/>}</span><strong>{entry?(entry.item.title||entry.item.day):title}</strong></button>)}</div></div>}
   <div className="template-bar"><button className="template-toggle" aria-expanded={choosing} onClick={()=>setChoosing(!choosing)}><Sparkles size={16}/>{ko?'앨범 템플릿':'Album templates'}<span>{ko?templates.find(t=>t.id===template)!.ko:templates.find(t=>t.id===template)!.en}</span></button><small>{ko?'사진은 그대로, 분위기만 새롭게':'Same memories, a different mood'}</small></div>
@@ -72,5 +75,5 @@ export default function AlbumBook({folderId,title,description,locale,onPhoto,onA
   <nav className="book-controls" aria-label={ko?'앨범책 넘기기':'Turn book pages'}><button disabled={current===0||!!flip} onClick={()=>turn(current-1)}><ArrowLeft size={17}/>{ko?'이전':'Previous'}</button><span aria-live="polite">{current} / {pages.length}</span><button disabled={current===pages.length||!!flip} onClick={()=>turn(current+1)}>{ko?'다음':'Next'}<ArrowRight size={17}/></button></nav>
   <p className="book-hint">{ko?'버튼이나 좌우 방향키로 책장을 넘기세요. 모바일에서는 옆으로 밀어보세요.':'Turn pages with the buttons or arrow keys. Swipe on mobile.'}</p>
  </section>;
- return expanded?createPortal(content,document.body):content;
+ return <>{expanded?createPortal(content,document.body):content}{ticket&&createPortal(<StoryTicket folderId={folderId} title={title} ko={ko} onClose={()=>setTicket(false)}/>,document.body)}</>;
 }
