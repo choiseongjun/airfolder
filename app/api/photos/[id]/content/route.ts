@@ -7,9 +7,12 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   return safe(async () => {
     const started=performance.now();
     const id = uuid((await context.params).id), query = new URL(request.url).searchParams;
-    const sharedToken=query.get('share');
-    const who=sharedToken?null:await viewer();
-    const rows = sharedToken?{rows:await linkedPhotos(sharedToken,id),rowCount:0}:await pool().query(`SELECT p.* FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id
+    const sharedToken=query.get('share'),wallView=query.get('wall')==='1';
+    const who=sharedToken||wallView?null:await viewer();
+    const rows = sharedToken?{rows:await linkedPhotos(sharedToken,id),rowCount:0}
+      :wallView?await pool().query(`SELECT p.* FROM snaproom.photos p JOIN snaproom.wall_pins w ON w.photo_id=p.id
+      WHERE p.id=$1 AND p.shared AND cardinality(p.recipients)=0 AND snaproom.album_active(p.folder_id)`,[id])
+      :await pool().query(`SELECT p.* FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id
       WHERE snaproom.album_active(p.folder_id) AND p.id=$1 AND m.viewer_id=$2 AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)`,[id,who]);
     if (!rows.rows.length) throw new ApiError(404,'PHOTO_NOT_FOUND');
     const authorized=performance.now();
