@@ -95,7 +95,7 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
   const [studio,setStudio]=useState(false);
   function openStudio(){if(browsing){window.location.href=`/?lang=${locale}&studio=1`;return;}const url=new URL(window.location.href);url.searchParams.set("studio","1");window.history.pushState({...window.history.state,studio:true},"",url);setStudio(true);}
   function closeStudio(){setStudio(false);const url=new URL(window.location.href);url.searchParams.delete("studio");window.history.replaceState(window.history.state,"",url);}
-  useEffect(()=>{const sync=()=>setStudio(new URLSearchParams(window.location.search).get("studio")==="1");window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
+  useEffect(()=>{const sync=()=>setStudio(new URLSearchParams(window.location.search).get("studio")==="1");const timer=window.setTimeout(sync,0);window.addEventListener("popstate",sync);return()=>{window.clearTimeout(timer);window.removeEventListener("popstate",sync);};},[]);
   const [nativeApp,setNativeApp]=useState(false),[incomingCount,setIncomingCount]=useState(0);
   const [activeGroup,setActiveGroup]=useState<string|null>(null);
   const [albumStart,setAlbumStart]=useState(""),[albumEnd,setAlbumEnd]=useState("");
