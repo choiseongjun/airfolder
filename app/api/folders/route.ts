@@ -3,6 +3,19 @@ import { randomUUID } from 'node:crypto';
 import { ApiError, json, pool, safe, sameOrigin, transaction, uuid, viewer } from '@/lib/server';
 import { folderDates } from '@/lib/folder-dates';
 import { trackGrowth } from '@/lib/growth';
+import { deleteAlbum } from '@/lib/album-deletion';
+import { cleanupDeletedStorage } from '@/lib/storage-deletions';
+export async function DELETE(request: Request) {
+  return safe(async () => {
+    sameOrigin(request);
+    const who = await viewer(), body = await json(request), id = uuid(body.id);
+    if (body.confirm !== 'DELETE_ALBUM') throw new ApiError(400,'CONFIRMATION_REQUIRED');
+    await transaction(db => deleteAlbum(db,id,who,body.name));
+    // The durable queue remains available to maintenance if storage is unavailable.
+    await cleanupDeletedStorage().catch(() => console.error('Album storage cleanup pending'));
+    return Response.json({ok:true});
+  });
+}
 export async function PATCH(request:Request){return safe(async()=>{
   sameOrigin(request);const who=await viewer(),body=await json(request),id=uuid(body.id),groupId=uuid(body.groupId);await requireTerms(who);
   await transaction(async db=>{

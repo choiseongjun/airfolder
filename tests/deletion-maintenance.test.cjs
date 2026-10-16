@@ -6,6 +6,7 @@ const { timingSafeEqual } = require('node:crypto');
 function endpoint(env, configured = false) {
   let accessed = false;
   const imports = {
+    '@/lib/storage-deletions': { cleanupDeletedStorage: async () => {} },
     'node:crypto': { timingSafeEqual },
     '@/lib/admin': { adminSafe: fn => fn() },
     '@/lib/account-deletions': { deletionConfiguration: () => ({ firebase: configured }), runAccountDeletions: async () => { accessed = true; return { completed: 0, failed: 0, pending: 0 }; } },
