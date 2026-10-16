@@ -9,7 +9,7 @@ import MediaView from './media-view';
 import {useBookPreviews} from './use-book-previews';
 import './album-book.css';
 import './album-templates.css';
-const templates=[{id:'scrapbook',ko:'추억 스크랩북',en:'Scrapbook',hintKo:'테이프와 작은 스티커',hintEn:'Tape & little keepsakes'},{id:'minimal',ko:'화이트 갤러리',en:'White gallery',hintKo:'여백과 사진에 집중',hintEn:'Space for your photos'},{id:'film',ko:'필름 아카이브',en:'Film archive',hintKo:'깊은 색감과 필름 프레임',hintEn:'Dark pages & film frames'},{id:'diary',ko:'피치 다이어리',en:'Peach diary',hintKo:'체크 종이와 다정한 기록',hintEn:'Gingham & gentle notes'}] as const;
+export const templates=[{id:'scrapbook',ko:'추억 스크랩북',en:'Scrapbook',hintKo:'테이프와 작은 스티커',hintEn:'Tape & little keepsakes'},{id:'minimal',ko:'화이트 갤러리',en:'White gallery',hintKo:'여백과 사진에 집중',hintEn:'Space for your photos'},{id:'film',ko:'필름 아카이브',en:'Film archive',hintKo:'깊은 색감과 필름 프레임',hintEn:'Dark pages & film frames'},{id:'diary',ko:'피치 다이어리',en:'Peach diary',hintKo:'체크 종이와 다정한 기록',hintEn:'Gingham & gentle notes'}] as const;
 type TemplateId=typeof templates[number]['id'];
 
 export default function AlbumBook({folderId,title,description,locale,onPhoto,onAdd}:{folderId:string;title:string;description:string;locale:'ko'|'en';onPhoto:(item:MemoryItem)=>void;onAdd?:()=>void}){
