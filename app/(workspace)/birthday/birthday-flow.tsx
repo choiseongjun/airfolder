@@ -52,12 +52,11 @@ export default function BirthdayFlow({ locale }: { locale: string }) {
     if (navigator.share) { try { await navigator.share({ text: message }); return; } catch { return; } }
     await copy(message, 'message');
   }
-  return <main className="growth-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
-    <section className="growth-card bday-card">
-      <div className="growth-icon">{invite ? <Check /> : <Cake />}</div>
-      <p className="growth-eyebrow">{invite ? 'SEND IT TO THE GROUP CHAT' : 'A BIRTHDAY ALBUM, FILLED BY FRIENDS'}</p>
-      <h1>{invite ? text('이제 단톡방에 보내세요', 'Now send it to the group chat') : text('친구 생일, 앨범으로 선물해요', 'Give a birthday album')}</h1>
-      <p className="growth-lead">{invite ? text('친구들이 링크를 열어 사진 한 장과 한마디를 남기면, 버스데이 테마로 자동으로 꾸며져요. 앱 설치도 가입도 필요 없어요.', `Friends open the link and add a photo and a note. It decorates itself in the Birthday Film theme. No app or sign-up needed.`) : text('친구들이 사진 한 장, 한마디씩 채우면 생일날 예쁜 앨범 한 권이 돼요. 꾸미기는 자동이에요.', 'Friends each add a photo and a note, and it becomes a pretty album by the big day. Decorating is automatic.')}</p>
+  return <main className="growth-page bday-flow"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
+    <section className="bday-sheet bday-card">
+      <p className="bday-kicker">{invite ? <><Check size={14} />{text('앨범이 준비됐어요', 'Your album is ready')}</> : <><Cake size={14} />{text('생일 앨범', 'Birthday album')}</>}</p>
+      <h1 className="bday-heading">{invite ? text('이제 단톡방에 보내세요', 'Now send it to the group chat') : text('친구 생일, 앨범으로 선물해요', 'Give a birthday album')}</h1>
+      <p className="bday-lead">{invite ? text('친구들이 링크를 열어 사진 한 장과 한마디를 남기면 자동으로 꾸며져요. 앱 설치도 가입도 필요 없어요.', 'Friends open the link and add a photo and a note. It decorates itself. No app or sign-up needed.') : text('친구들이 사진 한 장, 한마디씩 채우면 생일날 예쁜 앨범 한 권이 돼요.', 'Friends each add a photo and a note, and it becomes a pretty album by the big day.')}</p>
 
       <div className="ta-album theme-birthday bday-preview" aria-hidden="true">
         <div className="ta-garland">{Array.from({ length: 9 }, (_, i) => <i key={i} />)}</div>
@@ -67,22 +66,22 @@ export default function BirthdayFlow({ locale }: { locale: string }) {
       </div>
 
       {error && <p className="growth-error" role="alert">{error}</p>}
-      {!invite ? <form className="growth-form" onSubmit={create}>
-        <label className="growth-field">{text('누구의 생일인가요?', 'Whose birthday is it?')}<input required maxLength={30} disabled={Boolean(album)} value={hero} onChange={e => setHero(e.target.value)} placeholder={text('예: 지수', 'e.g. Jisoo')} /></label>
+      {!invite ? <form className="bday-step" onSubmit={create}>
+        <label className="growth-field">{text('누구의 생일인가요?', 'Whose birthday is it?')}<input required maxLength={30} disabled={Boolean(album)} value={hero} onChange={e => setHero(e.target.value)} placeholder={text('예: 지수', 'e.g. Jisoo')} enterKeyHint="next" /></label>
         <label className="growth-field">{text('생일 날짜', 'Birthday')}<input type="date" required min={localDay()} disabled={Boolean(album)} value={day} onChange={e => setDay(e.target.value)} /></label>
         {left > INVITE_DAYS && <p className="growth-note">{text(`초대 링크는 ${INVITE_DAYS}일간 유효해요. 생일이 더 남았다면 나중에 앨범에서 새 링크를 만들 수 있어요.`, `Invite links last ${INVITE_DAYS} days. You can make a fresh link from the album later.`)}</p>}
         {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
-        <button className="growth-button" disabled={!ready || busy || !name || !day || (!accepted && !consent)}>{busy ? text('준비하고 있어요…', 'Preparing…') : text('생일 앨범 만들기', 'Create the birthday album')}<ArrowRight size={18} /></button>
         <p className="growth-note">{text('주인공 몰래 만들어도 돼요. 생일날 같은 링크를 주인공에게 보내면 완성된 앨범을 볼 수 있어요.', 'Keep it a surprise. On the day, send the same link to the birthday person so they can open the finished album.')}</p>
-      </form> : <>
+        <div className="bday-dock"><button className="growth-button" disabled={!ready || busy || !name || !day || (!accepted && !consent)}>{busy ? text('준비하고 있어요…', 'Preparing…') : !name ? text('주인공 이름을 적어주세요', 'Add their name first') : text(`${title} 앨범 만들기`, `Create ${title} album`)}<ArrowRight size={18} /></button></div>
+      </form> : <div className="bday-step">
         <div className="bday-message"><span>{text('단톡방에 보낼 메시지', 'Message for the group chat')}</span><p>{message}</p></div>
-        <div className="growth-links">
-          <button className="growth-button" onClick={() => void share()}><Send size={17} />{text('단톡방에 보내기', 'Send to the group')}</button>
-          <button className="growth-button secondary" onClick={() => void copy(message, 'message')}><Copy size={17} />{text('메시지 복사', 'Copy message')}</button>
-          <button className="growth-button secondary" onClick={() => void copy(invite, 'link')}><Copy size={17} />{text('링크만 복사', 'Copy link only')}</button>
+        <div className="bday-copy-row">
+          <button onClick={() => void copy(message, 'message')}><Copy size={15} />{copied === 'message' ? text('복사됨', 'Copied') : text('메시지 복사', 'Copy message')}</button>
+          <button onClick={() => void copy(invite, 'link')}><Copy size={15} />{copied === 'link' ? text('복사됨', 'Copied') : text('링크만 복사', 'Copy link')}</button>
         </div>
-        <p className="growth-note" role="status">{copied === 'message' ? text('메시지를 복사했어요. 단톡방에 붙여넣으세요. ', 'Message copied. Paste it in the group chat. ') : copied === 'link' ? text('링크를 복사했어요. ', 'Link copied. ') : ''}{text(`링크는 ${INVITE_DAYS}일간 유효해요. 생일날 같은 링크를 주인공에게 보내 주세요.`, `The link lasts ${INVITE_DAYS} days. On the day, send the same link to the birthday person.`)}</p>
-        <div className="growth-links"><Link className="growth-button secondary" href={`/?album=${album}&view=theme&lang=${locale}`}>{text('앨범 미리보기', 'Preview the album')}<ArrowRight size={18} /></Link></div>
-      </>}
+        <p className="growth-note" role="status">{copied === 'message' ? text('메시지를 복사했어요. 단톡방에 붙여넣으세요. ', 'Message copied. Paste it in the group chat. ') : ''}{text(`링크는 ${INVITE_DAYS}일간 유효해요. 생일날 같은 링크를 주인공에게 보내 주세요.`, `The link lasts ${INVITE_DAYS} days. On the day, send the same link to the birthday person.`)}</p>
+        <Link className="bday-more" href={`/?album=${album}&view=theme&lang=${locale}`}>{text('앨범 미리보기 →', 'Preview the album →')}</Link>
+        <div className="bday-dock"><button className="growth-button" onClick={() => void share()}><Send size={18} />{text('카톡 단톡방에 보내기', 'Send to the group chat')}</button></div>
+      </div>}
     </section></main>;
 }

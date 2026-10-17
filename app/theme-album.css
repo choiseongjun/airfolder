@@ -12,7 +12,13 @@
 .ta-birthday-bar strong{display:block;font-size:14px}
 .ta-birthday-bar small{display:block;font-size:11px;color:#a46a83;line-height:1.5;margin-top:2px}
 .ta-birthday-bar .primary-button{flex-shrink:0}
-@media(max-width:560px){.ta-birthday-bar{flex-wrap:wrap}.ta-birthday-bar .primary-button{width:100%;justify-content:center}}
+@media(max-width:560px){
+ .ta-birthday-bar{gap:10px;padding:10px 12px;border-radius:14px}
+ .ta-birthday-count{min-width:46px;height:46px;font-size:13px;border-radius:12px}
+ .ta-birthday-bar strong{font-size:13px}
+ .ta-birthday-bar small{display:none}
+ .ta-birthday-bar .primary-button{min-height:36px;padding:7px 12px;font-size:12px;white-space:nowrap}
+}
 
 /* Theme picker */
 .ta-picker{background:#fffcf5;border:1px solid #e9dfcf;border-radius:18px;padding:14px;margin-bottom:18px;box-shadow:0 8px 22px #6b513310}
@@ -170,9 +176,17 @@
  .ta-caption{font-size:15px}
  .ta-cover-note{font-size:16px}
  .ta-sticker svg{width:42px;height:42px}
- .ta-picker-head small{margin-left:0;width:100%}
- .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:44%;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 6px}
- .ta-swatch{scroll-snap-align:start}
+ /* On phones the picker shrinks to a row of chips so the album itself is on the first screen. */
+ .ta-picker{padding:10px 0 10px 12px;border-radius:14px;margin-bottom:14px}
+ .ta-picker-head strong{font-size:13px}
+ .ta-picker-head small{display:none}
+ .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;overflow-x:auto;margin-top:8px;padding:3px 12px 4px 3px;scrollbar-width:none}
+ .ta-swatch{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px}
+ .ta-swatch:hover{transform:none}
+ .ta-swatch-art{width:34px;height:34px;padding:3px;border-radius:50%;box-sizing:border-box}
+ .ta-swatch-art img,.ta-swatch-art>i{width:100%;height:100%;aspect-ratio:auto;border:0!important;border-radius:50%;transform:none!important}
+ .ta-swatch-deco,.ta-swatch>small,.ta-swatch>em{display:none!important}
+ .ta-swatch>strong{margin:0;font-size:12px;white-space:nowrap}
  .ta-cta{flex-direction:column;align-items:stretch;text-align:center}
  .ta-cta .primary-button{justify-content:center}
 }
