@@ -31,6 +31,706 @@
   ],
   "albums": [
     {
+      "id": "e99766e8-969c-4f06-9166-843eb9de2eea",
+      "group": 0,
+      "names": [
+        "제주, 우리 다섯의 여름",
+        "Jeju, the five of us"
+      ],
+      "date": "2026-10-16",
+      "note": [
+        "다섯 명이 각자 찍은 사진을 앨범 하나로 모았어요.",
+        "Five phones, one album."
+      ],
+      "theme": "polaroid",
+      "showcase": true,
+      "records": [
+        [
+          "첫날 · 바다부터 보러 갔다",
+          "Day 1 · Straight to the sea"
+        ],
+        [
+          "둘째 날 · 비 오던 날 성산일출봉",
+          "Day 2 · A rainy day at Seongsan"
+        ],
+        [
+          "마지막 밤 · 내년에도 여기",
+          "Last night · Same place next year"
+        ]
+      ],
+      "photos": [
+        {
+          "id": "a24a6223-178e-4fa5-93f9-24c0c403704d",
+          "src": "/explore/photo-5.jpg",
+          "caption": [
+            "다 같이 손잡고 입수 직전",
+            "Holding hands, right before we jumped in"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
+          ]
+        },
+        {
+          "id": "67bfe697-7fae-4eb1-9e7f-f841fd327e49",
+          "src": "/explore/photo-11.jpg",
+          "caption": [
+            "물 차갑다고 소리 지른 거 나야",
+            "Yes, I was the one screaming"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
+          ]
+        },
+        {
+          "id": "f23f18fd-e7db-4bf7-b751-da6d1cf0bf69",
+          "src": "/explore/photo-6.jpg",
+          "caption": [
+            "모래 뜨거워서 뛰어다님",
+            "The sand was way too hot"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        },
+        {
+          "id": "bfab5577-f76c-4ed2-891a-c23624b7c892",
+          "src": "/explore/photo-4.jpg",
+          "caption": [
+            "해 질 때까지 수다",
+            "Talking till sunset"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
+          ]
+        },
+        {
+          "id": "226f45d4-6b59-4c75-867a-d2f1bc7a0b66",
+          "src": "/explore/photo-12.jpg",
+          "caption": [
+            "비 그치자마자 다시 바다로",
+            "Back in the sea the moment the rain stopped"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        },
+        {
+          "id": "9b5d41ea-5df6-4c28-9106-08acd44de84d",
+          "src": "/explore/photo-25.jpg",
+          "caption": [
+            "우산 하나에 다섯 명",
+            "Five people, one umbrella"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
+          ]
+        },
+        {
+          "id": "404a3590-e380-451d-bdfc-5f5a1b8c44f8",
+          "src": "/explore/photo-18.jpg",
+          "caption": [
+            "말 안 해도 좋았던 순간",
+            "We did not need to say anything"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
+          ]
+        },
+        {
+          "id": "f02b1e38-df8f-4a30-8d4b-4d3caa7409f9",
+          "src": "/explore/photo-21.jpg",
+          "caption": [
+            "어깨동무는 국룰",
+            "Arms around shoulders, always"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
+          ]
+        },
+        {
+          "id": "1cf8a409-32f9-49dd-93f5-97323a31753c",
+          "src": "/explore/photo-13.jpg",
+          "caption": [
+            "노을 보면서 조용해진 우리",
+            "We all went quiet at sunset"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        },
+        {
+          "id": "d606dbea-08af-4cee-9446-fc6951d957b7",
+          "src": "/explore/photo-16.jpg",
+          "caption": [
+            "이 사진 프사 각",
+            "Profile picture material"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        },
+        {
+          "id": "6df92dd4-63e5-4ce1-b445-a05ceb892354",
+          "src": "/explore/photo-28.jpg",
+          "caption": [
+            "무슨 얘기에 저렇게 웃었더라",
+            "What were we laughing about?"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
+          ]
+        },
+        {
+          "id": "350af54b-901e-4b99-89a3-01dbe8daa6be",
+          "src": "/explore/photo-0.jpg",
+          "caption": [
+            "마지막 단체 셀카, 다 눈 떴다!",
+            "Last group selfie, eyes open!"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "79670580-2a02-4c89-abc5-8bf5739c40d9",
+      "group": 1,
+      "names": [
+        "지수의 스물다섯 번째 생일",
+        "Jisoo turns 25"
+      ],
+      "date": "2026-10-16",
+      "note": [
+        "단톡방에 링크 하나 올렸더니 여덟 명이 사진을 채워줬어요.",
+        "One link in the group chat, and eight friends filled it in."
+      ],
+      "theme": "birthday",
+      "showcase": true,
+      "records": [
+        [
+          "서프라이즈 대성공",
+          "The surprise worked"
+        ],
+        [
+          "너랑 찍은 제일 웃긴 사진",
+          "Our funniest photos with you"
+        ],
+        [
+          "스물다섯도 같이 놀자",
+          "Let us keep playing at 25"
+        ]
+      ],
+      "photos": [
+        {
+          "id": "c3155337-0497-4a39-8a8a-85e076f1bf44",
+          "src": "/explore/photo-26.jpg",
+          "caption": [
+            "촛불 끄기 3초 전, 표정 봐",
+            "Three seconds before the candles. Look at her face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
+          ]
+        },
+        {
+          "id": "9f41b554-cfff-47a9-b79d-389d767d1453",
+          "src": "/explore/photo-8.jpg",
+          "caption": [
+            "가랜드 다는 데만 한 시간",
+            "An hour just to hang the garland"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        },
+        {
+          "id": "7003a67c-36a5-4d36-948a-d3a3bc407068",
+          "src": "/explore/photo-27.jpg",
+          "caption": [
+            "고깔모자 강제 착용",
+            "Party hats were mandatory"
+          ],
+          "by": [
+            "태오",
+            "Teo"
+          ]
+        },
+        {
+          "id": "b8441d28-5d0f-43cc-ac52-b2c1a9466bc9",
+          "src": "/explore/photo-47.jpg",
+          "caption": [
+            "풍선 터질까 봐 조마조마",
+            "Terrified the balloons would pop"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "7b497409-278c-457e-bb92-476658628ef0",
+          "src": "/explore/photo-1.jpg",
+          "caption": [
+            "이거 올리면 화낼 거 알지만",
+            "I know you will hate that I posted this"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
+          ]
+        },
+        {
+          "id": "222819dd-fa11-4feb-8c1f-95d9119faf0f",
+          "src": "/explore/photo-9.jpg",
+          "caption": [
+            "계단만 보면 단체사진",
+            "Every staircase means a group photo"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        },
+        {
+          "id": "175b8182-d889-46f5-963e-74c0265411cb",
+          "src": "/explore/photo-7.jpg",
+          "caption": [
+            "열 명 한 프레임 성공",
+            "Ten people, one frame"
+          ],
+          "by": [
+            "수아",
+            "Sua"
+          ]
+        },
+        {
+          "id": "0af238f3-e0ff-4c12-9f14-9de933f561b2",
+          "src": "/explore/photo-24.jpg",
+          "caption": [
+            "우리 처음 만난 그 카페",
+            "The café where we first met"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
+          ]
+        },
+        {
+          "id": "b416f071-bd7d-4c1d-bacd-fd699c906f4d",
+          "src": "/explore/photo-45.jpg",
+          "caption": [
+            "2차는 공원 피크닉",
+            "Round two: a picnic in the park"
+          ],
+          "by": [
+            "태오",
+            "Teo"
+          ]
+        },
+        {
+          "id": "03997b06-05e3-42cf-8b25-2ba5a9aeca9d",
+          "src": "/explore/photo-46.jpg",
+          "caption": [
+            "선물 언박싱 타임",
+            "Present unboxing time"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "f8f52b89-d9cd-4bab-8015-02d4e29cdc8a",
+          "src": "/explore/photo-39.jpg",
+          "caption": [
+            "밤까지 이어진 파티",
+            "The party went all night"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        },
+        {
+          "id": "45427628-2ae3-440c-9f32-c8764cd08be0",
+          "src": "/explore/photo-43.jpg",
+          "caption": [
+            "생일 축하해, 지수야!",
+            "Happy birthday, Jisoo!"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "366dd4b2-027c-4823-80ff-7cbd49a5a917",
+      "group": 1,
+      "names": [
+        "필름으로 남긴 가을 소풍",
+        "An autumn picnic on film"
+      ],
+      "date": "2026-10-15",
+      "note": [
+        "필름 카메라 느낌으로 모아 본 우리의 가을.",
+        "Our autumn, the film-camera way."
+      ],
+      "theme": "film",
+      "showcase": true,
+      "records": [
+        [
+          "오후 2시, 돗자리 펴기",
+          "2 p.m. Blankets down"
+        ],
+        [
+          "필름 한 롤 다 쓸 때까지",
+          "Until the roll ran out"
+        ],
+        [
+          "해 질 녘, 돌아가기 싫은 시간",
+          "Golden hour, not ready to go"
+        ]
+      ],
+      "photos": [
+        {
+          "id": "61f30fc5-f118-430b-8666-4ecdb869f652",
+          "src": "/explore/photo-29.jpg",
+          "caption": [
+            "자리 맡기 성공",
+            "We got the good spot"
+          ],
+          "by": [
+            "태오",
+            "Teo"
+          ]
+        },
+        {
+          "id": "b5558663-c0b9-4bd2-928b-f7f4e6dd87f7",
+          "src": "/explore/photo-31.jpg",
+          "caption": [
+            "샌드위치 내가 쌌음",
+            "I made the sandwiches"
+          ],
+          "by": [
+            "수아",
+            "Sua"
+          ]
+        },
+        {
+          "id": "5c853913-6694-4301-b894-442756aedff9",
+          "src": "/explore/photo-30.jpg",
+          "caption": [
+            "건배는 사이다로",
+            "Cheers, with soda"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
+          ]
+        },
+        {
+          "id": "8e7c19ce-a585-4168-936d-8eed80d70439",
+          "src": "/explore/photo-37.jpg",
+          "caption": [
+            "도시가 한눈에",
+            "The whole city below us"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "c2080669-59dd-4b8c-a78f-890867f3eb8f",
+          "src": "/explore/photo-2.jpg",
+          "caption": [
+            "업어달라고 한 적 없음",
+            "Nobody asked for a piggyback"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
+          ]
+        },
+        {
+          "id": "f98c9bbb-27bb-4989-bd1d-e11858022c1a",
+          "src": "/explore/photo-3.jpg",
+          "caption": [
+            "햇살 좋아서 다 잘 나옴",
+            "Good light, good faces"
+          ],
+          "by": [
+            "수아",
+            "Sua"
+          ]
+        },
+        {
+          "id": "3930ea26-bb82-484b-9792-d4dcb5820d00",
+          "src": "/explore/photo-35.jpg",
+          "caption": [
+            "강아지랑 친해지기",
+            "Making friends with a dog"
+          ],
+          "by": [
+            "태오",
+            "Teo"
+          ]
+        },
+        {
+          "id": "7df2cd6e-d6c8-456b-bef2-b4cbaa71b6e8",
+          "src": "/explore/photo-38.jpg",
+          "caption": [
+            "나뭇잎 사이로",
+            "Through the leaves"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "619ad02a-366c-4fac-a367-a5b06ab5493f",
+          "src": "/explore/photo-36.jpg",
+          "caption": [
+            "누워서 하늘 보기",
+            "Lying down, looking up"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
+          ]
+        },
+        {
+          "id": "2b08d1c6-fc52-4962-abb2-f25840027682",
+          "src": "/explore/photo-32.jpg",
+          "caption": [
+            "이 색감 보정 아니고 진짜임",
+            "This color is real, not a filter"
+          ],
+          "by": [
+            "수아",
+            "Sua"
+          ]
+        },
+        {
+          "id": "c4970121-08fb-4f21-8cbc-cc2ce2a89ad8",
+          "src": "/explore/photo-17.jpg",
+          "caption": [
+            "다음엔 산 정상에서",
+            "Next time, from the summit"
+          ],
+          "by": [
+            "태오",
+            "Teo"
+          ]
+        },
+        {
+          "id": "39b03452-6f39-4b96-87e3-69004c36d893",
+          "src": "/explore/photo-14.jpg",
+          "caption": [
+            "벌써 다음 계획 세우는 중",
+            "Already planning the next one"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1c769e4c-3dbf-458f-9f46-77a47fc6838a",
+      "group": 0,
+      "names": [
+        "우리끼리 브런치 데이",
+        "Our little brunch day"
+      ],
+      "date": "2026-10-15",
+      "note": [
+        "예쁜 카페 세 군데, 사진은 삼백 장.",
+        "Three cute cafés, three hundred photos."
+      ],
+      "theme": "softgirl",
+      "showcase": true,
+      "records": [
+        [
+          "첫 번째 카페 · 창가 자리",
+          "Café one · The window seat"
+        ],
+        [
+          "두 번째 카페 · 디저트 배는 따로",
+          "Café two · Dessert has its own stomach"
+        ],
+        [
+          "마지막 · 집 가는 길도 예쁨",
+          "Last stop · Even the walk home was cute"
+        ]
+      ],
+      "photos": [
+        {
+          "id": "62e53b64-c663-41ba-a7f5-67a68557ed50",
+          "src": "/explore/photo-41.jpg",
+          "caption": [
+            "라떼 아트 하트 나옴",
+            "Got a heart in my latte"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "442fc4b3-2f84-464b-be60-1aa405610a4d",
+          "src": "/explore/photo-34.jpg",
+          "caption": [
+            "웃다가 커피 쏟을 뻔",
+            "Almost spilled it from laughing"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        },
+        {
+          "id": "f42f3031-84b1-4c8a-9b50-686f08fb8d54",
+          "src": "/explore/photo-44.jpg",
+          "caption": [
+            "벽 그림이랑 깔맞춤",
+            "Matching the mural"
+          ],
+          "by": [
+            "수아",
+            "Sua"
+          ]
+        },
+        {
+          "id": "b866da53-b763-43ae-b3d7-bf983e1bb8b1",
+          "src": "/explore/photo-42.jpg",
+          "caption": [
+            "사진 찍는 사람 사진",
+            "A photo of the photographer"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        },
+        {
+          "id": "4a294d7f-e902-470b-9cf3-399d7405bd4f",
+          "src": "/explore/photo-40.jpg",
+          "caption": [
+            "피자도 브런치 맞음",
+            "Pizza counts as brunch"
+          ],
+          "by": [
+            "태오",
+            "Teo"
+          ]
+        },
+        {
+          "id": "fc40cceb-d9c8-4305-b8f3-d2aa1efa500c",
+          "src": "/explore/photo-33.jpg",
+          "caption": [
+            "수다 3시간 경과",
+            "Three hours of chatting"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        },
+        {
+          "id": "892706cf-13fd-4b40-84fb-e39e7a17f1ba",
+          "src": "/explore/photo-23.jpg",
+          "caption": [
+            "친구 집 거실 같은 카페",
+            "A café that feels like home"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "d05b6efb-a2e3-41f7-9f42-180501226b57",
+          "src": "/explore/photo-22.jpg",
+          "caption": [
+            "이때 무슨 얘기했는지 아는 사람",
+            "Who remembers this joke?"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        },
+        {
+          "id": "7f44678a-6af9-403e-92e7-7fe7cbf0ea99",
+          "src": "/explore/photo-20.jpg",
+          "caption": [
+            "벽화 앞 포즈 연습 10번",
+            "Ten tries at the mural pose"
+          ],
+          "by": [
+            "수아",
+            "Sua"
+          ]
+        },
+        {
+          "id": "efe85ae4-f43e-4b9d-80ee-6e63cb33f27d",
+          "src": "/explore/photo-19.jpg",
+          "caption": [
+            "전망대에서 손 흔들기",
+            "Waving from the top"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
+          ]
+        },
+        {
+          "id": "3ce43a06-c3ec-400a-9f7a-b10a4ef88f10",
+          "src": "/explore/photo-10.jpg",
+          "caption": [
+            "오늘의 단체사진",
+            "Today’s group photo"
+          ],
+          "by": [
+            "민지",
+            "Minji"
+          ]
+        },
+        {
+          "id": "8b469aa8-7b29-4ab7-bb2a-182af1e84d32",
+          "src": "/explore/photo-15.jpg",
+          "caption": [
+            "마지막은 위에서 찍기",
+            "Ending with the top-down shot"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
+          ]
+        }
+      ]
+    },
+    {
       "id": "202f27f2-a5ec-421d-a93f-f3c23ac74992",
       "group": 0,
       "names": [
@@ -47,96 +747,144 @@
           "id": "5bf8385c-404b-4e6f-a0ae-eb48d4ec088c",
           "src": "/explore/photo-0.jpg",
           "caption": [
-            "바다를 만나러 · 1",
-            "Days by the sea · 1"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "77f6f784-107b-4afb-a168-2ba33ea952a7",
           "src": "/explore/photo-1.jpg",
           "caption": [
-            "바다를 만나러 · 2",
-            "Days by the sea · 2"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "53fb7d72-1975-4db9-a222-a8f449315b41",
           "src": "/explore/photo-2.jpg",
           "caption": [
-            "바다를 만나러 · 3",
-            "Days by the sea · 3"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "9d5913a5-8a25-42a9-a907-3b1318b2a846",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "바다를 만나러 · 4",
-            "Days by the sea · 4"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "6a448957-8860-4460-aef9-869c219597a3",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "바다를 만나러 · 5",
-            "Days by the sea · 5"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "3ee4129d-c734-443c-a012-c4cc51518c41",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "바다를 만나러 · 6",
-            "Days by the sea · 6"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "1f663576-629b-4f9b-a002-121e2adbc92f",
           "src": "/explore/photo-6.jpg",
           "caption": [
-            "바다를 만나러 · 7",
-            "Days by the sea · 7"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "2a37653a-8b7d-4738-aed3-d3d34e6c194a",
           "src": "/explore/photo-7.jpg",
           "caption": [
-            "바다를 만나러 · 8",
-            "Days by the sea · 8"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "c991cfbc-99c9-4ea7-aa64-515d83bebb17",
           "src": "/explore/photo-8.jpg",
           "caption": [
-            "바다를 만나러 · 9",
-            "Days by the sea · 9"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "c2a70a93-04d3-40e8-a8ab-17c5dfbbadee",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "바다를 만나러 · 10",
-            "Days by the sea · 10"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "3b0c9279-7255-4a82-abc7-0d706f37dcd7",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "바다를 만나러 · 11",
-            "Days by the sea · 11"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "1335437a-805b-49e6-a227-2d821d5f69dc",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "바다를 만나러 · 12",
-            "Days by the sea · 12"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         }
       ],
@@ -153,7 +901,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "polaroid"
     },
     {
       "id": "f01e2233-c4c4-484a-a7c6-440ade699da6",
@@ -172,96 +921,144 @@
           "id": "dac3181f-6f78-485a-ad28-a7f05f2dd6af",
           "src": "/explore/photo-7.jpg",
           "caption": [
-            "느리게 걷는 여행 · 1",
-            "A slow escape · 1"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "85a7827e-bf36-4c4d-a616-764b6a2d5f12",
           "src": "/explore/photo-8.jpg",
           "caption": [
-            "느리게 걷는 여행 · 2",
-            "A slow escape · 2"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "5bf4176e-fbe1-4d6e-a32e-20f9701ad642",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "느리게 걷는 여행 · 3",
-            "A slow escape · 3"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "61a2c8b5-c61d-4f7d-ae41-61c88ea23216",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "느리게 걷는 여행 · 4",
-            "A slow escape · 4"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "6cfa4bfc-24e1-452c-ade5-80b4bdd70c35",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "느리게 걷는 여행 · 5",
-            "A slow escape · 5"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "f15f8814-2584-4c9a-ab46-46baa6a0a49d",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "느리게 걷는 여행 · 6",
-            "A slow escape · 6"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "7fa7c4a9-d12f-424f-acea-17ca287a796c",
           "src": "/explore/photo-13.jpg",
           "caption": [
-            "느리게 걷는 여행 · 7",
-            "A slow escape · 7"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "170116f8-57cd-4564-a33d-a1e2d903aad4",
           "src": "/explore/photo-14.jpg",
           "caption": [
-            "느리게 걷는 여행 · 8",
-            "A slow escape · 8"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "a22c652c-a9d1-4ab3-aa5b-68017aec8ba5",
           "src": "/explore/photo-15.jpg",
           "caption": [
-            "느리게 걷는 여행 · 9",
-            "A slow escape · 9"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "d3538ef0-5ddf-4b49-a2a0-5195697e339f",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "느리게 걷는 여행 · 10",
-            "A slow escape · 10"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "3c3b7af8-f763-4f4f-ad08-10183bb53f7a",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "느리게 걷는 여행 · 11",
-            "A slow escape · 11"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "86cf4914-5c9a-44a8-a653-a5f10e724c59",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "느리게 걷는 여행 · 12",
-            "A slow escape · 12"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         }
       ],
@@ -278,7 +1075,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "film"
     },
     {
       "id": "0b3ca6fc-9220-4582-aae8-605d31acdc86",
@@ -297,96 +1095,144 @@
           "id": "7eec2987-8222-43f8-a1cb-2b531da5a60d",
           "src": "/explore/photo-14.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 1",
-            "A weekend in the woods · 1"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "eefa5682-04e8-4d24-a28a-591e57f30831",
           "src": "/explore/photo-15.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 2",
-            "A weekend in the woods · 2"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "c3faf65d-5e72-431a-af0d-f2a283dc63b3",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 3",
-            "A weekend in the woods · 3"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "442ad571-4e80-45a7-a0d8-50a009d36bd3",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 4",
-            "A weekend in the woods · 4"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "9e5c63c1-846c-4063-a967-3ab1cc6bdd84",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 5",
-            "A weekend in the woods · 5"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "bad5897e-75c0-438f-a715-506f3a6976b8",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 6",
-            "A weekend in the woods · 6"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "67231f38-3038-416f-a84f-cef14c4669c6",
           "src": "/explore/photo-20.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 7",
-            "A weekend in the woods · 7"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "101bf1d3-6933-493e-a01d-b5778ac19198",
           "src": "/explore/photo-21.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 8",
-            "A weekend in the woods · 8"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "0d4ba69f-58ff-4efc-a8d0-7d56484f566f",
           "src": "/explore/photo-22.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 9",
-            "A weekend in the woods · 9"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "b5ba36ad-a2c6-491e-a618-33c7b21aa7ef",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 10",
-            "A weekend in the woods · 10"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "54ab9ccb-cd26-44cc-a4ca-dc2c05ede91e",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 11",
-            "A weekend in the woods · 11"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "ba194fb2-28d4-4d09-ae3b-ce61e3ba0262",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "숲에서 보낸 주말 · 12",
-            "A weekend in the woods · 12"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         }
       ],
@@ -403,7 +1249,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "softgirl"
     },
     {
       "id": "0cd2caa4-22f2-43b2-ab7a-d613d8938832",
@@ -422,96 +1269,144 @@
           "id": "ba55e217-d056-4671-aa7c-cf69a3b825e0",
           "src": "/explore/photo-21.jpg",
           "caption": [
-            "노을이 머문 자리 · 1",
-            "Chasing sunset · 1"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "5302c072-2870-4f0c-ae9d-344d037d56e6",
           "src": "/explore/photo-22.jpg",
           "caption": [
-            "노을이 머문 자리 · 2",
-            "Chasing sunset · 2"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "43fa9c76-1460-4e9f-a4e5-565fe259175c",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "노을이 머문 자리 · 3",
-            "Chasing sunset · 3"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "36b2c61e-e4b3-4aef-a4f5-30cf02c5168e",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "노을이 머문 자리 · 4",
-            "Chasing sunset · 4"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "d0af5ff9-1e49-49ff-a9f2-22bb317f3c37",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "노을이 머문 자리 · 5",
-            "Chasing sunset · 5"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "34a0f980-4d96-4acf-aefe-25e7adea567d",
           "src": "/explore/photo-26.jpg",
           "caption": [
-            "노을이 머문 자리 · 6",
-            "Chasing sunset · 6"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "ae7e5e9a-3146-4dd5-a1e5-286c91c5bf06",
           "src": "/explore/photo-27.jpg",
           "caption": [
-            "노을이 머문 자리 · 7",
-            "Chasing sunset · 7"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "8d0c48e1-10a3-43b3-ae4a-628364585d81",
           "src": "/explore/photo-28.jpg",
           "caption": [
-            "노을이 머문 자리 · 8",
-            "Chasing sunset · 8"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "e36f60c4-4960-4e7e-a5f8-26c832051625",
           "src": "/explore/photo-29.jpg",
           "caption": [
-            "노을이 머문 자리 · 9",
-            "Chasing sunset · 9"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "645ee676-2a6f-499e-a096-bfa1dc84eef8",
           "src": "/explore/photo-30.jpg",
           "caption": [
-            "노을이 머문 자리 · 10",
-            "Chasing sunset · 10"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "0b6f7ef9-f53b-43ed-a5af-c7da661994b1",
           "src": "/explore/photo-31.jpg",
           "caption": [
-            "노을이 머문 자리 · 11",
-            "Chasing sunset · 11"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "68468828-af88-4c26-a2dc-bb1cbb1910d7",
           "src": "/explore/photo-32.jpg",
           "caption": [
-            "노을이 머문 자리 · 12",
-            "Chasing sunset · 12"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         }
       ],
@@ -528,7 +1423,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     },
     {
       "id": "4bac2e2c-08ce-41c4-a97f-504b08cf592b",
@@ -547,96 +1443,144 @@
           "id": "b0f40227-8c59-456e-ac65-8de0934cc4d8",
           "src": "/explore/photo-28.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 1",
-            "A day without plans · 1"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "1e622d31-db63-4d48-a719-0140c7927bdd",
           "src": "/explore/photo-29.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 2",
-            "A day without plans · 2"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "5b3ae0ec-028a-439b-ab13-5e75d587799a",
           "src": "/explore/photo-30.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 3",
-            "A day without plans · 3"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "f8747639-4d6a-4ef5-a513-cce002b69fff",
           "src": "/explore/photo-31.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 4",
-            "A day without plans · 4"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "f396c2a0-823e-4606-a2dc-edc9194714d9",
           "src": "/explore/photo-32.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 5",
-            "A day without plans · 5"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "8d45c299-056e-4cb8-a51f-c25aa7d1e890",
           "src": "/explore/photo-33.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 6",
-            "A day without plans · 6"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "f2032225-1aa4-44bd-a481-7847dcd63e20",
           "src": "/explore/photo-34.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 7",
-            "A day without plans · 7"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "a27e4653-aacf-489c-a684-a832f1920895",
           "src": "/explore/photo-35.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 8",
-            "A day without plans · 8"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "5dbbb869-9fe9-428c-aa57-0777c4798d98",
           "src": "/explore/photo-36.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 9",
-            "A day without plans · 9"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "88f045dd-8717-4eab-a2ef-bacfc86a3785",
           "src": "/explore/photo-37.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 10",
-            "A day without plans · 10"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "bccb51c8-7f24-4e1e-a8b2-b5165b75ab28",
           "src": "/explore/photo-38.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 11",
-            "A day without plans · 11"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "fc546317-a4b3-4e05-a5e4-8d517e6b7d60",
           "src": "/explore/photo-39.jpg",
           "caption": [
-            "아무 계획 없는 하루 · 12",
-            "A day without plans · 12"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         }
       ],
@@ -653,7 +1597,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "polaroid"
     },
     {
       "id": "6bd9d5ab-eda4-4255-a07b-cce51937422b",
@@ -672,96 +1617,144 @@
           "id": "6258cd8e-ca9b-485f-a0f1-2d696851f986",
           "src": "/explore/photo-35.jpg",
           "caption": [
-            "다음 계절에도 함께 · 1",
-            "Together next season · 1"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "ba580d2e-088b-4b3a-aab6-b59bca5c6669",
           "src": "/explore/photo-36.jpg",
           "caption": [
-            "다음 계절에도 함께 · 2",
-            "Together next season · 2"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "a2c29210-3b18-4ac7-a51c-00aad52fb5a9",
           "src": "/explore/photo-37.jpg",
           "caption": [
-            "다음 계절에도 함께 · 3",
-            "Together next season · 3"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "c1521fda-a802-4c64-ab86-b07cbc8a215c",
           "src": "/explore/photo-38.jpg",
           "caption": [
-            "다음 계절에도 함께 · 4",
-            "Together next season · 4"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "12c21324-bcc7-41d8-af30-6c224f86645d",
           "src": "/explore/photo-39.jpg",
           "caption": [
-            "다음 계절에도 함께 · 5",
-            "Together next season · 5"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "7061cd80-d0a7-465c-a795-323f07d9c024",
           "src": "/explore/photo-40.jpg",
           "caption": [
-            "다음 계절에도 함께 · 6",
-            "Together next season · 6"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "5771fa6a-ce62-46a3-a2e1-e1d4d81a04db",
           "src": "/explore/photo-41.jpg",
           "caption": [
-            "다음 계절에도 함께 · 7",
-            "Together next season · 7"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "6a4d9e70-cc01-4635-a01b-8052b95a86b2",
           "src": "/explore/photo-42.jpg",
           "caption": [
-            "다음 계절에도 함께 · 8",
-            "Together next season · 8"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "7aa21e5b-575c-403e-a6ed-fce93d2ab40b",
           "src": "/explore/photo-43.jpg",
           "caption": [
-            "다음 계절에도 함께 · 9",
-            "Together next season · 9"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "0dd71c12-437f-4a05-a4d7-efcb3a6de822",
           "src": "/explore/photo-44.jpg",
           "caption": [
-            "다음 계절에도 함께 · 10",
-            "Together next season · 10"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "9b7d7838-8f83-4fde-af5e-964bb4140afa",
           "src": "/explore/photo-45.jpg",
           "caption": [
-            "다음 계절에도 함께 · 11",
-            "Together next season · 11"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "ec6a03a1-666b-4c54-adea-5cbe3fb47f3a",
           "src": "/explore/photo-46.jpg",
           "caption": [
-            "다음 계절에도 함께 · 12",
-            "Together next season · 12"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         }
       ],
@@ -778,7 +1771,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "film"
     },
     {
       "id": "7a4401fa-91f0-40f5-a2b8-bfb21ed6f32b",
@@ -797,96 +1791,144 @@
           "id": "7a0cf71d-87ba-43dc-aa57-3ae11341e080",
           "src": "/explore/photo-42.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 1",
-            "Together again · 1"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "3ac09f7a-bf0c-4269-acfa-088b5073e3d5",
           "src": "/explore/photo-43.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 2",
-            "Together again · 2"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "a542cc3e-1d53-48d0-a9a3-38b7d1f3e75e",
           "src": "/explore/photo-44.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 3",
-            "Together again · 3"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "81c80f07-9505-4ded-aa4d-4b208f086727",
           "src": "/explore/photo-45.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 4",
-            "Together again · 4"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "230ceb0e-6866-4169-a95d-1f10fb7e70ff",
           "src": "/explore/photo-46.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 5",
-            "Together again · 5"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "79cfbc8e-9ff5-4c3b-aa7b-418ffa7de858",
           "src": "/explore/photo-47.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 6",
-            "Together again · 6"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "5052cac1-b9ad-4be1-a01c-f211a17410b0",
           "src": "/explore/photo-0.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 7",
-            "Together again · 7"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "32cc4b4f-b80c-4b02-ad72-94915fb80629",
           "src": "/explore/photo-1.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 8",
-            "Together again · 8"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "f70ad9a3-d68e-49df-a464-1d5f9cfc648c",
           "src": "/explore/photo-2.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 9",
-            "Together again · 9"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "cf62bd9a-7eb1-4946-ae8a-0b9a6b4dea97",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 10",
-            "Together again · 10"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "63655be5-e6f5-49e8-ae1d-888ac4edcd1f",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 11",
-            "Together again · 11"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "0bb99203-8aef-462d-acb4-101cde295361",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "오랜만이라 더 반가워 · 12",
-            "Together again · 12"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         }
       ],
@@ -903,7 +1945,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "softgirl"
     },
     {
       "id": "62e0466d-aa4a-4daa-aae9-037b69c17efb",
@@ -922,96 +1965,144 @@
           "id": "1ee72072-5cc4-4684-af7b-7b44ed8e8c91",
           "src": "/explore/photo-1.jpg",
           "caption": [
-            "우리의 가을 소풍 · 1",
-            "An autumn picnic · 1"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "678b561a-7f79-4ffc-acb6-5570c2d61f50",
           "src": "/explore/photo-2.jpg",
           "caption": [
-            "우리의 가을 소풍 · 2",
-            "An autumn picnic · 2"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "ddaaedf3-39cb-4ec2-a445-4b132fe37e11",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "우리의 가을 소풍 · 3",
-            "An autumn picnic · 3"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "bd693fec-e6d5-4c77-af77-bd6aab6b8961",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "우리의 가을 소풍 · 4",
-            "An autumn picnic · 4"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "278f5800-061e-474a-a735-c35f1ccbf52a",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "우리의 가을 소풍 · 5",
-            "An autumn picnic · 5"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "485c4dba-2824-43ac-aed0-b4a0d028e2be",
           "src": "/explore/photo-6.jpg",
           "caption": [
-            "우리의 가을 소풍 · 6",
-            "An autumn picnic · 6"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "cca32616-172c-48aa-a0c0-0c6bc5e260c8",
           "src": "/explore/photo-7.jpg",
           "caption": [
-            "우리의 가을 소풍 · 7",
-            "An autumn picnic · 7"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "94b55ffb-b4be-4c44-a51b-1298261ce4b9",
           "src": "/explore/photo-8.jpg",
           "caption": [
-            "우리의 가을 소풍 · 8",
-            "An autumn picnic · 8"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "fc5bc63a-6232-4465-ae24-396378a8cbe8",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "우리의 가을 소풍 · 9",
-            "An autumn picnic · 9"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "abd13576-79a6-4bcf-ad80-44d84477a1a3",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "우리의 가을 소풍 · 10",
-            "An autumn picnic · 10"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "57247842-4cb6-4449-a2ba-636525b551c1",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "우리의 가을 소풍 · 11",
-            "An autumn picnic · 11"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "821f0f19-9cb0-46ac-a3c8-bd2f32244915",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "우리의 가을 소풍 · 12",
-            "An autumn picnic · 12"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         }
       ],
@@ -1028,7 +2119,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     },
     {
       "id": "decebcb7-64d5-4025-a114-a6cda09fc804",
@@ -1047,96 +2139,144 @@
           "id": "ecff3f51-6324-412b-ad1c-eb42206e0a4d",
           "src": "/explore/photo-8.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 1",
-            "A birthday to keep · 1"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "7ff7e000-3a06-464d-a564-da48df5ecabe",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 2",
-            "A birthday to keep · 2"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "29c97190-ddc7-40e3-afe8-25ecb09f9c09",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 3",
-            "A birthday to keep · 3"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "031aa036-1d6b-4376-a26d-5eaf5bfc398f",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 4",
-            "A birthday to keep · 4"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "b9e5c93c-dc60-4600-a86e-145255576755",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 5",
-            "A birthday to keep · 5"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "783c4087-e45f-400f-a797-ce08cba65412",
           "src": "/explore/photo-13.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 6",
-            "A birthday to keep · 6"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "7db3a525-2b00-4a90-a2f2-2beed2d92474",
           "src": "/explore/photo-14.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 7",
-            "A birthday to keep · 7"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "22ed71b1-9d85-4537-a0c2-39bd93830580",
           "src": "/explore/photo-15.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 8",
-            "A birthday to keep · 8"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "fe5bcb0d-3be9-4416-a138-620921eb4629",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 9",
-            "A birthday to keep · 9"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "57ad5bae-40b0-4884-a0ac-4e3a32404af5",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 10",
-            "A birthday to keep · 10"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "530fd491-b968-4161-a528-58bfd89806e4",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 11",
-            "A birthday to keep · 11"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "355c9c0d-3062-419f-a55f-e245233298b0",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "생일을 기억하는 방법 · 12",
-            "A birthday to keep · 12"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         }
       ],
@@ -1153,7 +2293,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     },
     {
       "id": "587296f6-a2a3-4454-a21c-fd9b82c5c740",
@@ -1172,96 +2313,144 @@
           "id": "7eae7c93-8ba4-4884-ab8e-6ff6dbb8684c",
           "src": "/explore/photo-15.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 1",
-            "The streets we walked · 1"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "8bba676e-fd70-4800-ac22-cc18d6072515",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 2",
-            "The streets we walked · 2"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "1a95b384-2c83-4e6b-a91a-640c6a892e26",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 3",
-            "The streets we walked · 3"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "0ce836fa-f20a-41d3-aeca-91376ae6a769",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 4",
-            "The streets we walked · 4"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "f02436f9-40fd-46bf-a7d5-95cc61040488",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 5",
-            "The streets we walked · 5"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "785a0d73-bb40-4137-a1e8-941f6b68ae45",
           "src": "/explore/photo-20.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 6",
-            "The streets we walked · 6"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "34c05012-4014-43d8-ab95-7ad57c53b8d1",
           "src": "/explore/photo-21.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 7",
-            "The streets we walked · 7"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "f5e07b57-11b4-46be-a185-438d547f60b1",
           "src": "/explore/photo-22.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 8",
-            "The streets we walked · 8"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "3e390685-2bd2-435b-aeba-b750118caf04",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 9",
-            "The streets we walked · 9"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "81d6c423-beec-4727-a93c-1b9cb19512f1",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 10",
-            "The streets we walked · 10"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "3946ca51-5099-4568-ab1f-5d4947f61584",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 11",
-            "The streets we walked · 11"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "0174de3c-4687-40d5-aeaf-d92e950fcaff",
           "src": "/explore/photo-26.jpg",
           "caption": [
-            "같이 걷던 그 거리 · 12",
-            "The streets we walked · 12"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         }
       ],
@@ -1278,7 +2467,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "film"
     },
     {
       "id": "06f73576-fcb9-440b-a31f-83fd63360937",
@@ -1297,96 +2487,144 @@
           "id": "c3607c53-913f-4ba4-afa2-dc4f6eb5a3f6",
           "src": "/explore/photo-22.jpg",
           "caption": [
-            "사진을 모으던 밤 · 1",
-            "An evening of memories · 1"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "031b4713-27fc-4b5d-af6a-91baea924ae2",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "사진을 모으던 밤 · 2",
-            "An evening of memories · 2"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "41529a60-df10-46a4-aeaa-735c8f8a5bb6",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "사진을 모으던 밤 · 3",
-            "An evening of memories · 3"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "411b9532-2c75-46ef-a37a-9325186ba60f",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "사진을 모으던 밤 · 4",
-            "An evening of memories · 4"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "0efb1343-73d7-45e4-a1f1-b8aa4d6d296f",
           "src": "/explore/photo-26.jpg",
           "caption": [
-            "사진을 모으던 밤 · 5",
-            "An evening of memories · 5"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "e0c98289-72c4-4a6a-a94c-abced55d0dbb",
           "src": "/explore/photo-27.jpg",
           "caption": [
-            "사진을 모으던 밤 · 6",
-            "An evening of memories · 6"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "da98f3fb-cee4-4342-a010-75706dcc2799",
           "src": "/explore/photo-28.jpg",
           "caption": [
-            "사진을 모으던 밤 · 7",
-            "An evening of memories · 7"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "b19de92f-9d07-4ee7-a8dd-22157743627b",
           "src": "/explore/photo-29.jpg",
           "caption": [
-            "사진을 모으던 밤 · 8",
-            "An evening of memories · 8"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "833786f3-e209-4bd3-a622-daf6d5cc5b29",
           "src": "/explore/photo-30.jpg",
           "caption": [
-            "사진을 모으던 밤 · 9",
-            "An evening of memories · 9"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "13f1f62a-2213-46ae-a42e-f9a425d067ed",
           "src": "/explore/photo-31.jpg",
           "caption": [
-            "사진을 모으던 밤 · 10",
-            "An evening of memories · 10"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "0f562607-45d7-4d1c-accd-6367acb319eb",
           "src": "/explore/photo-32.jpg",
           "caption": [
-            "사진을 모으던 밤 · 11",
-            "An evening of memories · 11"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "33e02953-12d3-4be5-a8aa-a323cc3456ae",
           "src": "/explore/photo-33.jpg",
           "caption": [
-            "사진을 모으던 밤 · 12",
-            "An evening of memories · 12"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         }
       ],
@@ -1403,7 +2641,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "softgirl"
     },
     {
       "id": "294b3eb1-1136-4036-a059-a65dac51aa67",
@@ -1422,96 +2661,144 @@
           "id": "205a0a3b-d348-433a-a3e1-36d5c49232f7",
           "src": "/explore/photo-29.jpg",
           "caption": [
-            "열두 달의 우리 · 1",
-            "Our year together · 1"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "7f0a04ef-4705-4383-ac7d-81f422b34632",
           "src": "/explore/photo-30.jpg",
           "caption": [
-            "열두 달의 우리 · 2",
-            "Our year together · 2"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "44d3a99e-87b6-4404-a240-f222652a98e2",
           "src": "/explore/photo-31.jpg",
           "caption": [
-            "열두 달의 우리 · 3",
-            "Our year together · 3"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "d1909b40-3606-4dda-a707-9ddde8206b50",
           "src": "/explore/photo-32.jpg",
           "caption": [
-            "열두 달의 우리 · 4",
-            "Our year together · 4"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "bce16fe5-e1db-41c0-ae42-5a1a4456348f",
           "src": "/explore/photo-33.jpg",
           "caption": [
-            "열두 달의 우리 · 5",
-            "Our year together · 5"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "cca9897c-67f3-4af4-a707-f410ff6fa2a6",
           "src": "/explore/photo-34.jpg",
           "caption": [
-            "열두 달의 우리 · 6",
-            "Our year together · 6"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "4a0b2b33-68f9-4cbd-a35c-15b4e33983e5",
           "src": "/explore/photo-35.jpg",
           "caption": [
-            "열두 달의 우리 · 7",
-            "Our year together · 7"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "d05d81c3-cb3f-4f4c-a882-0d7dce2e9351",
           "src": "/explore/photo-36.jpg",
           "caption": [
-            "열두 달의 우리 · 8",
-            "Our year together · 8"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "cda2d167-2ad4-4dd5-a3f6-f03da0a367a0",
           "src": "/explore/photo-37.jpg",
           "caption": [
-            "열두 달의 우리 · 9",
-            "Our year together · 9"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "54ac786d-7360-4776-aa94-6cfc1a0773b7",
           "src": "/explore/photo-38.jpg",
           "caption": [
-            "열두 달의 우리 · 10",
-            "Our year together · 10"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "1bb44282-a986-465a-ae9b-73ee6a236eb6",
           "src": "/explore/photo-39.jpg",
           "caption": [
-            "열두 달의 우리 · 11",
-            "Our year together · 11"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "034fb45b-efbf-47b3-a7a2-cf2526ea75ce",
           "src": "/explore/photo-40.jpg",
           "caption": [
-            "열두 달의 우리 · 12",
-            "Our year together · 12"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         }
       ],
@@ -1528,7 +2815,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     },
     {
       "id": "50a6e62f-abc1-407b-abb2-512dca3a41a3",
@@ -1547,96 +2835,144 @@
           "id": "3590f893-9ce0-45a4-aa34-608d59cd02f1",
           "src": "/explore/photo-36.jpg",
           "caption": [
-            "엄마와 나의 산책 · 1",
-            "A walk with Mom · 1"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "2f6a4c61-fc27-4409-ad6e-b0e0d716f9c4",
           "src": "/explore/photo-37.jpg",
           "caption": [
-            "엄마와 나의 산책 · 2",
-            "A walk with Mom · 2"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "157d054f-ac4d-4938-a3a0-a83076264440",
           "src": "/explore/photo-38.jpg",
           "caption": [
-            "엄마와 나의 산책 · 3",
-            "A walk with Mom · 3"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "3aea0fe0-6df8-4f63-a4da-ce771ecc654e",
           "src": "/explore/photo-39.jpg",
           "caption": [
-            "엄마와 나의 산책 · 4",
-            "A walk with Mom · 4"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "fa952e6a-61ed-4b96-a493-3a6d16faad61",
           "src": "/explore/photo-40.jpg",
           "caption": [
-            "엄마와 나의 산책 · 5",
-            "A walk with Mom · 5"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "b5a7028c-03ad-4090-a545-2943f88bf679",
           "src": "/explore/photo-41.jpg",
           "caption": [
-            "엄마와 나의 산책 · 6",
-            "A walk with Mom · 6"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "2e68fa69-d772-4011-a343-e1093cc653cf",
           "src": "/explore/photo-42.jpg",
           "caption": [
-            "엄마와 나의 산책 · 7",
-            "A walk with Mom · 7"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "132095b1-2358-4c3c-a89b-1ab3700b786b",
           "src": "/explore/photo-43.jpg",
           "caption": [
-            "엄마와 나의 산책 · 8",
-            "A walk with Mom · 8"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "521137c8-7aad-4d4d-a06a-a9a36a4980f0",
           "src": "/explore/photo-44.jpg",
           "caption": [
-            "엄마와 나의 산책 · 9",
-            "A walk with Mom · 9"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "7148d127-aa18-474e-adba-eb5d3769932f",
           "src": "/explore/photo-45.jpg",
           "caption": [
-            "엄마와 나의 산책 · 10",
-            "A walk with Mom · 10"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "840e73db-af74-4d7f-af57-4118109c9b09",
           "src": "/explore/photo-46.jpg",
           "caption": [
-            "엄마와 나의 산책 · 11",
-            "A walk with Mom · 11"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "3ce5e5a7-7de1-4e0b-adb4-ff7c7b939086",
           "src": "/explore/photo-47.jpg",
           "caption": [
-            "엄마와 나의 산책 · 12",
-            "A walk with Mom · 12"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         }
       ],
@@ -1653,7 +2989,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "polaroid"
     },
     {
       "id": "3b3893ef-102a-4127-aa33-9e496502232f",
@@ -1672,96 +3009,144 @@
           "id": "62564a6c-ff29-4efb-a292-21358b759754",
           "src": "/explore/photo-43.jpg",
           "caption": [
-            "가족의 작은 여행 · 1",
-            "A little family trip · 1"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "b579443b-0c92-4520-aac4-22e92e9450e2",
           "src": "/explore/photo-44.jpg",
           "caption": [
-            "가족의 작은 여행 · 2",
-            "A little family trip · 2"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "3f4e46f4-8940-4f7d-a583-f910b7620795",
           "src": "/explore/photo-45.jpg",
           "caption": [
-            "가족의 작은 여행 · 3",
-            "A little family trip · 3"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "ddd76e2d-23d3-4372-a04b-5470efdb151f",
           "src": "/explore/photo-46.jpg",
           "caption": [
-            "가족의 작은 여행 · 4",
-            "A little family trip · 4"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "6de30c38-1043-42fa-a0b0-a7e1ed9237d4",
           "src": "/explore/photo-47.jpg",
           "caption": [
-            "가족의 작은 여행 · 5",
-            "A little family trip · 5"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "5332984d-1b02-413e-aa8e-dbb6aa0dce82",
           "src": "/explore/photo-0.jpg",
           "caption": [
-            "가족의 작은 여행 · 6",
-            "A little family trip · 6"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "c0034e6e-90ac-4243-a830-25ce0482dc2c",
           "src": "/explore/photo-1.jpg",
           "caption": [
-            "가족의 작은 여행 · 7",
-            "A little family trip · 7"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "95dd80ba-0564-4539-ae2b-5c65a49c8e7c",
           "src": "/explore/photo-2.jpg",
           "caption": [
-            "가족의 작은 여행 · 8",
-            "A little family trip · 8"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "d7d09e72-256f-4749-af57-9aece2022d87",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "가족의 작은 여행 · 9",
-            "A little family trip · 9"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "0b44477b-258c-421e-a84f-e6e7f0ede6e1",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "가족의 작은 여행 · 10",
-            "A little family trip · 10"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "0d5c408b-e60c-4f4f-a479-b8ed178b8353",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "가족의 작은 여행 · 11",
-            "A little family trip · 11"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "d662e224-c799-4de4-ac9c-3f977a58165b",
           "src": "/explore/photo-6.jpg",
           "caption": [
-            "가족의 작은 여행 · 12",
-            "A little family trip · 12"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         }
       ],
@@ -1778,7 +3163,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "film"
     },
     {
       "id": "8b43e71c-b16c-4a04-a5b2-81bbd0ca0089",
@@ -1797,96 +3183,144 @@
           "id": "679a8019-514f-42fb-a883-5a28efc27b56",
           "src": "/explore/photo-2.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 1",
-            "Waiting for spring · 1"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "57039d7a-ab11-4627-abf3-ce761cf2b8f7",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 2",
-            "Waiting for spring · 2"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "74a8a125-9d0c-4dc7-a913-e543d3d1fa76",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 3",
-            "Waiting for spring · 3"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "0f1f59d5-3ad1-4683-a81f-7f47a4834964",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 4",
-            "Waiting for spring · 4"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "d382cd96-7318-4025-ad27-a7f11cb2e275",
           "src": "/explore/photo-6.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 5",
-            "Waiting for spring · 5"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "48ee78af-246e-47fe-a959-03393ad18e0b",
           "src": "/explore/photo-7.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 6",
-            "Waiting for spring · 6"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "5c6e76bb-e554-4294-a983-487be2c43af7",
           "src": "/explore/photo-8.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 7",
-            "Waiting for spring · 7"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "c79db7f9-d386-400a-ab9c-bf38e19ea158",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 8",
-            "Waiting for spring · 8"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "3918b674-0bf1-45b0-afdb-d4d8010cef26",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 9",
-            "Waiting for spring · 9"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "5fe24bb6-d35b-4c0e-aee7-c1e3508b031b",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 10",
-            "Waiting for spring · 10"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "ecc07214-ba88-467d-a5ce-25aa2379f933",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 11",
-            "Waiting for spring · 11"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "35945605-fcb7-449f-a430-a2b7a53892dc",
           "src": "/explore/photo-13.jpg",
           "caption": [
-            "봄을 기다리는 마음 · 12",
-            "Waiting for spring · 12"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         }
       ],
@@ -1903,7 +3337,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "softgirl"
     },
     {
       "id": "44811973-cf8c-42ee-adcc-5605ebfe7ae4",
@@ -1922,96 +3357,144 @@
           "id": "f7185684-0fb4-4f29-a2c4-89ee4043d8d1",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 1",
-            "A sunny Sunday · 1"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "38f3e284-3b0f-4635-a302-f555b8305ff0",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 2",
-            "A sunny Sunday · 2"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "7921daef-c52d-40df-a88d-a613f49fe496",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 3",
-            "A sunny Sunday · 3"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "647e1f51-38cb-4b6e-a103-529f3098b50c",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 4",
-            "A sunny Sunday · 4"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "70790b4f-d278-48dc-ae12-b5e34c221d07",
           "src": "/explore/photo-13.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 5",
-            "A sunny Sunday · 5"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "422524fc-b007-4d8e-ad66-6421cab8b661",
           "src": "/explore/photo-14.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 6",
-            "A sunny Sunday · 6"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "65aafb2c-62f7-4455-a21a-16c4bf47fa44",
           "src": "/explore/photo-15.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 7",
-            "A sunny Sunday · 7"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "c6045cc2-a78d-47d1-aa05-e74abc1e145e",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 8",
-            "A sunny Sunday · 8"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "9c501bcb-d17a-456e-a545-168af0665bf0",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 9",
-            "A sunny Sunday · 9"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "f549359b-14c9-42ea-ab1c-88c65dd78b28",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 10",
-            "A sunny Sunday · 10"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "17f24d4b-215b-4aa0-ab4e-6c29ff31dbf3",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 11",
-            "A sunny Sunday · 11"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "6348ccbd-c0dd-4ff9-afd4-f92e7dae6166",
           "src": "/explore/photo-20.jpg",
           "caption": [
-            "햇살 좋은 일요일 · 12",
-            "A sunny Sunday · 12"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         }
       ],
@@ -2028,7 +3511,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     },
     {
       "id": "8e40c0b6-ffa5-44a5-ada7-1d541f0397c3",
@@ -2047,96 +3531,144 @@
           "id": "ed7a199b-ab6f-415d-ab21-f51afd81e547",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 1",
-            "Opening old photographs · 1"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "7fab7d0c-14db-4357-a0c1-07e098617dc9",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 2",
-            "Opening old photographs · 2"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "e546042d-8280-470e-a94a-cbc328d47755",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 3",
-            "Opening old photographs · 3"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "69b18dfb-a7d4-4390-aace-a324617ad8ba",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 4",
-            "Opening old photographs · 4"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "beffcf95-c7e7-446e-a2a2-ea6c735fd3e4",
           "src": "/explore/photo-20.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 5",
-            "Opening old photographs · 5"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "3603935e-9bd7-4db7-a782-36987c43f221",
           "src": "/explore/photo-21.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 6",
-            "Opening old photographs · 6"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "6a68dec0-6989-417f-a9b4-d8f94b6f4cf6",
           "src": "/explore/photo-22.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 7",
-            "Opening old photographs · 7"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "e47b9f9e-b376-471f-a558-c5e39d6dfa4a",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 8",
-            "Opening old photographs · 8"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "153d0d7c-608a-4177-a570-b136a369b1d2",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 9",
-            "Opening old photographs · 9"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "18285045-e632-4a07-a479-c0b89ebfc3e7",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 10",
-            "Opening old photographs · 10"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "6e6ea9e4-ddcf-4187-a139-787b058e0509",
           "src": "/explore/photo-26.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 11",
-            "Opening old photographs · 11"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "7d29055c-94e5-469c-a85d-2e1c0796b9f3",
           "src": "/explore/photo-27.jpg",
           "caption": [
-            "오래된 사진을 펼치면 · 12",
-            "Opening old photographs · 12"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         }
       ],
@@ -2153,7 +3685,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "polaroid"
     },
     {
       "id": "1f8aa343-73b6-4673-aff5-7a5dd41319d0",
@@ -2172,96 +3705,144 @@
           "id": "9fbc784c-7463-4872-a28e-1a7709fd59a4",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "함께라서 좋은 날 · 1",
-            "Better together · 1"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "5ee16909-c0d2-4554-a049-7c606a8b5dd5",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "함께라서 좋은 날 · 2",
-            "Better together · 2"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "b03054c8-0abb-467e-a118-ccdaaa797c7a",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "함께라서 좋은 날 · 3",
-            "Better together · 3"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "a4528d57-7192-4c55-ab9b-17c768035577",
           "src": "/explore/photo-26.jpg",
           "caption": [
-            "함께라서 좋은 날 · 4",
-            "Better together · 4"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "d2da25bf-c060-4bc9-af97-06d1e7d54f76",
           "src": "/explore/photo-27.jpg",
           "caption": [
-            "함께라서 좋은 날 · 5",
-            "Better together · 5"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "5fc38d70-5796-49ae-af92-045f6f37d84c",
           "src": "/explore/photo-28.jpg",
           "caption": [
-            "함께라서 좋은 날 · 6",
-            "Better together · 6"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "16132fb5-af4e-4c2f-ad36-6bb200d7b7fa",
           "src": "/explore/photo-29.jpg",
           "caption": [
-            "함께라서 좋은 날 · 7",
-            "Better together · 7"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "b1d11825-e3fb-4bd5-abfd-a60e13716fa4",
           "src": "/explore/photo-30.jpg",
           "caption": [
-            "함께라서 좋은 날 · 8",
-            "Better together · 8"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "2e2d19f7-492f-4a1b-ab22-0f0e5e591e6a",
           "src": "/explore/photo-31.jpg",
           "caption": [
-            "함께라서 좋은 날 · 9",
-            "Better together · 9"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "57a34445-cef6-44c0-aa62-4e12155177b3",
           "src": "/explore/photo-32.jpg",
           "caption": [
-            "함께라서 좋은 날 · 10",
-            "Better together · 10"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "3f64c2d7-0011-4fcf-a81b-4abf46dd9f6c",
           "src": "/explore/photo-33.jpg",
           "caption": [
-            "함께라서 좋은 날 · 11",
-            "Better together · 11"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "5189543e-d470-4876-aebf-a639b2b33218",
           "src": "/explore/photo-34.jpg",
           "caption": [
-            "함께라서 좋은 날 · 12",
-            "Better together · 12"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         }
       ],
@@ -2278,7 +3859,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "film"
     },
     {
       "id": "23b5c316-49e8-428c-a12e-0a957d733788",
@@ -2297,96 +3879,144 @@
           "id": "7df53047-1f01-4996-a23d-5d30516fefd7",
           "src": "/explore/photo-30.jpg",
           "caption": [
-            "빛을 따라 걷기 · 1",
-            "Following the light · 1"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "cfb915ca-28ec-4f11-a6ec-b012dc4e957c",
           "src": "/explore/photo-31.jpg",
           "caption": [
-            "빛을 따라 걷기 · 2",
-            "Following the light · 2"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "a3916b44-78a0-4416-aeb2-014901a2c5c7",
           "src": "/explore/photo-32.jpg",
           "caption": [
-            "빛을 따라 걷기 · 3",
-            "Following the light · 3"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "155a8d34-d7fe-49b6-af6c-ed3685333f41",
           "src": "/explore/photo-33.jpg",
           "caption": [
-            "빛을 따라 걷기 · 4",
-            "Following the light · 4"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "e15bceed-c57c-47ea-a163-de90dedb40cb",
           "src": "/explore/photo-34.jpg",
           "caption": [
-            "빛을 따라 걷기 · 5",
-            "Following the light · 5"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "0c1ccf38-831e-4983-a57f-c4539a90045f",
           "src": "/explore/photo-35.jpg",
           "caption": [
-            "빛을 따라 걷기 · 6",
-            "Following the light · 6"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "e2b93696-dc40-4f21-a5a7-78361ec69ff4",
           "src": "/explore/photo-36.jpg",
           "caption": [
-            "빛을 따라 걷기 · 7",
-            "Following the light · 7"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "908930d6-3305-4198-ac6c-1c6e9f28a01c",
           "src": "/explore/photo-37.jpg",
           "caption": [
-            "빛을 따라 걷기 · 8",
-            "Following the light · 8"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "291632e9-3a80-4e0a-a4fe-90b031d7aa94",
           "src": "/explore/photo-38.jpg",
           "caption": [
-            "빛을 따라 걷기 · 9",
-            "Following the light · 9"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "cfffd77f-7f7a-43aa-a647-88a60edf2ba1",
           "src": "/explore/photo-39.jpg",
           "caption": [
-            "빛을 따라 걷기 · 10",
-            "Following the light · 10"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "4f17fc2c-d9f3-4f7f-ab6e-e4c53f969733",
           "src": "/explore/photo-40.jpg",
           "caption": [
-            "빛을 따라 걷기 · 11",
-            "Following the light · 11"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "e8717667-92fe-4bfe-ac3d-67ebd00582d2",
           "src": "/explore/photo-41.jpg",
           "caption": [
-            "빛을 따라 걷기 · 12",
-            "Following the light · 12"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         }
       ],
@@ -2403,7 +4033,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "softgirl"
     },
     {
       "id": "4b1aa2b7-79e5-4794-acdc-bedea090aa07",
@@ -2422,96 +4053,144 @@
           "id": "e10a09a0-16c1-4f80-acc1-4aa61f32614d",
           "src": "/explore/photo-37.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 1",
-            "A quiet coffee break · 1"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "f4ce11c6-7de9-4b44-a1d6-06281397bb78",
           "src": "/explore/photo-38.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 2",
-            "A quiet coffee break · 2"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "89c38672-615e-4686-a279-a30cc50f36ae",
           "src": "/explore/photo-39.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 3",
-            "A quiet coffee break · 3"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "1b8246ed-30cf-49de-ac98-12dd6eee17c5",
           "src": "/explore/photo-40.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 4",
-            "A quiet coffee break · 4"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "c007c6bd-6ac5-4989-ac9c-41d8e0ff9214",
           "src": "/explore/photo-41.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 5",
-            "A quiet coffee break · 5"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "33daa273-217d-46aa-aed8-144e7fda5f75",
           "src": "/explore/photo-42.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 6",
-            "A quiet coffee break · 6"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "6319ba90-e926-4ddb-a94f-42b14cbc7b7b",
           "src": "/explore/photo-43.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 7",
-            "A quiet coffee break · 7"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "ce6d3ffd-f0c8-4c29-aa15-733fee9f069c",
           "src": "/explore/photo-44.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 8",
-            "A quiet coffee break · 8"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "b55f0fae-4e0b-41dd-a616-419d6c0959a7",
           "src": "/explore/photo-45.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 9",
-            "A quiet coffee break · 9"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "86271757-9117-4e77-a468-4d3b008bc87e",
           "src": "/explore/photo-46.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 10",
-            "A quiet coffee break · 10"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "2437080a-5317-4f8b-abbf-dedf55f0f46d",
           "src": "/explore/photo-47.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 11",
-            "A quiet coffee break · 11"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "00fc87d4-39da-4321-a455-5084be21be20",
           "src": "/explore/photo-0.jpg",
           "caption": [
-            "커피 한 잔의 여유 · 12",
-            "A quiet coffee break · 12"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         }
       ],
@@ -2528,7 +4207,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     },
     {
       "id": "512e4862-1b62-425d-a2d4-176643eeb6eb",
@@ -2547,96 +4227,144 @@
           "id": "5d4f27b9-5a0c-4682-a438-0a6c56dcaaa7",
           "src": "/explore/photo-44.jpg",
           "caption": [
-            "나만의 작은 휴가 · 1",
-            "My little holiday · 1"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "38c646a2-de58-43b3-a125-ac6901b2243e",
           "src": "/explore/photo-45.jpg",
           "caption": [
-            "나만의 작은 휴가 · 2",
-            "My little holiday · 2"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "f0082f33-7d89-4091-a53a-7dfce9544b4e",
           "src": "/explore/photo-46.jpg",
           "caption": [
-            "나만의 작은 휴가 · 3",
-            "My little holiday · 3"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "7af3bad1-d5ee-4719-ab68-3b4dd4600093",
           "src": "/explore/photo-47.jpg",
           "caption": [
-            "나만의 작은 휴가 · 4",
-            "My little holiday · 4"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "d8e42853-a9c5-4302-a113-95261c42a888",
           "src": "/explore/photo-0.jpg",
           "caption": [
-            "나만의 작은 휴가 · 5",
-            "My little holiday · 5"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "7c793f0d-0a6e-49a3-a4d8-5a550adb9dc0",
           "src": "/explore/photo-1.jpg",
           "caption": [
-            "나만의 작은 휴가 · 6",
-            "My little holiday · 6"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "91d14b68-d835-4d2f-a560-b603c4d6defa",
           "src": "/explore/photo-2.jpg",
           "caption": [
-            "나만의 작은 휴가 · 7",
-            "My little holiday · 7"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "a2e83e63-f271-43f9-a808-a07a8985bb66",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "나만의 작은 휴가 · 8",
-            "My little holiday · 8"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "c7075f17-649a-446f-a860-0cc510379e67",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "나만의 작은 휴가 · 9",
-            "My little holiday · 9"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "d98afb2d-4e7a-4791-a537-4c39e23a3897",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "나만의 작은 휴가 · 10",
-            "My little holiday · 10"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "c0399be9-b756-4cb9-a4cb-60a76ac6db6e",
           "src": "/explore/photo-6.jpg",
           "caption": [
-            "나만의 작은 휴가 · 11",
-            "My little holiday · 11"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "7614e2f8-7b02-4a5d-af6f-70591a8b003c",
           "src": "/explore/photo-7.jpg",
           "caption": [
-            "나만의 작은 휴가 · 12",
-            "My little holiday · 12"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         }
       ],
@@ -2653,7 +4381,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "polaroid"
     },
     {
       "id": "d2a6d211-79ed-46e8-ac59-9f1b321cac31",
@@ -2672,96 +4401,144 @@
           "id": "dbe331e4-6f19-4727-a64f-1893792cb4a4",
           "src": "/explore/photo-3.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 1",
-            "Collecting colors · 1"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "ba16f642-0407-4f5f-ac99-87e5994abb25",
           "src": "/explore/photo-4.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 2",
-            "Collecting colors · 2"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "ca43aa9a-6a71-44f2-a520-cdbf9be53a46",
           "src": "/explore/photo-5.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 3",
-            "Collecting colors · 3"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "88122985-355d-4212-ae68-d00d514f2ab7",
           "src": "/explore/photo-6.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 4",
-            "Collecting colors · 4"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "f2378318-2a9d-430b-a9b9-a4072dec5d46",
           "src": "/explore/photo-7.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 5",
-            "Collecting colors · 5"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "d395235b-91ef-46f9-ab1e-a7da2052694b",
           "src": "/explore/photo-8.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 6",
-            "Collecting colors · 6"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "56ab0560-2dc0-44a4-a038-a54d7edba0bf",
           "src": "/explore/photo-9.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 7",
-            "Collecting colors · 7"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "223cff38-012d-48e6-a822-0cb91c684f4a",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 8",
-            "Collecting colors · 8"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "86f5c299-a508-4535-a5cc-98ad278f90b4",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 9",
-            "Collecting colors · 9"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "e58bb4bf-7703-462d-ac7a-3d2f9c9ef890",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 10",
-            "Collecting colors · 10"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "ccb2eb4d-b98c-4857-a46c-f6c84643c317",
           "src": "/explore/photo-13.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 11",
-            "Collecting colors · 11"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "b3c11079-7654-4a3e-a8b5-45d60be8c6a4",
           "src": "/explore/photo-14.jpg",
           "caption": [
-            "좋아하는 색을 모아서 · 12",
-            "Collecting colors · 12"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         }
       ],
@@ -2778,7 +4555,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "film"
     },
     {
       "id": "2b42be9e-8a15-4598-a2c4-e3c6e2339ff5",
@@ -2797,96 +4575,144 @@
           "id": "b8c03230-c154-4adf-a174-2c8e064303f0",
           "src": "/explore/photo-10.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 1",
-            "Scenes from today · 1"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "2d4387b6-a4fe-4d77-a9a9-28bc580dd007",
           "src": "/explore/photo-11.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 2",
-            "Scenes from today · 2"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "da6e8960-9e35-479e-af09-65f9417dbb4b",
           "src": "/explore/photo-12.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 3",
-            "Scenes from today · 3"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "f09d1619-5ed5-4ae0-ab3d-bc224351d90b",
           "src": "/explore/photo-13.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 4",
-            "Scenes from today · 4"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "6a6b208a-9e74-4ab6-aba5-44c39f212909",
           "src": "/explore/photo-14.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 5",
-            "Scenes from today · 5"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "f1e1c3f0-fcb3-464c-a31f-d1d23f78baf8",
           "src": "/explore/photo-15.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 6",
-            "Scenes from today · 6"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "18f68dc2-2063-4e8e-a44e-40caedb9deac",
           "src": "/explore/photo-16.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 7",
-            "Scenes from today · 7"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "4e3cce61-8111-463e-a6e4-8767df0b029c",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 8",
-            "Scenes from today · 8"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "81d4e9d4-2dcd-4d45-ab5d-5933b69a6e33",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 9",
-            "Scenes from today · 9"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "4fce56a6-e4fa-45b6-a0ec-da65285177b8",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 10",
-            "Scenes from today · 10"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "12154867-8308-4e3b-a2ef-feca5a2a714a",
           "src": "/explore/photo-20.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 11",
-            "Scenes from today · 11"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "107e533b-6f6b-42f8-afb7-3786de0c7818",
           "src": "/explore/photo-21.jpg",
           "caption": [
-            "오늘의 풍경 기록 · 12",
-            "Scenes from today · 12"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         }
       ],
@@ -2903,7 +4729,8 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "softgirl"
     },
     {
       "id": "a5650f33-b631-43b7-aab3-a28bbd07db20",
@@ -2922,96 +4749,144 @@
           "id": "691fdcc0-57c3-495d-a065-766718440716",
           "src": "/explore/photo-17.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 1",
-            "A day to revisit · 1"
+            "이 순간 저장",
+            "Saving this moment"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "50d93d13-ee32-4955-aaaf-3555cd64953a",
           "src": "/explore/photo-18.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 2",
-            "A day to revisit · 2"
+            "배고파서 예민했던 시간",
+            "Hangry hour"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "42acc033-6431-49c2-adfa-35ea61e367cf",
           "src": "/explore/photo-19.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 3",
-            "A day to revisit · 3"
+            "다음에도 꼭 같이",
+            "Next time, together again"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "f6ffcd39-bf0c-492d-a9c5-1868687d33d6",
           "src": "/explore/photo-20.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 4",
-            "A day to revisit · 4"
+            "누가 찍었는지 몰라도 고마워",
+            "Whoever took this, thank you"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "dab0de15-918f-41ae-aaf0-59c51448f1b3",
           "src": "/explore/photo-21.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 5",
-            "A day to revisit · 5"
+            "웃겨서 저장함",
+            "Saved because it is funny"
+          ],
+          "by": [
+            "하윤",
+            "Hayun"
           ]
         },
         {
           "id": "23b17116-11d5-4753-a86a-51be790816e2",
           "src": "/explore/photo-22.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 6",
-            "A day to revisit · 6"
+            "이날 날씨 미쳤다",
+            "The weather was unreal"
+          ],
+          "by": [
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "61c69baa-44d0-432c-ad79-3678ae049503",
           "src": "/explore/photo-23.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 7",
-            "A day to revisit · 7"
+            "다시 가고 싶은 곳 1위",
+            "Number one place to go back to"
+          ],
+          "by": [
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "950cb77c-feaa-4385-a776-17f9a2d31e77",
           "src": "/explore/photo-24.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 8",
-            "A day to revisit · 8"
+            "이 표정 너무 좋아",
+            "I love this face"
+          ],
+          "by": [
+            "도윤",
+            "Doyun"
           ]
         },
         {
           "id": "35feb8a4-c8c5-4cd8-ab85-2d72046d8f09",
           "src": "/explore/photo-25.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 9",
-            "A day to revisit · 9"
+            "웃음 참기 실패",
+            "Failed to keep a straight face"
+          ],
+          "by": [
+            "유나",
+            "Yuna"
           ]
         },
         {
           "id": "b490df50-f108-4d81-aad3-9922f14cb1c6",
           "src": "/explore/photo-26.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 10",
-            "A day to revisit · 10"
+            "사진 보내줘서 고마워",
+            "Thanks for sending this one"
+          ],
+          "by": [
+            "태오",
+            "Teo"
           ]
         },
         {
           "id": "628833eb-ab99-4e96-a50d-9eaef2a84b7b",
           "src": "/explore/photo-27.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 11",
-            "A day to revisit · 11"
+            "여기서 한참 앉아 있었지",
+            "We sat here forever"
+          ],
+          "by": [
+            "수아",
+            "Sua"
           ]
         },
         {
           "id": "ccd52725-f982-4a75-a5dd-63bbb9964b1e",
           "src": "/explore/photo-28.jpg",
           "caption": [
-            "다시 펼쳐볼 하루 · 12",
-            "A day to revisit · 12"
+            "우리 다 잘 나온 유일한 사진",
+            "The one photo where we all look good"
+          ],
+          "by": [
+            "지수",
+            "Jisoo"
           ]
         }
       ],
@@ -3028,10 +4903,11 @@
           "돌아오는 길에 벌써 다음 약속을 잡았다. 다음 앨범도 이 사람들과 함께 만들고 싶다.",
           "We were already planning the next outing on the way home. Another album with the same people."
         ]
-      ]
+      ],
+      "theme": "birthday"
     }
   ],
-  "photoCount": 288,
+  "photoCount": 336,
   "source": "Unsplash (https://unsplash.com/license)",
   "fictional": true,
   "credits": [

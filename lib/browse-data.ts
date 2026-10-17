@@ -1,5 +1,7 @@
 import catalog from '@/app/explore/catalog.json';
 export function isBrowse(){return typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('browse')==='1';}
+/** The theme each sample album was decorated with, so explore opens on a finished look. */
+export function browseTheme(folderId:string){return catalog.albums.find(a=>a.id===folderId)?.theme;}
 export function browseResponse(path:string,method='GET'):unknown{
  const q=new URL(path,'https://local.invalid'),ko=(new URLSearchParams(window.location.search).get('lang')||document.documentElement.lang)==='ko',l=ko?0:1;
  if(path==='/api/session'&&method==='POST')return {viewerId:'browse-only'};
@@ -18,7 +20,8 @@ export function browseResponse(path:string,method='GET'):unknown{
  if(q.pathname==='/api/memories'){
   const album=catalog.albums.find(a=>a.id===q.searchParams.get('folderId'));
   if(!album)return {items:[],hasMore:false};
-  const items=album.records.map((r,i)=>({id:album.id+'-record-'+i,kind:'record',title:album.names[l]+' · '+(i+1),body:r[l],day:album.date,created:Date.parse(album.date+'T12:00:00Z')+i,shared:true,mine:false,author:members[0].name,revision:0,updatedAt:album.date+'T12:00:00Z',photos:photos.filter(p=>p.roomId===album.id).slice(i*4,i*4+4).map(p=>({...p,kind:'photo',body:p.name,day:album.date,author:members[0].name,revision:0,updatedAt:album.date+'T12:00:00Z'}))}));
+  const authors=new Map(album.photos.map(p=>[p.id,p.by?.[l]||members[0].name]));
+  const items=album.records.map((r,i)=>({id:album.id+'-record-'+i,kind:'record',title:album.names[l]+' · '+(i+1),body:r[l],day:album.date,created:Date.parse(album.date+'T12:00:00Z')+i,shared:true,mine:false,author:members[0].name,revision:0,updatedAt:album.date+'T12:00:00Z',photos:photos.filter(p=>p.roomId===album.id).slice(i*4,i*4+4).map(p=>({...p,kind:'photo',body:p.name,day:album.date,author:authors.get(p.id)!,revision:0,updatedAt:album.date+'T12:00:00Z'}))}));
   return {items:items.reverse(),hasMore:false};
  }
  if(q.pathname==='/api/discussion')return {comments:[],count:0,liked:false,hasMore:false,shared:true,mine:false};

@@ -1,6 +1,6 @@
 import { publicMetadata } from '@/lib/seo';
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Gaegu, Geist, Geist_Mono, Nanum_Pen_Script } from "next/font/google";
 import PerformanceDiagnostics from "../performance-diagnostics";
 import WebAnalytics from "../web-analytics";
 import "../globals.css";
@@ -17,6 +17,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Handwriting faces for themed albums. Korean glyphs arrive by unicode-range, so skip the latin-only preload.
+const handFont = Gaegu({
+  variable: "--font-hand",
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  preload: false,
+});
+
+const penFont = Nanum_Pen_Script({
+  variable: "--font-pen",
+  weight: "400",
+  subsets: ["latin"],
+  preload: false,
+});
+
 export const metadata: Metadata = {
   ...publicMetadata("en"),
   alternates: undefined,
@@ -29,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${handFont.variable} ${penFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}
