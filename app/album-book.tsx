@@ -44,7 +44,8 @@ export default function AlbumBook({folderId,title,description,locale,onPhoto,onA
  const pages=useMemo(()=>buildBookPages(items,pageSize),[items,pageSize]);
  const current=Math.min(page,pages.length);
  const [ticket,setTicket]=useState(false);
- const totalPhotos=useMemo(()=>pages.reduce((n,p)=>n+p.photos.length,0),[pages]);
+ const ticketPhotos=useMemo(()=>pages.flatMap(p=>p.photos).filter(p=>p.mediaType!=='video'&&p.src).map(p=>({id:p.id,name:p.body,src:p.src!})),[pages]);
+ const totalPhotos=ticketPhotos.length;
  const previewSources=useMemo(()=>{
   const indices=[current,current+1,current+2,current-1,...(flip?[flip.from]:[])];
   return [...new Set(indices.flatMap(index=>index===0?pages.find(p=>p.photos.length)?.photos.slice(0,1)||[]:pages[index-1]?.photos||[]).filter(p=>p.mediaType!=='video'&&p.src).map(p=>p.src!))];
@@ -75,5 +76,5 @@ export default function AlbumBook({folderId,title,description,locale,onPhoto,onA
   <nav className="book-controls" aria-label={ko?'앨범책 넘기기':'Turn book pages'}><button disabled={current===0||!!flip} onClick={()=>turn(current-1)}><ArrowLeft size={17}/>{ko?'이전':'Previous'}</button><span aria-live="polite">{current} / {pages.length}</span><button disabled={current===pages.length||!!flip} onClick={()=>turn(current+1)}>{ko?'다음':'Next'}<ArrowRight size={17}/></button></nav>
   <p className="book-hint">{ko?'버튼이나 좌우 방향키로 책장을 넘기세요. 모바일에서는 옆으로 밀어보세요.':'Turn pages with the buttons or arrow keys. Swipe on mobile.'}</p>
  </section>;
- return <>{expanded?createPortal(content,document.body):content}{ticket&&createPortal(<StoryTicket folderId={folderId} title={title} ko={ko} onClose={()=>setTicket(false)}/>,document.body)}</>;
+ return <>{expanded?createPortal(content,document.body):content}{ticket&&createPortal(<StoryTicket folderId={folderId} title={title} photos={ticketPhotos} ko={ko} onClose={()=>setTicket(false)}/>,document.body)}</>;
 }

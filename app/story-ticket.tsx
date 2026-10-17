@@ -1,14 +1,22 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { Download, Ticket, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Download, Shuffle, Ticket, X } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import './story-ticket.css';
 
-export default function StoryTicket({ folderId, title, ko, onClose }: { folderId: string; title: string; ko: boolean; onClose: () => void }) {
+type TicketPhoto = { id: string; name: string; src: string };
+function pickRandom(photos: TicketPhoto[], n: number) {
+ const pool = [...photos], picked: TicketPhoto[] = [];
+ while (picked.length < n && pool.length) picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+ return picked;
+}
+
+export default function StoryTicket({ folderId, title, photos, ko, onClose }: { folderId: string; title: string; photos: TicketPhoto[]; ko: boolean; onClose: () => void }) {
  const canvas = useRef<HTMLCanvasElement>(null);
  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
  const [error, setError] = useState('');
- function draw(imgs: HTMLImageElement[], names: string[]) {
+ const [names, setNames] = useState<string[]>([]);
+ const draw = useCallback((imgs: HTMLImageElement[], memberNames: string[]) => {
   const c = canvas.current; if (!c) return; const ctx = c.getContext('2d'); if (!ctx) return;
   const w = 720, h = 1280; c.width = w; c.height = h;
   ctx.fillStyle = '#f3ead9'; ctx.fillRect(0, 0, w, h);
@@ -23,7 +31,7 @@ export default function StoryTicket({ folderId, title, ko, onClose }: { folderId
   }
   const afterGrid = gridTop + cell * 2 + 20 + 50;
   ctx.fillStyle = '#3c2b1d'; ctx.font = "bold 36px Georgia, 'Times New Roman', serif"; ctx.fillText(title, w / 2, afterGrid, w - 100);
-  if (names.length) { ctx.fillStyle = '#8a5a33'; ctx.font = '16px sans-serif'; ctx.fillText(names.slice(0, 6).join(' · '), w / 2, afterGrid + 36, w - 100); }
+  if (memberNames.length) { ctx.fillStyle = '#8a5a33'; ctx.font = '16px sans-serif'; ctx.fillText(memberNames.slice(0, 6).join(' · '), w / 2, afterGrid + 36, w - 100); }
   const cutY = h - 220;
   ctx.save(); ctx.strokeStyle = '#b89468'; ctx.setLineDash([8, 8]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(24, cutY); ctx.lineTo(w - 24, cutY); ctx.stroke(); ctx.restore();
   const barY = cutY + 40, barH = 60; let bx = 60;
@@ -32,23 +40,20 @@ export default function StoryTicket({ folderId, title, ko, onClose }: { folderId
   const date = new Date().toISOString().slice(0, 10).replaceAll('-', ' . ');
   ctx.font = '14px monospace'; ctx.fillText(`${date}  ·  NO. ${Math.floor(Math.random() * 90000 + 10000)}`, w / 2, barY + barH + 30);
   ctx.font = '13px sans-serif'; ctx.fillStyle = '#a9875f'; ctx.fillText('memonestia.xyz', w / 2, h - 40);
- }
+ }, [title]);
+ const roll = useCallback((memberNames: string[]) => {
+  if (!photos.length) { setError(ko ? '티켓에 쓸 사진이 없어요.' : 'No photos to use yet.'); setStatus('error'); return; }
+  setStatus('loading'); setError('');
+  const picks = pickRandom(photos, Math.min(4, photos.length));
+  Promise.all(picks.map(p => new Promise<HTMLImageElement>((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = reject; img.src = p.src; })))
+   .then(imgs => { draw(imgs, memberNames); setStatus('ready'); })
+   .catch(() => { setError(ko ? '티켓을 만들지 못했어요. 다시 시도해 주세요.' : 'Could not create the ticket. Please retry.'); setStatus('error'); });
+ }, [photos, ko, draw]);
  useEffect(() => {
   let active = true;
-  (async () => {
-   try {
-    const [photosRes, membersRes] = await Promise.all([
-     api<{ photos: { id: string; name: string; src: string }[] }>(`/api/photos/best?folderId=${encodeURIComponent(folderId)}`),
-     api<{ members: { id: string; name: string }[] }>(`/api/members?folderId=${encodeURIComponent(folderId)}`),
-    ]);
-    if (!active) return;
-    if (!photosRes.photos.length) { setError(ko ? '티켓에 쓸 사진이 없어요.' : 'No photos to use yet.'); setStatus('error'); return; }
-    const imgs = await Promise.all(photosRes.photos.slice(0, 4).map(p => new Promise<HTMLImageElement>((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = reject; img.src = p.src; })));
-    if (!active) return;
-    draw(imgs, membersRes.members.map(m => m.name));
-    setStatus('ready');
-   } catch { if (active) { setError(ko ? '티켓을 만들지 못했어요. 다시 시도해 주세요.' : 'Could not create the ticket. Please retry.'); setStatus('error'); } }
-  })();
+  api<{ members: { id: string; name: string }[] }>(`/api/members?folderId=${encodeURIComponent(folderId)}`)
+   .then(res => { if (!active) return; const memberNames = res.members.map(m => m.name); setNames(memberNames); roll(memberNames); })
+   .catch(() => { if (active) roll([]); });
   return () => { active = false; };
  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [folderId]);
@@ -60,7 +65,10 @@ export default function StoryTicket({ folderId, title, ko, onClose }: { folderId
    {status === 'loading' && <p role="status">{ko ? '티켓을 만드는 중…' : 'Making your ticket…'}</p>}
    {status === 'error' && <p role="alert">{error}</p>}
    <canvas ref={canvas} className={status === 'ready' ? 'is-ready' : ''} aria-label={ko ? '티켓 미리보기' : 'Ticket preview'}/>
-   {status === 'ready' && <button className="primary-button full" onClick={download}><Download size={16}/>{ko ? '이미지 저장하기' : 'Save image'}</button>}
+   {status === 'ready' && <div className="story-ticket-actions">
+    <button className="secondary-button" disabled={photos.length <= 4} onClick={() => roll(names)}><Shuffle size={16}/>{ko ? '다른 조합 뽑기' : 'Draw again'}</button>
+    <button className="primary-button" onClick={download}><Download size={16}/>{ko ? '이미지 저장하기' : 'Save image'}</button>
+   </div>}
   </section>
  </div>;
 }
