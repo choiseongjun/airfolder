@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Swatch thumbnails reuse the album's already-loaded photo URLs. */
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowRight, Share2, Sparkles, Wand2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { browseTheme } from '@/lib/browse-data';
 import type { MemoryItem } from './memories';
@@ -58,9 +58,27 @@ function dDay(day: string) {
  return left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : '';
 }
 
+export function albumShareMessage(title: string, url: string, ko: boolean, birthday: boolean) {
+ if (birthday) return ko ? `🎂 ${title} 앨범이에요!\n같이 찍은 사진 한 장이랑 한마디 남겨줘. 생일날 한 권으로 보여줄 거야 🤫\n${url}` : `🎂 ${title} album!\nAdd a photo and a short note. We'll show it on the big day 🤫\n${url}`;
+ return ko ? `📸 ${title} 앨범 같이 보자!\n열면 꾸민 앨범이 바로 보이고, 내 사진도 한 장씩 보탤 수 있어.\n${url}` : `📸 Let's look at our ${title} album!\nIt opens decorated, and you can add your own photos too.\n${url}`;
+}
+
 /** `birthday` is the party date (or '' when unknown) for birthday albums; undefined otherwise. */
-export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, onInvite, onPhoto }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; onInvite?: () => void; onPhoto: (item: MemoryItem) => void }) {
+export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void }) {
  const ko = locale === 'ko';
+ const [sharing, setSharing] = useState(false), [shareNote, setShareNote] = useState('');
+ // The album's invite link doubles as its share link: it opens on this decorated view and lets people add photos.
+ async function share() {
+  if (sharing) return;
+  setSharing(true); setShareNote('');
+  try {
+   const { token } = await api<{ token: string }>('/api/invites', { method: 'POST', body: JSON.stringify({ folderId }) });
+   const url = `${window.location.origin}/join/${token}?lang=${locale}`, text = albumShareMessage(title, url, ko, birthday !== undefined);
+   if (navigator.share) { try { await navigator.share({ text }); } catch { /* Closing the share sheet is not an error. */ } }
+   else { await navigator.clipboard.writeText(text); setShareNote(ko ? '공유 메시지를 복사했어요. 단톡방에 붙여넣으세요.' : 'Share message copied. Paste it in your group chat.'); }
+  } catch { setShareNote(ko ? '공유 링크를 만들지 못했어요. 다시 시도해 주세요.' : 'Could not make a share link. Please try again.'); }
+  finally { setSharing(false); }
+ }
  const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined));
  const [items, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  useEffect(() => {
@@ -124,10 +142,10 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
   {birthday !== undefined && <div className="ta-birthday-bar">
    <span className="ta-birthday-count">{countdown || '🎂'}</span>
    <div><strong>{people.length ? (ko ? `친구 ${people.length}명이 채웠어요` : `${people.length} ${people.length === 1 ? 'friend has' : 'friends have'} added photos`) : (ko ? '아직 아무도 채우지 않았어요' : 'Nobody has added a photo yet')}</strong><small>{ko ? '단톡방에 링크를 보내면 사진과 한마디가 여기에 쌓여요.' : 'Share the link in the group chat and photos with notes land here.'}</small></div>
-   {onInvite && <button className="primary-button" onClick={onInvite}>{ko ? '친구 더 부르기' : 'Invite friends'}</button>}
+   {canShare && <button className="primary-button" disabled={sharing} onClick={() => void share()}>{ko ? '친구 더 부르기' : 'Invite friends'}</button>}
   </div>}
   <div className="ta-picker">
-   <div className="ta-picker-head"><Sparkles size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small></div>
+   <div className="ta-picker-head"><Sparkles size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small>{canShare && birthday === undefined && <button className="ta-share-mini" disabled={sharing} onClick={() => void share()}><Share2 size={14}/>{ko ? '공유' : 'Share'}</button>}</div>
    <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
     {albumThemes.map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
      <span className="ta-swatch-art" aria-hidden="true">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}<span className="ta-swatch-deco"><Deco item={decor[t.id][0]} className=""/></span></span>
@@ -159,6 +177,12 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
     <small>memonestia.</small>
    </footer>
   </div>
+
+  {canShare && <div className="ta-share">
+   <div><strong>{ko ? '이 앨범, 같이 보고 같이 채워요' : 'Share it, fill it together'}</strong><p>{ko ? '링크를 연 사람은 꾸민 앨범을 바로 보고, 자기 사진도 보탤 수 있어요. 앱 설치는 필요 없어요.' : 'People who open the link see this decorated album and can add their own photos. No app needed.'}</p></div>
+   <button className="primary-button" disabled={sharing} onClick={() => void share()}><Share2 size={16}/>{sharing ? (ko ? '링크 만드는 중…' : 'Making link…') : (ko ? '앨범 공유하기' : 'Share album')}</button>
+  </div>}
+  {shareNote && <p className="ta-share-note" role="status">{shareNote}</p>}
 
   {browsing && <div className="ta-cta">
    <div><strong>{ko ? `${meta.ko} 테마로 우리 앨범 만들기` : `Make ours in ${meta.en}`}</strong><p>{ko ? '사진 몇 장과 한 줄 메모만 올리면, 꾸미기는 자동이에요. 친구들도 링크로 같이 채워요.' : 'Add a few photos and a note. The decorating is automatic, and friends can fill it in from a link.'}</p></div>

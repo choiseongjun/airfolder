@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Thumbnails are local object URLs of photos not uploaded yet. */
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, Check, ImagePlus, Link2, LockKeyhole, Upload, Users } from 'lucide-react';
 import { api, initializeSession } from '@/lib/client-api';
 import { IMAGE_LIMIT } from '@/lib/media-limits';
@@ -12,7 +13,7 @@ import Consent from '../../../growth/consent';
 import '../../../theme-album.css';
 import '../../birthday/birthday.css';
 
-type Invite = { name: string; kind: 'album' | 'group'; expiresAt: string; birthday?: boolean; day?: string | null };
+type Invite = { name: string; kind: 'album' | 'group'; expiresAt: string; birthday?: boolean; day?: string | null; photos?: number | null; people?: number | null };
 function dDay(day: string) { const now = new Date(), today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()); const left = Math.round((Date.parse(day + 'T00:00:00Z') - today) / 86400000); return left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : ''; }
 type Album = { id: string; name: string };
 type Item = { id: string; file: File; status: 'waiting' | 'uploading' | 'done' | 'failed'; error?: string; shared?: boolean; folder?: string; preview?: string };
@@ -21,7 +22,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
   const [invite, setInvite] = useState<Invite | null>(null), [ready, setReady] = useState(false), [accepted, setAccepted] = useState(false), [consent, setConsent] = useState(false);
   const [joined, setJoined] = useState(false), [albums, setAlbums] = useState<Album[]>([]), [folder, setFolder] = useState(''), [group, setGroup] = useState('');
   const [items, setItems] = useState<Item[]>([]), [shared, setShared] = useState(true), [busy, setBusy] = useState(false), [error, setError] = useState(''), [retry, setRetry] = useState(0), [note, setNote] = useState(''), [nickname, setNickname] = useState('');
-  const birthday = Boolean(invite?.birthday);
+  const birthday = Boolean(invite?.birthday), router = useRouter();
   const uploading = useRef(false), staged = useRef<Item[]>([]);
   useEffect(() => { staged.current = items; }, [items]);
   // Thumbnails are object URLs; release them when the page goes away.
@@ -44,12 +45,14 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
   }, [items]);
-  async function join() {
+  async function join(thenView = false) {
     if (!ready || busy || (!accepted && !consent)) return;
     setBusy(true); setError('');
     try {
       if (!accepted) { await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) }); setAccepted(true); }
       const result = await api<{ folderId?: string; groupId?: string; albums: Album[] }>('/api/join', { method: 'POST', body: JSON.stringify({ token, name: nickname.trim() || undefined }) });
+      // A shared album link should land on the decorated album itself, not the upload form.
+      if (thenView && result.folderId) { router.push(`/?lang=${locale}&album=${result.folderId}&view=theme`); return; }
       setAlbums(result.albums); setFolder(result.folderId || (result.albums.length === 1 ? result.albums[0].id : '')); setGroup(result.groupId || ''); setJoined(true);
     } catch (cause) { setError(cause instanceof Error && /INVITE/.test(cause.message) ? text('초대가 만료되었어요. 모임장에게 새 링크를 요청해 주세요.', 'The invite expired. Ask the organizer for a new link.') : text('참여하지 못했어요. 모임 정원이나 연결 상태를 확인하고 다시 시도해 주세요.', 'Could not join. Check the group capacity or your connection and try again.')); }
     finally { setBusy(false); }
@@ -100,6 +103,8 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
   const completed = items.filter(i => i.status === 'done').length, pending = items.filter(i => i.status !== 'done').length;
   if (birthday && invite) {
     const countdown = invite.day ? dDay(invite.day) : '', sent = completed > 0 && !pending;
+    // From the birthday on, the link is mostly opened to look, so viewing becomes the main action.
+    const partyDay = Boolean(invite.day) && (!countdown || countdown === 'D-DAY') && !!invite.photos;
     // Birthday guests are on a phone, mid-chat: one screen, thumb-reach action, nothing to configure.
     return <main className="growth-page bday-flow"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link></nav>
       <section className="bday-sheet">
@@ -116,7 +121,8 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
           <p className="bday-lead">{text('함께 찍은 사진 한 장이랑 한마디만 남겨주세요. 꾸미기는 자동이에요.', 'Add one photo of you two and a short note. Decorating is automatic.')}</p>
           <label className="growth-field">{text('내 이름', 'Your name')}<input maxLength={30} disabled={busy} value={nickname} onChange={e => setNickname(e.target.value)} placeholder={text('사진 옆에 같이 적혀요 · 예: 하윤', 'Shown with your photo · e.g. Hayun')} autoComplete="nickname" enterKeyHint="go" onKeyDown={e => { if (e.key === 'Enter') void join(); }} /></label>
           {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
-          <div className="bday-dock"><button className="growth-button" onClick={() => void join()} disabled={!ready || busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : text('사진 고르러 가기', 'Choose a photo')}<ArrowRight size={18} /></button></div>
+          {!!invite.photos && <button className="bday-more" disabled={!ready || busy || (!accepted && !consent)} onClick={() => void join(!partyDay)}>{partyDay ? text('+ 나도 사진 보태기', '+ Add my photo too') : text(`지금까지 모인 앨범 보기 · 사진 ${invite.photos}장 →`, `See the album so far · ${invite.photos} photos →`)}</button>}
+          <div className="bday-dock"><button className="growth-button" onClick={() => void join(partyDay)} disabled={!ready || busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : partyDay ? text('완성된 생일 앨범 보기 🎂', 'Open the birthday album 🎂') : text('사진 고르러 가기', 'Choose a photo')}<ArrowRight size={18} /></button></div>
         </div> : sent ? <div className="bday-step bday-done">
           <div className="bday-thumbs">{items.map(item => <span key={item.id} className="bday-thumb">{item.preview && <img src={item.preview} alt="" />}<Check size={16} /></span>)}</div>
           <p className="bday-lead">{text('친구들 사진이 다 모이면 버스데이 테마 앨범으로 완성돼요.', 'Once everyone adds theirs, it becomes a Birthday Film album.')}</p>
@@ -150,7 +156,9 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
       {!joined && ready && <div className="growth-form">{invite?.kind === 'group' && <p className="growth-note">{text('참여하면 이 그룹의 기존·새 앨범에 접근할 수 있으며, 멤버에게 공유된 사진만 볼 수 있어요.', 'Joining gives access to existing and future group albums, and photos shared with members.')}</p>}
         {birthday && <label className="growth-field">{text('내 이름 (사진 옆에 같이 적혀요)', 'Your name (shown with your photo)')}<input maxLength={30} disabled={busy} value={nickname} onChange={e => setNickname(e.target.value)} placeholder={text('예: 하윤', 'e.g. Hayun')} /></label>}
         {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
-        <button className="growth-button" onClick={() => void join()} disabled={busy || (!accepted && !consent)}>{busy ? text('참여 중…', 'Joining…') : text('참여하고 사진 고르기', 'Join & choose photos')}<ArrowRight size={18} /></button>
+        {invite?.kind === 'album' && !!invite.photos && <><p className="growth-note">{text(`사진 ${invite.photos}장${invite.people && invite.people > 1 ? ` · ${invite.people}명이 채웠어요` : ''}. 열면 꾸민 앨범으로 바로 보여요.`, `${invite.photos} photos${invite.people && invite.people > 1 ? ` from ${invite.people} people` : ''}. It opens as a decorated album.`)}</p>
+          <button className="growth-button" onClick={() => void join(true)} disabled={busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : text('앨범 보기', 'Open the album')}<ArrowRight size={18} /></button></>}
+        <button className={`growth-button${invite?.kind === 'album' && invite.photos ? ' secondary' : ''}`} onClick={() => void join()} disabled={busy || (!accepted && !consent)}>{busy ? text('참여 중…', 'Joining…') : invite?.kind === 'album' && invite.photos ? text('내 사진도 보태기', 'Add my photos too') : text('참여하고 사진 고르기', 'Join & choose photos')}<ArrowRight size={18} /></button>
         <p className="growth-note">{text('링크를 받은 모임 멤버만 참여해 주세요. 초대 링크는 7일간 유효합니다.', 'Please join only if invited by the organizer. Invitations last 7 days.')}</p></div>}
       {joined && <>{albums.length > 1 && <label className="growth-field">{text('사진을 올릴 앨범', 'Choose an album')}<select disabled={busy || items.some(i => i.folder)} value={folder} onChange={e => setFolder(e.target.value)}><option value="">{text('앨범을 선택해 주세요', 'Select an album')}</option>{albums.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select></label>}
         {!albums.length ? <p className="growth-success">{text('모임에 참여했어요. 아직 앨범이 없으니 모임장에게 앨범을 만들어 달라고 요청해 주세요.', 'You joined! Ask your organizer to create the first album, then open this invite again.')}</p> : <>
@@ -163,7 +171,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
             {pending > 0 && <p className="growth-note">{text('전송이 끝날 때까지 이 화면을 열어 두세요. 성공한 사진은 다시 전송하지 않습니다. 공개 범위는 새로 전송할 사진에 적용돼요.', 'Keep this page open until uploads finish. Completed photos are not uploaded again. Audience changes apply to new uploads.')}</p>}</>}
           {completed > 0 && <p className="growth-success" role="status">{text(`${completed}장의 사진을 보탰어요. 함께한 순간이 더 풍성해졌네요.`, `${completed} photos added. Your moments are now part of the story.`)}</p>}
         </>}
-        <div className="growth-links">{!pending && <>{birthday && folder ? <Link className="growth-button" href={`/?lang=${locale}&album=${folder}&view=theme`}>{text('완성되는 앨범 미리보기', 'Peek at the album')}</Link> : <Link className="growth-button secondary" href={`/?lang=${locale}${folder ? `&room=${folder}` : group ? `&group=${group}` : ''}`}>{text('모임 앨범 보기', 'View the album')}</Link>}<Link className="growth-button secondary" href={`/${locale}/hosts`}>{text('다음 모임은 내가 열어볼래요', 'Host my next gathering')}</Link></>}
+        <div className="growth-links">{!pending && <>{birthday && folder ? <Link className="growth-button" href={`/?lang=${locale}&album=${folder}&view=theme`}>{text('완성되는 앨범 미리보기', 'Peek at the album')}</Link> : <Link className="growth-button secondary" href={`/?lang=${locale}${folder ? `&album=${folder}&view=theme` : group ? `&group=${group}` : ''}`}>{text('모임 앨범 보기', 'View the album')}</Link>}<Link className="growth-button secondary" href={`/${locale}/hosts`}>{text('다음 모임은 내가 열어볼래요', 'Host my next gathering')}</Link></>}
           <p className="growth-note">{text('이 브라우저에 참여 정보가 저장됩니다. 나중에 다른 기기에서도 보려면 내 공간에서 계정을 연결해 주세요.', 'Your membership is saved in this browser. Connect an account in My space to return on another device.')}</p></div>
       </>}
     </section></main>;

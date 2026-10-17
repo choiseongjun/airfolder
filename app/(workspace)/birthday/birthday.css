@@ -46,7 +46,8 @@
 .bday-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2px dashed #ffb3c8;background:#fff6f8;color:#d0507b;font-size:12px;font-weight:700;cursor:pointer}
 .bday-thumbs .bday-add:only-child{grid-column:1/-1;aspect-ratio:auto;height:160px;font-size:15px}
 .bday-add input,.bday-more input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-.bday-more{position:relative;padding:10px;text-align:center;color:#d0507b;font-size:14px;font-weight:700}
+.bday-more{position:relative;display:block;width:100%;padding:10px;border:0;background:none;text-align:center;color:#d0507b;font:inherit;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer}
+.bday-more:disabled{opacity:.5;cursor:default}
 .bday-done .bday-thumbs{grid-template-columns:repeat(4,1fr)}
 .bday-dock{margin-top:6px}
 .bday-dock .growth-button{width:100%;min-height:54px;border-radius:14px;border-color:#ff5a87;background:#ff5a87;color:#fff;font-size:16px}
