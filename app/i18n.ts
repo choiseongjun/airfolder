@@ -137,6 +137,7 @@ export const english = {
   "2시간 전": "2 hours ago",
   "성수동 에어컨 설치": "Seongsu installation",
   "업무": "Work",
+  "생일": "Birthday",
   "작업의 시작부터 마무리까지": "Every detail, from start to finish",
   "어제": "Yesterday",
   "작은 일상 수집": "Little everyday things",

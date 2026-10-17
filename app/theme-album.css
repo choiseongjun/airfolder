@@ -5,6 +5,15 @@
 .ta-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:64px 0;color:#8a7a66;font-size:14px}
 .ta-loading svg{animation:ta-wiggle 1s ease-in-out infinite}
 
+/* Birthday progress */
+.ta-birthday-bar{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:14px 16px;border-radius:18px;background:#fff4f7;border:1px solid #ffd0dd;color:#7a3a57}
+.ta-birthday-count{flex-shrink:0;display:grid;place-items:center;min-width:58px;height:58px;padding:0 8px;border-radius:14px;background:#ff6f91;color:#fff;font:800 16px var(--font-geist-mono),monospace;box-shadow:3px 3px 0 #5a3d8a}
+.ta-birthday-bar>div{flex:1;min-width:0}
+.ta-birthday-bar strong{display:block;font-size:14px}
+.ta-birthday-bar small{display:block;font-size:11px;color:#a46a83;line-height:1.5;margin-top:2px}
+.ta-birthday-bar .primary-button{flex-shrink:0}
+@media(max-width:560px){.ta-birthday-bar{flex-wrap:wrap}.ta-birthday-bar .primary-button{width:100%;justify-content:center}}
+
 /* Theme picker */
 .ta-picker{background:#fffcf5;border:1px solid #e9dfcf;border-radius:18px;padding:14px;margin-bottom:18px;box-shadow:0 8px 22px #6b513310}
 .ta-picker-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#5d4f3f}

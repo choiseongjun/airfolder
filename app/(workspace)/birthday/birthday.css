@@ -1,0 +1,16 @@
+/* Birthday album: a small live mock of what friends will fill in. */
+.bday-preview{margin:20px 0;padding:18px 16px 20px;border-radius:18px;box-shadow:0 10px 24px #5a3d8a1f;animation:none}
+.bday-preview .ta-cover{padding:34px 0 6px}
+.bday-preview .ta-cover h2{font-size:30px}
+.bday-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.bday-slots .ta-photo{display:flex;flex-direction:column;align-items:center;gap:6px;animation:none}
+.bday-slots .ta-photo:nth-child(1){--r:-3deg}.bday-slots .ta-photo:nth-child(2){--r:2deg;border-color:#7cc4e8}.bday-slots .ta-photo:nth-child(3){--r:-1.5deg;border-color:#ff8fb1}
+.bday-slot{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:4px;background:repeating-linear-gradient(45deg,#fff3f6 0 8px,#fff 8px 16px);font-size:24px}
+.bday-slots small{font-family:var(--font-hand),cursive;font-weight:700;font-size:14px;color:#5a3d8a}
+.bday-message{margin:18px 0 12px;padding:14px 16px;border-radius:14px;background:#fef3c7;border:1px solid #f4dc8e;text-align:left}
+.bday-message span{display:block;font-size:11px;font-weight:700;color:#9a7b2c;margin-bottom:6px}
+.bday-message p{margin:0;white-space:pre-line;font-size:14px;line-height:1.6;color:#3f3416;word-break:break-all}
+.bday-card .growth-links .growth-button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.bday-card .growth-links button.growth-button:not(.secondary){color:#fff}
+.bday-guest{margin:16px 0;padding:14px 16px;border-radius:14px;background:#fff4f7;border:1px dashed #ffb3c8;color:#a2486c;font-size:13px;line-height:1.6;text-align:left}
+.bday-guest strong{display:block;font-size:14px;margin-bottom:2px}

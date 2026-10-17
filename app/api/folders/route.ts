@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     if (typeof body.name !== 'string' || !body.name.trim() || body.name.trim().length > 80 || typeof (body.description ?? '') !== 'string' || (body.description ?? '').length > 500) throw new ApiError(400, 'INVALID_FOLDER');
     const count = await pool().query('SELECT count(*) FROM snaproom.folders WHERE owner_id=$1', [who]);
     if (Number(count.rows[0].count) >= 100) throw new ApiError(409, 'FOLDER_LIMIT');
-    const id = body.source === 'organizer' && body.creationId ? uuid(body.creationId) : randomUUID(); const category = ['여행','모임','업무','개인'].includes(body.category) ? body.category : '개인';
+    const id = body.source === 'organizer' && body.creationId ? uuid(body.creationId) : randomUUID(); const category = ['여행','모임','업무','개인','생일'].includes(body.category) ? body.category : '개인';
     let dates: [string | null, string | null];
     try { dates = folderDates(body.startDate, body.endDate); } catch { throw new ApiError(400, 'INVALID_DATE_RANGE'); }
     const groupId=body.groupId?uuid(body.groupId):null;

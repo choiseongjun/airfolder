@@ -46,16 +46,22 @@ function Deco({ item, className }: { item: Decor; className: string }) {
 
 type Chapter = { id: string; note: string; day: string; photos: MemoryItem[] };
 const fileLike = /(^(img|dsc|pxl|kakaotalk)[_-])|\.(jpe?g|png|heic|webp|gif|mp4|mov)$/i;
-function savedTheme(folderId: string): AlbumThemeId {
- const fallback = (browseTheme(folderId) as AlbumThemeId | undefined) || 'polaroid';
+function savedTheme(folderId: string, birthday: boolean): AlbumThemeId {
+ const fallback = birthday ? 'birthday' : (browseTheme(folderId) as AlbumThemeId | undefined) || 'polaroid';
  try { const saved = localStorage.getItem('memonestia-album-theme:' + folderId); return albumThemes.some(t => t.id === saved) ? saved as AlbumThemeId : fallback; } catch { return fallback; }
 }
 const dotted = (day: string) => day.replaceAll('-', '.');
 const stamp = (day: string) => `'${day.slice(2, 4)} ${day.slice(5, 7)} ${day.slice(8, 10)}`;
 
-export default function ThemeAlbum({ folderId, title, description, locale, browsing, onPhoto }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; onPhoto: (item: MemoryItem) => void }) {
+function dDay(day: string) {
+ const now = new Date(), left = Math.round((Date.parse(day + 'T00:00:00Z') - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+ return left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : '';
+}
+
+/** `birthday` is the party date (or '' when unknown) for birthday albums; undefined otherwise. */
+export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, onInvite, onPhoto }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; onInvite?: () => void; onPhoto: (item: MemoryItem) => void }) {
  const ko = locale === 'ko';
- const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId));
+ const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined));
  const [items, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  useEffect(() => {
   const controller = new AbortController();
@@ -72,7 +78,8 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const chapters = useMemo(() => {
   const list: Chapter[] = [];
   for (const item of items || []) {
-   const photos = (item.kind === 'photo' ? [item] : item.photos || []).filter(p => p.src);
+   // Photos bundled under a note inherit its writer, so every print carries a friend's name.
+   const photos = (item.kind === 'photo' ? [item] : item.photos || []).filter(p => p.src).map(p => p.author ? p : { ...p, author: item.author });
    const note = item.kind === 'record' ? (item.body || item.title || '').trim() : '';
    const last = list[list.length - 1];
    // Loose photos from the same day read better as one spread than as many one-photo chapters.
@@ -86,7 +93,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  // The closing shot (often the group selfie) makes the best cover and avoids repeating the first print.
  const cover = allPhotos.findLast(p => p.mediaType !== 'video') || allPhotos[0];
  const meta = albumThemes.find(t => t.id === theme)!;
- const day = chapters[0]?.day || '';
+ const day = birthday || chapters[0]?.day || '';
 
  function choose(id: AlbumThemeId) {
   setTheme(id);
@@ -112,7 +119,13 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  if (error) return <div role="alert" className="album-book-message">{ko ? '앨범을 불러오지 못했어요.' : 'Could not load this album.'} <button onClick={() => { setError(false); setRetry(n => n + 1); }}>{ko ? '다시 시도' : 'Retry'}</button></div>;
  if (!items) return <div className="ta-loading" role="status"><Wand2 size={22}/><strong>{ko ? '사진에 테마를 입히는 중…' : 'Decorating your album…'}</strong></div>;
 
+ const countdown = birthday ? dDay(birthday) : '';
  return <section className="ta-wrap" aria-label={ko ? '꾸민 앨범' : 'Themed album'}>
+  {birthday !== undefined && <div className="ta-birthday-bar">
+   <span className="ta-birthday-count">{countdown || '🎂'}</span>
+   <div><strong>{people.length ? (ko ? `친구 ${people.length}명이 채웠어요` : `${people.length} ${people.length === 1 ? 'friend has' : 'friends have'} added photos`) : (ko ? '아직 아무도 채우지 않았어요' : 'Nobody has added a photo yet')}</strong><small>{ko ? '단톡방에 링크를 보내면 사진과 한마디가 여기에 쌓여요.' : 'Share the link in the group chat and photos with notes land here.'}</small></div>
+   {onInvite && <button className="primary-button" onClick={onInvite}>{ko ? '친구 더 부르기' : 'Invite friends'}</button>}
+  </div>}
   <div className="ta-picker">
    <div className="ta-picker-head"><Sparkles size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small></div>
    <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
@@ -149,7 +162,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
 
   {browsing && <div className="ta-cta">
    <div><strong>{ko ? `${meta.ko} 테마로 우리 앨범 만들기` : `Make ours in ${meta.en}`}</strong><p>{ko ? '사진 몇 장과 한 줄 메모만 올리면, 꾸미기는 자동이에요. 친구들도 링크로 같이 채워요.' : 'Add a few photos and a note. The decorating is automatic, and friends can fill it in from a link.'}</p></div>
-   <Link className="primary-button" href={`/start?lang=${locale}`}>{ko ? '1분 만에 시작하기' : 'Start in a minute'}<ArrowRight size={16}/></Link>
+   <Link className="primary-button" href={theme === 'birthday' ? `/birthday?lang=${locale}` : `/start?lang=${locale}`}>{ko ? '1분 만에 시작하기' : 'Start in a minute'}<ArrowRight size={16}/></Link>
   </div>}
  </section>;
 }

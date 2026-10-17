@@ -6,7 +6,11 @@ export async function POST(request: Request) {
     sameOrigin(request); const who = await viewer(), body = await json(request);
     await requireTerms(who);
     if (typeof body.token !== 'string' || !/^[a-f\d]{64}$/.test(body.token)) throw new ApiError(400, 'INVALID_INVITE');
+    const nickname = typeof body.name === 'string' ? body.name.trim() : '';
+    if (nickname.length > 30) throw new ApiError(400, 'INVALID_NAME');
     const joined = await transaction(async db => {
+      // Guests have no account name; this is what friends see next to their photos and notes.
+      if (nickname) await db.query('UPDATE snaproom.viewers SET display_name=$2 WHERE id=$1', [who, nickname]);
       const groupInvite=await db.query('SELECT g.id FROM snaproom.groups g JOIN snaproom.group_invites i ON i.group_id=g.id WHERE i.token_hash=$1 AND i.expires_at>now() FOR UPDATE OF g',[hash(body.token)]);
       if(groupInvite.rowCount){const groupId=groupInvite.rows[0].id;const valid=await db.query('SELECT 1 FROM snaproom.group_invites WHERE token_hash=$1 AND expires_at>now()',[hash(body.token)]);if(!valid.rowCount)throw new ApiError(404,'INVITE_EXPIRED');const capacity=await db.query('SELECT count(*)::int n,COALESCE(bool_or(viewer_id=$2),false) joined FROM snaproom.group_members WHERE group_id=$1',[groupId,who]);if(capacity.rows[0].n>=200&&!capacity.rows[0].joined)throw new ApiError(409,'GROUP_MEMBER_LIMIT');await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id) VALUES($1,$2) ON CONFLICT DO NOTHING',[groupId,who]);return {groupId};}
       const invite = await db.query('SELECT i.folder_id FROM snaproom.invites i JOIN snaproom.folders f ON f.id=i.folder_id WHERE i.token_hash=$1 AND i.expires_at>now() AND f.group_id IS NULL AND f.deleted_at IS NULL FOR UPDATE OF f', [hash(body.token)]);
