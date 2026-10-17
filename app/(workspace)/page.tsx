@@ -9,7 +9,7 @@ type Props = { searchParams: Promise<{ lang?: string | string[]; browse?: string
 
 export async function generateMetadata({ searchParams }: Props) {
   const { lang } = await searchParams;
-  const metadata = publicMetadata(lang === 'ko' ? 'ko' : 'en');
+  const metadata = publicMetadata(await requestLocale(lang));
   return { ...metadata, alternates: undefined, robots: { index: false, follow: false }, openGraph: { ...metadata.openGraph, url: undefined } };
 }
 
