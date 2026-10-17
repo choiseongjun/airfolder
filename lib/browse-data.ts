@@ -10,6 +10,11 @@ export function browseResponse(path:string,method='GET'):unknown{
  if(q.pathname==='/api/workspace')return {viewerId:'browse-only',account:null,rooms,photos};
  if(q.pathname==='/api/groups')return q.searchParams.has('id')?{members,invites:[]}:{groups:catalog.groups.map(g=>({id:g.id,name:g.names[l],description:ko?'둘러보기 앨범 모음':'Explore collection',mine:false,muted:false,members:1,albums:rooms.filter(r=>r.groupId===g.id).length}))};
  if(q.pathname==='/api/members')return {members,invites:[]};
+ if(q.pathname==='/api/photos/best'){
+  const album=catalog.albums.find(a=>a.id===q.searchParams.get('folderId'));
+  if(!album)return {photos:[]};
+  return {photos:album.photos.slice(0,4).map(p=>({id:p.id,name:p.caption[l],roomId:album.id,src:p.src,votes:0}))};
+ }
  if(q.pathname==='/api/memories'){
   const album=catalog.albums.find(a=>a.id===q.searchParams.get('folderId'));
   if(!album)return {items:[],hasMore:false};
