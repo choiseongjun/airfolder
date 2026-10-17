@@ -8,3 +8,13 @@
 .story-ticket-actions{display:flex;gap:8px;margin-top:16px}
 .story-ticket-actions button{flex:1;justify-content:center;display:flex;align-items:center;gap:6px}
 .story-ticket-actions button:disabled{opacity:.5;cursor:default}
+.story-ticket-format{display:flex;gap:6px;margin-bottom:14px;background:#efe8db;border-radius:10px;padding:4px}
+.story-ticket-format button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 6px;border:0;border-radius:7px;background:transparent;color:#786c58;font-size:12px;font-weight:600;cursor:pointer}
+.story-ticket-format button[aria-pressed=true]{background:#fff;color:#30473b;box-shadow:0 2px 6px #0001}
+.story-ticket-tags{margin-top:18px;padding:16px;border-radius:14px;background:#f2eee3;text-align:left}
+.story-ticket-tags>p{font-size:12px;font-weight:700;color:#786c58;margin:0 0 8px}
+.story-ticket-tag-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.story-ticket-tag-list span{font-size:12px;padding:4px 10px;border-radius:20px;background:#fff;color:#4a3410;border:1px solid #e3dac9}
+.story-ticket-tags .text-button{display:inline-flex;align-items:center;gap:5px;padding:0;font-size:12px}
+.story-ticket-tags small{display:block;margin-top:8px;font-size:11px;color:#8a7f6c;line-height:1.5}
+.story-ticket-timing{color:#a9875f !important}
