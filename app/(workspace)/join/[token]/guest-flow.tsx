@@ -16,7 +16,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
   const ko = locale === 'ko', text = (a: string, b: string) => ko ? a : b;
   const [invite, setInvite] = useState<Invite | null>(null), [ready, setReady] = useState(false), [accepted, setAccepted] = useState(false), [consent, setConsent] = useState(false);
   const [joined, setJoined] = useState(false), [albums, setAlbums] = useState<Album[]>([]), [folder, setFolder] = useState(''), [group, setGroup] = useState('');
-  const [items, setItems] = useState<Item[]>([]), [shared, setShared] = useState(true), [busy, setBusy] = useState(false), [error, setError] = useState(''), [retry, setRetry] = useState(0);
+  const [items, setItems] = useState<Item[]>([]), [shared, setShared] = useState(true), [busy, setBusy] = useState(false), [error, setError] = useState(''), [retry, setRetry] = useState(0), [note, setNote] = useState('');
   const uploading = useRef(false);
   useEffect(() => {
     let active = true;
@@ -62,6 +62,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
     if (uploading.current || !folder) return;
     uploading.current = true; setBusy(true); setError('');
     const pending = items.filter(i => i.status === 'waiting' || i.status === 'failed');
+    const completedIds: string[] = [];
     try {
       for (const item of pending) {
         // Retrying a staged upload must keep its original album and audience.
@@ -71,13 +72,19 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
         const form = new FormData();
         form.set('id', item.id); form.set('folderId', target); form.set('file', item.file, item.file.name); form.set('name', item.file.name);
         form.set('created', String(Math.min(item.file.lastModified || Date.now(), Date.now()))); form.set('shared', String(audience));
-        try { await api('/api/photos', { method: 'POST', body: form }); setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'done' } : i)); }
+        try { await api('/api/photos', { method: 'POST', body: form }); setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'done' } : i)); completedIds.push(item.id); }
         catch (cause) {
           const reason = uploadFailureReason(cause instanceof Error ? cause.message : '');
           void trackClient('upload_failed', { source: 'guest', reason }, target);
           const message = reason === 'storage' ? text('저장 공간이 부족해요. 내 공간에서 용량을 확인해 주세요.', 'Storage is full. Check usage in My space.') : reason === 'format' ? text('읽을 수 없는 사진이에요. JPG나 PNG로 다시 선택해 주세요.', 'Could not read this photo. Try a JPG or PNG.') : text('전송하지 못했어요. 연결을 확인하고 다시 올려 주세요.', 'Upload failed. Check your connection and retry.');
           setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'failed', error: message } : i));
         }
+      }
+      if (note.trim() && completedIds.length) {
+        try {
+          await api('/api/memories', { method: 'POST', body: JSON.stringify({ id: crypto.randomUUID(), folderId: folder, title: '', body: note.trim(), day: new Date().toISOString().slice(0, 10), shared, photoIds: completedIds }) });
+          setNote('');
+        } catch { /* The photos are already saved even if the note could not be attached. */ }
       }
     } finally { uploading.current = false; setBusy(false); }
   }
@@ -98,6 +105,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
           <p className="growth-note">{text('사진을 골라 아래 버튼을 누르면 업로드됩니다. 사진 한 장당 20MB까지, 한 번에 50장.', 'Choose photos, then press the upload button. Up to 50 photos, 20 MB each.')}</p>
           <label className="growth-upload-zone"><ImagePlus size={30} /><strong>{text('함께 남길 사진 고르기', 'Choose photos to keep together')}</strong><input aria-label={text('사진 선택', 'Choose photos')} type="file" accept="image/*,.heic,.heif" multiple disabled={busy || !folder || items.length >= 50} onChange={e => { choose(e.target.files); e.target.value = ''; }} /></label>
           {items.length > 0 && <><div className="growth-options" role="group" aria-label={text('사진 공개 범위', 'Photo audience')}><label><input type="radio" name="audience" checked={shared} disabled={busy} onChange={() => setShared(true)} /><Users size={15} />{text('앨범 멤버에게 공유', 'Share with album members')}</label><label><input type="radio" name="audience" checked={!shared} disabled={busy} onChange={() => setShared(false)} /><LockKeyhole size={15} />{text('나만 보기', 'Only me')}</label></div>
+            <label className="growth-field">{text('한마디 남기기 (선택)', 'Leave a note (optional)')}<textarea maxLength={300} disabled={busy} value={note} onChange={e => setNote(e.target.value)} placeholder={text('이 사진들과 함께 남길 말이 있나요?', 'Anything you want to say with these photos?')} /></label>
             <ul className="growth-upload-list">{items.map(item => <li key={item.id}>{item.status === 'done' ? <Check size={18} /> : <Upload size={18} />}<span className="growth-file-name">{item.file.name}<small>{item.error || (item.status === 'done' ? text(item.shared ? '공유 완료' : '나만 보기로 저장 완료', item.shared ? 'Shared' : 'Saved privately') : item.status === 'uploading' ? text('올리는 중…', 'Uploading…') : text('전송 대기', 'Ready to upload'))}</small>{item.status === 'failed' && <small>{text('재시도는 처음 선택한 앨범·공개 범위를 유지해요.', 'Retries keep the original album and audience.')}</small>}</span>{item.status !== 'uploading' && <button disabled={busy} onClick={() => setItems(old => old.filter(i => i.id !== item.id))}>{text(item.status === 'done' ? '목록에서 닫기' : '선택 취소', item.status === 'done' ? 'Dismiss' : 'Remove')}</button>}</li>)}</ul>
             {pending > 0 && <button className="growth-button" disabled={busy || !folder} onClick={() => void upload()}>{busy ? text(`올리는 중 · ${completed}/${items.length}장`, `Uploading · ${completed}/${items.length}`) : items.some(i => i.status === 'failed') ? text('남은 사진 다시 올리기', 'Retry remaining photos') : text(`${pending}장 ${shared ? '모임에 공유하며 올리기' : '나만 보기로 올리기'}`, `Upload ${pending} photos ${shared ? '& share' : 'privately'}`)}<ArrowRight size={17} /></button>}
             {pending > 0 && <p className="growth-note">{text('전송이 끝날 때까지 이 화면을 열어 두세요. 성공한 사진은 다시 전송하지 않습니다. 공개 범위는 새로 전송할 사진에 적용돼요.', 'Keep this page open until uploads finish. Completed photos are not uploaded again. Audience changes apply to new uploads.')}</p>}</>}
