@@ -1,15 +1,15 @@
 /* Cute skin for the public landing page, matching the app: pastel dotted paper, handwriting headings, pink buttons, stickers. */
-.lp-page{--lp-paper:#fff8f1;--lp-coral:#ff5a87;background-color:#fff8f1;background-image:radial-gradient(#ffd3de 1.4px,transparent 1.8px),radial-gradient(#cfe9f7 1.4px,transparent 1.8px),radial-gradient(#ffe8a8 1.8px,transparent 2.2px);background-size:46px 46px,62px 62px,78px 78px;background-position:0 0,20px 28px,36px 12px}
+.lp-page{--lp-paper:var(--paper);--lp-coral:var(--brand);--lp-ink:var(--ink);--lp-muted:var(--ink-soft);background-color:var(--paper);background-image:radial-gradient(var(--dot-a) 1.4px,transparent 1.8px),radial-gradient(var(--dot-b) 1.4px,transparent 1.8px),radial-gradient(#ffe8a8 1.8px,transparent 2.2px);background-size:46px 46px,62px 62px,78px 78px;background-position:0 0,20px 28px,36px 12px}
 .lp-page h1,.lp-page h2{font-family:var(--font-hand),var(--font-editorial),cursive;font-weight:700;letter-spacing:-.02em}
-.lp-page .lp-hero h1{color:#4a3a3f;line-height:1.12}
-.lp-page .lp-hero h1 em{font-style:normal;color:#ff5a87;text-shadow:3px 3px 0 #ffe08a}
-.lp-page .lp-eyebrow{display:inline-flex;padding:6px 14px;border-radius:999px;background:#ffe7ee;color:#d0507b;font-weight:700}
-.lp-page .lp-button{border:0;border-radius:20px;background:#ff5a87;color:#fff;font-size:15px;font-weight:700;box-shadow:0 5px 0 #d43f6c}
-.lp-page .lp-button:hover{background:#ff477a;transform:translateY(-1px)}
-.lp-page .lp-button:active{transform:translateY(3px);box-shadow:0 2px 0 #d43f6c}
-.lp-page .lp-nav-cta{border:2px solid #ffc6d4;background:#fff;color:#d0507b;font-weight:700}
-.lp-page .lp-text-link{color:#d0507b}
-.lp-page .lp-brand-dot{color:#ff5a87}
+.lp-page .lp-hero h1{color:var(--ink);line-height:1.12}
+.lp-page .lp-hero h1 em{font-style:normal;color:var(--brand);text-shadow:3px 3px 0 #ffe08a}
+.lp-page .lp-eyebrow{display:inline-flex;padding:6px 14px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:700}
+.lp-page .lp-button{border:0;border-radius:20px;background:var(--brand);color:#fff;font-size:15px;font-weight:700;box-shadow:0 5px 0 var(--brand-press)}
+.lp-page .lp-button:hover{background:var(--brand-hover);transform:translateY(-1px)}
+.lp-page .lp-button:active{transform:translateY(3px);box-shadow:0 2px 0 var(--brand-press)}
+.lp-page .lp-nav-cta{border:2px solid var(--brand-line);background:#fff;color:var(--brand);font-weight:700}
+.lp-page .lp-text-link{color:var(--brand)}
+.lp-page .lp-brand-dot{color:var(--brand)}
 
 /* Stickers floating around the hero */
 .lp-page .lp-hero:before,.lp-page .lp-hero:after{content:'';position:absolute;z-index:2;width:64px;height:64px;pointer-events:none;background:center/contain no-repeat;filter:drop-shadow(0 3px 3px #0002);animation:lp-bob 4s ease-in-out infinite alternate}
@@ -18,3 +18,5 @@
 @keyframes lp-bob{to{translate:0 -7px}}
 @media(max-width:700px){.lp-page .lp-hero:before,.lp-page .lp-hero:after{width:44px;height:44px}.lp-page .lp-hero:before{top:10px;left:4%}.lp-page .lp-hero:after{top:18px;right:4%}}
 @media(prefers-reduced-motion:reduce){.lp-page .lp-hero:before,.lp-page .lp-hero:after{animation:none}}
+.lp-page .lp-how-steps--interactive button[aria-pressed=true] .lp-step-index{background:var(--brand);border-color:var(--brand)}
+.lp-page .lp-try-studio{border:2px solid var(--brand-line);background:#fff;color:var(--brand);font-weight:700}

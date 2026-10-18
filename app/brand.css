@@ -1,0 +1,19 @@
+/* One palette for every screen: the logo blue for actions, cream paper, navy ink.
+   Album themes keep their own colours; everything around them uses these tokens. */
+:root{
+ --brand:#3949e7;          /* buttons, links, selected states (the logo blue) */
+ --brand-hover:#2f3dd2;
+ --brand-press:#2531a8;    /* the chunky shadow under buttons */
+ --brand-soft:#e9ecff;     /* chips, badges, soft highlights */
+ --brand-softer:#f4f5ff;   /* selected cards, quiet panels */
+ --brand-line:#c9d0ff;     /* borders on brand elements */
+ --ink:#23284a;            /* headings and body text */
+ --ink-soft:#6b6f8c;       /* secondary text */
+ --paper:#fff9f2;          /* page background */
+ --card:#fffdfa;           /* cards and sheets */
+ --edge:#ece6dc;           /* card borders and their under-shadow */
+ --dot-a:#dfe3ff;          /* background dots */
+ --dot-b:#ffe3cf;
+}
+/* Older stylesheets read these names; point them at the same palette. */
+:root{--orange:var(--brand);--foreground:var(--ink);--background:var(--paper)}

@@ -1,85 +1,86 @@
 /* Cute skin for "My space": the same pastel paper, stickers-and-tape and chunky pink buttons as onboarding. */
-.app-shell{--orange:#ff5a87;--line:#f3e2d8;background-color:#fff8f1;background-image:radial-gradient(#ffd3de 1.3px,transparent 1.7px),radial-gradient(#cfe9f7 1.3px,transparent 1.7px);background-size:44px 44px,60px 60px;background-position:0 0,22px 30px}
-.app-shell .topbar,.app-shell .mobile-tabs{background:#fffaf6ee;backdrop-filter:blur(8px)}
+.app-shell{--orange:var(--brand);--line:var(--edge);background-color:var(--paper);background-image:radial-gradient(var(--dot-a) 1.3px,transparent 1.7px),radial-gradient(var(--dot-b) 1.3px,transparent 1.7px);background-size:44px 44px,60px 60px;background-position:0 0,22px 30px}
+.app-shell .topbar,.app-shell .mobile-tabs{background:#fffaf4ee;backdrop-filter:blur(8px)}
 
 /* Buttons */
-.app-shell .primary-button{border-radius:14px;font-size:12px;font-weight:700;box-shadow:0 3px 0 #d43f6c}
-.app-shell .primary-button:active{transform:translateY(2px);box-shadow:0 1px 0 #d43f6c}
-.app-shell .secondary-button{border:2px solid #f1e3d9;border-radius:14px;background:#fff;color:#c2557d;font-weight:600}
-.app-shell .text-button{color:#d0507b}
+.app-shell .primary-button{border-radius:14px;background:var(--brand);font-size:12px;font-weight:700;box-shadow:0 3px 0 var(--brand-press)}
+.app-shell .primary-button:hover{background:var(--brand-hover)}
+.app-shell .primary-button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--brand-press)}
+.app-shell .secondary-button{border:2px solid var(--edge);border-radius:14px;background:#fff;color:var(--brand);font-weight:600}
+.app-shell .text-button{color:var(--brand)}
 
 /* Headings */
-.app-shell .eyebrow{color:#ff6f91;font-weight:700}
-.app-shell .page-heading h1{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:#4a3a3f}
-.app-shell .page-heading p{color:#8a7178}
-.app-shell .section-heading h2{font-family:var(--font-hand),cursive;font-size:22px;color:#4a3a3f}
+.app-shell .eyebrow{color:var(--brand);font-weight:700}
+.app-shell .page-heading h1{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+.app-shell .page-heading p{color:var(--ink-soft)}
+.app-shell .section-heading h2{font-family:var(--font-hand),cursive;font-size:22px;color:var(--ink)}
 
 /* Filters and view tabs */
-.app-shell .tab{border-radius:999px;color:#9a7c84}
-.app-shell .selected-tab{background:#ffe7ee;color:#d0507b;font-weight:700}
-.app-shell .folder-view-tabs{background:#fff;border:2px solid #f3e2d8;border-radius:18px}
-.app-shell .folder-view-tabs button{border-radius:13px;color:#9a7c84}
-.app-shell .folder-view-tabs button[aria-pressed=true]{background:#fff0f4;color:#d0507b;box-shadow:0 2px 0 #ffd0dd}
+.app-shell .tab{border-radius:999px;color:var(--ink-soft)}
+.app-shell .selected-tab{background:var(--brand-soft);color:var(--brand);font-weight:700}
+.app-shell .folder-view-tabs{background:#fff;border:2px solid var(--edge);border-radius:18px}
+.app-shell .folder-view-tabs button{border-radius:13px;color:var(--ink-soft)}
+.app-shell .folder-view-tabs button[aria-pressed=true]{background:var(--brand-softer);color:var(--brand);box-shadow:0 2px 0 var(--brand-line)}
 
 /* Album cards: a taped print on the shelf */
-.app-shell .room-card{position:relative;overflow:visible;border:2px solid #f3e2d8;border-radius:22px;background:#fffdfa;box-shadow:0 5px 0 #f3e2d8}
-.app-shell .room-card:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:0 8px 0 #f3e2d8}
-.app-shell .room-card:before{content:'';position:absolute;z-index:3;top:-9px;left:50%;width:70px;height:20px;transform:translateX(-50%) rotate(-3deg);background:repeating-linear-gradient(45deg,#ffd6e0e6 0 6px,#fff0f4e6 6px 12px);border-radius:2px}
+.app-shell .room-card{position:relative;overflow:visible;border:2px solid var(--edge);border-radius:22px;background:var(--card);box-shadow:0 5px 0 var(--edge)}
+.app-shell .room-card:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:0 8px 0 var(--edge)}
+.app-shell .room-card:before{content:'';position:absolute;z-index:3;top:-9px;left:50%;width:70px;height:20px;transform:translateX(-50%) rotate(-3deg);background:repeating-linear-gradient(45deg,#dfe3ffe6 0 6px,#f4f5ffe6 6px 12px);border-radius:2px}
 .app-shell .room-card:nth-child(3n+2):before{background:repeating-linear-gradient(45deg,#cfe9f7e6 0 6px,#eef8fde6 6px 12px);transform:translateX(-50%) rotate(2deg)}
 .app-shell .room-card:nth-child(3n):before{background:repeating-linear-gradient(45deg,#ffe8a8e6 0 6px,#fff6d6e6 6px 12px)}
 .app-shell .room-cover{border-radius:20px 20px 0 0}
-.app-shell .category-badge{border-radius:999px;background:#fffffff0;color:#d0507b;font-weight:700}
-.app-shell .room-card-title button{font-family:var(--font-hand),cursive;font-size:18px;font-weight:700;color:#4a3a3f}
+.app-shell .category-badge{border-radius:999px;background:#fffffff0;color:var(--brand);font-weight:700}
+.app-shell .room-card-title button{font-family:var(--font-hand),cursive;font-size:18px;font-weight:700;color:var(--ink)}
 .app-shell .folder-capture-button{border-radius:14px}
 
 /* Album page */
-.app-shell .album-people{border:2px solid #f3e2d8;border-radius:18px;background:#fffdfa}
-.app-shell .album-people-icon{background:#ffe7ee;color:#d0507b}
+.app-shell .album-people{border:2px solid var(--edge);border-radius:18px;background:var(--card)}
+.app-shell .album-people-icon{background:var(--brand-soft);color:var(--brand)}
 
 /* Bottom navigation */
-.app-shell .mobile-tabs>button[aria-current]{color:#d0507b}
-.app-shell .mobile-tabs>button[aria-current]>svg{fill:#ffe7ee}
-.app-shell .mobile-tabs .tab-camera{color:#ff5a87}
+.app-shell .mobile-tabs>button[aria-current]{color:var(--brand);background:var(--brand-softer)}
+.app-shell .mobile-tabs>button[aria-current]>svg{fill:var(--brand-soft)}
+.app-shell .mobile-tabs .tab-camera{color:var(--brand)}
 
 @media(prefers-reduced-motion:reduce){.app-shell .room-card:hover{transform:none}}
 
 /* Leftover orange and green accents, brought into the pink palette */
-.app-shell .guide-explore-link{background:#ff5a87;border-color:#ff5a87;box-shadow:0 4px 0 #d43f6c}
-.app-shell .tab-camera>span{background:#ff5a87;box-shadow:0 3px 0 #d43f6c}
-.app-shell .group-card{border:2px solid #f3e2d8;box-shadow:0 4px 0 #f3e2d8}
-.app-shell .group-card.active{border-color:#ff8fb1;background:#fff4f7;box-shadow:0 4px 0 #ffd0dd}
+.app-shell .guide-explore-link{background:var(--brand);border-color:var(--brand);box-shadow:0 4px 0 var(--brand-press)}
+.app-shell .tab-camera>span{background:var(--brand);box-shadow:0 3px 0 var(--brand-press)}
+.app-shell .group-card{border:2px solid var(--edge);box-shadow:0 4px 0 var(--edge)}
+.app-shell .group-card.active{border-color:var(--brand-line);background:var(--brand-softer);box-shadow:0 4px 0 var(--brand-line)}
 
 /* Album header: share sits next to "add photos" on every album view */
 .app-shell .page-heading-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .app-shell .page-heading-actions .primary-button{margin-top:0}
-.app-shell .heading-share{min-height:40px;padding:9px 14px;border-color:#ffc6d4;color:#d0507b;font-size:12px;font-weight:700}
+.app-shell .heading-share{min-height:40px;padding:9px 14px;border-color:var(--brand-line);color:var(--brand);font-size:12px;font-weight:700}
 @media(max-width:600px){.app-shell .page-heading-actions{flex-direction:column;align-items:stretch}}
 
 /* First visit: the empty bookshelf, in the same pastel paper as the rest */
-.app-shell .empty-bookshelf{border:2px solid #f3e2d8;border-radius:26px;background:#fffdfa;box-shadow:0 5px 0 #f3e2d8}
-.app-shell .sample-books{background:repeating-linear-gradient(90deg,#fff0f4 0 22px,#fff8f1 22px 44px)}
-.app-shell .shelf-kicker{display:inline-block;padding:4px 10px;border-radius:999px;background:#ffe7ee;color:#d0507b;font-weight:700}
-.app-shell .first-book-copy h3{font-family:var(--font-hand),cursive;font-size:32px;font-weight:700;color:#4a3a3f}
-.app-shell .first-book-copy p{color:#8a7178}
-.app-shell .first-book-copy li{color:#7a5b62}
-.app-shell .first-book-copy li:before{color:#ff6f91}
-.app-shell .explore-hero-button{border:0;border-radius:18px;background:#ff5a87;box-shadow:0 4px 0 #d43f6c}
-.app-shell .explore-hero-button:hover{background:#ff477a}
-.app-shell .shelf-sample-sticker{background:#ffe7ee;color:#d0507b}
+.app-shell .empty-bookshelf{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 5px 0 var(--edge)}
+.app-shell .sample-books{background:repeating-linear-gradient(90deg,var(--brand-softer) 0 22px,var(--paper) 22px 44px)}
+.app-shell .shelf-kicker{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:700}
+.app-shell .first-book-copy h3{font-family:var(--font-hand),cursive;font-size:32px;font-weight:700;color:var(--ink)}
+.app-shell .first-book-copy p{color:var(--ink-soft)}
+.app-shell .first-book-copy li{color:var(--ink-soft)}
+.app-shell .first-book-copy li:before{color:var(--brand)}
+.app-shell .explore-hero-button{border:0;border-radius:18px;background:var(--brand);box-shadow:0 4px 0 var(--brand-press)}
+.app-shell .explore-hero-button:hover{background:var(--brand-hover)}
+.app-shell .shelf-sample-sticker{background:var(--brand-soft);color:var(--brand)}
 
 /* Desktop story panel beside the app */
-.app-shell .keepsake-story{background-color:#fff4f7;color:#4a3a3f;border-right:2px solid #f3e2d8;background-image:radial-gradient(#ffc9d6 1.3px,transparent 1.7px);background-size:30px 30px}
-.app-shell .keepsake-story .story-top .brand{color:#4a3a3f}
-.app-shell .keepsake-kicker{color:#d0507b}
-.app-shell .keepsake-story-content h2{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:#4a3a3f}
-.app-shell .keepsake-story-content h2 em{color:#ff5a87}
-.app-shell .keepsake-story-content>p,.app-shell .keepsake-help,.app-shell .keepsake-story .story-note{color:#8a7178}
-.app-shell .keepsake-handwriting,.app-shell .keepsake-photo figcaption{font-family:var(--font-hand),cursive;font-style:normal;font-size:15px;color:#c2557d}
-.app-shell .keepsake-sticker{background:#ffe7ee;color:#d0507b}
-.app-shell .keepsake-story .story-cta{border:0;border-radius:16px;background:#ff5a87;box-shadow:0 4px 0 #d43f6c}
-.app-shell .keepsake-story .story-cta:hover{background:#ff477a}
+.app-shell .keepsake-story{background-color:var(--brand-softer);color:var(--ink);border-right:2px solid var(--edge);background-image:radial-gradient(var(--dot-a) 1.3px,transparent 1.7px);background-size:30px 30px}
+.app-shell .keepsake-story .story-top .brand{color:var(--ink)}
+.app-shell .keepsake-kicker{color:var(--brand)}
+.app-shell .keepsake-story-content h2{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+.app-shell .keepsake-story-content h2 em{color:var(--brand)}
+.app-shell .keepsake-story-content>p,.app-shell .keepsake-help,.app-shell .keepsake-story .story-note{color:var(--ink-soft)}
+.app-shell .keepsake-handwriting,.app-shell .keepsake-photo figcaption{font-family:var(--font-hand),cursive;font-style:normal;font-size:15px;color:var(--brand)}
+.app-shell .keepsake-sticker{background:var(--brand-soft);color:var(--brand)}
+.app-shell .keepsake-story .story-cta{border:0;border-radius:16px;background:var(--brand);box-shadow:0 4px 0 var(--brand-press)}
+.app-shell .keepsake-story .story-cta:hover{background:var(--brand-hover)}
 
 /* Dialogs (help, create, invite, account) */
-.app-shell .modal{border:2px solid #f3e2d8;border-radius:26px;background:#fffdfa;box-shadow:0 6px 0 #f3e2d8,0 25px 80px #c9727a33}
-.app-shell .modal h2{font-family:var(--font-hand),cursive;font-size:28px;font-weight:700;color:#4a3a3f}
-.app-shell .modal-symbol{background:#ffe7ee;color:#d0507b;border-radius:16px}
+.app-shell .modal{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 6px 0 var(--edge),0 25px 80px #3949e722}
+.app-shell .modal h2{font-family:var(--font-hand),cursive;font-size:28px;font-weight:700;color:var(--ink)}
+.app-shell .modal-symbol{background:var(--brand-soft);color:var(--brand);border-radius:16px}

@@ -3,6 +3,7 @@ import { Gaegu, Geist, Noto_Serif_KR } from 'next/font/google';
 import { isPublicLocale, publicLocales, publicLocaleTags } from '@/lib/public-locale';
 import WebAnalytics from '../web-analytics';
 import './landing.css';
+import '../brand.css';
 
 const sans = Geist({ subsets: ['latin'], variable: '--font-landing-sans', display: 'swap' });
 // Handwriting for the cute headings; Korean glyphs load by unicode-range, so skip the latin-only preload.

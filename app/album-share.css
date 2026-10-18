@@ -1,26 +1,26 @@
 /* Share sheet: a bottom sheet on phones, a centred card on larger screens. */
-.share-sheet-backdrop{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:#283d35b8;backdrop-filter:blur(6px)}
-.share-sheet{width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:18px 18px 20px;border-radius:26px;background:#fffdfa;color:#4a3a3f;border:2px solid #f3e2d8}
+.share-sheet-backdrop{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:#23284ab8;backdrop-filter:blur(6px)}
+.share-sheet{width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:18px 18px 20px;border-radius:26px;background:var(--card);color:var(--ink);border:2px solid var(--edge)}
 .share-sheet header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.share-sheet header strong{font-family:var(--font-hand),cursive;font-size:22px;color:#4a3a3f}
-.share-sheet header button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#efe8db;color:#5d4f3f;cursor:pointer}
-.share-preview{display:grid;place-items:center;height:300px;margin-bottom:16px;border-radius:18px;background:#fff0f4;overflow:hidden}
+.share-sheet header strong{font-family:var(--font-hand),cursive;font-size:22px;color:var(--ink)}
+.share-sheet header button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--brand-soft);color:var(--ink);cursor:pointer}
+.share-preview{display:grid;place-items:center;height:300px;margin-bottom:16px;border-radius:18px;background:var(--brand-softer);overflow:hidden}
 .share-preview img{height:100%!important;width:auto!important;max-width:100%;object-fit:contain;border-radius:10px;box-shadow:0 8px 20px #0002}
-.share-preview span{font-size:13px;color:#8a7a66}
+.share-preview span{font-size:13px;color:var(--ink-soft)}
 .share-targets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.share-targets button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:4px 0;border:0;background:none;color:#4e4236;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.share-targets button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:4px 0;border:0;background:none;color:var(--ink);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .share-targets button:disabled{opacity:.45;cursor:default}
 .share-icon{display:grid;place-items:center;width:54px;height:54px;border-radius:18px}
 .share-icon svg{width:24px;height:24px}
 .share-kakao .share-icon{background:#FEE500;color:#000000d9}
 .share-instagram .share-icon{background:radial-gradient(circle at 30% 107%,#fdf497 0,#fd5949 45%,#d6249f 60%,#285AEB 90%);color:#fff}
 .share-threads .share-icon{background:#101010;color:#fff}
-.share-copy .share-icon{background:#e8eee2;color:#385239}
+.share-copy .share-icon{background:var(--brand-soft);color:var(--brand)}
 .share-secondary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
-.share-secondary button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border:1px solid #e3d6c8;border-radius:12px;background:#fff;color:#5d4f3f;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.share-secondary button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border:1px solid var(--edge);border-radius:12px;background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .share-secondary button:only-child{grid-column:1/-1}
 .share-secondary button:disabled{opacity:.5}
-.share-note{margin:12px 0 0;font-size:12px;line-height:1.6;color:#8a7a66;text-align:center}
+.share-note{margin:12px 0 0;font-size:12px;line-height:1.6;color:var(--ink-soft);text-align:center}
 @media(max-width:600px){
  .share-sheet-backdrop{align-items:flex-end;padding:0}
  .share-sheet{max-width:none;border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}

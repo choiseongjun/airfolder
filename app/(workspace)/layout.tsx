@@ -4,6 +4,7 @@ import { Gaegu, Geist, Geist_Mono, Nanum_Pen_Script } from "next/font/google";
 import PerformanceDiagnostics from "../performance-diagnostics";
 import WebAnalytics from "../web-analytics";
 import "../globals.css";
+import "../brand.css";
 import "../workspace-split.css";
 import "../workspace-motion.css";
 
