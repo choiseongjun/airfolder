@@ -109,6 +109,7 @@ export default async function Landing({ params }: Props) {
       </section>
     </main>
     <footer className="lp-footer"><div><Brand href={`/${lang}`} /><p>{t.footerLine}</p></div><nav aria-label={lang === 'ko' ? '서비스 안내' : 'Service information'}>
+      <Link href={`/${lang}/make`}>{lang === 'ko' ? '만들기 가이드' : 'Guides'}</Link><Link href={`/${lang}/make/birthday-album`}>{lang === 'ko' ? '생일 앨범 만들기' : 'Birthday albums'}</Link><Link href={`/${lang}/make/collect-group-photos`}>{lang === 'ko' ? '단체사진 모으기' : 'Collect group photos'}</Link>
       <Link href="/privacy">{t.privacy}</Link><Link href="/terms">{t.terms}</Link><Link href="/support">{t.support}</Link>
     </nav><span className="lp-copyright">© 2026 Memonestia</span></footer>
   </div>;
