@@ -1,9 +1,9 @@
 /* Cute skin for "My space": the same pastel paper, stickers-and-tape and chunky pink buttons as onboarding. */
-.app-shell{--orange:var(--brand);--line:var(--edge);background-color:var(--paper);background-image:radial-gradient(var(--dot-a) 1.3px,transparent 1.7px),radial-gradient(var(--dot-b) 1.3px,transparent 1.7px);background-size:44px 44px,60px 60px;background-position:0 0,22px 30px}
+.app-shell{--orange:var(--brand);--line:var(--edge);background-color:var(--paper);background-image:none}
 .app-shell .topbar,.app-shell .mobile-tabs{background:#fffaf4ee;backdrop-filter:blur(8px)}
 
 /* Buttons */
-.app-shell .primary-button{border-radius:14px;background:var(--brand);font-size:12px;font-weight:700;box-shadow:0 3px 0 var(--brand-press)}
+.app-shell .primary-button{border-radius:14px;background:var(--brand);font-size:12px;font-weight:700;box-shadow:0 2px 0 var(--brand-press)}
 .app-shell .primary-button:hover{background:var(--brand-hover)}
 .app-shell .primary-button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--brand-press)}
 .app-shell .secondary-button{border:2px solid var(--edge);border-radius:14px;background:#fff;color:var(--brand);font-weight:600}
@@ -11,9 +11,9 @@
 
 /* Headings */
 .app-shell .eyebrow{color:var(--brand);font-weight:700}
-.app-shell .page-heading h1{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+.app-shell .page-heading h1{font-family:var(--font-editorial),Georgia,serif;font-weight:600;letter-spacing:-.03em;color:var(--ink)}
 .app-shell .page-heading p{color:var(--ink-soft)}
-.app-shell .section-heading h2{font-family:var(--font-hand),cursive;font-size:22px;color:var(--ink)}
+.app-shell .section-heading h2{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:22px;color:var(--ink)}
 
 /* Filters and view tabs */
 .app-shell .tab{border-radius:999px;color:var(--ink-soft)}
@@ -23,14 +23,14 @@
 .app-shell .folder-view-tabs button[aria-pressed=true]{background:var(--brand-softer);color:var(--brand);box-shadow:0 2px 0 var(--brand-line)}
 
 /* Album cards: a taped print on the shelf */
-.app-shell .room-card{position:relative;overflow:visible;border:2px solid var(--edge);border-radius:22px;background:var(--card);box-shadow:0 5px 0 var(--edge)}
-.app-shell .room-card:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:0 8px 0 var(--edge)}
+.app-shell .room-card{position:relative;overflow:visible;border:2px solid var(--edge);border-radius:22px;background:var(--card);box-shadow:0 1px 0 var(--edge)}
+.app-shell .room-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px #1e2a2114}
 .app-shell .room-card:before{content:'';position:absolute;z-index:3;top:-9px;left:50%;width:70px;height:20px;transform:translateX(-50%) rotate(-3deg);background:repeating-linear-gradient(45deg,#dfe3ffe6 0 6px,#f4f5ffe6 6px 12px);border-radius:2px}
 .app-shell .room-card:nth-child(3n+2):before{background:repeating-linear-gradient(45deg,#cfe9f7e6 0 6px,#eef8fde6 6px 12px);transform:translateX(-50%) rotate(2deg)}
 .app-shell .room-card:nth-child(3n):before{background:repeating-linear-gradient(45deg,#ffe8a8e6 0 6px,#fff6d6e6 6px 12px)}
 .app-shell .room-cover{border-radius:20px 20px 0 0}
 .app-shell .category-badge{border-radius:999px;background:#fffffff0;color:var(--brand);font-weight:700}
-.app-shell .room-card-title button{font-family:var(--font-hand),cursive;font-size:18px;font-weight:700;color:var(--ink)}
+.app-shell .room-card-title button{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:18px;font-weight:700;color:var(--ink)}
 .app-shell .folder-capture-button{border-radius:14px}
 
 /* Album page */
@@ -45,9 +45,9 @@
 @media(prefers-reduced-motion:reduce){.app-shell .room-card:hover{transform:none}}
 
 /* Leftover orange and green accents, brought into the pink palette */
-.app-shell .guide-explore-link{background:var(--brand);border-color:var(--brand);box-shadow:0 4px 0 var(--brand-press)}
-.app-shell .tab-camera>span{background:var(--brand);box-shadow:0 3px 0 var(--brand-press)}
-.app-shell .group-card{border:2px solid var(--edge);box-shadow:0 4px 0 var(--edge)}
+.app-shell .guide-explore-link{background:var(--brand);border-color:var(--brand);box-shadow:0 2px 0 var(--brand-press)}
+.app-shell .tab-camera>span{background:var(--brand);box-shadow:0 2px 0 var(--brand-press)}
+.app-shell .group-card{border:2px solid var(--edge);box-shadow:0 1px 0 var(--edge)}
 .app-shell .group-card.active{border-color:var(--brand-line);background:var(--brand-softer);box-shadow:0 4px 0 var(--brand-line)}
 
 /* Album header: share sits next to "add photos" on every album view */
@@ -57,30 +57,30 @@
 @media(max-width:600px){.app-shell .page-heading-actions{flex-direction:column;align-items:stretch}}
 
 /* First visit: the empty bookshelf, in the same pastel paper as the rest */
-.app-shell .empty-bookshelf{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 5px 0 var(--edge)}
+.app-shell .empty-bookshelf{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 1px 0 var(--edge)}
 .app-shell .sample-books{background:repeating-linear-gradient(90deg,var(--brand-softer) 0 22px,var(--paper) 22px 44px)}
 .app-shell .shelf-kicker{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:700}
-.app-shell .first-book-copy h3{font-family:var(--font-hand),cursive;font-size:32px;font-weight:700;color:var(--ink)}
+.app-shell .first-book-copy h3{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:32px;font-weight:700;color:var(--ink)}
 .app-shell .first-book-copy p{color:var(--ink-soft)}
 .app-shell .first-book-copy li{color:var(--ink-soft)}
 .app-shell .first-book-copy li:before{color:var(--brand)}
-.app-shell .explore-hero-button{border:0;border-radius:18px;background:var(--brand);box-shadow:0 4px 0 var(--brand-press)}
+.app-shell .explore-hero-button{border:0;border-radius:18px;background:var(--brand);box-shadow:0 2px 0 var(--brand-press)}
 .app-shell .explore-hero-button:hover{background:var(--brand-hover)}
 .app-shell .shelf-sample-sticker{background:var(--brand-soft);color:var(--brand)}
 
 /* Desktop story panel beside the app */
-.app-shell .keepsake-story{background-color:var(--brand-softer);color:var(--ink);border-right:2px solid var(--edge);background-image:radial-gradient(var(--dot-a) 1.3px,transparent 1.7px);background-size:30px 30px}
+.app-shell .keepsake-story{background-color:var(--brand-softer);color:var(--ink);border-right:2px solid var(--edge);background-image:none}
 .app-shell .keepsake-story .story-top .brand{color:var(--ink)}
 .app-shell .keepsake-kicker{color:var(--brand)}
-.app-shell .keepsake-story-content h2{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+.app-shell .keepsake-story-content h2{font-family:var(--font-editorial),Georgia,serif;font-weight:600;letter-spacing:-.03em;color:var(--ink)}
 .app-shell .keepsake-story-content h2 em{color:var(--brand)}
 .app-shell .keepsake-story-content>p,.app-shell .keepsake-help,.app-shell .keepsake-story .story-note{color:var(--ink-soft)}
-.app-shell .keepsake-handwriting,.app-shell .keepsake-photo figcaption{font-family:var(--font-hand),cursive;font-style:normal;font-size:15px;color:var(--brand)}
+.app-shell .keepsake-handwriting,.app-shell .keepsake-photo figcaption{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-style:normal;font-size:15px;color:var(--brand)}
 .app-shell .keepsake-sticker{background:var(--brand-soft);color:var(--brand)}
-.app-shell .keepsake-story .story-cta{border:0;border-radius:16px;background:var(--brand);box-shadow:0 4px 0 var(--brand-press)}
+.app-shell .keepsake-story .story-cta{border:0;border-radius:16px;background:var(--brand);box-shadow:0 2px 0 var(--brand-press)}
 .app-shell .keepsake-story .story-cta:hover{background:var(--brand-hover)}
 
 /* Dialogs (help, create, invite, account) */
-.app-shell .modal{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 6px 0 var(--edge),0 25px 80px #3949e722}
-.app-shell .modal h2{font-family:var(--font-hand),cursive;font-size:28px;font-weight:700;color:var(--ink)}
+.app-shell .modal{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 6px 0 var(--edge),0 25px 80px #1e2a211c}
+.app-shell .modal h2{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:28px;font-weight:700;color:var(--ink)}
 .app-shell .modal-symbol{background:var(--brand-soft);color:var(--brand);border-radius:16px}

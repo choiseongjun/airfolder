@@ -1,10 +1,10 @@
 /* Cute skin for the onboarding pages: pastel paper, stickers, handwriting headings and chunky buttons. */
-.cute-page{width:100%;box-sizing:border-box;padding-bottom:130px;background-color:var(--paper);background-image:radial-gradient(var(--dot-a) 1.6px,transparent 2px),radial-gradient(var(--dot-b) 1.6px,transparent 2px),radial-gradient(#ffe39a 2px,transparent 2.4px);background-size:38px 38px,52px 52px,64px 64px;background-position:0 0,18px 24px,30px 10px;color:var(--ink)}
+.cute-page{width:100%;box-sizing:border-box;padding-bottom:130px;background-color:var(--paper);background-image:none;color:var(--ink)}
 .cute-page .growth-nav{max-width:520px;margin:0 auto 16px}
-.cute-page .growth-brand{font-family:var(--font-hand),cursive;font-size:28px;letter-spacing:0;color:var(--ink)}
+.cute-page .growth-brand{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:28px;letter-spacing:0;color:var(--ink)}
 .cute-page .growth-brand span{color:var(--brand)}
 .cute-page .growth-nav>a:last-child{padding:6px 12px;border-radius:999px;background:#fff;box-shadow:0 2px 0 var(--edge);color:var(--ink-soft);text-decoration:none}
-.cute-sheet,.cute-page .growth-card{position:relative;max-width:520px;margin:0 auto;padding:28px 22px 26px;border:2px solid var(--edge);border-radius:28px;background:var(--card);box-shadow:0 6px 0 var(--edge),0 22px 50px #3949e714}
+.cute-sheet,.cute-page .growth-card{position:relative;max-width:520px;margin:0 auto;padding:28px 22px 26px;border:2px solid var(--edge);border-radius:28px;background:var(--card);box-shadow:0 6px 0 var(--edge),0 22px 50px #1e2a2112}
 .cute-deco{position:absolute;pointer-events:none;filter:drop-shadow(0 2px 2px #0002)}
 .cute-deco svg{width:48px;height:48px}
 .cute-deco-a{top:-20px;right:18px;transform:rotate(12deg)}
@@ -20,7 +20,7 @@
 @keyframes cute-pop{from{opacity:0;transform:scale(.96) translateY(8px)}}
 @media(prefers-reduced-motion:reduce){.cute-deco,.cute-sheet,.cute-page .growth-card{animation:none}}
 .cute-kicker{display:inline-block;margin:0 0 8px;padding:5px 12px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:700}
-.cute-title,.cute-page .growth-card h1{margin:0 0 18px;font-family:var(--font-hand),cursive;font-size:34px;line-height:1.2;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
+.cute-title,.cute-page .growth-card h1{margin:0 0 18px;font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:34px;line-height:1.2;font-weight:700;letter-spacing:-.5px;color:var(--ink)}
 .cute-page .growth-eyebrow{color:var(--brand)}
 .cute-page .growth-icon{background:var(--brand-soft);color:var(--brand);border-radius:18px}
 .cute-kinds{display:grid;gap:10px;margin-bottom:20px}
@@ -28,7 +28,7 @@
 .cute-kind:hover{transform:translateY(-1px)}
 .cute-kind[aria-checked=true]{border-color:var(--brand-line);background:var(--brand-softer)}
 .cute-kind>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.cute-kind strong{font-family:var(--font-hand),cursive;font-size:21px;font-weight:700}
+.cute-kind strong{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:21px;font-weight:700}
 .cute-kind small{font-size:12px;color:var(--ink-soft)}
 .cute-kind em{font-style:normal;font-size:12px;color:var(--brand);margin-top:3px}
 .cute-kind-icon{display:grid;place-items:center;flex-shrink:0;width:52px;height:52px;border-radius:16px;background:#fff6e8}
@@ -38,17 +38,21 @@
 .cute-kind>svg{color:var(--brand)}
 .cute-page .growth-field input,.cute-page .growth-field textarea{font-size:16px;border:2px solid var(--edge);border-radius:16px;background:#fff}
 .cute-page .growth-field input:focus,.cute-page .growth-field textarea:focus{border-color:var(--brand-line);outline:none}
-.cute-page .growth-button{border-radius:18px;border-color:var(--brand);background:var(--brand);box-shadow:0 4px 0 var(--brand-press);font-size:16px}
+.cute-page .growth-button{border-radius:18px;border-color:var(--brand);background:var(--brand);box-shadow:0 2px 0 var(--brand-press);font-size:16px}
 .cute-page .growth-button.secondary{background:#fff;color:var(--brand);border-color:var(--brand-line);box-shadow:0 3px 0 var(--brand-line)}
-.cute-page .growth-button:disabled{background:#b9c1f5;border-color:#b9c1f5;box-shadow:none;opacity:1}
+.cute-page .growth-button:disabled{background:var(--brand-line);border-color:var(--brand-line);box-shadow:none;opacity:1}
 .cute-page .bday-dock .growth-button.cute-kakao{background:#FEE500;border-color:#FEE500;color:#000000d9;box-shadow:0 4px 0 #d9c400}
 .cute-page .growth-upload-zone{border-color:var(--brand-line);background:var(--brand-softer);border-radius:22px}
 .cute-page .growth-success{background:var(--brand-softer);color:var(--brand);border-radius:18px}
 .cute-ticket{display:flex;flex-direction:column;align-items:center;gap:8px;margin:4px 0 16px;padding:18px;border:2px dashed var(--brand-line);border-radius:22px;background:var(--brand-softer)}
-.cute-ticket strong{font-family:var(--font-hand),cursive;font-size:26px;color:var(--brand)}
+.cute-ticket strong{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:26px;color:var(--brand)}
 .cute-ticket img{border-radius:12px;background:#fff;padding:6px}
 .cute-ticket small{font-size:12px;color:var(--ink-soft)}
 @media(max-width:600px){
  .cute-sheet,.cute-page .growth-card{padding:24px 16px 22px;border-radius:24px}
  .cute-title,.cute-page .growth-card h1{font-size:30px}
 }
+
+/* Calm it down: no floating corner stickers or bounce-in. */
+.cute-deco{display:none}
+.cute-sheet,.cute-page .growth-card{animation:none}

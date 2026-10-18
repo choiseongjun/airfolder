@@ -1,6 +1,6 @@
 import { publicMetadata } from '@/lib/seo';
 import type { Metadata } from "next";
-import { Gaegu, Geist, Geist_Mono, Nanum_Pen_Script } from "next/font/google";
+import { Gaegu, Geist, Geist_Mono, Nanum_Pen_Script, Noto_Serif_KR } from "next/font/google";
 import PerformanceDiagnostics from "../performance-diagnostics";
 import WebAnalytics from "../web-analytics";
 import "../globals.css";
@@ -26,6 +26,14 @@ const handFont = Gaegu({
   preload: false,
 });
 
+// Editorial serif for page headings, shared with the public pages.
+const editorialFont = Noto_Serif_KR({
+  variable: "--font-editorial",
+  weight: ["500", "600", "700"],
+  subsets: ["latin"],
+  preload: false,
+});
+
 const penFont = Nanum_Pen_Script({
   variable: "--font-pen",
   weight: "400",
@@ -45,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${handFont.variable} ${penFont.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${handFont.variable} ${penFont.variable} ${editorialFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}

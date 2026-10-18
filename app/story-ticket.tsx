@@ -118,7 +118,7 @@ export default function StoryTicket({ folderId, title, photos, ko, onClose }: { 
     <div className="story-ticket-tag-list">{tags.map(tag => <span key={tag}>{tag}</span>)}</div>
     <button className="text-button" onClick={copyTags}><Copy size={14}/>{ko ? '해시태그 복사' : 'Copy hashtags'}</button>
     {tagMessage && <small role="status">{tagMessage}</small>}
-    <small className="story-ticket-timing">{ko ? '✨ 주말이나 연휴에 올리면 반응이 더 좋아요.' : '✨ Posts tend to land best on weekends or holidays.'}</small>
+    <small className="story-ticket-timing">{ko ? '주말이나 연휴에 올리면 반응이 더 좋아요.' : '✨ Posts tend to land best on weekends or holidays.'}</small>
    </div>}
   </section>
  </div>;

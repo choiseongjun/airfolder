@@ -2,7 +2,7 @@
 .share-sheet-backdrop{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:#23284ab8;backdrop-filter:blur(6px)}
 .share-sheet{width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:18px 18px 20px;border-radius:26px;background:var(--card);color:var(--ink);border:2px solid var(--edge)}
 .share-sheet header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.share-sheet header strong{font-family:var(--font-hand),cursive;font-size:22px;color:var(--ink)}
+.share-sheet header strong{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:22px;color:var(--ink)}
 .share-sheet header button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--brand-soft);color:var(--ink);cursor:pointer}
 .share-preview{display:grid;place-items:center;height:300px;margin-bottom:16px;border-radius:18px;background:var(--brand-softer);overflow:hidden}
 .share-preview img{height:100%!important;width:auto!important;max-width:100%;object-fit:contain;border-radius:10px;box-shadow:0 8px 20px #0002}

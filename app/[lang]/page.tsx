@@ -1,7 +1,7 @@
 import BrandMark from '@/app/brand-mark';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowDown, ArrowRight, ArrowUpRight, Camera, Check, LockKeyhole, Plus, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Camera, Check, Heart, LockKeyhole, Plus } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { copy, isPublicLanguage, publicMetadata, publicOrigin } from '@/lib/seo';
 import { landingCopy } from './landing-copy';
@@ -63,7 +63,7 @@ export default async function Landing({ params }: Props) {
           <p className="lp-eyebrow"><span />FOR YOUR PEOPLE. FOR YOUR MOMENTS.</p>
           <h1 id="hero-title">{t.headline[0]}<br /><em>{t.headline[1]}</em></h1>
           <p className="lp-hero-intro">{t.intro[0]}<br />{t.intro[1]}</p>
-          <div className="lp-hero-actions"><Link className="lp-button" href={appHref}>{t.start}<ArrowUpRight size={19} aria-hidden="true" /></Link><a className="lp-try-studio" href="#memory-studio"><Sparkles size={16} aria-hidden="true" />{lang === 'ko' ? '먼저 꾸며볼래요' : 'Play a little first'}</a></div>
+          <div className="lp-hero-actions"><Link className="lp-button" href={appHref}>{t.start}<ArrowUpRight size={19} aria-hidden="true" /></Link><a className="lp-try-studio" href="#memory-studio"><Camera size={16} aria-hidden="true" />{lang === 'ko' ? '먼저 꾸며볼래요' : 'Play a little first'}</a></div>
           <span className="lp-start-hint">{t.hint}</span>
         </div>
         <HeroMemories lang={lang} />
@@ -82,7 +82,7 @@ export default async function Landing({ params }: Props) {
             <h2 id="create-title">{t.cardTitle[0]}<br /><em>{t.cardTitle[1]}</em></h2>
             <p className="lp-body-copy">{t.cardBody}</p>
             <Link className="lp-text-link" href={appHref}>{t.cardLink}<ArrowRight size={19} aria-hidden="true" /></Link>
-            <p className="lp-frame-invitation"><Sparkles size={16} aria-hidden="true" />{t.cardTip}</p>
+            <p className="lp-frame-invitation"><Heart size={16} aria-hidden="true" />{t.cardTip}</p>
           </div>
           <FramePreview lang={lang} />
         </div>

@@ -402,7 +402,7 @@ html{scroll-padding-top:115px}
 }
 
 /* Memonestia shared-photo identity */
-.lp-brand .lp-brand-icon{background:transparent;transform:none;border-radius:0;padding:0;box-shadow:none;color:#3949e7}
+.lp-brand .lp-brand-icon{background:transparent;transform:none;border-radius:0;padding:0;box-shadow:none;color:var(--brand)}
 .lp-brand .lp-brand-icon svg{width:100%;height:100%}
 .lp-brand{font-family:Arial,var(--font-geist-sans),sans-serif;font-weight:750;letter-spacing:-1.1px}
-.lp-brand-dot{color:#3949e7}
+.lp-brand-dot{color:var(--brand)}

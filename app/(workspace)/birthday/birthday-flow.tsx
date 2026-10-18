@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Cake, Check, Copy, Send } from 'lucide-react';
+import { ArrowRight, Cake, Camera, Check, Copy, PenLine, Send, UserRound } from 'lucide-react';
 import { api, initializeSession } from '@/lib/client-api';
 import { TERMS_VERSION } from '@/lib/policy';
 import Consent from '../../growth/consent';
@@ -65,7 +65,7 @@ export default function BirthdayFlow({ locale }: { locale: string }) {
         <div className="ta-garland">{Array.from({ length: 9 }, (_, i) => <i key={i} />)}</div>
         <div className="ta-cover"><span className="ta-kicker">HAPPY BIRTHDAY</span><h2>{name ? title : text('○○의 생일', 'Their birthday')}</h2>
           <p className="ta-cover-meta"><span>{left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : day.replaceAll('-', '.')}</span><span>{text('친구들이 채우는 중', 'Friends are filling it in')}</span></p></div>
-        <div className="bday-slots">{[0, 1, 2].map(i => <span key={i} className="ta-photo"><span className="bday-slot">{['📸', '💌', '🎉'][i]}</span><small>{[text('사진 한 장', 'a photo'), text('한마디', 'a note'), text('친구 이름', 'their name')][i]}</small></span>)}</div>
+        <div className="bday-slots">{[0, 1, 2].map(i => <span key={i} className="ta-photo"><span className="bday-slot">{[<Camera key="c" size={22} />, <PenLine key="p" size={22} />, <UserRound key="u" size={22} />][i]}</span><small>{[text('사진 한 장', 'a photo'), text('한마디', 'a note'), text('친구 이름', 'their name')][i]}</small></span>)}</div>
       </div>
 
       {error && <p className="growth-error" role="alert">{error}</p>}

@@ -1,10 +1,10 @@
 /* Cute skin for the public landing page, matching the app: pastel dotted paper, handwriting headings, pink buttons, stickers. */
-.lp-page{--lp-paper:var(--paper);--lp-coral:var(--brand);--lp-ink:var(--ink);--lp-muted:var(--ink-soft);background-color:var(--paper);background-image:radial-gradient(var(--dot-a) 1.4px,transparent 1.8px),radial-gradient(var(--dot-b) 1.4px,transparent 1.8px),radial-gradient(#ffe8a8 1.8px,transparent 2.2px);background-size:46px 46px,62px 62px,78px 78px;background-position:0 0,20px 28px,36px 12px}
-.lp-page h1,.lp-page h2{font-family:var(--font-hand),var(--font-editorial),cursive;font-weight:700;letter-spacing:-.02em}
+.lp-page{--lp-paper:var(--paper);--lp-coral:var(--brand);--lp-ink:var(--ink);--lp-muted:var(--ink-soft);background-color:var(--paper);background-image:none}
+.lp-page h1,.lp-page h2{font-family:var(--font-editorial),Georgia,serif;font-weight:600;letter-spacing:-.03em}
 .lp-page .lp-hero h1{color:var(--ink);line-height:1.12}
-.lp-page .lp-hero h1 em{font-style:normal;color:var(--brand);text-shadow:3px 3px 0 #ffe08a}
+.lp-page .lp-hero h1 em{font-style:normal;color:var(--brand)}
 .lp-page .lp-eyebrow{display:inline-flex;padding:6px 14px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:700}
-.lp-page .lp-button{border:0;border-radius:20px;background:var(--brand);color:#fff;font-size:15px;font-weight:700;box-shadow:0 5px 0 var(--brand-press)}
+.lp-page .lp-button{border:0;border-radius:20px;background:var(--brand);color:#fff;font-size:15px;font-weight:700;box-shadow:0 2px 0 var(--brand-press)}
 .lp-page .lp-button:hover{background:var(--brand-hover);transform:translateY(-1px)}
 .lp-page .lp-button:active{transform:translateY(3px);box-shadow:0 2px 0 var(--brand-press)}
 .lp-page .lp-nav-cta{border:2px solid var(--brand-line);background:#fff;color:var(--brand);font-weight:700}
@@ -20,3 +20,6 @@
 @media(prefers-reduced-motion:reduce){.lp-page .lp-hero:before,.lp-page .lp-hero:after{animation:none}}
 .lp-page .lp-how-steps--interactive button[aria-pressed=true] .lp-step-index{background:var(--brand);border-color:var(--brand)}
 .lp-page .lp-try-studio{border:2px solid var(--brand-line);background:#fff;color:var(--brand);font-weight:700}
+
+/* The floating hero stickers read as decoration for its own sake; keep the hero clean. */
+.lp-page .lp-hero:before,.lp-page .lp-hero:after{display:none}

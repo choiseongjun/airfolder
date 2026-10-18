@@ -6,7 +6,7 @@
 .bday-slots .ta-photo{display:flex;flex-direction:column;align-items:center;gap:6px;animation:none}
 .bday-slots .ta-photo:nth-child(1){--r:-3deg}.bday-slots .ta-photo:nth-child(2){--r:2deg;border-color:#7cc4e8}.bday-slots .ta-photo:nth-child(3){--r:-1.5deg;border-color:var(--brand-line)}
 .bday-slot{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:4px;background:repeating-linear-gradient(45deg,var(--brand-softer) 0 8px,#fff 8px 16px);font-size:24px}
-.bday-slots small{font-family:var(--font-hand),cursive;font-weight:700;font-size:14px;color:#5a3d8a}
+.bday-slots small{font-family:var(--font-editorial),Georgia,serif;font-weight:600;letter-spacing:-.03em;font-size:14px;color:#5a3d8a}
 .bday-message{margin:18px 0 12px;padding:14px 16px;border-radius:14px;background:#fef3c7;border:1px solid #f4dc8e;text-align:left}
 .bday-message span{display:block;font-size:11px;font-weight:700;color:#9a7b2c;margin-bottom:6px}
 .bday-message p{margin:0;white-space:pre-line;font-size:14px;line-height:1.6;color:#3f3416;word-break:break-all}
@@ -29,7 +29,7 @@
 .bday-flow .growth-nav{max-width:480px;margin:0 auto 14px}
 .bday-sheet{max-width:480px;margin:0 auto}
 .bday-hero{display:flex;align-items:flex-end;justify-content:center;height:96px;padding:0 0 14px;border-radius:18px;box-shadow:none;animation:none}
-.bday-title{display:block;margin:16px 0 6px;text-align:center;font:700 32px/1.2 var(--font-hand),cursive;color:var(--brand);text-shadow:2px 2px 0 #ffe08a;overflow-wrap:anywhere}
+.bday-title{display:block;margin:16px 0 6px;text-align:center;font:600 30px/1.25 var(--font-editorial),Georgia,serif;letter-spacing:-.03em;color:var(--ink);overflow-wrap:anywhere}
 .bday-sub{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:0 0 20px;font-size:14px;color:var(--ink)}
 .bday-sub b{padding:3px 10px;border-radius:999px;background:var(--brand);color:#fff;font:800 12px var(--font-geist-mono),monospace}
 .bday-step{display:grid;gap:16px}
@@ -51,7 +51,7 @@
 .bday-done .bday-thumbs{grid-template-columns:repeat(4,1fr)}
 .bday-dock{margin-top:6px}
 .bday-dock .growth-button{width:100%;min-height:54px;border-radius:14px;border-color:var(--brand);background:var(--brand);color:#fff;font-size:16px}
-.bday-dock .growth-button:disabled{background:#b9c1f5;border-color:#b9c1f5;opacity:1}
+.bday-dock .growth-button:disabled{background:var(--brand-line);border-color:var(--brand-line);opacity:1}
 .bday-dock small{display:block;margin-top:6px;text-align:center;font-size:11px;color:#8a7f72}
 @media(max-width:600px){
  .bday-dock{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#f6f4ecf2;backdrop-filter:blur(10px);border-top:1px solid #e6e1d4}

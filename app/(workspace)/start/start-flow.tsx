@@ -81,7 +81,7 @@ export default function StartFlow({ locale }: { locale: string }) {
           <p className="growth-note">{text('앱 설치 없이 이 브라우저에서 바로 시작해요. 친구들도 링크만 누르면 돼요.', 'Starts right here in your browser. Friends just open the link.')}</p>
         </form>
       </> : <>
-        <p className="cute-kicker">{text('앨범이 준비됐어요 🎉', 'Your album is ready 🎉')}</p>
+        <p className="cute-kicker">{text('앨범이 준비됐어요', 'Your album is ready')}</p>
         <h1 className="cute-title">{text('이제 친구들에게 보내요', 'Now send it to your friends')}</h1>
         <div className="cute-ticket"><strong>{title}</strong>{qr && <img src={qr} alt={text('초대 QR 코드', 'Invitation QR code')} width={150} height={150} />}<small>{text('현장에서는 QR을 보여주세요', 'Show the QR in person')}</small></div>
         <div className="bday-message"><span>{text('보낼 메시지', 'Message to send')}</span><p>{message}</p></div>

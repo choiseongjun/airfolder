@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { ArrowRight, Share2, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowRight, Palette, Share2, Wand2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { browseTheme } from '@/lib/browse-data';
 import type { MemoryItem } from './memories';
@@ -166,21 +166,21 @@ ${url}`;
  const countdown = birthday ? dDay(birthday) : '';
  return <section className="ta-wrap" aria-label={ko ? '꾸민 앨범' : 'Themed album'}>
   {birthday !== undefined && <div className="ta-birthday-bar">
-   <span className="ta-birthday-count">{countdown || '🎂'}</span>
+   <span className="ta-birthday-count">{countdown || (ko ? '생일' : 'B-day')}</span>
    <div><strong>{people.length ? (ko ? `친구 ${people.length}명이 채웠어요` : `${people.length} ${people.length === 1 ? 'friend has' : 'friends have'} added photos`) : (ko ? '아직 아무도 채우지 않았어요' : 'Nobody has added a photo yet')}</strong><small>{ko ? '단톡방에 링크를 보내면 사진과 한마디가 여기에 쌓여요.' : 'Share the link in the group chat and photos with notes land here.'}</small></div>
    {shareable && <button className="primary-button" onClick={share}>{canShare ? (ko ? '친구 더 부르기' : 'Invite friends') : (ko ? '공유하기' : 'Share')}</button>}
   </div>}
   {canShare && members.length > 1 && <div className="ta-nudge">
    <div><strong>{ko ? `${contributors.size}명이 사진을 보탰어요` : `${contributors.size} ${contributors.size === 1 ? 'person has' : 'people have'} added photos`}</strong>
     {pending.length > 0 ? <span className="ta-nudge-names">{(named.length ? named : []).slice(0, 5).map(n => <i key={n}>{n}</i>)}{pending.length > named.slice(0, 5).length && <i>{ko ? `+${pending.length - named.slice(0, 5).length}명` : `+${pending.length - named.slice(0, 5).length}`}</i>}<small>{ko ? '아직 안 올렸어요' : 'still to add'}</small></span> : <small>{ko ? '모두 사진을 올렸어요 🎉' : 'Everyone has added photos 🎉'}</small>}</div>
-   {pending.length > 0 && <button onClick={() => setSharing('nudge')}>{ko ? '조르기 💌' : 'Nudge 💌'}</button>}
+   {pending.length > 0 && <button onClick={() => setSharing('nudge')}>{ko ? '조르기' : 'Nudge'}</button>}
   </div>}
   {monthly && <div className="ta-months" role="group" aria-label={ko ? '월별로 보기' : 'View by month'}>
    <button aria-pressed={month === 'all'} onClick={() => setMonth('all')}>{ko ? '전체' : 'All'}</button>
-   {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '💌 이번 달 우리' : '💌 This month of us') : monthName(m)}</button>)}
+   {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '이번 달 우리' : 'This month of us') : monthName(m)}</button>)}
   </div>}
   <div className="ta-picker">
-   <div className="ta-picker-head"><Sparkles size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small>{shareable && birthday === undefined && <button className="ta-share-mini" onClick={share}><Share2 size={14}/>{ko ? '공유' : 'Share'}</button>}</div>
+   <div className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small>{shareable && birthday === undefined && <button className="ta-share-mini" onClick={share}><Share2 size={14}/>{ko ? '공유' : 'Share'}</button>}</div>
    <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
     {albumThemes.map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
      <span className="ta-swatch-art" aria-hidden="true">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}<span className="ta-swatch-deco"><Deco item={decor[t.id][0]} className=""/></span></span>

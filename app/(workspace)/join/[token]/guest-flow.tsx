@@ -116,7 +116,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
           <span className="ta-kicker">HAPPY BIRTHDAY</span>
         </div>
         <h1 className="bday-title">{invite.name}</h1>
-        <p className="bday-sub">{countdown && <b>{countdown}</b>}{sent ? text('보냈어요! 생일날 한 권으로 공개돼요 🎉', 'Sent! It opens as one album on the day 🎉') : text('주인공에겐 아직 비밀이에요 🤫', 'Keep it a secret for now 🤫')}</p>
+        <p className="bday-sub">{countdown && <b>{countdown}</b>}{sent ? text('보냈어요! 생일날 한 권으로 공개돼요', 'Sent! It opens as one album on the day.') : text('주인공에겐 아직 비밀이에요', 'Keep it a secret for now.')}</p>
         {error && <p className="growth-error" role="alert">{error}</p>}
         {!ready && error && <button className="growth-button secondary" onClick={() => setRetry(n => n + 1)}>{text('다시 확인', 'Try again')}</button>}
 
@@ -125,7 +125,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
           <label className="growth-field">{text('내 이름', 'Your name')}<input maxLength={30} disabled={busy} value={nickname} onChange={e => setNickname(e.target.value)} placeholder={text('사진 옆에 같이 적혀요 · 예: 하윤', 'Shown with your photo · e.g. Hayun')} autoComplete="nickname" enterKeyHint="go" onKeyDown={e => { if (e.key === 'Enter') void join(); }} /></label>
           {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
           {!!invite.photos && <button className="bday-more" disabled={!ready || busy || (!accepted && !consent)} onClick={() => void join(!partyDay)}>{partyDay ? text('+ 나도 사진 보태기', '+ Add my photo too') : text(`지금까지 모인 앨범 보기 · 사진 ${invite.photos}장 →`, `See the album so far · ${invite.photos} photos →`)}</button>}
-          <div className="bday-dock"><button className="growth-button" onClick={() => void join(partyDay)} disabled={!ready || busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : partyDay ? text('완성된 생일 앨범 보기 🎂', 'Open the birthday album 🎂') : text('사진 고르러 가기', 'Choose a photo')}<ArrowRight size={18} /></button></div>
+          <div className="bday-dock"><button className="growth-button" onClick={() => void join(partyDay)} disabled={!ready || busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : partyDay ? text('완성된 생일 앨범 보기', 'Open the birthday album') : text('사진 고르러 가기', 'Choose a photo')}<ArrowRight size={18} /></button></div>
         </div> : sent ? <div className="bday-step bday-done">
           <div className="bday-thumbs">{items.map(item => <span key={item.id} className="bday-thumb">{item.preview && <img src={item.preview} alt="" />}<Check size={16} /></span>)}</div>
           <p className="bday-lead">{text('친구들 사진이 다 모이면 버스데이 테마 앨범으로 완성돼요.', 'Once everyone adds theirs, it becomes a Birthday Film album.')}</p>
@@ -154,7 +154,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
       <div className="growth-icon cute-icon"><Sticker kind={completed ? 'star' : joined ? 'flower' : 'heart'} /></div>
       <p className="growth-eyebrow">YOUR VIEW MAKES THE MEMORY</p><h1>{invite?.name || (error ? text('초대를 열 수 없어요', 'Unable to open this invite') : text('모임 초대를 확인하고 있어요', 'Opening your invitation'))}</h1>
       {!joined && <p className="growth-lead">{birthday ? text('생일 주인공에게 줄 앨범이에요. 함께 찍은 사진 한 장과 한마디를 남겨주세요. 생일날 예쁜 앨범 한 권으로 완성돼요.', 'A birthday album for a friend. Add a photo of you two and a short note. It turns into a pretty album by the big day.') : text('당신이 찍은 순간도 보태주세요. 앱 설치나 새 계정 가입 없이, 고른 사진만 올릴 수 있어요.', 'Add your side of the story. No app installation or new account needed. Only the photos you choose are uploaded.')}</p>}
-      {birthday && <div className="bday-guest"><strong>🎂 {invite?.day && dDay(invite.day) ? `${dDay(invite.day)} · ` : ''}{text('주인공에겐 아직 비밀이에요', 'Keep it a secret for now')}</strong>{text('올린 사진과 한마디는 버스데이 테마로 자동으로 꾸며져요. 꾸미기는 신경 쓰지 않아도 돼요.', 'Your photo and note are decorated in the Birthday Film theme automatically. No decorating needed.')}</div>}
+      {birthday && <div className="bday-guest"><strong>{invite?.day && dDay(invite.day) ? `${dDay(invite.day)} · ` : ''}{text('주인공에겐 아직 비밀이에요', 'Keep it a secret for now')}</strong>{text('올린 사진과 한마디는 버스데이 테마로 자동으로 꾸며져요. 꾸미기는 신경 쓰지 않아도 돼요.', 'Your photo and note are decorated in the Birthday Film theme automatically. No decorating needed.')}</div>}
       {error && <p className="growth-error" role="alert">{error}</p>}
       {!ready && error && <button className="growth-button secondary" onClick={() => setRetry(n => n + 1)}>{text('다시 확인', 'Try again')}</button>}
       {!joined && ready && <div className="growth-form">{invite?.kind === 'group' && <p className="growth-note">{text('참여하면 이 그룹의 기존·새 앨범에 접근할 수 있으며, 멤버에게 공유된 사진만 볼 수 있어요.', 'Joining gives access to existing and future group albums, and photos shared with members.')}</p>}

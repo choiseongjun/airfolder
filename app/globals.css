@@ -64,7 +64,7 @@ html,body{height:100%;overflow:hidden}body{background:#eeeDE7}.app-shell{display
 .photo-open,.record-photo{position:relative}.photo-open .video-badge,.record-photo .video-badge{position:absolute;top:10px;left:10px;bottom:auto;right:auto;background:#172215cc;color:white;padding:5px 9px;border-radius:7px;font-size:11px;pointer-events:none}
 
 /* Memonestia shared-photo identity */
-.brand .brand-icon{background:transparent;transform:none;border-radius:0;padding:0;box-shadow:none;color:#3949e7}
+.brand .brand-icon{background:transparent;transform:none;border-radius:0;padding:0;box-shadow:none;color:var(--brand)}
 .brand .brand-icon svg{width:100%;height:100%}
 .brand{font-family:Arial,var(--font-geist-sans),sans-serif;font-weight:750;letter-spacing:-1.1px}
-.brand-dot{color:#3949e7}
+.brand-dot{color:var(--brand)}
