@@ -16,19 +16,23 @@ export const albumThemes = [
  { id: 'film', ko: '필름 아카이브', en: 'Film Archive', hintKo: '필름 프레임과 주황 날짜 도장', hintEn: 'Film frames & orange date stamps', kicker: 'ROLL 01 · 36 EXP', chapter: 'FRAME' },
  { id: 'softgirl', ko: '소프트 걸', en: 'Soft Girl', hintKo: '핑크 깅엄, 리본, 하트', hintEn: 'Pink gingham, ribbons & hearts', kicker: 'xoxo, us', chapter: '♡' },
  { id: 'birthday', ko: '버스데이 필름', en: 'Birthday Film', hintKo: '가랜드, 컨페티, 케이크', hintEn: 'Garland, confetti & cake', kicker: 'HAPPY BIRTHDAY', chapter: 'PART' },
+ { id: 'picnic', ko: '피크닉 데이', en: 'Picnic Day', hintKo: '체크 돗자리, 체리, 데이지', hintEn: 'Gingham blanket, cherries & daisies', kicker: 'PICNIC CLUB', chapter: 'SPOT' },
+ { id: 'starry', ko: '별밤 콘서트', en: 'Starry Night', hintKo: '밤하늘, 별빛, 네온 테두리', hintEn: 'Night sky, starlight & neon', kicker: 'NIGHT OUT', chapter: 'TRACK' },
 ] as const;
 export type AlbumThemeId = typeof albumThemes[number]['id'];
 
-type StickerKind = 'sun' | 'wave' | 'star' | 'heart' | 'bow' | 'sparkle' | 'cake' | 'balloon' | 'flower';
+export type StickerKind = 'sun' | 'wave' | 'star' | 'heart' | 'bow' | 'sparkle' | 'cake' | 'balloon' | 'flower' | 'cherry' | 'moon';
 type Decor = StickerKind | { text: string };
 const decor: Record<AlbumThemeId, Decor[]> = {
  polaroid: ['sun', { text: 'summer!' }, 'wave', 'star', { text: 'best day ever' }, 'flower'],
  film: [{ text: 'MEMO 400' }, 'sparkle', { text: '★ keep' }, 'star', { text: 'NO. 07' }, 'sparkle'],
  softgirl: ['heart', 'sparkle', { text: 'xoxo' }, 'bow', 'flower', { text: 'so cute' }],
  birthday: ['cake', 'balloon', { text: 'HBD!' }, 'star', { text: 'make a wish' }, 'heart'],
+ picnic: ['cherry', 'flower', { text: 'picnic day' }, 'sun', { text: 'yum!' }, 'cherry'],
+ starry: ['moon', 'sparkle', { text: 'encore!' }, 'star', { text: 'best night' }, 'sparkle'],
 };
 
-function Sticker({ kind }: { kind: StickerKind }) {
+export function Sticker({ kind }: { kind: StickerKind }) {
  const art: Record<StickerKind, React.ReactNode> = {
   sun: <><circle cx="32" cy="32" r="13" fill="#ffd25e" stroke="#f29b38" strokeWidth="3"/>{Array.from({ length: 8 }, (_, i) => <path key={i} d="M32 6v9" stroke="#f29b38" strokeWidth="4" strokeLinecap="round" transform={`rotate(${i * 45} 32 32)`}/>)}</>,
   wave: <path d="M4 38c7-9 14-9 21 0s14 9 21 0 11-8 14-4M4 50c7-9 14-9 21 0s14 9 21 0 11-8 14-4" fill="none" stroke="#4aa3d8" strokeWidth="5" strokeLinecap="round"/>,
@@ -38,6 +42,8 @@ function Sticker({ kind }: { kind: StickerKind }) {
   sparkle: <path d="M32 4c3 16 8 21 24 28-16 7-21 12-24 28-3-16-8-21-24-28 16-7 21-12 24-28z" fill="#fff4c9" stroke="#e1b552" strokeWidth="3" strokeLinejoin="round"/>,
   cake: <><rect x="12" y="32" width="40" height="22" rx="5" fill="#ffd9e4" stroke="#e46d93" strokeWidth="3"/><path d="M12 40c5 4 9 4 13 0s9-4 14 0 9 4 13 0" fill="none" stroke="#fff" strokeWidth="4"/><path d="M24 31V20M32 31V18M40 31V20" stroke="#7cc4e8" strokeWidth="4" strokeLinecap="round"/><path d="M24 15c-2-3 2-6 0-8 4 2 3 6 0 8zM32 13c-2-3 2-6 0-8 4 2 3 6 0 8zM40 15c-2-3 2-6 0-8 4 2 3 6 0 8z" fill="#ffb02e"/></>,
   balloon: <><ellipse cx="32" cy="24" rx="15" ry="18" fill="#8fd0ff" stroke="#3d93cf" strokeWidth="3"/><path d="M29 42h6l-3 4z" fill="#3d93cf"/><path d="M32 46c-5 6 5 9 0 15" fill="none" stroke="#7a7a7a" strokeWidth="2"/><ellipse cx="26" cy="17" rx="3" ry="5" fill="#fff" opacity=".7"/></>,
+  cherry: <><path d="M22 40c4-14 10-24 22-30M42 40c-2-12-1-22 2-30" fill="none" stroke="#5a9b4a" strokeWidth="3" strokeLinecap="round"/><path d="M44 10c6-4 13-2 15 3-6 3-12 2-15-3z" fill="#7fc36a" stroke="#5a9b4a" strokeWidth="2"/><circle cx="21" cy="45" r="11" fill="#ff5a6e" stroke="#c9364b" strokeWidth="3"/><circle cx="43" cy="45" r="11" fill="#ff5a6e" stroke="#c9364b" strokeWidth="3"/><ellipse cx="17" cy="41" rx="3" ry="4" fill="#fff" opacity=".7"/><ellipse cx="39" cy="41" rx="3" ry="4" fill="#fff" opacity=".7"/></>,
+  moon: <><path d="M40 8a24 24 0 1 0 16 38A20 20 0 0 1 40 8z" fill="#ffe08a" stroke="#e9b43b" strokeWidth="3" strokeLinejoin="round"/><circle cx="30" cy="30" r="3" fill="#f2c95a"/><circle cx="24" cy="42" r="2" fill="#f2c95a"/></>,
   flower: <>{Array.from({ length: 5 }, (_, i) => <ellipse key={i} cx="32" cy="17" rx="8" ry="12" fill="#fff" stroke="#f0a1b8" strokeWidth="3" transform={`rotate(${i * 72} 32 32)`}/>)}<circle cx="32" cy="32" r="7" fill="#ffd25e" stroke="#e9a23b" strokeWidth="3"/></>,
  };
  return <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">{art[kind]}</svg>;
@@ -70,8 +76,16 @@ export function albumShareMessage(title: string, url: string, ko: boolean, birth
 export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void }) {
  const ko = locale === 'ko';
  // Owners share the album's invite link (it opens on this decorated view); members share the finished look.
- const [sharing, setSharing] = useState(false), shareable = !browsing;
- const share = () => setSharing(true);
+ const [sharing, setSharing] = useState<'' | 'share' | 'nudge'>(''), shareable = !browsing;
+ const share = () => setSharing('share');
+ const [members, setMembers] = useState<{ id: string; name: string; mine: boolean }[]>([]);
+ useEffect(() => {
+  if (!canShare) return;
+  let active = true;
+  api<{ members: { id: string; name: string; mine: boolean }[] }>(`/api/members?folderId=${encodeURIComponent(folderId)}`).then(r => { if (active) setMembers(r.members); }).catch(() => {});
+  return () => { active = false; };
+ }, [canShare, folderId]);
+ const [month, setMonth] = useState('all');
  const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined));
  const [items, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  useEffect(() => {
@@ -99,12 +113,31 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
   }
   return list;
  }, [items]);
- const allPhotos = chapters.flatMap(c => c.photos);
+ // Ongoing albums read best a month at a time: "this month of us".
+ const months = [...new Set(chapters.map(c => c.day.slice(0, 7)).filter(m => /^\d{4}-\d{2}$/.test(m)))].sort().reverse();
+ const monthly = birthday === undefined && months.length > 0;
+ const shown = monthly && month !== 'all' ? chapters.filter(c => c.day.startsWith(month)) : chapters;
+ const thisMonth = new Date().toISOString().slice(0, 7);
+ const monthName = (m: string) => ko ? `${Number(m.slice(5))}월` : new Date(m + '-01T12:00:00').toLocaleString('en', { month: 'long' });
+ const monthTitle = (m: string) => ko ? `${monthName(m)}의 우리` : `Us in ${monthName(m)}`;
+ const allPhotos = shown.flatMap(c => c.photos);
  const people = [...new Set(allPhotos.map(p => p.author).filter(Boolean))];
+ // Who joined but hasn't added anything yet, so the organiser can give them a friendly nudge.
+ const contributors = new Set(chapters.flatMap(c => c.photos.map(p => p.author)).filter(Boolean));
+ const pending = members.filter(m => !m.mine && !contributors.has(m.name));
+ const named = pending.filter(m => !/^Member [0-9a-f]{6}$/.test(m.name)).map(m => m.name);
+ function nudgeMessage(url: string, countdown: string) {
+  const who = named.length ? named.slice(0, 3).join(', ') + (pending.length > 3 ? (ko ? ` 외 ${pending.length - 3}명` : ` and ${pending.length - 3} more`) : '') : (ko ? `아직 안 올린 ${pending.length}명` : `the ${pending.length} of you who haven't`);
+  return ko ? `⏰ ${title}${countdown ? ` ${countdown}` : ''}!
+${who}, 아직 사진 안 올렸지? 한 장이랑 한마디만 남겨줘 🙏
+${url}` : `⏰ ${title}${countdown ? ` ${countdown}` : ''}!
+${who}, add one photo and a note? 🙏
+${url}`;
+ }
  // The closing shot (often the group selfie) makes the best cover and avoids repeating the first print.
  const cover = allPhotos.findLast(p => p.mediaType !== 'video') || allPhotos[0];
  const meta = albumThemes.find(t => t.id === theme)!;
- const day = birthday || chapters[0]?.day || '';
+ const day = birthday || shown[0]?.day || '';
 
  function choose(id: AlbumThemeId) {
   setTheme(id);
@@ -137,6 +170,15 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
    <div><strong>{people.length ? (ko ? `친구 ${people.length}명이 채웠어요` : `${people.length} ${people.length === 1 ? 'friend has' : 'friends have'} added photos`) : (ko ? '아직 아무도 채우지 않았어요' : 'Nobody has added a photo yet')}</strong><small>{ko ? '단톡방에 링크를 보내면 사진과 한마디가 여기에 쌓여요.' : 'Share the link in the group chat and photos with notes land here.'}</small></div>
    {shareable && <button className="primary-button" onClick={share}>{canShare ? (ko ? '친구 더 부르기' : 'Invite friends') : (ko ? '공유하기' : 'Share')}</button>}
   </div>}
+  {canShare && members.length > 1 && <div className="ta-nudge">
+   <div><strong>{ko ? `${contributors.size}명이 사진을 보탰어요` : `${contributors.size} ${contributors.size === 1 ? 'person has' : 'people have'} added photos`}</strong>
+    {pending.length > 0 ? <span className="ta-nudge-names">{(named.length ? named : []).slice(0, 5).map(n => <i key={n}>{n}</i>)}{pending.length > named.slice(0, 5).length && <i>{ko ? `+${pending.length - named.slice(0, 5).length}명` : `+${pending.length - named.slice(0, 5).length}`}</i>}<small>{ko ? '아직 안 올렸어요' : 'still to add'}</small></span> : <small>{ko ? '모두 사진을 올렸어요 🎉' : 'Everyone has added photos 🎉'}</small>}</div>
+   {pending.length > 0 && <button onClick={() => setSharing('nudge')}>{ko ? '조르기 💌' : 'Nudge 💌'}</button>}
+  </div>}
+  {monthly && <div className="ta-months" role="group" aria-label={ko ? '월별로 보기' : 'View by month'}>
+   <button aria-pressed={month === 'all'} onClick={() => setMonth('all')}>{ko ? '전체' : 'All'}</button>
+   {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '💌 이번 달 우리' : '💌 This month of us') : monthName(m)}</button>)}
+  </div>}
   <div className="ta-picker">
    <div className="ta-picker-head"><Sparkles size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small>{shareable && birthday === undefined && <button className="ta-share-mini" onClick={share}><Share2 size={14}/>{ko ? '공유' : 'Share'}</button>}</div>
    <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
@@ -153,17 +195,18 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
    <header className="ta-cover">
     <span className="ta-kicker">{meta.kicker}</span>
     {cover && <div className="ta-cover-photo">{photo(cover, 0, 'big', true)}<Deco item={decor[theme][0]} className="ta-at-cover-a"/><Deco item={decor[theme][1]} className="ta-at-cover-b"/></div>}
-    <h2>{title}</h2>
+    <h2>{monthly && month !== 'all' ? monthTitle(month) : title}</h2>
+    {monthly && month !== 'all' && <p className="ta-cover-note">{title}</p>}
     {description && <p className="ta-cover-note">{description}</p>}
     <p className="ta-cover-meta">{day && <span>{dotted(day)}</span>}{people.length > 0 && <span>{people.slice(0, 4).join(' · ')}{people.length > 4 ? (ko ? ` 외 ${people.length - 4}명` : ` +${people.length - 4}`) : ''}</span>}</p>
    </header>
-   {chapters.map((chapter, ci) => <section key={chapter.id} className="ta-chapter">
+   {shown.map((chapter, ci) => <section key={chapter.id} className="ta-chapter">
     <div className="ta-chapter-head"><span className="ta-chapter-label">{meta.chapter} {String(ci + 1).padStart(2, '0')}</span>{chapter.note && <p className="ta-note">{chapter.note}</p>}</div>
     <Deco item={decor[theme][(ci * 2 + 2) % decor[theme].length]} className="ta-at-a"/>
     {spread(chapter, ci)}
     <Deco item={decor[theme][(ci * 2 + 3) % decor[theme].length]} className="ta-at-b"/>
    </section>)}
-   {!chapters.length && <p className="ta-empty">{ko ? '사진과 한 줄 메모를 올리면 이 테마로 자동으로 꾸며져요.' : 'Add photos and a note, and this theme decorates them for you.'}</p>}
+   {!shown.length && <p className="ta-empty">{ko ? '사진과 한 줄 메모를 올리면 이 테마로 자동으로 꾸며져요.' : 'Add photos and a note, and this theme decorates them for you.'}</p>}
    <footer className="ta-end">
     <span className="ta-end-stamp">THE END</span>
     <p>{ko ? `${people.length > 1 ? `${people.length}명이 함께 채운` : '우리의'} 앨범 · 사진 ${allPhotos.length}장` : `${people.length > 1 ? `Filled in by ${people.length} friends` : 'Our album'} · ${allPhotos.length} photos`}</p>
@@ -175,9 +218,9 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
    <div><strong>{ko ? '카톡·인스타·쓰레드로 자랑하기' : 'Share to KakaoTalk, Instagram, Threads'}</strong><p>{canShare ? (ko ? '링크를 연 친구는 꾸민 앨범을 바로 보고 자기 사진도 보탤 수 있어요. 인스타 스토리용 이미지도 만들어 드려요.' : 'Friends who open the link see this album and can add photos. A story image is made for Instagram, too.') : (ko ? '꾸민 앨범을 인스타 스토리 이미지로 만들어 드려요.' : 'Turn this album into an Instagram story image.')}</p></div>
    <button className="primary-button" onClick={share}><Share2 size={16}/>{ko ? '앨범 공유하기' : 'Share album'}</button>
   </div>}
-  {sharing && createPortal(<AlbumShare folderId={folderId} title={title} theme={theme} locale={locale} canInvite={!!canShare} day={day}
+  {sharing && createPortal(<AlbumShare folderId={folderId} title={monthly && month !== 'all' ? monthTitle(month) : title} theme={theme} locale={locale} canInvite={!!canShare} day={day}
    photos={[cover, ...allPhotos.filter(p => p !== cover)].filter(p => p && p.mediaType !== 'video' && p.src).slice(0, 3).map(p => p!.src!)} people={people}
-   message={url => albumShareMessage(title, url, ko, birthday !== undefined, !!canShare)} onClose={() => setSharing(false)}/>, document.body)}
+   message={url => sharing === 'nudge' ? nudgeMessage(url, countdown) : albumShareMessage(title, url, ko, birthday !== undefined, !!canShare)} onClose={() => setSharing('')}/>, document.body)}
 
   {browsing && <div className="ta-cta">
    <div><strong>{ko ? `${meta.ko} 테마로 우리 앨범 만들기` : `Make ours in ${meta.en}`}</strong><p>{ko ? '사진 몇 장과 한 줄 메모만 올리면, 꾸미기는 자동이에요. 친구들도 링크로 같이 채워요.' : 'Add a few photos and a note. The decorating is automatic, and friends can fill it in from a link.'}</p></div>

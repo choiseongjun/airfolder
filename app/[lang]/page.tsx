@@ -10,6 +10,7 @@ import LanguageSwitch from './language-switch';
 import HeroMemories from './hero-memories';
 import AlbumStory from './album-story';
 import LandingMotion from './landing-motion';
+import './landing-cute.css';
 import { isPublicLocale } from '@/lib/public-locale';
 import RegionalLanding from './regional-landing';
 

@@ -1,0 +1,50 @@
+/* Cute skin for "My space": the same pastel paper, stickers-and-tape and chunky pink buttons as onboarding. */
+.app-shell{--orange:#ff5a87;--line:#f3e2d8;background-color:#fff8f1;background-image:radial-gradient(#ffd3de 1.3px,transparent 1.7px),radial-gradient(#cfe9f7 1.3px,transparent 1.7px);background-size:44px 44px,60px 60px;background-position:0 0,22px 30px}
+.app-shell .topbar,.app-shell .mobile-tabs{background:#fffaf6ee;backdrop-filter:blur(8px)}
+
+/* Buttons */
+.app-shell .primary-button{border-radius:14px;font-size:12px;font-weight:700;box-shadow:0 3px 0 #d43f6c}
+.app-shell .primary-button:active{transform:translateY(2px);box-shadow:0 1px 0 #d43f6c}
+.app-shell .secondary-button{border:2px solid #f1e3d9;border-radius:14px;background:#fff;color:#c2557d;font-weight:600}
+.app-shell .text-button{color:#d0507b}
+
+/* Headings */
+.app-shell .eyebrow{color:#ff6f91;font-weight:700}
+.app-shell .page-heading h1{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:#4a3a3f}
+.app-shell .page-heading p{color:#8a7178}
+.app-shell .section-heading h2{font-family:var(--font-hand),cursive;font-size:22px;color:#4a3a3f}
+
+/* Filters and view tabs */
+.app-shell .tab{border-radius:999px;color:#9a7c84}
+.app-shell .selected-tab{background:#ffe7ee;color:#d0507b;font-weight:700}
+.app-shell .folder-view-tabs{background:#fff;border:2px solid #f3e2d8;border-radius:18px}
+.app-shell .folder-view-tabs button{border-radius:13px;color:#9a7c84}
+.app-shell .folder-view-tabs button[aria-pressed=true]{background:#fff0f4;color:#d0507b;box-shadow:0 2px 0 #ffd0dd}
+
+/* Album cards: a taped print on the shelf */
+.app-shell .room-card{position:relative;overflow:visible;border:2px solid #f3e2d8;border-radius:22px;background:#fffdfa;box-shadow:0 5px 0 #f3e2d8}
+.app-shell .room-card:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:0 8px 0 #f3e2d8}
+.app-shell .room-card:before{content:'';position:absolute;z-index:3;top:-9px;left:50%;width:70px;height:20px;transform:translateX(-50%) rotate(-3deg);background:repeating-linear-gradient(45deg,#ffd6e0e6 0 6px,#fff0f4e6 6px 12px);border-radius:2px}
+.app-shell .room-card:nth-child(3n+2):before{background:repeating-linear-gradient(45deg,#cfe9f7e6 0 6px,#eef8fde6 6px 12px);transform:translateX(-50%) rotate(2deg)}
+.app-shell .room-card:nth-child(3n):before{background:repeating-linear-gradient(45deg,#ffe8a8e6 0 6px,#fff6d6e6 6px 12px)}
+.app-shell .room-cover{border-radius:20px 20px 0 0}
+.app-shell .category-badge{border-radius:999px;background:#fffffff0;color:#d0507b;font-weight:700}
+.app-shell .room-card-title button{font-family:var(--font-hand),cursive;font-size:18px;font-weight:700;color:#4a3a3f}
+.app-shell .folder-capture-button{border-radius:14px}
+
+/* Album page */
+.app-shell .album-people{border:2px solid #f3e2d8;border-radius:18px;background:#fffdfa}
+.app-shell .album-people-icon{background:#ffe7ee;color:#d0507b}
+
+/* Bottom navigation */
+.app-shell .mobile-tabs>button[aria-current]{color:#d0507b}
+.app-shell .mobile-tabs>button[aria-current]>svg{fill:#ffe7ee}
+.app-shell .mobile-tabs .tab-camera{color:#ff5a87}
+
+@media(prefers-reduced-motion:reduce){.app-shell .room-card:hover{transform:none}}
+
+/* Leftover orange and green accents, brought into the pink palette */
+.app-shell .guide-explore-link{background:#ff5a87;border-color:#ff5a87;box-shadow:0 4px 0 #d43f6c}
+.app-shell .tab-camera>span{background:#ff5a87;box-shadow:0 3px 0 #d43f6c}
+.app-shell .group-card{border:2px solid #f3e2d8;box-shadow:0 4px 0 #f3e2d8}
+.app-shell .group-card.active{border-color:#ff8fb1;background:#fff4f7;box-shadow:0 4px 0 #ffd0dd}

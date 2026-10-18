@@ -33,6 +33,7 @@ import { WorkspaceStory, StudioTeaser, EmptyBookshelf } from "../workspace-delig
 import GuestTrial from "../guest-trial";
 import "../workspace-delight.css";
 import "../memory-bookshelf.css";
+import "../workspace-cute.css";
 import Memories, { Discussion } from "../memories";
 import AnalyticsPreference from "../analytics-preference";
 import { trackAuthEvent } from "@/lib/auth-analytics";

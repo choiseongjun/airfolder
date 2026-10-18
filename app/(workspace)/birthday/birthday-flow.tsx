@@ -5,8 +5,10 @@ import { ArrowRight, Cake, Check, Copy, Send } from 'lucide-react';
 import { api, initializeSession } from '@/lib/client-api';
 import { TERMS_VERSION } from '@/lib/policy';
 import Consent from '../../growth/consent';
+import { Sticker } from '../../theme-album';
 import '../../theme-album.css';
 import './birthday.css';
+import '../../growth/cute.css';
 
 const INVITE_DAYS = 7;
 function localDay(offset = 0) { const d = new Date(); d.setDate(d.getDate() + offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
@@ -52,8 +54,9 @@ export default function BirthdayFlow({ locale }: { locale: string }) {
     if (navigator.share) { try { await navigator.share({ text: message }); return; } catch { return; } }
     await copy(message, 'message');
   }
-  return <main className="growth-page bday-flow"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
+  return <main className="growth-page bday-flow cute-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
     <section className="bday-sheet bday-card">
+      <span className="cute-deco cute-deco-a" aria-hidden="true"><Sticker kind="cake" /></span>
       <p className="bday-kicker">{invite ? <><Check size={14} />{text('앨범이 준비됐어요', 'Your album is ready')}</> : <><Cake size={14} />{text('생일 앨범', 'Birthday album')}</>}</p>
       <h1 className="bday-heading">{invite ? text('이제 단톡방에 보내세요', 'Now send it to the group chat') : text('친구 생일, 앨범으로 선물해요', 'Give a birthday album')}</h1>
       <p className="bday-lead">{invite ? text('친구들이 링크를 열어 사진 한 장과 한마디를 남기면 자동으로 꾸며져요. 앱 설치도 가입도 필요 없어요.', 'Friends open the link and add a photo and a note. It decorates itself. No app or sign-up needed.') : text('친구들이 사진 한 장, 한마디씩 채우면 생일날 예쁜 앨범 한 권이 돼요.', 'Friends each add a photo and a note, and it becomes a pretty album by the big day.')}</p>

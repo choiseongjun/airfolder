@@ -1,13 +1,15 @@
 'use client';
 // Renders a themed album as a 1080x1920 story image (Instagram/Threads stories) on a canvas.
 
-export type StoryTheme = 'polaroid' | 'film' | 'softgirl' | 'birthday';
+export type StoryTheme = 'polaroid' | 'film' | 'softgirl' | 'birthday' | 'picnic' | 'starry';
 type Palette = { bg: (ctx: CanvasRenderingContext2D, w: number, h: number) => void; ink: string; sub: string; accent: string; frame: string; kicker: string };
 
 const palettes: Record<StoryTheme, Palette> = {
  polaroid: { ink: '#1d5b86', sub: '#3a7cab', accent: '#ff8a5c', frame: '#fffefa', kicker: 'SUMMER DIARY', bg: (ctx, w, h) => { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#cfeaf8'); g.addColorStop(.55, '#f3f6ef'); g.addColorStop(1, '#f6e5c3'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); dots(ctx, w, h, '#ffffffaa', 44, 3); } },
  film: { ink: '#f6e7c4', sub: '#d9c59c', accent: '#ff9d3b', frame: '#0e0d0b', kicker: 'ROLL 01 · 36 EXP', bg: (ctx, w, h) => { ctx.fillStyle = '#1b1a17'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { ctx.fillStyle = Math.random() > .5 ? '#ffffff08' : '#00000014'; ctx.fillRect(Math.random() * w, Math.random() * h, 2, 2); } } },
  softgirl: { ink: '#d0507b', sub: '#c2557d', accent: '#e46d93', frame: '#ffffff', kicker: 'xoxo, us', bg: (ctx, w, h) => { ctx.fillStyle = '#fff0f3'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#ffd6e077'; for (let x = 0; x < w; x += 56) ctx.fillRect(x, 0, 28, h); for (let y = 0; y < h; y += 56) ctx.fillRect(0, y, w, 28); } },
+ picnic: { ink: '#c9364b', sub: '#4f7d3f', accent: '#5a9b4a', frame: '#ffffff', kicker: 'PICNIC CLUB', bg: (ctx, w, h) => { ctx.fillStyle = '#fffdf6'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#ff6b7a33'; for (let x = 0; x < w; x += 72) ctx.fillRect(x, 0, 36, h); for (let y = 0; y < h; y += 72) ctx.fillRect(0, y, w, 36); } },
+ starry: { ink: '#fff4d6', sub: '#c9c3ff', accent: '#ff7ad9', frame: '#ffffff', kicker: 'NIGHT OUT', bg: (ctx, w, h) => { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#141a3d'); g.addColorStop(1, '#3a2763'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 220; i++) { ctx.fillStyle = `rgba(255,255,255,${(0.3 + Math.random() * 0.7).toFixed(2)})`; ctx.beginPath(); ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 2.4 + .4, 0, Math.PI * 2); ctx.fill(); } } },
  birthday: { ink: '#ff5a87', sub: '#5a3d8a', accent: '#7c5cff', frame: '#ffffff', kicker: 'HAPPY BIRTHDAY', bg: (ctx, w, h) => { ctx.fillStyle = '#fff9ef'; ctx.fillRect(0, 0, w, h); dots(ctx, w, h, '#ff8fb1', 92, 5); dots(ctx, w, h, '#7cc4e8', 116, 5, 40); dots(ctx, w, h, '#ffd25e', 140, 6, 70); } },
 };
 
@@ -29,7 +31,7 @@ function fitText(ctx: CanvasRenderingContext2D, text: string, max: number, size:
 function print(ctx: CanvasRenderingContext2D, theme: StoryTheme, img: HTMLImageElement | undefined, x: number, y: number, w: number, h: number, deg: number, tint: string) {
  const p = palettes[theme];
  ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.rotate(deg * Math.PI / 180); ctx.translate(-w / 2, -h / 2);
- ctx.shadowColor = '#0000002e'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14;
+ ctx.shadowColor = theme === 'starry' ? '#ff7ad9aa' : '#0000002e'; ctx.shadowBlur = theme === 'starry' ? 46 : 30; ctx.shadowOffsetY = theme === 'starry' ? 0 : 14;
  const pad = theme === 'film' ? 0 : 22, bottom = theme === 'polaroid' ? 90 : pad;
  ctx.fillStyle = theme === 'birthday' ? tint : p.frame;
  if (theme === 'softgirl') { ctx.beginPath(); ctx.roundRect(0, 0, w, h, 44); ctx.fill(); } else ctx.fillRect(0, 0, w, h);

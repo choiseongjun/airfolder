@@ -1,17 +1,17 @@
 /* Themed album: one vertical keepsake decorated automatically from photos and short notes. */
 .ta-wrap{margin-top:14px}
-.folder-view-tabs .folder-view-theme{display:flex;align-items:center;justify-content:center;gap:5px;color:#c0846a}
+.folder-view-tabs .folder-view-theme{display:flex;align-items:center;justify-content:center;gap:5px;color:#ff5a87}
 .folder-view-tabs .folder-view-theme[aria-pressed=true]{color:#b0623f}
 .ta-loading{display:flex;flex-direction:column;align-items:center;gap:10px;padding:64px 0;color:#8a7a66;font-size:14px}
 .ta-loading svg{animation:ta-wiggle 1s ease-in-out infinite}
 
 /* Birthday progress */
-.ta-birthday-bar{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:14px 16px;border-radius:18px;background:#fff4f7;border:1px solid #ffd0dd;color:#7a3a57}
+.ta-birthday-bar{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:14px 16px;border-radius:22px;background:#fff4f7;border:2px solid #ffd0dd;color:#7a3a57}
 .ta-birthday-count{flex-shrink:0;display:grid;place-items:center;min-width:58px;height:58px;padding:0 8px;border-radius:14px;background:#ff6f91;color:#fff;font:800 16px var(--font-geist-mono),monospace;box-shadow:3px 3px 0 #5a3d8a}
 .ta-birthday-bar>div{flex:1;min-width:0}
 .ta-birthday-bar strong{display:block;font-size:14px}
 .ta-birthday-bar small{display:block;font-size:11px;color:#a46a83;line-height:1.5;margin-top:2px}
-.ta-birthday-bar .primary-button{flex-shrink:0}
+.ta-birthday-bar .primary-button{flex-shrink:0;border:0;border-radius:14px;background:#ff5a87;color:#fff;box-shadow:0 3px 0 #d43f6c}
 @media(max-width:560px){
  .ta-birthday-bar{gap:10px;padding:10px 12px;border-radius:14px}
  .ta-birthday-count{min-width:46px;height:46px;font-size:13px;border-radius:12px}
@@ -20,16 +20,30 @@
  .ta-birthday-bar .primary-button{min-height:36px;padding:7px 12px;font-size:12px;white-space:nowrap}
 }
 
+/* Who has added photos, and a nudge for the rest */
+.ta-nudge{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:12px 14px;border:2px dashed #ffc6d4;border-radius:18px;background:#fffafb;color:#7a3a57}
+.ta-nudge>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.ta-nudge strong{font-size:14px}
+.ta-nudge small{font-size:11px;color:#a46a83}
+.ta-nudge-names{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.ta-nudge-names i{font-style:normal;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:#ffe7ee;color:#d0507b}
+.ta-nudge button{flex-shrink:0;padding:10px 14px;border:0;border-radius:14px;background:#ff5a87;color:#fff;font:inherit;font-size:13px;font-weight:700;box-shadow:0 3px 0 #d43f6c;cursor:pointer}
+
+/* Month chips: "this month of us" */
+.ta-months{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding:2px 2px 4px;scrollbar-width:none}
+.ta-months button{flex-shrink:0;padding:8px 14px;border:2px solid #f1e3d9;border-radius:999px;background:#fff;color:#7a5b62;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.ta-months button[aria-pressed=true]{border-color:#ff8fb1;background:#fff0f4;color:#d0507b}
+
 /* Theme picker */
-.ta-picker{background:#fffcf5;border:1px solid #e9dfcf;border-radius:18px;padding:14px;margin-bottom:18px;box-shadow:0 8px 22px #6b513310}
+.ta-picker{background:#fffdfa;border:2px solid #f3e2d8;border-radius:22px;padding:14px;margin-bottom:18px;box-shadow:0 4px 0 #f3e2d8}
 .ta-picker-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#5d4f3f}
-.ta-picker-head svg{color:#d08a5c}
-.ta-picker-head strong{font-size:14px}
+.ta-picker-head svg{color:#ff6f91}
+.ta-picker-head strong{font-family:var(--font-hand),cursive;font-size:20px;color:#4a3a3f}
 .ta-picker-head small{font-size:11px;color:#998b78;margin-left:auto}
-.ta-picker-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
-.ta-swatch{min-width:0;text-align:left;border:1px solid #e6dccb;background:#fff;border-radius:14px;padding:8px 8px 10px;cursor:pointer;transition:transform .15s ease-out,box-shadow .15s;color:#4e4236}
+.ta-picker-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.ta-swatch{min-width:0;text-align:left;border:2px solid #f1e3d9;background:#fff;border-radius:18px;padding:8px 8px 10px;cursor:pointer;transition:transform .15s ease-out,box-shadow .15s;color:#4e4236}
 .ta-swatch:hover{transform:translateY(-2px);box-shadow:0 8px 16px #6b513318}
-.ta-swatch[aria-pressed=true]{outline:2px solid #c0846a;outline-offset:2px}
+.ta-swatch[aria-pressed=true]{outline:none;border-color:#ff8fb1;background:#fff4f7}
 .ta-swatch-art{position:relative;display:grid;place-items:center;height:96px;border-radius:9px;overflow:hidden}
 .ta-swatch-art img,.ta-swatch-art>i{width:58%;aspect-ratio:1;object-fit:cover;background:#ddd;display:block}
 .ta-swatch-deco{position:absolute;right:-2px;top:-4px;transform:scale(.62);transform-origin:top right}
@@ -37,7 +51,7 @@
 .ta-swatch>strong,.ta-swatch>small,.ta-swatch>em{display:block}
 .ta-swatch>strong{font-size:12px;margin-top:8px}
 .ta-swatch>small{font-size:10px;color:#968877;line-height:1.45;margin-top:2px}
-.ta-swatch>em{font-style:normal;font-size:10px;font-weight:700;color:#c0846a;margin-top:7px}
+.ta-swatch>em{font-style:normal;font-size:10px;font-weight:700;color:#ff5a87;margin-top:7px}
 .swatch-polaroid .ta-swatch-art{background:linear-gradient(#bfe3f5,#f7e8c8)}
 .swatch-polaroid .ta-swatch-art img{border:4px solid #fff;border-bottom-width:13px;transform:rotate(-4deg);box-shadow:0 4px 8px #0002}
 .swatch-film .ta-swatch-art{background:#1d1b18}
@@ -83,12 +97,12 @@
 .ta-end-stamp{display:inline-block;font:800 14px var(--font-geist-mono),monospace;letter-spacing:4px;padding:8px 16px;border:2px solid currentColor;border-radius:6px;transform:rotate(-4deg)}
 .ta-end p{font-family:var(--font-hand),cursive;font-size:18px;margin:14px 0 4px}
 .ta-end small{font-weight:700;font-size:12px;opacity:.6}
-.ta-share-mini{display:inline-flex;align-items:center;gap:5px;margin-left:auto;padding:6px 12px;border:1px solid #e6d3c4;border-radius:999px;background:#fff;color:#b0623f;font-size:12px;font-weight:700;cursor:pointer}
+.ta-share-mini{display:inline-flex;align-items:center;gap:5px;margin-left:auto;padding:6px 12px;border:2px solid #ffc6d4;border-radius:999px;background:#fff;color:#d0507b;font-size:12px;font-weight:700;cursor:pointer}
 .ta-picker-head small+.ta-share-mini{margin-left:10px}
-.ta-share{max-width:560px;margin:16px auto 0;display:flex;gap:14px;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:18px;background:#fff8f1;border:1px solid #f0dcc8;color:#5d4f3f}
-.ta-share strong{font-size:15px}
+.ta-share{max-width:560px;margin:16px auto 0;display:flex;gap:14px;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:22px;background:#fff4f7;border:2px dashed #ffc6d4;color:#5d4f3f}
+.ta-share strong{font-family:var(--font-hand),cursive;font-size:21px;color:#c2557d}
 .ta-share p{margin:4px 0 0;font-size:12px;line-height:1.55;color:#8a7a66}
-.ta-share .primary-button{flex-shrink:0;display:inline-flex;align-items:center;gap:6px}
+.ta-share .primary-button{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:16px;background:#ff5a87;color:#fff;box-shadow:0 4px 0 #d43f6c}
 .ta-share-note{max-width:560px;margin:8px auto 0;font-size:12px;color:#8a7a66;text-align:center}
 .ta-cta{max-width:560px;margin:16px auto 0;display:flex;gap:14px;align-items:center;justify-content:space-between;background:#2f4a3d;color:#fff8ec;border-radius:18px;padding:18px 20px}
 .ta-cta strong{font-size:15px}
@@ -170,6 +184,48 @@
 .theme-birthday .ta-caption{color:#5a3d8a}
 .theme-birthday .ta-sticker-text{background:#7c5cff;color:#fff}
 .theme-birthday .ta-end-stamp{color:#ff6f91}
+
+/* Picnic Day */
+.theme-picnic{--ink:#4f3a2c;background-color:#fffdf6;background-image:linear-gradient(90deg,#ff6b7a2e 50%,transparent 50%),linear-gradient(#ff6b7a2e 50%,transparent 50%);background-size:36px 36px}
+.theme-picnic .ta-kicker{background:#5a9b4a;color:#fff;padding:7px 14px;border-radius:999px;letter-spacing:3px}
+.theme-picnic .ta-cover h2{color:#c9364b;text-shadow:2px 2px 0 #fff}
+.theme-picnic .ta-cover-meta span{background:#fff;color:#4f7d3f}
+.theme-picnic .ta-chapter-label{color:#5a9b4a}
+.theme-picnic .ta-note{color:#7a2f3c;background:#fff;padding:8px 18px;border-radius:12px;box-shadow:0 3px 0 #f0c9cf}
+.theme-picnic .ta-photo{background:#fff;padding:9px 9px 11px;border-radius:8px;box-shadow:0 8px 18px #7a2f3c22}
+.theme-picnic .ta-photo:before{content:'';position:absolute;z-index:2;top:-10px;left:50%;width:64px;height:20px;transform:translateX(-50%) rotate(-4deg);background:repeating-linear-gradient(90deg,#ff6b7ad9 0 8px,#ffffffd9 8px 16px)}
+.theme-picnic .ta-row-one .ta-photo{--r:1.5deg}
+.theme-picnic .ta-row-two .ta-photo:first-child{--r:-3deg}
+.theme-picnic .ta-row-two .ta-photo:last-child{--r:2deg;margin-top:16px}
+.theme-picnic .ta-caption{color:#7a2f3c}
+.theme-picnic .ta-sticker-text{background:#5a9b4a;color:#fff}
+.theme-picnic .ta-end-stamp{color:#c9364b}
+.swatch-picnic .ta-swatch-art{background-color:#fffdf6;background-image:linear-gradient(90deg,#ff6b7a40 50%,transparent 50%),linear-gradient(#ff6b7a40 50%,transparent 50%);background-size:14px 14px}
+.swatch-picnic .ta-swatch-art img{border:4px solid #fff;border-radius:4px;transform:rotate(-3deg)}
+
+/* Starry Night */
+.theme-starry{--ink:#fff4d6;background:radial-gradient(#ffffffcc 1px,transparent 1.5px) 0 0/34px 34px,radial-gradient(#ffffff88 1.2px,transparent 1.6px) 17px 21px/52px 52px,linear-gradient(180deg,#141a3d,#3a2763)}
+.theme-starry .ta-kicker{color:#ff7ad9;border:1px solid #ff7ad9aa;padding:6px 12px;border-radius:999px;text-shadow:0 0 8px #ff7ad9}
+.theme-starry .ta-cover h2{color:#fff4d6;text-shadow:0 0 14px #ff7ad9aa}
+.theme-starry .ta-cover-note,.theme-starry .ta-note{color:#e9e4ff}
+.theme-starry .ta-cover-meta span{background:#ffffff1a;color:#c9c3ff}
+.theme-starry .ta-chapter-label{color:#ff7ad9}
+.theme-starry .ta-photo{background:#fff;padding:7px;border-radius:10px;box-shadow:0 0 0 2px #ff7ad966,0 0 26px #ff7ad966}
+.theme-starry .ta-row-two .ta-photo:first-child{--r:-2deg}
+.theme-starry .ta-row-two .ta-photo:last-child{--r:2deg;margin-top:14px}
+.theme-starry figcaption{color:#e9e4ff}
+.theme-starry .ta-caption{color:#fff4d6}
+.theme-starry .ta-by{color:#c9c3ff}
+.theme-starry .ta-sticker-text{background:#ff7ad9;color:#1d1640}
+.theme-starry .ta-end-stamp{color:#ff7ad9}
+.swatch-starry .ta-swatch-art{background:radial-gradient(#fff 1px,transparent 1.5px) 0 0/12px 12px,linear-gradient(#141a3d,#3a2763)}
+.swatch-starry .ta-swatch-art img{border:3px solid #fff;border-radius:6px;box-shadow:0 0 12px #ff7ad9}
+
+/* Stickers bob gently, like they're stuck on paper that moves */
+.ta-sticker{animation:ta-bob 4s ease-in-out infinite alternate}
+.ta-at-b,.ta-at-cover-b{animation-delay:-2s}
+@keyframes ta-bob{to{translate:0 -5px}}
+@media(prefers-reduced-motion:reduce){.ta-sticker{animation:none}}
 
 @keyframes ta-in{from{opacity:0}}
 @keyframes ta-drop{from{opacity:0;transform:translateY(16px) rotate(var(--r,0deg)) scale(.95)}}

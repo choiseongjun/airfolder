@@ -3,15 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Check, ImagePlus, Link2, LockKeyhole, Upload, Users } from 'lucide-react';
+import { ArrowRight, Check, ImagePlus, LockKeyhole, Upload, Users } from 'lucide-react';
 import { api, initializeSession } from '@/lib/client-api';
 import { IMAGE_LIMIT } from '@/lib/media-limits';
 import { TERMS_VERSION } from '@/lib/policy';
 import { trackClient } from '@/lib/growth-client';
 import { uploadFailureReason } from '@/lib/growth-events';
 import Consent from '../../../growth/consent';
+import { Sticker } from '../../../theme-album';
 import '../../../theme-album.css';
 import '../../birthday/birthday.css';
+import '../../../growth/cute.css';
 
 type Invite = { name: string; kind: 'album' | 'group'; expiresAt: string; birthday?: boolean; day?: string | null; photos?: number | null; people?: number | null };
 function dDay(day: string) { const now = new Date(), today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()); const left = Math.round((Date.parse(day + 'T00:00:00Z') - today) / 86400000); return left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : ''; }
@@ -106,8 +108,9 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
     // From the birthday on, the link is mostly opened to look, so viewing becomes the main action.
     const partyDay = Boolean(invite.day) && (!countdown || countdown === 'D-DAY') && !!invite.photos;
     // Birthday guests are on a phone, mid-chat: one screen, thumb-reach action, nothing to configure.
-    return <main className="growth-page bday-flow"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link></nav>
+    return <main className="growth-page bday-flow cute-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link></nav>
       <section className="bday-sheet">
+        <span className="cute-deco cute-deco-a" aria-hidden="true"><Sticker kind="balloon" /></span>
         <div className="ta-album theme-birthday bday-hero" aria-hidden="true">
           <div className="ta-garland">{Array.from({ length: 9 }, (_, i) => <i key={i} />)}</div>
           <span className="ta-kicker">HAPPY BIRTHDAY</span>
@@ -145,9 +148,10 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
         </div>}
       </section></main>;
   }
-  return <main className="growth-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
+  return <main className="growth-page cute-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
     <section className="growth-card"><ol className="growth-steps"><li className={!joined ? 'current' : ''}>01 {text('모임 참여', 'Join')}</li><li className={joined && !completed ? 'current' : ''}>02 {text('사진 선택', 'Choose')}</li><li className={completed ? 'current' : ''}>03 {text('함께 보기', 'Enjoy')}</li></ol>
-      <div className="growth-icon">{completed ? <Check /> : joined ? <ImagePlus /> : <Link2 />}</div>
+      <span className="cute-deco cute-deco-a" aria-hidden="true"><Sticker kind="sparkle" /></span><span className="cute-deco cute-deco-b" aria-hidden="true"><Sticker kind="heart" /></span>
+      <div className="growth-icon cute-icon"><Sticker kind={completed ? 'star' : joined ? 'flower' : 'heart'} /></div>
       <p className="growth-eyebrow">YOUR VIEW MAKES THE MEMORY</p><h1>{invite?.name || (error ? text('초대를 열 수 없어요', 'Unable to open this invite') : text('모임 초대를 확인하고 있어요', 'Opening your invitation'))}</h1>
       {!joined && <p className="growth-lead">{birthday ? text('생일 주인공에게 줄 앨범이에요. 함께 찍은 사진 한 장과 한마디를 남겨주세요. 생일날 예쁜 앨범 한 권으로 완성돼요.', 'A birthday album for a friend. Add a photo of you two and a short note. It turns into a pretty album by the big day.') : text('당신이 찍은 순간도 보태주세요. 앱 설치나 새 계정 가입 없이, 고른 사진만 올릴 수 있어요.', 'Add your side of the story. No app installation or new account needed. Only the photos you choose are uploaded.')}</p>}
       {birthday && <div className="bday-guest"><strong>🎂 {invite?.day && dDay(invite.day) ? `${dDay(invite.day)} · ` : ''}{text('주인공에겐 아직 비밀이에요', 'Keep it a secret for now')}</strong>{text('올린 사진과 한마디는 버스데이 테마로 자동으로 꾸며져요. 꾸미기는 신경 쓰지 않아도 돼요.', 'Your photo and note are decorated in the Birthday Film theme automatically. No decorating needed.')}</div>}
