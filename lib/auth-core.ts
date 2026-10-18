@@ -1,6 +1,6 @@
 import type { PoolClient } from 'pg';
 
-export type Identity = { uid: string; provider: 'google.com' | 'apple.com' | 'password'; email: string | null; name: string };
+export type Identity = { uid: string; provider: 'google.com' | 'apple.com' | 'password' | 'kakao'; email: string | null; name: string };
 
 // Only call this after Firebase Admin has verified the token's signature, issuer and audience.
 export function identityFromVerifiedClaims(token: {

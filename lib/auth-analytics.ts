@@ -23,7 +23,7 @@ export async function setAnalyticsPreference(allowed: boolean) {
     }
   }
 }
-export async function trackAuthEvent(event: 'login_start' | 'login' | 'sign_up' | 'login_failed', method: 'google' | 'apple' | 'password', surface: 'web' | 'app_connect', error?: unknown) {
+export async function trackAuthEvent(event: 'login_start' | 'login' | 'sign_up' | 'login_failed', method: 'google' | 'apple' | 'password' | 'kakao', surface: 'web' | 'app_connect', error?: unknown) {
   if (!analyticsAllowed()) return;
   try {
     instance ??= (async () => {

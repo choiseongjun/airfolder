@@ -1,6 +1,6 @@
 // Only processes a previously confirmed request. Dependencies are injected for verification.
 export function deletionErrorCode(error) {
-  return ['FIREBASE_ADMIN_NOT_CONFIGURED', 'STORAGE_DELETE_FAILED', 'FIREBASE_DELETE_FAILED'].includes(error?.code) ? error.code : 'DELETION_RETRY_REQUIRED';
+  return ['FIREBASE_ADMIN_NOT_CONFIGURED', 'STORAGE_DELETE_FAILED', 'FIREBASE_DELETE_FAILED', 'KAKAO_UNLINK_FAILED'].includes(error?.code) ? error.code : 'DELETION_RETRY_REQUIRED';
 }
 /** @param {{ adminId?: string | null }} options */
 export async function deleteRequestedAccount(db, store, auth, viewerId, options = {}) {
@@ -19,7 +19,9 @@ export async function deleteRequestedAccount(db, store, auth, viewerId, options 
     await log(attempt.rows[0].deletion_attempts > 1 ? 'deletion_retried' : 'deletion_started', `${attempt.rows[0].deletion_attempts}회차`);
     await db.query('SAVEPOINT deletion_changes');
     try {
-      if (job.firebase_uid && !auth) throw Object.assign(new Error('Firebase administration credentials required'), { code: 'FIREBASE_ADMIN_NOT_CONFIGURED' });
+      // Kakao accounts never exist in Firebase; they are identified as kakao:<user id>.
+      const kakaoId = job.firebase_uid?.startsWith('kakao:') ? job.firebase_uid.slice(6) : null;
+      if (job.firebase_uid && !kakaoId && !auth) throw Object.assign(new Error('Firebase administration credentials required'), { code: 'FIREBASE_ADMIN_NOT_CONFIGURED' });
       const groups = await db.query('SELECT id FROM snaproom.groups WHERE owner_id=$1 FOR UPDATE', [job.id]);
       for (const group of groups.rows) {
         const next = await db.query('SELECT m.viewer_id FROM snaproom.group_members m JOIN snaproom.viewers v ON v.id=m.viewer_id WHERE m.group_id=$1 AND m.viewer_id<>$2 AND v.deletion_requested_at IS NULL AND v.suspended_at IS NULL ORDER BY m.joined_at,m.viewer_id LIMIT 1', [group.id, job.id]);
@@ -39,7 +41,11 @@ export async function deleteRequestedAccount(db, store, auth, viewerId, options 
         const removed = await store.remove(paths.slice(i, i + 100));
         if (removed.error) throw Object.assign(new Error('Storage cleanup failed; request retained for retry'), { code: 'STORAGE_DELETE_FAILED' });
       }
-      if (job.firebase_uid) {
+      if (kakaoId && process.env.KAKAO_ADMIN_KEY) {
+        // Disconnect the app from the Kakao account so a later sign-in starts fresh.
+        const unlinked = await fetch('https://kapi.kakao.com/v1/user/unlink', { method: 'POST', headers: { Authorization: `KakaoAK ${process.env.KAKAO_ADMIN_KEY}`, 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ target_id_type: 'user_id', target_id: kakaoId }), signal: AbortSignal.timeout(10000) }).catch(() => null);
+        if (!unlinked || (!unlinked.ok && unlinked.status !== 400)) throw Object.assign(new Error('Kakao unlink failed; request retained for retry'), { code: 'KAKAO_UNLINK_FAILED' });
+      } else if (job.firebase_uid && !kakaoId) {
         await auth.deleteUser(job.firebase_uid).catch(error => { if (error.code !== 'auth/user-not-found') throw Object.assign(new Error('Firebase deletion failed; request retained for retry'), { code: 'FIREBASE_DELETE_FAILED' }); });
       }
       // Empty selected-member lists mean everyone: keep such content private when the last recipient is removed.
