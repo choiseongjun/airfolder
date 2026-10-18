@@ -10,14 +10,22 @@ import type { MemoryItem } from './memories';
 import MediaView from './media-view';
 import AlbumShare from './album-share';
 import './theme-album.css';
+import './theme-layouts.css';
 
 export const albumThemes = [
- { id: 'polaroid', ko: '폴라로이드 썸머', en: 'Polaroid Summer', hintKo: '파란 바다, 마스킹테이프, 손글씨', hintEn: 'Blue sea, washi tape, handwriting', kicker: 'SUMMER DIARY', chapter: 'DAY' },
- { id: 'film', ko: '필름 아카이브', en: 'Film Archive', hintKo: '필름 프레임과 주황 날짜 도장', hintEn: 'Film frames & orange date stamps', kicker: 'ROLL 01 · 36 EXP', chapter: 'FRAME' },
- { id: 'softgirl', ko: '소프트 걸', en: 'Soft Girl', hintKo: '핑크 깅엄, 리본, 하트', hintEn: 'Pink gingham, ribbons & hearts', kicker: 'xoxo, us', chapter: '♡' },
- { id: 'birthday', ko: '버스데이 필름', en: 'Birthday Film', hintKo: '가랜드, 컨페티, 케이크', hintEn: 'Garland, confetti & cake', kicker: 'HAPPY BIRTHDAY', chapter: 'PART' },
- { id: 'picnic', ko: '피크닉 데이', en: 'Picnic Day', hintKo: '체크 돗자리, 체리, 데이지', hintEn: 'Gingham blanket, cherries & daisies', kicker: 'PICNIC CLUB', chapter: 'SPOT' },
- { id: 'starry', ko: '별밤 콘서트', en: 'Starry Night', hintKo: '밤하늘, 별빛, 네온 테두리', hintEn: 'Night sky, starlight & neon', kicker: 'NIGHT OUT', chapter: 'TRACK' },
+ { id: 'polaroid', ko: '폴라로이드 썸머', en: 'Polaroid Summer', hintKo: '파란 바다, 마스킹테이프, 손글씨', hintEn: 'Blue sea, washi tape, handwriting', kicker: 'SUMMER DIARY', chapter: 'DAY', layout: 'classic' },
+ { id: 'film', ko: '필름 아카이브', en: 'Film Archive', hintKo: '필름 프레임과 주황 날짜 도장', hintEn: 'Film frames & orange date stamps', kicker: 'ROLL 01 · 36 EXP', chapter: 'FRAME', layout: 'classic' },
+ { id: 'softgirl', ko: '소프트 걸', en: 'Soft Girl', hintKo: '핑크 깅엄, 리본, 하트', hintEn: 'Pink gingham, ribbons & hearts', kicker: 'xoxo, us', chapter: '♡', layout: 'classic' },
+ { id: 'birthday', ko: '버스데이 필름', en: 'Birthday Film', hintKo: '가랜드, 컨페티, 케이크', hintEn: 'Garland, confetti & cake', kicker: 'HAPPY BIRTHDAY', chapter: 'PART', layout: 'classic' },
+ { id: 'picnic', ko: '피크닉 데이', en: 'Picnic Day', hintKo: '체크 돗자리, 체리, 데이지', hintEn: 'Gingham blanket, cherries & daisies', kicker: 'PICNIC CLUB', chapter: 'SPOT', layout: 'classic' },
+ { id: 'starry', ko: '별밤 콘서트', en: 'Starry Night', hintKo: '밤하늘, 별빛, 네온 테두리', hintEn: 'Night sky, starlight & neon', kicker: 'NIGHT OUT', chapter: 'TRACK', layout: 'classic' },
+ // These lay photos out differently, not just recolour them, like different kinds of 다꾸.
+ { id: 'diary', ko: '다이어리 노트', en: 'Diary Notebook', hintKo: '줄노트에 붙이고 옆에 메모', hintEn: 'Taped on lined paper, notes in the margin', kicker: 'MY DIARY', chapter: 'PAGE', layout: 'notebook' },
+ { id: 'fourcut', ko: '인생네컷', en: 'Photo Booth', hintKo: '네 컷 스트립으로 착착', hintEn: 'Stacked four-cut strips', kicker: 'PHOTO BOOTH', chapter: 'TAKE', layout: 'strip' },
+ { id: 'ticket', ko: '여행 티켓', en: 'Travel Ticket', hintKo: '사진마다 보딩패스 한 장', hintEn: 'Every photo a boarding pass', kicker: 'BOARDING PASS', chapter: 'GATE', layout: 'ticket' },
+ { id: 'magazine', ko: '매거진', en: 'Magazine', hintKo: '큰 화보 사진과 기사 구성', hintEn: 'Cover shots and feature spreads', kicker: 'ISSUE NO. 01', chapter: 'FEATURE', layout: 'magazine' },
+ { id: 'stamp', ko: '우표 컬렉션', en: 'Stamp Collection', hintKo: '톱니 테두리와 날짜 소인', hintEn: 'Perforated edges & postmarks', kicker: 'AIR MAIL', chapter: 'SET', layout: 'stamp' },
+ { id: 'scrap', ko: '크래프트 스크랩', en: 'Kraft Scrapbook', hintKo: '겹쳐 붙인 사진과 찢은 메모지', hintEn: 'Overlapped prints & torn notes', kicker: 'SCRAPBOOK', chapter: 'NO.', layout: 'collage' },
 ] as const;
 export type AlbumThemeId = typeof albumThemes[number]['id'];
 
@@ -30,6 +38,12 @@ const decor: Record<AlbumThemeId, Decor[]> = {
  birthday: ['cake', 'balloon', { text: 'HBD!' }, 'star', { text: 'make a wish' }, 'heart'],
  picnic: ['cherry', 'flower', { text: 'picnic day' }, 'sun', { text: 'yum!' }, 'cherry'],
  starry: ['moon', 'sparkle', { text: 'encore!' }, 'star', { text: 'best night' }, 'sparkle'],
+ diary: ['flower', { text: 'today' }, 'heart', 'star', { text: 'note to self' }, 'sun'],
+ fourcut: [{ text: 'SMILE!' }, 'star', { text: '1, 2, 3!' }, 'heart', { text: 'cheese' }, 'sparkle'],
+ ticket: [{ text: 'ADMIT ONE' }, 'sun', { text: 'GATE 07' }, 'star', { text: 'BON VOYAGE' }, 'wave'],
+ magazine: [{ text: 'EXCLUSIVE' }, { text: 'NEW' }, { text: 'P. 12' }, 'star', { text: 'COVER STORY' }, 'sparkle'],
+ stamp: [{ text: 'FIRST CLASS' }, 'flower', { text: 'POSTMARKED' }, 'star', { text: 'PAR AVION' }, 'heart'],
+ scrap: ['flower', { text: 'keep this' }, 'heart', { text: 'memories' }, 'star', 'sun'],
 };
 
 export function Sticker({ kind }: { kind: StickerKind }) {
@@ -152,8 +166,24 @@ ${url}`;
    {!bare && (caption || p.author) && <figcaption>{caption && <span className="ta-caption">{caption}</span>}{p.author && <span className="ta-by">— {p.author}</span>}</figcaption>}
   </figure>;
  }
+ const captionOf = (p: MemoryItem) => p.body && !fileLike.test(p.body.trim()) ? p.body : '';
  function spread(chapter: Chapter, ci: number) {
-  // Alternate a big print and tilted pairs so every chapter feels hand-placed.
+  const ps = chapter.photos, no = (i: number) => `${String(ci + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
+  switch (meta.layout) {
+   case 'notebook': return ps.map((p, i) => <div key={p.id} className={`ta-row ta-row-one ta-nb-row${i % 2 ? ' is-flip' : ''}`}>{photo(p, i, 'big')}</div>);
+   case 'strip': {
+    const strips: MemoryItem[][] = []; for (let i = 0; i < ps.length; i += 4) strips.push(ps.slice(i, i + 4));
+    return <div className="ta-strips">{strips.map((strip, si) => <div key={si} className="ta-strip">{strip.map((p, i) => photo(p, si * 4 + i, 'small', true))}<span className="ta-strip-foot">memonestia · {dotted(strip[0].day || chapter.day)}</span></div>)}</div>;
+   }
+   case 'ticket': return <div className="ta-tickets">{ps.map((p, i) => <article key={p.id} className="ta-ticket">{photo(p, i, 'small', true)}<div className="ta-ticket-stub"><small>{ko ? '탑승자' : 'PASSENGER'}</small><b>{p.author || (ko ? '우리' : 'US')}</b><small>{ko ? '행선지' : 'TO'}</small><b>{captionOf(p) || chapter.note || title}</b><small>{ko ? '날짜' : 'DATE'}</small><b>{dotted(p.day || chapter.day)}</b><span className="ta-ticket-no">NO. {no(i)}</span></div></article>)}</div>;
+   case 'magazine': {
+    const [lead, ...more] = ps; if (!lead) return null;
+    return <div className="ta-mag"><div className="ta-mag-hero">{photo(lead, 0, 'big')}<span className="ta-mag-no">{String(ci + 1).padStart(2, '0')}</span></div>{more.length > 0 && <div className="ta-mag-grid">{more.map((p, i) => photo(p, i + 1, 'small'))}</div>}</div>;
+   }
+   case 'stamp': return <div className="ta-stamps">{ps.map((p, i) => <div key={p.id} className="ta-stamp">{photo(p, i, 'small')}<span className="ta-postmark" aria-hidden="true">{dotted(p.day || chapter.day).slice(2)}</span></div>)}</div>;
+   case 'collage': return <div className="ta-collage">{ps.map((p, i) => photo(p, i, 'small'))}</div>;
+  }
+  // Classic: alternate a big print and tilted pairs so every chapter feels hand-placed.
   const rows: MemoryItem[][] = []; const rest = [...chapter.photos]; let big = ci % 2 === 0;
   while (rest.length) { if (big || rest.length === 1) rows.push(rest.splice(0, 1)); else rows.push(rest.splice(0, 2)); big = !big; }
   let n = 0;

@@ -40,7 +40,7 @@
 .ta-picker-head svg{color:var(--brand)}
 .ta-picker-head strong{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:20px;color:var(--ink)}
 .ta-picker-head small{font-size:11px;color:#998b78;margin-left:auto}
-.ta-picker-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.ta-picker-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
 .ta-swatch{min-width:0;text-align:left;border:2px solid var(--edge);background:#fff;border-radius:18px;padding:8px 8px 10px;cursor:pointer;transition:transform .15s ease-out,box-shadow .15s;color:var(--ink)}
 .ta-swatch:hover{transform:translateY(-2px);box-shadow:0 8px 16px #6b513318}
 .ta-swatch[aria-pressed=true]{outline:none;border-color:var(--brand-line);background:var(--brand-softer)}

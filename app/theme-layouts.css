@@ -1,0 +1,145 @@
+/* ===== Layout themes: each one arranges the photos differently, like a different kind of 다꾸 ===== */
+
+/* Diary Notebook: taped prints on lined paper, the note written beside each one */
+.theme-diary{--ink:#2b3a67;background:linear-gradient(90deg,transparent 34px,#f2a7a7 34px 36px,transparent 36px),repeating-linear-gradient(#fffdf6 0 31px,#c9d8f0 31px 32px)}
+.theme-diary .ta-kicker{color:#d9534f;letter-spacing:4px}
+.theme-diary .ta-cover h2{font-family:var(--font-pen),cursive;font-size:44px;font-weight:400;color:#2b3a67}
+.theme-diary .ta-cover-meta span{background:#fff;color:#55608a;border:1px solid #c9d8f0}
+.theme-diary .ta-chapter-label{color:#d9534f}
+.theme-diary .ta-note{color:#2b3a67;background:linear-gradient(transparent 60%,#ffe58f99 60%)}
+.theme-diary .ta-cover-photo .ta-photo{background:#fff;padding:8px;box-shadow:0 4px 12px #2b3a6726}
+.theme-diary .ta-nb-row{padding:0}
+.theme-diary .ta-nb-row .ta-photo{display:grid;grid-template-columns:56% 1fr;gap:14px;align-items:center;--r:-1.5deg}
+.theme-diary .ta-nb-row.is-flip .ta-photo{grid-template-columns:1fr 56%;--r:1.5deg}
+.theme-diary .ta-nb-row.is-flip figcaption{order:-1;text-align:right}
+.theme-diary .ta-nb-row .ta-photo button{position:relative;background:#fff;padding:7px;box-shadow:0 4px 12px #2b3a6726}
+.theme-diary .ta-nb-row .ta-photo button:after{content:'';position:absolute;top:-9px;left:24%;width:62px;height:18px;transform:rotate(-6deg);background:repeating-linear-gradient(45deg,#ffe58fd9 0 6px,#fff3c4d9 6px 12px)}
+.theme-diary .ta-nb-row.is-flip .ta-photo button:after{left:auto;right:20%;transform:rotate(5deg);background:repeating-linear-gradient(45deg,#bfe0f5d9 0 6px,#e3f2fbd9 6px 12px)}
+.theme-diary figcaption{margin:0;text-align:left}
+.theme-diary .ta-caption{font-family:var(--font-pen),cursive;font-size:22px;font-weight:400;line-height:1.25;color:#2b3a67}
+.theme-diary .ta-by{color:#d9534f}
+.theme-diary .ta-sticker-text{background:none;color:#d9534f;border:2px solid #d9534f;border-radius:6px}
+.theme-diary .ta-end-stamp{color:#d9534f}
+.swatch-diary .ta-swatch-art{background:repeating-linear-gradient(#fffdf6 0 9px,#c9d8f0 9px 10px)}
+.swatch-diary .ta-swatch-art img{border:4px solid #fff;transform:rotate(-3deg);box-shadow:0 3px 6px #0002}
+
+/* Photo Booth: every four photos become one strip, white and black strips side by side */
+.theme-fourcut{--ink:#f5f5f5;background:#1a1a1a}
+.theme-fourcut .ta-kicker{color:#fff;border:1px solid #fff;padding:6px 12px;letter-spacing:4px}
+.theme-fourcut .ta-cover h2{color:#fff;font-family:var(--font-editorial),Georgia,serif;font-weight:700}
+.theme-fourcut .ta-cover-note,.theme-fourcut .ta-note{color:#ddd}
+.theme-fourcut .ta-cover-meta span{background:#2a2a2a;color:#ccc}
+.theme-fourcut .ta-chapter-label{color:#aaa}
+.theme-fourcut .ta-cover-photo .ta-photo{background:#fff;padding:8px}
+.ta-strips{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-bottom:22px}
+.ta-strip{display:flex;flex-direction:column;gap:6px;width:calc(50% - 7px);max-width:220px;padding:8px 8px 0;background:#fff;box-shadow:0 12px 26px #0007;transform:rotate(-1.5deg)}
+.ta-strip:nth-child(even){background:#0d0d0d;outline:1px solid #333;transform:rotate(1.5deg)}
+.ta-strip .ta-photo{--r:0deg;margin:0}
+.ta-strip .ta-frame img,.ta-strip .ta-frame video{aspect-ratio:4/3}
+.ta-strip-foot{padding:10px 0 12px;text-align:center;font:700 10px var(--font-geist-mono),monospace;letter-spacing:2px;color:#111}
+.ta-strip:nth-child(even) .ta-strip-foot{color:#eee}
+.theme-fourcut .ta-sticker-text{background:#fff;color:#111;font:700 12px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:2px}
+.theme-fourcut .ta-end-stamp{color:#fff}
+.swatch-fourcut .ta-swatch-art{background:#1a1a1a}
+.swatch-fourcut .ta-swatch-art img{width:36%;aspect-ratio:.62;border:4px solid #fff;border-bottom-width:12px}
+
+/* Travel Ticket: each photo is a boarding pass with a tear-off stub */
+.theme-ticket{--ink:#1f3b5b;background:radial-gradient(#c4d4e4 1.4px,transparent 1.8px) 0 0/26px 26px,#e6eef6}
+.theme-ticket .ta-kicker{background:#1f3b5b;color:#fff;padding:7px 12px;border-radius:4px;letter-spacing:3px}
+.theme-ticket .ta-cover h2{color:#1f3b5b;font-family:var(--font-editorial),Georgia,serif;font-weight:700}
+.theme-ticket .ta-cover-meta span{background:#fff;color:#4d6b8c}
+.theme-ticket .ta-chapter-label{color:#e8833a}
+.theme-ticket .ta-note{color:#1f3b5b}
+.theme-ticket .ta-cover-photo .ta-photo{background:#fff;padding:8px;border-radius:12px}
+.ta-tickets{display:grid;gap:14px;margin-bottom:22px}
+.ta-ticket{position:relative;display:grid;grid-template-columns:1.3fr 1fr;overflow:hidden;border-radius:14px;background:#fff;box-shadow:0 8px 18px #1f3b5b24}
+.ta-ticket .ta-photo{--r:0deg;margin:0}
+.ta-ticket .ta-photo button,.ta-ticket .ta-frame{height:100%}
+.ta-ticket .ta-frame img,.ta-ticket .ta-frame video{height:100%;min-height:150px;aspect-ratio:auto}
+.ta-ticket-stub{position:relative;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:14px 14px 12px;border-left:2px dashed #c4d4e4}
+.ta-ticket-stub:before,.ta-ticket-stub:after{content:'';position:absolute;left:-10px;width:18px;height:18px;border-radius:50%;background:#e6eef6}
+.ta-ticket-stub:before{top:-9px}
+.ta-ticket-stub:after{bottom:-9px}
+.ta-ticket-stub small{font:700 9px var(--font-geist-mono),monospace;letter-spacing:1.5px;color:#7d93ad}
+.ta-ticket-stub b{margin-bottom:5px;font-size:13px;line-height:1.3;color:#1f3b5b;overflow-wrap:anywhere}
+.ta-ticket-no{position:absolute;top:8px;right:10px;font:700 10px var(--font-geist-mono),monospace;color:#e8833a}
+.theme-ticket .ta-sticker-text{background:#e8833a;color:#fff;font:700 11px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:3px}
+.theme-ticket .ta-end-stamp{color:#e8833a}
+.swatch-ticket .ta-swatch-art{background:#e6eef6}
+.swatch-ticket .ta-swatch-art img{width:70%;aspect-ratio:1.6;border:4px solid #fff;border-right:22px solid #fff;border-radius:6px;box-shadow:0 3px 8px #1f3b5b30}
+
+/* Magazine: a cover shot with a big number, then a two-column spread with ruled captions */
+.theme-magazine{--ink:#111;background:#f4f1ea;border-top:12px solid #d6332f}
+.theme-magazine .ta-cover{text-align:left}
+.theme-magazine .ta-kicker{background:#d6332f;color:#fff;padding:5px 10px;letter-spacing:3px}
+.theme-magazine .ta-cover-photo{max-width:100%;margin:16px 0 10px}
+.theme-magazine .ta-cover h2{font-family:var(--font-editorial),Georgia,serif;font-size:44px;font-weight:700;letter-spacing:-1.5px;color:#111}
+.theme-magazine .ta-cover-note{font:500 16px/1.6 var(--font-editorial),Georgia,serif;color:#333}
+.theme-magazine .ta-cover-meta{justify-content:flex-start}
+.theme-magazine .ta-cover-meta span{background:none;border:1px solid #111;border-radius:0;color:#111}
+.theme-magazine .ta-chapter-head{text-align:left;border-top:2px solid #111;padding-top:10px}
+.theme-magazine .ta-chapter-label{color:#d6332f}
+.theme-magazine .ta-note{display:block;max-width:none;margin-top:6px;font-family:var(--font-editorial),Georgia,serif;font-size:24px;font-weight:700;color:#111}
+.theme-magazine .ta-photo{--r:0deg;padding:0;background:none;box-shadow:none}
+.ta-mag-hero{position:relative;margin-bottom:14px}
+.ta-mag-no{position:absolute;top:10px;left:14px;font:900 64px/1 Georgia,serif;color:#fff;text-shadow:0 2px 14px #0007;pointer-events:none}
+.ta-mag-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
+.theme-magazine figcaption{margin-top:6px;padding-top:6px;border-top:1px solid #111;text-align:left}
+.theme-magazine .ta-caption{font:600 14px/1.4 var(--font-editorial),Georgia,serif;color:#111}
+.theme-magazine .ta-by{font:600 10px var(--font-geist-mono),monospace;letter-spacing:1px;text-transform:uppercase;color:#d6332f;opacity:1}
+.theme-magazine .ta-sticker-text{background:#111;color:#fff;font:700 11px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:0}
+.theme-magazine .ta-end-stamp{color:#d6332f;border-radius:0}
+.swatch-magazine .ta-swatch-art{background:#f4f1ea;border-top:6px solid #d6332f}
+.swatch-magazine .ta-swatch-art img{width:86%;aspect-ratio:1.4}
+
+/* Stamp Collection: perforated stamps in a grid with a date postmark, airmail border */
+.theme-stamp{--ink:#7a2e2e;background:#f2ead8;border:10px solid transparent;border-image:repeating-linear-gradient(45deg,#c9463d 0 12px,#f2ead8 12px 24px,#2f5f8a 24px 36px,#f2ead8 36px 48px) 10}
+.theme-stamp .ta-kicker{color:#2f5f8a;border:2px solid #2f5f8a;padding:6px 12px;letter-spacing:4px}
+.theme-stamp .ta-cover h2{font-family:var(--font-editorial),Georgia,serif;font-weight:700;color:#7a2e2e}
+.theme-stamp .ta-cover-meta span{background:#fff;color:#9a5a4a}
+.theme-stamp .ta-chapter-label{color:#2f5f8a}
+.theme-stamp .ta-note{color:#7a2e2e}
+/* White paper under a dotted border in the page colour reads as perforated edges. */
+.theme-stamp .ta-photo{padding:8px 8px 6px;background:#fff;border:6px dotted #f2ead8;box-shadow:0 4px 10px #7a2e2e22}
+.ta-stamps{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin-bottom:22px}
+.ta-stamp{position:relative}
+.ta-stamp:nth-child(odd) .ta-photo{--r:-2deg}
+.ta-stamp:nth-child(even) .ta-photo{--r:2deg}
+.ta-postmark{position:absolute;z-index:2;top:-10px;right:-8px;display:grid;place-items:center;width:60px;height:60px;border:2px solid #7a2e2ec0;border-radius:50%;transform:rotate(-14deg);font:700 9px var(--font-geist-mono),monospace;color:#7a2e2ec0;background:repeating-linear-gradient(0deg,transparent 0 6px,#7a2e2e1f 6px 7px)}
+.theme-stamp .ta-caption{font:600 13px var(--font-editorial),Georgia,serif;color:#7a2e2e}
+.theme-stamp .ta-by{color:#2f5f8a}
+.theme-stamp .ta-sticker-text{background:#2f5f8a;color:#fff;font:700 11px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:2px}
+.theme-stamp .ta-end-stamp{color:#2f5f8a;border-radius:50%}
+.swatch-stamp .ta-swatch-art{background:#f2ead8}
+.swatch-stamp .ta-swatch-art img{width:56%;padding:3px;border:5px dotted #f2ead8;background:#fff;transform:rotate(-4deg)}
+
+/* Kraft Scrapbook: prints overlap like they were glued in, notes on torn paper, paper clips */
+.theme-scrap{--ink:#3a2a1a;background:repeating-linear-gradient(95deg,#ffffff0d 0 2px,transparent 2px 9px),#d6bf98}
+.theme-scrap .ta-kicker{background:#3a2a1a;color:#f3e6cc;padding:6px 12px;letter-spacing:4px;transform:rotate(-2deg)}
+.theme-scrap .ta-cover h2{font-family:var(--font-pen),cursive;font-size:46px;font-weight:400;color:#3a2a1a}
+.theme-scrap .ta-cover-meta span{background:#f3e6cc;color:#5d4632}
+.theme-scrap .ta-chapter-label{color:#5d4632}
+.theme-scrap .ta-note{padding:10px 18px;background:#fffbe8;color:#3a2a1a;transform:rotate(-1.5deg);clip-path:polygon(0 6%,8% 0,20% 6%,35% 1%,50% 6%,65% 0,80% 6%,92% 1%,100% 6%,100% 94%,90% 100%,75% 94%,60% 100%,45% 94%,30% 100%,15% 94%,0 100%)}
+.theme-scrap .ta-photo{padding:8px 8px 10px;background:#fffaf0;box-shadow:2px 8px 16px #3a2a1a44}
+.theme-scrap .ta-photo:before{content:'';position:absolute;z-index:3;top:-16px;right:22%;width:14px;height:42px;border:3px solid #8f979e;border-radius:8px}
+.ta-collage{display:grid;grid-template-columns:repeat(6,1fr);padding:6px 0 26px}
+.ta-collage .ta-photo:nth-child(4n+1){grid-column:1/5;--r:-4deg;z-index:1}
+.ta-collage .ta-photo:nth-child(4n+2){grid-column:3/7;margin-top:-34px;--r:5deg;z-index:2}
+.ta-collage .ta-photo:nth-child(4n+3){grid-column:1/4;margin-top:-18px;--r:3deg;z-index:3}
+.ta-collage .ta-photo:nth-child(4n+4){grid-column:4/7;margin-top:-56px;--r:-3deg;z-index:4}
+.ta-collage .ta-photo:last-child:nth-child(4n+1){grid-column:2/6}
+.theme-scrap .ta-caption{font-family:var(--font-pen),cursive;font-size:19px;font-weight:400;color:#3a2a1a}
+.theme-scrap .ta-sticker-text{background:#fffbe8;color:#3a2a1a;font-family:var(--font-pen),cursive;font-size:20px;font-weight:400;border-radius:2px}
+.theme-scrap .ta-end-stamp{color:#3a2a1a}
+.swatch-scrap .ta-swatch-art{background:#d6bf98}
+.swatch-scrap .ta-swatch-art img{border:4px solid #fffaf0;transform:rotate(5deg);box-shadow:2px 4px 8px #3a2a1a44}
+
+@media(max-width:560px){
+ .theme-magazine .ta-cover h2{font-size:34px}
+ .ta-mag-no{font-size:48px}
+ .ta-ticket{grid-template-columns:1.15fr 1fr}
+ .ta-ticket-stub{padding:12px 10px}
+ .ta-ticket-stub b{font-size:12px}
+ .ta-strips{gap:10px}
+ .ta-strip{width:calc(50% - 5px)}
+}
