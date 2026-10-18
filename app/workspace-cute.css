@@ -48,3 +48,38 @@
 .app-shell .tab-camera>span{background:#ff5a87;box-shadow:0 3px 0 #d43f6c}
 .app-shell .group-card{border:2px solid #f3e2d8;box-shadow:0 4px 0 #f3e2d8}
 .app-shell .group-card.active{border-color:#ff8fb1;background:#fff4f7;box-shadow:0 4px 0 #ffd0dd}
+
+/* Album header: share sits next to "add photos" on every album view */
+.app-shell .page-heading-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.app-shell .page-heading-actions .primary-button{margin-top:0}
+.app-shell .heading-share{min-height:40px;padding:9px 14px;border-color:#ffc6d4;color:#d0507b;font-size:12px;font-weight:700}
+@media(max-width:600px){.app-shell .page-heading-actions{flex-direction:column;align-items:stretch}}
+
+/* First visit: the empty bookshelf, in the same pastel paper as the rest */
+.app-shell .empty-bookshelf{border:2px solid #f3e2d8;border-radius:26px;background:#fffdfa;box-shadow:0 5px 0 #f3e2d8}
+.app-shell .sample-books{background:repeating-linear-gradient(90deg,#fff0f4 0 22px,#fff8f1 22px 44px)}
+.app-shell .shelf-kicker{display:inline-block;padding:4px 10px;border-radius:999px;background:#ffe7ee;color:#d0507b;font-weight:700}
+.app-shell .first-book-copy h3{font-family:var(--font-hand),cursive;font-size:32px;font-weight:700;color:#4a3a3f}
+.app-shell .first-book-copy p{color:#8a7178}
+.app-shell .first-book-copy li{color:#7a5b62}
+.app-shell .first-book-copy li:before{color:#ff6f91}
+.app-shell .explore-hero-button{border:0;border-radius:18px;background:#ff5a87;box-shadow:0 4px 0 #d43f6c}
+.app-shell .explore-hero-button:hover{background:#ff477a}
+.app-shell .shelf-sample-sticker{background:#ffe7ee;color:#d0507b}
+
+/* Desktop story panel beside the app */
+.app-shell .keepsake-story{background-color:#fff4f7;color:#4a3a3f;border-right:2px solid #f3e2d8;background-image:radial-gradient(#ffc9d6 1.3px,transparent 1.7px);background-size:30px 30px}
+.app-shell .keepsake-story .story-top .brand{color:#4a3a3f}
+.app-shell .keepsake-kicker{color:#d0507b}
+.app-shell .keepsake-story-content h2{font-family:var(--font-hand),cursive;font-weight:700;letter-spacing:-.5px;color:#4a3a3f}
+.app-shell .keepsake-story-content h2 em{color:#ff5a87}
+.app-shell .keepsake-story-content>p,.app-shell .keepsake-help,.app-shell .keepsake-story .story-note{color:#8a7178}
+.app-shell .keepsake-handwriting,.app-shell .keepsake-photo figcaption{font-family:var(--font-hand),cursive;font-style:normal;font-size:15px;color:#c2557d}
+.app-shell .keepsake-sticker{background:#ffe7ee;color:#d0507b}
+.app-shell .keepsake-story .story-cta{border:0;border-radius:16px;background:#ff5a87;box-shadow:0 4px 0 #d43f6c}
+.app-shell .keepsake-story .story-cta:hover{background:#ff477a}
+
+/* Dialogs (help, create, invite, account) */
+.app-shell .modal{border:2px solid #f3e2d8;border-radius:26px;background:#fffdfa;box-shadow:0 6px 0 #f3e2d8,0 25px 80px #c9727a33}
+.app-shell .modal h2{font-family:var(--font-hand),cursive;font-size:28px;font-weight:700;color:#4a3a3f}
+.app-shell .modal-symbol{background:#ffe7ee;color:#d0507b;border-radius:16px}

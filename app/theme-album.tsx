@@ -54,7 +54,7 @@ function Deco({ item, className }: { item: Decor; className: string }) {
 
 type Chapter = { id: string; note: string; day: string; photos: MemoryItem[] };
 const fileLike = /(^(img|dsc|pxl|kakaotalk)[_-])|\.(jpe?g|png|heic|webp|gif|mp4|mov)$/i;
-function savedTheme(folderId: string, birthday: boolean): AlbumThemeId {
+export function savedTheme(folderId: string, birthday: boolean): AlbumThemeId {
  const fallback = birthday ? 'birthday' : (browseTheme(folderId) as AlbumThemeId | undefined) || 'polaroid';
  try { const saved = localStorage.getItem('memonestia-album-theme:' + folderId); return albumThemes.some(t => t.id === saved) ? saved as AlbumThemeId : fallback; } catch { return fallback; }
 }

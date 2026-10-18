@@ -1,11 +1,11 @@
 /* Share sheet: a bottom sheet on phones, a centred card on larger screens. */
 .share-sheet-backdrop{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:20px;background:#283d35b8;backdrop-filter:blur(6px)}
-.share-sheet{width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:18px 18px 20px;border-radius:22px;background:#fbf9f3;color:#30473b}
+.share-sheet{width:100%;max-width:420px;max-height:92vh;overflow:auto;padding:18px 18px 20px;border-radius:26px;background:#fffdfa;color:#4a3a3f;border:2px solid #f3e2d8}
 .share-sheet header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.share-sheet header strong{font-size:16px}
+.share-sheet header strong{font-family:var(--font-hand),cursive;font-size:22px;color:#4a3a3f}
 .share-sheet header button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#efe8db;color:#5d4f3f;cursor:pointer}
-.share-preview{display:grid;place-items:center;height:300px;margin-bottom:16px;border-radius:14px;background:#efe8db;overflow:hidden}
-.share-preview img{height:100%;width:auto;border-radius:10px;box-shadow:0 8px 20px #0002}
+.share-preview{display:grid;place-items:center;height:300px;margin-bottom:16px;border-radius:18px;background:#fff0f4;overflow:hidden}
+.share-preview img{height:100%!important;width:auto!important;max-width:100%;object-fit:contain;border-radius:10px;box-shadow:0 8px 20px #0002}
 .share-preview span{font-size:13px;color:#8a7a66}
 .share-targets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .share-targets button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:4px 0;border:0;background:none;color:#4e4236;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
