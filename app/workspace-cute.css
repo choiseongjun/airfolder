@@ -84,3 +84,11 @@
 .app-shell .modal{border:2px solid var(--edge);border-radius:26px;background:var(--card);box-shadow:0 6px 0 var(--edge),0 25px 80px #1e2a211c}
 .app-shell .modal h2{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:28px;font-weight:700;color:var(--ink)}
 .app-shell .modal-symbol{background:var(--brand-soft);color:var(--brand);border-radius:16px}
+
+/* Account sheet: guests see sign-in first; their space details fold away */
+.app-shell .account-more{margin-top:18px;border:1px solid var(--edge);border-radius:14px;background:var(--card)}
+.app-shell .account-more>summary{padding:14px 16px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer}
+.app-shell .account-more[open]>summary{border-bottom:1px solid var(--edge)}
+.app-shell .account-more>*:not(summary){margin-left:12px;margin-right:12px}
+.app-shell .storage-details{margin-top:8px}
+.app-shell .storage-details>summary{font-size:12px;color:var(--brand);cursor:pointer}
