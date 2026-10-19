@@ -47,8 +47,10 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
   }, [items]);
+  // Viewing an already-shared album carries no new data from the guest, so it skips the consent
+  // gate that contributing a photo still needs.
   async function join(thenView = false) {
-    if (!ready || busy || (!accepted && !consent)) return;
+    if (!ready || busy || (!thenView && !accepted && !consent)) return;
     setBusy(true); setError('');
     try {
       if (!accepted) { await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) }); setAccepted(true); }
@@ -124,8 +126,8 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
           <p className="bday-lead">{text('함께 찍은 사진 한 장이랑 한마디만 남겨주세요. 꾸미기는 자동이에요.', 'Add one photo of you two and a short note. Decorating is automatic.')}</p>
           <label className="growth-field">{text('내 이름', 'Your name')}<input maxLength={30} disabled={busy} value={nickname} onChange={e => setNickname(e.target.value)} placeholder={text('사진 옆에 같이 적혀요 · 예: 하윤', 'Shown with your photo · e.g. Hayun')} autoComplete="nickname" enterKeyHint="go" onKeyDown={e => { if (e.key === 'Enter') void join(); }} /></label>
           {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
-          {!!invite.photos && <button className="bday-more" disabled={!ready || busy || (!accepted && !consent)} onClick={() => void join(!partyDay)}>{partyDay ? text('+ 나도 사진 보태기', '+ Add my photo too') : text(`지금까지 모인 앨범 보기 · 사진 ${invite.photos}장 →`, `See the album so far · ${invite.photos} photos →`)}</button>}
-          <div className="bday-dock"><button className="growth-button" onClick={() => void join(partyDay)} disabled={!ready || busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : partyDay ? text('완성된 생일 앨범 보기', 'Open the birthday album') : text('사진 고르러 가기', 'Choose a photo')}<ArrowRight size={18} /></button></div>
+          {!!invite.photos && <button className="bday-more" disabled={!ready || busy || (partyDay && !accepted && !consent)} onClick={() => void join(!partyDay)}>{partyDay ? text('+ 나도 사진 보태기', '+ Add my photo too') : text(`지금까지 모인 앨범 보기 · 사진 ${invite.photos}장 →`, `See the album so far · ${invite.photos} photos →`)}</button>}
+          <div className="bday-dock"><button className="growth-button" onClick={() => void join(partyDay)} disabled={!ready || busy || (!partyDay && !accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : partyDay ? text('완성된 생일 앨범 보기', 'Open the birthday album') : text('사진 고르러 가기', 'Choose a photo')}<ArrowRight size={18} /></button></div>
         </div> : sent ? <div className="bday-step bday-done">
           <div className="bday-thumbs">{items.map(item => <span key={item.id} className="bday-thumb">{item.preview && <img src={item.preview} alt="" />}<Check size={16} /></span>)}</div>
           <p className="bday-lead">{text('친구들 사진이 다 모이면 버스데이 테마 앨범으로 완성돼요.', 'Once everyone adds theirs, it becomes a Birthday Film album.')}</p>
@@ -161,7 +163,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
         {birthday && <label className="growth-field">{text('내 이름 (사진 옆에 같이 적혀요)', 'Your name (shown with your photo)')}<input maxLength={30} disabled={busy} value={nickname} onChange={e => setNickname(e.target.value)} placeholder={text('예: 하윤', 'e.g. Hayun')} /></label>}
         {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
         {invite?.kind === 'album' && !!invite.photos && <><p className="growth-note">{text(`사진 ${invite.photos}장${invite.people && invite.people > 1 ? ` · ${invite.people}명이 채웠어요` : ''}. 열면 꾸민 앨범으로 바로 보여요.`, `${invite.photos} photos${invite.people && invite.people > 1 ? ` from ${invite.people} people` : ''}. It opens as a decorated album.`)}</p>
-          <button className="growth-button" onClick={() => void join(true)} disabled={busy || (!accepted && !consent)}>{busy ? text('여는 중…', 'Opening…') : text('앨범 보기', 'Open the album')}<ArrowRight size={18} /></button></>}
+          <button className="growth-button" onClick={() => void join(true)} disabled={busy}>{busy ? text('여는 중…', 'Opening…') : text('앨범 보기', 'Open the album')}<ArrowRight size={18} /></button></>}
         <button className={`growth-button${invite?.kind === 'album' && invite.photos ? ' secondary' : ''}`} onClick={() => void join()} disabled={busy || (!accepted && !consent)}>{busy ? text('참여 중…', 'Joining…') : invite?.kind === 'album' && invite.photos ? text('내 사진도 보태기', 'Add my photos too') : text('참여하고 사진 고르기', 'Join & choose photos')}<ArrowRight size={18} /></button>
         <p className="growth-note">{text('링크를 받은 모임 멤버만 참여해 주세요. 초대 링크는 7일간 유효합니다.', 'Please join only if invited by the organizer. Invitations last 7 days.')}</p></div>}
       {joined && <>{albums.length > 1 && <label className="growth-field">{text('사진을 올릴 앨범', 'Choose an album')}<select disabled={busy || items.some(i => i.folder)} value={folder} onChange={e => setFolder(e.target.value)}><option value="">{text('앨범을 선택해 주세요', 'Select an album')}</option>{albums.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select></label>}
