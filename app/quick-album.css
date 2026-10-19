@@ -27,6 +27,7 @@
 .qa-dock small{text-align:center;font-size:11px;color:var(--ink-soft)}
 .qa-dock .growth-consent{font-size:12px;color:var(--ink-soft)}
 .qa-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border:0;border-radius:14px;background:var(--brand);color:#fff;font:inherit;font-size:16px;font-weight:700;box-shadow:0 2px 0 var(--brand-press);cursor:pointer}
+.qa-primary:not(:disabled):hover{background:var(--brand-hover);color:#fff}
 .qa-primary:disabled{background:var(--brand-line);box-shadow:none;cursor:default}
 .qa-preview{padding-top:12px}
 /* The preview is about the album, so the theme picker stays a swipeable row of chips at every width. */
@@ -40,3 +41,4 @@
 .qa-preview .ta-swatch-art img,.qa-preview .ta-swatch-art>i{width:100%;height:100%;aspect-ratio:auto;border:0!important;border-radius:50%;transform:none!important}
 .qa-preview .ta-swatch-deco,.qa-preview .ta-swatch>small,.qa-preview .ta-swatch>em{display:none!important}
 .qa-preview .ta-swatch>strong{margin:0;font-size:12px;white-space:nowrap}
+.qa-blank{margin-top:2px;color:var(--ink-soft);font-weight:500}

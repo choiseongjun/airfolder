@@ -46,7 +46,9 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
  }
  function threads() {
   if (!text) return;
-  window.open(`https://www.threads.com/intent/post?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+  // Threads' intent page turns emoji outside the basic plane (📸, 🎂) into "�", so leave them out.
+  const plain = text.replace(/[\u{10000}-\u{10FFFF}]\uFE0F?[ \t]?/gu, '').replace(/^[ \t]+|[ \t]+$/gm, '');
+  window.open(`https://www.threads.com/intent/post?text=${encodeURIComponent(plain)}`, '_blank', 'noopener,noreferrer');
   setNote(t('이미지도 같이 올리려면 "이미지 저장"으로 받아 첨부하세요.', 'To add the picture too, save the image and attach it.'));
  }
  async function copy(value: string, done: string) {

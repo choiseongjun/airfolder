@@ -16,7 +16,7 @@ const SAMPLES = ['/explore/photo-0.jpg', '/explore/photo-5.jpg', '/explore/photo
 const today = () => new Date().toISOString().slice(0, 10);
 
 /** The first-visit path: pick or shoot photos, see them decorated right away, then keep the album. */
-export default function QuickAlbum({ locale, onClose, onSaved }: { locale: 'ko' | 'en'; onClose: () => void; onSaved: (folderId: string) => void }) {
+export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { locale: 'ko' | 'en'; onClose: () => void; onSaved: (folderId: string) => void; onBlank?: () => void }) {
   const ko = locale === 'ko', t = (a: string, b: string) => ko ? a : b;
   const [step, setStep] = useState<'pick' | 'note' | 'preview'>('pick');
   const [picks, setPicks] = useState<Pick[]>([]), [name, setName] = useState(''), [note, setNote] = useState('');
@@ -89,6 +89,7 @@ export default function QuickAlbum({ locale, onClose, onSaved }: { locale: 'ko' 
       </div>
       {picks.length > 0 && <div className="qa-thumbs">{picks.map(p => <span key={p.id}><img src={p.url} alt="" /><button aria-label={t('빼기', 'Remove')} onClick={() => remove(p.id)}>×</button></span>)}</div>}
       {!picks.length && <button className="qa-sample" onClick={() => void addSamples()}>{t('사진이 없으면 샘플 사진으로 먼저 해보기', 'No photos handy? Try it with sample photos')}</button>}
+      {!picks.length && onBlank && <button className="qa-sample qa-blank" onClick={onBlank}>{t('사진 없이 빈 앨범부터 만들기', 'Start an empty album instead')}</button>}
       {error && <p className="qa-error" role="alert">{error}</p>}
       <div className="qa-dock"><button className="qa-primary" disabled={!picks.length} onClick={() => setStep('note')}>{picks.length ? t(`사진 ${picks.length}장으로 계속`, `Continue with ${picks.length}`) : t('사진을 골라 주세요', 'Choose some photos')}<ArrowRight size={18} /></button></div>
     </section>}
