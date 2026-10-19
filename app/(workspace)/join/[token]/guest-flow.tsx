@@ -162,7 +162,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
       </section></main>;
   }
   return <main className="growth-page cute-page"><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
-    <section className="growth-card"><ol className="growth-steps"><li className={!joined ? 'current' : ''}>01 {text('모임 참여', 'Join')}</li><li className={joined && !completed ? 'current' : ''}>02 {text('사진 선택', 'Choose')}</li><li className={completed ? 'current' : ''}>03 {text('함께 보기', 'Enjoy')}</li></ol>
+    <section className="growth-card">
       <span className="cute-deco cute-deco-a" aria-hidden="true"><Sticker kind="sparkle" /></span><span className="cute-deco cute-deco-b" aria-hidden="true"><Sticker kind="heart" /></span>
       <div className="growth-icon cute-icon"><Sticker kind={completed ? 'star' : joined ? 'flower' : 'heart'} /></div>
       <p className="growth-eyebrow">YOUR VIEW MAKES THE MEMORY</p><h1>{invite?.name || (error ? text('초대를 열 수 없어요', 'Unable to open this invite') : text('모임 초대를 확인하고 있어요', 'Opening your invitation'))}</h1>
