@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { ArrowRight, Hourglass, Music2, Palette, Share2, Wand2 } from 'lucide-react';
+import { ArrowRight, Hourglass, Music2, Palette, Share2, Ticket, Wand2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { browseTheme } from '@/lib/browse-data';
 import type { MemoryItem } from './memories';
@@ -311,7 +311,7 @@ ${url}`;
    {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '이번 달 우리' : 'This month of us') : monthName(m)}</button>)}
   </div>}
   <div className="ta-picker">
-   <div className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small>{shareable && birthday === undefined && <button className="ta-share-mini" onClick={share}><Share2 size={14}/>{ko ? '공유' : 'Share'}</button>}</div>
+   <div className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small></div>
    <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
     {albumThemes.map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
      <span className="ta-swatch-art" aria-hidden="true">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}<span className="ta-swatch-deco"><Deco item={decor[t.id][0]} className=""/></span></span>
@@ -328,6 +328,10 @@ ${url}`;
    {styleError && <p className="ta-style-error" role="alert">{styleError}</p>}
   </details>}
 
+  {!localItems && <div className="ta-card-bar">
+   <button onClick={share}><Ticket size={17}/>{ko ? '인스타 카드 뽑기' : 'Make an Instagram card'}</button>
+   <small>{ko ? `지금 보는 ${meta.ko} 그대로 스토리 이미지로` : `This ${meta.en} look as a story image`}</small>
+  </div>}
   {theme === 'ticket' && !torn && <div className="ta-gate">
    <div className="ta-gate-pass">
     <div className="ta-gate-main">
@@ -395,7 +399,9 @@ ${url}`;
 
   {browsing && <div className="ta-cta">
    <div><strong>{ko ? `${meta.ko} 테마로 우리 앨범 만들기` : `Make ours in ${meta.en}`}</strong><p>{ko ? '사진 몇 장과 한 줄 메모만 올리면, 꾸미기는 자동이에요. 친구들도 링크로 같이 채워요.' : 'Add a few photos and a note. The decorating is automatic, and friends can fill it in from a link.'}</p></div>
-   <Link className="primary-button" href={theme === 'birthday' ? `/birthday?lang=${locale}` : `/start?lang=${locale}`}>{ko ? '1분 만에 시작하기' : 'Start in a minute'}<ArrowRight size={16}/></Link>
+   {theme === 'birthday' ? <Link className="primary-button" href={`/birthday?lang=${locale}`}>{ko ? '1분 만에 시작하기' : 'Start in a minute'}<ArrowRight size={16}/></Link>
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- Leaving Explore needs a full load so its read-only state does not carry over.
+    : <button className="primary-button" onClick={() => { window.location.href = `/?lang=${locale}&quick=1`; }}>{ko ? '내 사진으로 1분 만에 만들기' : 'Make mine in a minute'}<ArrowRight size={16}/></button>}
   </div>}
  </section>;
 }

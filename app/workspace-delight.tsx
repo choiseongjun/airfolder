@@ -45,7 +45,7 @@ export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:
 export function StudioTeaser({locale,onCreate}:{locale:Locale;onCreate:()=>void}) {
   const ko=locale==='ko';
   return <section className="studio-invitation">
-    <div className="studio-invitation-copy"><span><Camera size={12}/>{ko?'작은 추억 공방':'THE LITTLE MEMORY STUDIO'}</span><h2>{ko?'사진 몇 장, 예쁜 한 페이지.':'A few photos. A little magic.'}</h2><p>{ko?'네컷부터 엽서까지, 나만의 틀에 담아봐요.':'Photo strips or postcards, made yours.'}</p><button onClick={onCreate}>{ko?'추억 만들기':'Make a memory'}<ArrowRight size={15}/></button></div>
+    <div className="studio-invitation-copy"><span><Camera size={12}/>{ko?'작은 추억 공방':'THE LITTLE MEMORY STUDIO'}</span><h2>{ko?'사진 몇 장, 예쁜 한 페이지.':'A few photos. A little magic.'}</h2><p>{ko?'네컷부터 엽서까지, 나만의 틀에 담아봐요.':'Photo strips or postcards, made yours.'}</p><button onClick={onCreate}>{ko?'포토카드 만들기':'Make a photo card'}<ArrowRight size={15}/></button></div>
     <div className="studio-mini-strip" aria-hidden="true"><span>MEMONESTIA</span><img src="/landing/sea.webp" alt=""/><img src="/landing/picnic.webp" alt=""/><Heart size={12}/></div>
     <ImagePlus className="studio-invitation-spark" size={25} aria-hidden="true"/>
   </section>;
