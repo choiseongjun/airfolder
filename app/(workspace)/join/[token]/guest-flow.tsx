@@ -61,6 +61,17 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
     } catch (cause) { setError(cause instanceof Error && /INVITE/.test(cause.message) ? text('초대가 만료되었어요. 모임장에게 새 링크를 요청해 주세요.', 'The invite expired. Ask the organizer for a new link.') : text('참여하지 못했어요. 모임 정원이나 연결 상태를 확인하고 다시 시도해 주세요.', 'Could not join. Check the group capacity or your connection and try again.')); }
     finally { setBusy(false); }
   }
+  const autoOpened = useRef(false);
+  useEffect(() => {
+    // An invite to an album that already has photos should open straight on them, not a
+    // "choose photos" screen the guest has to tap past first.
+    if (autoOpened.current || !ready || joined || busy || birthday) return;
+    if (invite?.kind !== 'album' || !invite.photos) return;
+    autoOpened.current = true;
+    const timer = window.setTimeout(() => void join(true), 0);
+    return () => window.clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- One-shot: fires once the invite loads, guarded by autoOpened.
+  }, [ready, invite, joined, busy, birthday]);
   function choose(files: FileList | null) {
     if (!files || busy) return;
     const chosen = Array.from(files), valid: Item[] = [];
