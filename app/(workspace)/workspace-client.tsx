@@ -50,6 +50,9 @@ import { savedBrowserLocale, saveBrowserLocale } from "@/lib/browser-locale";
 type Account = { name: string; email: string | null; provider: string };
 type Room = { id: string; groupId?:string|null; name: string; category: string; endDate?: string|null; description: string; image: string; members: number; count: number; color: string; updated: string; updatedAt?: number; mine?: boolean; theme?: string; song?: string; revealAt?: string; held?: number; heldPeople?: number };
 type Photo = { id: string; roomId: string; src: string; name: string; shared: boolean; audience?: string; recipients?: string[]; mediaType?: string; mime?: string; originalAvailable?: boolean; hasPreview?: boolean; localFile?: Blob; created: number; demo?: boolean; mine?: boolean; uploadStatus?: "pending" | "uploading" | "uploaded" | "failed" };
+// The server caps staged uploads at 2 concurrent sessions per viewer (app/api/photos/uploads/route.ts) —
+// going higher just trades 429 UPLOAD_BUSY retries for the time saved.
+const UPLOAD_CONCURRENCY = 2;
 const photoUrl = (id: string, width = 900) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`;
 const coast = photoUrl("photo-1519046904884-53103b34b206");
 const seedRooms: Room[] = [
@@ -250,8 +253,11 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
   }, [rooms,photos,ready,viewerId,browsing]);
   useEffect(() => {
     if (!ready) return;
+    // A few photos at once instead of strictly one-by-one — picking 20 photos used to upload
+    // them in a single-file line, each waiting on the last network round trip to finish.
+    if (uploading.current.size >= UPLOAD_CONCURRENCY) return;
     const next = photos.find(p => p.uploadStatus === "pending" && !uploading.current.has(p.id));
-    if (!next || uploading.current.size) return;
+    if (!next) return;
     uploading.current.add(next.id); setPersistStatus("saving");
     (async()=>{
       try {
@@ -262,7 +268,7 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
         await api("/api/photos",{method:"POST",body});
         setPhotos(old=>old.map(p=>p.id===next.id?{...p,src:"/api/photos/"+p.id+"/content",localFile:undefined,originalAvailable:true,uploadStatus:"uploaded"}:p)); setServerError(false);
       } catch(error) { if(error instanceof Error&&/STORAGE_FULL/.test(error.message))setToast(locale==='ko'?'저장 한도에 도달해 업로드가 중단됐어요.':'Storage capacity reached. Upload stopped.'); setPhotos(old=>old.map(p=>p.id===next.id?{...p,uploadStatus:"failed"}:p)); }
-      finally { uploading.current.delete(next.id); setPersistStatus("saved"); }
+      finally { uploading.current.delete(next.id); if(!uploading.current.size) setPersistStatus("saved"); }
     })();
   },[photos,rooms,ready,viewerId,locale]);
   useEffect(()=>{

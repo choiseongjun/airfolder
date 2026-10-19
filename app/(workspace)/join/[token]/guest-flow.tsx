@@ -9,6 +9,7 @@ import { IMAGE_LIMIT } from '@/lib/media-limits';
 import { TERMS_VERSION } from '@/lib/policy';
 import { trackClient } from '@/lib/growth-client';
 import { uploadFailureReason } from '@/lib/growth-events';
+import { mapLimit } from '@/lib/parallel';
 import Consent from '../../../growth/consent';
 import ThemeAlbum, { Sticker } from '../../../theme-album';
 import type { MemoryItem } from '../../../memories';
@@ -91,7 +92,9 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
     const pending = items.filter(i => i.status === 'waiting' || i.status === 'failed');
     const completedIds: string[] = [];
     try {
-      for (const item of pending) {
+      // 2 at once, not strictly one-by-one — the server caps staged uploads at 2 concurrent
+      // sessions per viewer (app/api/photos/uploads/route.ts), so this is as fast as it gets.
+      await mapLimit(pending, 2, async item => {
         // Retrying a staged upload must keep its original album and audience.
         const target = item.folder || folder, audience = item.shared ?? shared;
         setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'uploading', folder: target, shared: audience, error: undefined } : i));
@@ -106,7 +109,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
           const message = reason === 'storage' ? text('저장 공간이 부족해요. 내 공간에서 용량을 확인해 주세요.', 'Storage is full. Check usage in My space.') : reason === 'format' ? text('읽을 수 없는 사진이에요. JPG나 PNG로 다시 선택해 주세요.', 'Could not read this photo. Try a JPG or PNG.') : text('전송하지 못했어요. 연결을 확인하고 다시 올려 주세요.', 'Upload failed. Check your connection and retry.');
           setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'failed', error: message } : i));
         }
-      }
+      });
       if (note.trim() && completedIds.length) {
         try {
           await api('/api/memories', { method: 'POST', body: JSON.stringify({ id: crypto.randomUUID(), folderId: folder, title: '', body: note.trim(), day: new Date().toISOString().slice(0, 10), shared, photoIds: completedIds }) });

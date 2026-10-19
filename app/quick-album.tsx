@@ -7,6 +7,7 @@ import { api } from '@/lib/client-api';
 import { IMAGE_LIMIT } from '@/lib/media-limits';
 import { TERMS_VERSION } from '@/lib/policy';
 import { groupDuplicates, hashImage } from '@/lib/photo-duplicates';
+import { mapLimit } from '@/lib/parallel';
 import ThemeAlbum from './theme-album';
 import type { MemoryItem } from './memories';
 import Consent from './growth/consent';
@@ -136,13 +137,16 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { loca
       setSaving(t('앨범 만드는 중…', 'Creating album…'));
       const { id: folderId } = await api<{ id: string }>('/api/folders', { method: 'POST', body: JSON.stringify({ name: title, category: dayCount > 1 ? '여행' : '모임', description: note.trim().slice(0, 200), startDate: first, endDate: last }) });
       const uploaded = new Set<string>();
-      for (const [i, p] of picks.entries()) {
-        setSaving(t(`사진 올리는 중 ${i + 1}/${picks.length}`, `Uploading ${i + 1}/${picks.length}`));
+      let sent = 0;
+      // 2 at once, not strictly one-by-one — the server caps staged uploads at 2 concurrent
+      // sessions per viewer (app/api/photos/uploads/route.ts), so this is as fast as it gets.
+      await mapLimit(picks, 2, async p => {
         const form = new FormData();
         form.set('id', p.id); form.set('folderId', folderId); form.set('file', p.file, p.file.name); form.set('name', p.file.name);
         form.set('created', String(p.taken)); form.set('shared', 'true');
         try { await api('/api/photos', { method: 'POST', body: form }); uploaded.add(p.id); } catch { /* Keep going; the album still saves what made it. */ }
-      }
+        finally { sent++; setSaving(t(`사진 올리는 중 ${sent}/${picks.length}`, `Uploading ${sent}/${picks.length}`)); }
+      });
       if (!uploaded.size) throw new Error('UPLOAD_FAILED');
       for (const d of days) {
         const photoIds = d.picks.map(p => p.id).filter(id => uploaded.has(id));
