@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { Gaegu, Geist, Noto_Serif_KR } from 'next/font/google';
 import { isPublicLocale, publicLocales, publicLocaleTags } from '@/lib/public-locale';
 import WebAnalytics from '../web-analytics';
+import KakaoBrowserEscape from '../kakao-browser-escape';
 import './landing.css';
 import '../brand.css';
 
@@ -15,5 +16,5 @@ export function generateStaticParams() { return publicLocales.map(lang => ({ lan
 export default async function PublicLayout({ children, params }: { children: React.ReactNode; params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!isPublicLocale(lang)) notFound();
-  return <html lang={publicLocaleTags[lang]} className={`${sans.variable} ${editorial.variable} ${hand.variable}`}><body>{children}<WebAnalytics /></body></html>;
+  return <html lang={publicLocaleTags[lang]} className={`${sans.variable} ${editorial.variable} ${hand.variable}`}><body><KakaoBrowserEscape />{children}<WebAnalytics /></body></html>;
 }

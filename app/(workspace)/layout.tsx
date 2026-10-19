@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Gaegu, Geist, Geist_Mono, Nanum_Pen_Script, Noto_Serif_KR } from "next/font/google";
 import PerformanceDiagnostics from "../performance-diagnostics";
 import WebAnalytics from "../web-analytics";
+import KakaoBrowserEscape from "../kakao-browser-escape";
 import "../globals.css";
 import "../brand.css";
 import "../workspace-split.css";
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${handFont.variable} ${penFont.variable} ${editorialFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <KakaoBrowserEscape />
         {children}
         <WebAnalytics /><PerformanceDiagnostics />
       </body>
