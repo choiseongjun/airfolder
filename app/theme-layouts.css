@@ -7,6 +7,7 @@
 .theme-diary .ta-cover-meta span{background:#fff;color:#55608a;border:1px solid #c9d8f0}
 .theme-diary .ta-chapter-label{color:#d9534f}
 .theme-diary .ta-note{color:#2b3a67;background:linear-gradient(transparent 60%,#ffe58f99 60%)}
+.theme-diary .ta-frame img,.theme-diary .ta-frame video{filter:saturate(.88) sepia(.08) brightness(1.03)}
 .theme-diary .ta-cover-photo .ta-photo{background:#fff;padding:8px;box-shadow:0 4px 12px #2b3a6726}
 .theme-diary .ta-nb-row{padding:0}
 .theme-diary .ta-nb-row .ta-photo{display:grid;grid-template-columns:56% 1fr;gap:14px;align-items:center;--r:-1.5deg}
@@ -35,7 +36,7 @@
 .ta-strip{display:flex;flex-direction:column;gap:6px;width:calc(50% - 7px);max-width:220px;padding:8px 8px 0;background:#fff;box-shadow:0 12px 26px #0007;transform:rotate(-1.5deg)}
 .ta-strip:nth-child(even){background:#0d0d0d;outline:1px solid #333;transform:rotate(1.5deg)}
 .ta-strip .ta-photo{--r:0deg;margin:0}
-.ta-strip .ta-frame img,.ta-strip .ta-frame video{aspect-ratio:4/3}
+.ta-strip .ta-frame img,.ta-strip .ta-frame video{aspect-ratio:4/3;filter:contrast(1.18) saturate(.9) brightness(1.03)}
 .ta-strip-foot{padding:10px 0 12px;text-align:center;font:700 10px var(--font-geist-mono),monospace;letter-spacing:2px;color:#111}
 .ta-strip:nth-child(even) .ta-strip-foot{color:#eee}
 .theme-fourcut .ta-sticker-text{background:#fff;color:#111;font:700 12px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:2px}
@@ -55,7 +56,7 @@
 .ta-ticket{position:relative;display:grid;grid-template-columns:1.3fr 1fr;overflow:hidden;border-radius:14px;background:#fff;box-shadow:0 8px 18px #1f3b5b24}
 .ta-ticket .ta-photo{--r:0deg;margin:0}
 .ta-ticket .ta-photo button,.ta-ticket .ta-frame{height:100%}
-.ta-ticket .ta-frame img,.ta-ticket .ta-frame video{height:100%;min-height:150px;aspect-ratio:auto}
+.ta-ticket .ta-frame img,.ta-ticket .ta-frame video{height:100%;min-height:150px;aspect-ratio:auto;filter:contrast(1.06) saturate(1.08)}
 .ta-ticket-stub{position:relative;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:14px 14px 12px;border-left:2px dashed #c4d4e4}
 .ta-ticket-stub:before,.ta-ticket-stub:after{content:'';position:absolute;left:-10px;width:18px;height:18px;border-radius:50%;background:#e6eef6}
 .ta-ticket-stub:before{top:-9px}
@@ -81,6 +82,7 @@
 .theme-magazine .ta-chapter-label{color:#d6332f}
 .theme-magazine .ta-note{display:block;max-width:none;margin-top:6px;font-family:var(--font-editorial),Georgia,serif;font-size:24px;font-weight:700;color:#111}
 .theme-magazine .ta-photo{--r:0deg;padding:0;background:none;box-shadow:none}
+.theme-magazine .ta-frame img,.theme-magazine .ta-frame video{filter:contrast(1.18) saturate(1.12)}
 .ta-mag-hero{position:relative;margin-bottom:14px}
 .ta-mag-no{position:absolute;top:10px;left:14px;font:900 64px/1 Georgia,serif;color:#fff;text-shadow:0 2px 14px #0007;pointer-events:none}
 .ta-mag-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
@@ -100,6 +102,7 @@
 .theme-stamp .ta-chapter-label{color:#2f5f8a}
 .theme-stamp .ta-note{color:#7a2e2e}
 /* White paper under a dotted border in the page colour reads as perforated edges. */
+.theme-stamp .ta-frame img,.theme-stamp .ta-frame video{filter:sepia(.28) contrast(1.05)}
 .theme-stamp .ta-photo{padding:8px 8px 6px;background:#fff;border:6px dotted #f2ead8;box-shadow:0 4px 10px #7a2e2e22}
 .ta-stamps{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin-bottom:22px}
 .ta-stamp{position:relative}
@@ -120,6 +123,7 @@
 .theme-scrap .ta-cover-meta span{background:#f3e6cc;color:#5d4632}
 .theme-scrap .ta-chapter-label{color:#5d4632}
 .theme-scrap .ta-note{padding:10px 18px;background:#fffbe8;color:#3a2a1a;transform:rotate(-1.5deg);clip-path:polygon(0 6%,8% 0,20% 6%,35% 1%,50% 6%,65% 0,80% 6%,92% 1%,100% 6%,100% 94%,90% 100%,75% 94%,60% 100%,45% 94%,30% 100%,15% 94%,0 100%)}
+.theme-scrap .ta-frame img,.theme-scrap .ta-frame video{filter:sepia(.18) saturate(.92) contrast(1.05)}
 .theme-scrap .ta-photo{padding:8px 8px 10px;background:#fffaf0;box-shadow:2px 8px 16px #3a2a1a44}
 .theme-scrap .ta-photo:before{content:'';position:absolute;z-index:3;top:-16px;right:22%;width:14px;height:42px;border:3px solid #8f979e;border-radius:8px}
 .ta-collage{display:grid;grid-template-columns:repeat(6,1fr);padding:6px 0 26px}

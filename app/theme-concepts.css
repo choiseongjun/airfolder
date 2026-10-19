@@ -17,6 +17,8 @@
 .theme-receipt .ta-cover h2{font:800 22px/1.3 var(--font-geist-mono),monospace;letter-spacing:-.02em;text-transform:uppercase}
 .theme-receipt .ta-cover-photo{max-width:100%}
 .theme-receipt .ta-frame img,.theme-receipt .ta-frame video{filter:grayscale(1) contrast(1.15) brightness(1.05)}
+/* A halftone dot screen over the grayscale print, like it actually came off thermal paper. */
+.theme-receipt .ta-frame::after{content:'';position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.45;background-image:radial-gradient(#000 32%,transparent 33%);background-size:3.5px 3.5px}
 .theme-receipt .ta-cover-meta span{background:none;border:0;color:#555;font-size:12px}
 .theme-receipt .ta-sticker:not(.ta-sticker-text){display:none}
 .theme-receipt .ta-sticker-text{background:none;color:#1f1f1f;border:2px solid #1f1f1f;font:800 11px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:4px;opacity:.75}
@@ -49,7 +51,7 @@
 .theme-vinyl .ta-end-stamp{color:#e8b04a}
 .ta-turntable{position:relative;width:min(100%,420px);aspect-ratio:1.45;margin:20px auto 6px}
 .ta-sleeve{position:absolute;left:0;top:6%;z-index:2;width:62%;aspect-ratio:1;overflow:hidden;border-radius:4px;background:#2d241e;box-shadow:6px 8px 18px #0008}
-.ta-sleeve img,.ta-sleeve i{display:block;width:100%;height:100%;object-fit:cover;animation:ta-fade .9s ease both}
+.ta-sleeve img,.ta-sleeve i{display:block;width:100%;height:100%;object-fit:cover;animation:ta-fade .9s ease both;filter:sepia(.15) contrast(1.08) saturate(1.08) brightness(.98)}
 @keyframes ta-fade{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
 .ta-record{position:absolute;right:2%;top:4%;width:64%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 2px,#1e1e1e 2px 4px);box-shadow:0 8px 20px #000a,inset 0 0 0 6px #0a0a0a;animation:ta-spin 3.4s linear infinite}
 .ta-record::after{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,#fff0,#ffffff1c 8%,#fff0 16%,#fff0 50%,#ffffff14 58%,#fff0 66%)}
@@ -73,7 +75,7 @@
 .ta-jacket-disc{position:absolute;right:0;top:8%;width:84%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 2px,#1d1d1d 2px 4px);box-shadow:0 4px 8px #0008}
 .ta-jacket .ta-photo{position:relative;z-index:1;transform:none}
 .ta-jacket .ta-frame{border-radius:3px;box-shadow:4px 6px 12px #0009}
-.ta-jacket .ta-frame img,.ta-jacket .ta-frame video{aspect-ratio:1}
+.ta-jacket .ta-frame img,.ta-jacket .ta-frame video{aspect-ratio:1;filter:sepia(.15) contrast(1.08) saturate(1.08) brightness(.98)}
 .ta-jacket-no{position:absolute;left:6px;top:6px;z-index:2;padding:2px 6px;border-radius:3px;background:#e8b04a;color:#211a16;font:800 10px var(--font-geist-mono),monospace}
 
 /* ③ Boarding gate: tear the stub to open the trip */
