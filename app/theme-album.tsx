@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { ArrowRight, Palette, Share2, Wand2 } from 'lucide-react';
+import { ArrowRight, Hourglass, Music2, Palette, Share2, Wand2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { browseTheme } from '@/lib/browse-data';
 import type { MemoryItem } from './memories';
@@ -11,6 +11,7 @@ import MediaView from './media-view';
 import AlbumShare from './album-share';
 import './theme-album.css';
 import './theme-layouts.css';
+import './theme-concepts.css';
 
 export const albumThemes = [
  { id: 'polaroid', ko: '폴라로이드 썸머', en: 'Polaroid Summer', hintKo: '파란 바다, 마스킹테이프, 손글씨', hintEn: 'Blue sea, washi tape, handwriting', kicker: 'SUMMER DIARY', chapter: 'DAY', layout: 'classic' },
@@ -22,10 +23,12 @@ export const albumThemes = [
  // These lay photos out differently, not just recolour them, like different kinds of 다꾸.
  { id: 'diary', ko: '다이어리 노트', en: 'Diary Notebook', hintKo: '줄노트에 붙이고 옆에 메모', hintEn: 'Taped on lined paper, notes in the margin', kicker: 'MY DIARY', chapter: 'PAGE', layout: 'notebook' },
  { id: 'fourcut', ko: '인생네컷', en: 'Photo Booth', hintKo: '네 컷 스트립으로 착착', hintEn: 'Stacked four-cut strips', kicker: 'PHOTO BOOTH', chapter: 'TAKE', layout: 'strip' },
- { id: 'ticket', ko: '여행 티켓', en: 'Travel Ticket', hintKo: '사진마다 보딩패스 한 장', hintEn: 'Every photo a boarding pass', kicker: 'BOARDING PASS', chapter: 'GATE', layout: 'ticket' },
+ { id: 'ticket', ko: '보딩패스', en: 'Boarding Pass', hintKo: '탑승권을 뜯으면 열리는 여행 앨범', hintEn: 'Tear the pass to open the trip', kicker: 'BOARDING PASS', chapter: 'GATE', layout: 'ticket' },
  { id: 'magazine', ko: '매거진', en: 'Magazine', hintKo: '큰 화보 사진과 기사 구성', hintEn: 'Cover shots and feature spreads', kicker: 'ISSUE NO. 01', chapter: 'FEATURE', layout: 'magazine' },
  { id: 'stamp', ko: '우표 컬렉션', en: 'Stamp Collection', hintKo: '톱니 테두리와 날짜 소인', hintEn: 'Perforated edges & postmarks', kicker: 'AIR MAIL', chapter: 'SET', layout: 'stamp' },
  { id: 'scrap', ko: '크래프트 스크랩', en: 'Kraft Scrapbook', hintKo: '겹쳐 붙인 사진과 찢은 메모지', hintEn: 'Overlapped prints & torn notes', kicker: 'SCRAPBOOK', chapter: 'NO.', layout: 'collage' },
+ { id: 'receipt', ko: '추억 영수증', en: 'Memory Receipt', hintKo: '감열지 영수증으로 지이잉 출력', hintEn: 'Printed out like a thermal receipt', kicker: 'MEMONESTIA PHOTO LAB', chapter: 'ITEM', layout: 'receipt' },
+ { id: 'vinyl', ko: 'LP 플레이어', en: 'Vinyl Player', hintKo: '돌아가는 LP와 그날의 노래', hintEn: 'A spinning record and the song of the day', kicker: 'SIDE A', chapter: 'TRACK', layout: 'vinyl' },
 ] as const;
 export type AlbumThemeId = typeof albumThemes[number]['id'];
 
@@ -44,6 +47,8 @@ const decor: Record<AlbumThemeId, Decor[]> = {
  magazine: [{ text: 'EXCLUSIVE' }, { text: 'NEW' }, { text: 'P. 12' }, 'star', { text: 'COVER STORY' }, 'sparkle'],
  stamp: [{ text: 'FIRST CLASS' }, 'flower', { text: 'POSTMARKED' }, 'star', { text: 'PAR AVION' }, 'heart'],
  scrap: ['flower', { text: 'keep this' }, 'heart', { text: 'memories' }, 'star', 'sun'],
+ receipt: [{ text: 'PAID' }, { text: 'NO REFUND' }, { text: 'THANK YOU' }, { text: 'COPY' }, { text: '*** 1 ***' }, { text: 'KEEP' }],
+ vinyl: [{ text: 'SIDE A' }, 'star', { text: '33⅓ RPM' }, 'sparkle', { text: 'B-SIDE' }, 'heart'],
 };
 
 export function Sticker({ kind }: { kind: StickerKind }) {
@@ -68,12 +73,26 @@ function Deco({ item, className }: { item: Decor; className: string }) {
 
 type Chapter = { id: string; note: string; day: string; photos: MemoryItem[] };
 const fileLike = /(^(img|dsc|pxl|kakaotalk)[_-])|\.(jpe?g|png|heic|webp|gif|mp4|mov)$/i;
-export function savedTheme(folderId: string, birthday: boolean): AlbumThemeId {
- const fallback = birthday ? 'birthday' : (browseTheme(folderId) as AlbumThemeId | undefined) || 'polaroid';
- try { const saved = localStorage.getItem('memonestia-album-theme:' + folderId); return albumThemes.some(t => t.id === saved) ? saved as AlbumThemeId : fallback; } catch { return fallback; }
+const isTheme = (id: unknown): id is AlbumThemeId => albumThemes.some(t => t.id === id);
+export function savedTheme(folderId: string, birthday: boolean, albumTheme = ''): AlbumThemeId {
+ const fallback = isTheme(albumTheme) ? albumTheme : birthday ? 'birthday' : (browseTheme(folderId) as AlbumThemeId | undefined) || 'polaroid';
+ try { const saved = localStorage.getItem('memonestia-album-theme:' + folderId); return isTheme(saved) ? saved : fallback; } catch { return fallback; }
 }
 const dotted = (day: string) => day.replaceAll('-', '.');
 const stamp = (day: string) => `'${day.slice(2, 4)} ${day.slice(5, 7)} ${day.slice(8, 10)}`;
+
+const clock = (ms?: number) => ms ? new Date(ms).toTimeString().slice(0, 5) : '--:--';
+const songSearch = (song: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
+function nextSundayNine() {
+ const d = new Date(); d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7)); d.setHours(21, 0, 0, 0);
+ return d;
+}
+const localInput = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+function countdownText(ms: number, ko: boolean) {
+ const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), hms = [Math.floor(s / 3600) % 24, Math.floor(s / 60) % 60, s % 60].map(n => String(n).padStart(2, '0')).join(':');
+ return d ? (ko ? `${d}일 ${hms}` : `${d}d ${hms}`) : hms;
+}
+export type AlbumStyle = { theme: string; song: string; revealAt: string; held: number; heldPeople: number };
 
 function dDay(day: string) {
  const now = new Date(), left = Math.round((Date.parse(day + 'T00:00:00Z') - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
@@ -88,7 +107,8 @@ export function albumShareMessage(title: string, url: string, ko: boolean, birth
 
 /** `birthday` is the party date (or '' when unknown) for birthday albums; undefined otherwise. */
 /** `localItems` renders photos that are not uploaded yet (a live preview), skipping the server and sharing. */
-export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto, localItems }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void; localItems?: MemoryItem[] }) {
+/** `style` is what the owner saved for everyone; `owner` may change it. `onChanged` reloads the workspace after a capsule opens. */
+export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto, localItems, style, owner, onChanged }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void; localItems?: MemoryItem[]; style?: AlbumStyle; owner?: boolean; onChanged?: () => void }) {
  const ko = locale === 'ko';
  // Owners share the album's invite link (it opens on this decorated view); members share the finished look.
  const [sharing, setSharing] = useState<'' | 'share' | 'nudge'>(''), shareable = !browsing && !localItems;
@@ -101,8 +121,27 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
   return () => { active = false; };
  }, [canShare, folderId]);
  const [month, setMonth] = useState('all');
- const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined));
  const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
+ const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined, style?.theme));
+ const editable = !!owner && !browsing && !localItems;
+ const [song, setSong] = useState(style?.song || ''), [songDraft, setSongDraft] = useState<string | null>(null);
+ const [revealAt, setRevealAt] = useState(style?.revealAt || ''), [capsuleDraft, setCapsuleDraft] = useState(''), [styleError, setStyleError] = useState('');
+ const [now, setNow] = useState(() => Date.now()), [torn, setTorn] = useState(false), [slide, setSlide] = useState(0);
+ const locked = !!revealAt && Date.parse(revealAt) > now;
+ useEffect(() => {
+  if (!locked) return;
+  const timer = window.setInterval(() => {
+   const t = Date.now(); setNow(t);
+   // The moment a capsule opens, reload so everyone's held photos appear at once.
+   if (t >= Date.parse(revealAt)) { setRetry(n => n + 1); onChanged?.(); }
+  }, 1000);
+  return () => window.clearInterval(timer);
+ }, [locked, revealAt, onChanged]);
+ async function saveStyle(change: { theme?: string; song?: string; revealAt?: string }) {
+  setStyleError('');
+  try { await api('/api/folders', { method: 'PUT', body: JSON.stringify({ action: 'style', id: folderId, ...change }) }); return true; }
+  catch { setStyleError(ko ? '저장하지 못했어요. 잠시 후 다시 해 주세요.' : 'Could not save. Try again in a moment.'); return false; }
+ }
  const items = localItems || fetched;
  useEffect(() => {
   if (localItems) return;
@@ -156,9 +195,41 @@ ${url}`;
  const meta = albumThemes.find(t => t.id === theme)!;
  const day = birthday || shown[0]?.day || '';
 
+ const stills = allPhotos.filter(p => p.mediaType !== 'video' && p.src);
+ useEffect(() => {
+  if (theme !== 'vinyl' || stills.length < 2) return;
+  const timer = window.setInterval(() => setSlide(n => n + 1), 3200);
+  return () => window.clearInterval(timer);
+ }, [theme, stills.length]);
+ async function saveSong() {
+  const next = (songDraft || '').trim().slice(0, 80);
+  if (await saveStyle({ song: next })) { setSong(next); setSongDraft(null); }
+ }
+ async function lockCapsule() {
+  const at = new Date(capsuleDraft || localInput(nextSundayNine()));
+  if (await saveStyle({ revealAt: at.toISOString() })) { setRevealAt(at.toISOString()); setNow(Date.now()); setCapsuleDraft(''); }
+ }
+ async function openCapsule() {
+  if (await saveStyle({ revealAt: 'now' })) { setRevealAt(new Date().toISOString()); setNow(Date.now()); setRetry(n => n + 1); onChanged?.(); }
+ }
+ function tear(e: React.PointerEvent<HTMLButtonElement>) {
+  // Drag the stub sideways (or just tap it) to tear the pass and board.
+  const el = e.currentTarget, start = e.clientX;
+  el.setPointerCapture(e.pointerId);
+  const move = (ev: PointerEvent) => { const dx = Math.max(0, ev.clientX - start); el.style.transform = `translateX(${dx}px) rotate(${dx / 12}deg)`; };
+  const up = (ev: PointerEvent) => { el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); const dx = ev.clientX - start; el.style.transform = ''; if (dx > 60 || Math.abs(dx) < 6) board(el); };
+  el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
+ }
+ function board(el?: HTMLElement | null) {
+  el?.closest('.ta-gate')?.classList.add('is-torn');
+  window.setTimeout(() => setTorn(true), 520);
+ }
+
  function choose(id: AlbumThemeId) {
   setTheme(id);
   try { localStorage.setItem('memonestia-album-theme:' + folderId, id); } catch {}
+  setTorn(false);
+  if (editable) void saveStyle({ theme: id });
  }
  function photo(p: MemoryItem, index: number, size: 'big' | 'small', bare = false) {
   const caption = !bare && p.body && !fileLike.test(p.body.trim()) ? p.body : '';
@@ -185,6 +256,11 @@ ${url}`;
    }
    case 'stamp': return <div className="ta-stamps">{ps.map((p, i) => <div key={p.id} className="ta-stamp">{photo(p, i, 'small')}<span className="ta-postmark" aria-hidden="true">{dotted(p.day || chapter.day).slice(2)}</span></div>)}</div>;
    case 'collage': return <div className="ta-collage">{ps.map((p, i) => photo(p, i, 'small'))}</div>;
+   case 'receipt': return <div className="ta-rc-items">{ps.map((p, i) => <div key={p.id} className="ta-rc-item">
+    <p className="ta-rc-line"><span>{clock(p.created)}</span><span>{captionOf(p) || p.author || (ko ? '사진' : 'PHOTO')}</span><span>x1</span></p>
+    {photo(p, i, 'small', true)}
+   </div>)}</div>;
+   case 'vinyl': return <div className="ta-jackets">{ps.map((p, i) => <div key={p.id} className="ta-jacket"><span className="ta-jacket-disc" aria-hidden="true"/>{photo(p, i, 'small')}<span className="ta-jacket-no">{String.fromCharCode(65 + (ci % 2))}{i + 1}</span></div>)}</div>;
   }
   // Classic: alternate a big print and tilted pairs so every chapter feels hand-placed.
   const rows: MemoryItem[][] = []; const rest = [...chapter.photos]; let big = ci % 2 === 0;
@@ -197,7 +273,29 @@ ${url}`;
  if (!items) return <div className="ta-loading" role="status"><Wand2 size={22}/><strong>{ko ? '사진에 테마를 입히는 중…' : 'Decorating your album…'}</strong></div>;
 
  const countdown = birthday ? dDay(birthday) : '';
+ const mineHeld = (items || []).flatMap(i => i.kind === 'photo' ? [i] : i.photos || []).filter(p => p.held && p.mine && p.src && p.mediaType !== 'video');
+ const revealDate = revealAt ? new Date(revealAt) : null;
+ const revealLabel = revealDate ? revealDate.toLocaleString(ko ? 'ko-KR' : 'en', { month: 'long', day: 'numeric', weekday: 'long', hour: 'numeric', minute: '2-digit' }) : '';
+ if (locked && !localItems) return <section className="ta-wrap" aria-label={ko ? '타임캡슐 현상소' : 'Time capsule darkroom'}>
+  <div className="ta-capsule">
+   <span className="ta-capsule-kicker">{ko ? '타임캡슐 현상소' : 'TIME CAPSULE DARKROOM'}</span>
+   <h2>{title}</h2>
+   <p className="ta-capsule-when">{ko ? `${revealLabel}에 다 같이 공개돼요` : `Opens for everyone ${revealLabel}`}</p>
+   <strong className="ta-capsule-count" role="timer" aria-live="off">{countdownText(Date.parse(revealAt) - now, ko)}</strong>
+   <div className="ta-capsule-roll" aria-hidden="true">{Array.from({ length: Math.min(12, Math.max(6, style?.held || 0)) }, (_, i) => <i key={i} className={i < (style?.held || 0) ? 'is-filled' : ''}/>)}</div>
+   <p className="ta-capsule-stat">{ko ? `지금까지 ${style?.heldPeople || 0}명이 ${style?.held || 0}장을 맡겼어요` : `${style?.held || 0} photos from ${style?.heldPeople || 0} people so far`}</p>
+   {mineHeld.length > 0 && <div className="ta-capsule-mine"><small>{ko ? `내가 맡긴 사진 ${mineHeld.length}장 (나만 보여요)` : `Your ${mineHeld.length} photos (only you can see them)`}</small><div>{mineHeld.slice(0, 8).map(p => <img key={p.id} src={p.src} alt=""/>)}</div></div>}
+   <p className="ta-capsule-hint">{ko ? '공개 전까지 사진은 올린 사람만 볼 수 있어요. 일회용 카메라처럼, 현상될 때까지 기다려 주세요.' : 'Until then, photos are visible only to whoever took them. Like a disposable camera, wait for the prints.'}</p>
+   {shareable && <button className="primary-button" onClick={share}><Share2 size={16}/>{ko ? '단톡방에 링크 보내기' : 'Send the link to the group'}</button>}
+   {editable && <button className="ta-capsule-open" onClick={() => void openCapsule()}>{ko ? '지금 바로 현상하기' : 'Develop now'}</button>}
+   {styleError && <p className="ta-style-error" role="alert">{styleError}</p>}
+  </div>
+  {sharing && createPortal(<AlbumShare folderId={folderId} title={title} theme={theme} locale={locale} canInvite={!!canShare} day={day} photos={[]} people={people}
+   message={url => ko ? `⏳ ${title} 타임캡슐이에요!\n각자 찍은 사진을 올려 두면 ${revealLabel}에 한꺼번에 공개돼요.\n${url}` : `⏳ ${title} is a time capsule!\nAdd your photos and they all open together ${revealLabel}.\n${url}`} onClose={() => setSharing('')}/>, document.body)}
+ </section>;
+ const opened = revealDate && !locked && now - revealDate.getTime() < 3 * 86400000;
  return <section className="ta-wrap" aria-label={ko ? '꾸민 앨범' : 'Themed album'}>
+  {opened && <div className="ta-capsule-done"><Hourglass size={18}/><div><strong>{ko ? '현상 완료!' : 'Developed!'}</strong><small>{ko ? `${revealLabel}에 모두의 사진이 한꺼번에 공개됐어요.` : `Everyone's photos opened together ${revealLabel}.`}</small></div></div>}
   {birthday !== undefined && <div className="ta-birthday-bar">
    <span className="ta-birthday-count">{countdown || (ko ? '생일' : 'B-day')}</span>
    <div><strong>{people.length ? (ko ? `친구 ${people.length}명이 채웠어요` : `${people.length} ${people.length === 1 ? 'friend has' : 'friends have'} added photos`) : (ko ? '아직 아무도 채우지 않았어요' : 'Nobody has added a photo yet')}</strong><small>{ko ? '단톡방에 링크를 보내면 사진과 한마디가 여기에 쌓여요.' : 'Share the link in the group chat and photos with notes land here.'}</small></div>
@@ -222,12 +320,45 @@ ${url}`;
     </button>)}
    </div>
   </div>
+  {editable && birthday === undefined && !locked && <details className="ta-capsule-setup">
+   <summary><Hourglass size={16}/><strong>{ko ? '타임캡슐로 만들기' : 'Make it a time capsule'}</strong><small>{ko ? '각자 올린 사진을 정한 시간에 한꺼번에 공개' : 'Everyone’s photos open together at a set time'}</small></summary>
+   <p>{ko ? '여행이나 모임 중에 각자 사진을 올려 두면, 공개 시간까지는 올린 사람만 볼 수 있어요. 시간이 되면 모두에게 동시에 열려요.' : 'During the trip everyone adds photos, visible only to themselves. At the set time they open for everyone at once.'}</p>
+   <label>{ko ? '공개 시간' : 'Opens at'}<input type="datetime-local" value={capsuleDraft || localInput(nextSundayNine())} min={localInput(new Date(Date.now() + 5 * 60000))} onChange={e => setCapsuleDraft(e.target.value)}/></label>
+   <button className="primary-button" onClick={() => void lockCapsule()}><Hourglass size={16}/>{ko ? '잠그고 현상 기다리기' : 'Lock it'}</button>
+   {styleError && <p className="ta-style-error" role="alert">{styleError}</p>}
+  </details>}
 
-  <div key={theme} className={`ta-album theme-${theme}`}>
+  {theme === 'ticket' && !torn && <div className="ta-gate">
+   <div className="ta-gate-pass">
+    <div className="ta-gate-main">
+     <span className="ta-gate-kicker">BOARDING PASS · {ko ? '탑승권' : 'MEMONESTIA AIR'}</span>
+     <div className="ta-gate-route"><div><small>FROM</small><b>{ko ? '우리' : 'US'}</b></div><span aria-hidden="true">✈</span><div><small>TO</small><b>{title}</b></div></div>
+     <div className="ta-gate-meta"><div><small>{ko ? '날짜' : 'DATE'}</small><b>{day ? dotted(day) : '—'}</b></div><div><small>{ko ? '탑승객' : 'PAX'}</small><b>{people.length || 1}</b></div><div><small>{ko ? '사진' : 'PHOTOS'}</small><b>{allPhotos.length}</b></div><div><small>GATE</small><b>07</b></div></div>
+    </div>
+    <button className="ta-gate-stub" onPointerDown={tear} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); board(e.currentTarget); } }} aria-label={ko ? '탑승권 뜯고 앨범 열기' : 'Tear the pass and open the album'}>
+     {cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}
+     <b>{ko ? '뜯어서 탑승' : 'TEAR TO BOARD'}</b><span aria-hidden="true">→</span>
+    </button>
+   </div>
+   <p>{ko ? '오른쪽 표를 옆으로 밀어 뜯으면 여행 앨범이 열려요' : 'Swipe the stub to tear it and open the album'}</p>
+  </div>}
+  {theme === 'receipt' && <div className="ta-printer" aria-hidden="true"><span/></div>}
+  {!(theme === 'ticket' && !torn) && <div key={theme} className={`ta-album theme-${theme}`}>
    {theme === 'birthday' && <div className="ta-garland" aria-hidden="true">{Array.from({ length: 11 }, (_, i) => <i key={i}/>)}</div>}
    <header className="ta-cover">
     <span className="ta-kicker">{meta.kicker}</span>
-    {cover && <div className="ta-cover-photo">{photo(cover, 0, 'big', true)}<Deco item={decor[theme][0]} className="ta-at-cover-a"/><Deco item={decor[theme][1]} className="ta-at-cover-b"/></div>}
+    {theme === 'vinyl' ? <div className="ta-turntable">
+     <div className="ta-sleeve">{stills.length ? <img key={slide % stills.length} src={stills[slide % stills.length].src} alt=""/> : <i/>}</div>
+     <div className="ta-record" aria-hidden="true"><span className="ta-record-label">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : null}</span></div>
+     <span className="ta-tonearm" aria-hidden="true"/>
+    </div> : cover && <div className="ta-cover-photo">{photo(cover, 0, 'big', true)}<Deco item={decor[theme][0]} className="ta-at-cover-a"/><Deco item={decor[theme][1]} className="ta-at-cover-b"/></div>}
+    {theme === 'vinyl' && <div className="ta-nowplaying">
+     <Music2 size={16}/><div><small>NOW PLAYING</small>{songDraft === null ? <b>{song || (ko ? '우리의 노래' : 'Our song')}</b>
+      : <input autoFocus maxLength={80} value={songDraft} onChange={e => setSongDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') void saveSong(); if (e.key === 'Escape') setSongDraft(null); }} placeholder={ko ? '예: 검정치마 - Everything' : 'e.g. Artist - Song'} aria-label={ko ? '그날의 노래' : 'Song of the day'}/>}</div>
+     {songDraft !== null ? <button onClick={() => void saveSong()}>{ko ? '저장' : 'Save'}</button>
+      : <>{song && <a href={songSearch(song)} target="_blank" rel="noopener noreferrer">{ko ? '노래 듣기' : 'Listen'}</a>}{editable && <button onClick={() => setSongDraft(song)}>{song ? (ko ? '바꾸기' : 'Change') : (ko ? '그날의 노래 정하기' : 'Pick the song')}</button>}</>}
+    </div>}
+    {theme === 'vinyl' && styleError && <p className="ta-style-error" role="alert">{styleError}</p>}
     <h2>{monthly && month !== 'all' ? monthTitle(month) : title}</h2>
     {monthly && month !== 'all' && <p className="ta-cover-note">{title}</p>}
     {description && <p className="ta-cover-note">{description}</p>}
@@ -240,12 +371,19 @@ ${url}`;
     <Deco item={decor[theme][(ci * 2 + 3) % decor[theme].length]} className="ta-at-b"/>
    </section>)}
    {!shown.length && <p className="ta-empty">{ko ? '사진과 한 줄 메모를 올리면 이 테마로 자동으로 꾸며져요.' : 'Add photos and a note, and this theme decorates them for you.'}</p>}
+   {theme === 'receipt' && <div className="ta-rc-total">
+    <p><span>{ko ? '총 사진' : 'TOTAL PHOTOS'}</span><b>{allPhotos.length}</b></p>
+    <p><span>{ko ? '함께한 사람' : 'PEOPLE'}</span><b>{Math.max(1, people.length)}</b></p>
+    <p><span>{ko ? '결제' : 'PAID WITH'}</span><b>{ko ? '추억 100%' : 'MEMORIES'}</b></p>
+    <span className="ta-rc-barcode" aria-hidden="true"/>
+    <small>{ko ? '이 영수증은 다시 볼 수 있어요 · 환불 불가' : 'Keep this receipt · No refunds'}</small>
+   </div>}
    <footer className="ta-end">
     <span className="ta-end-stamp">THE END</span>
     <p>{ko ? `${people.length > 1 ? `${people.length}명이 함께 채운` : '우리의'} 앨범 · 사진 ${allPhotos.length}장` : `${people.length > 1 ? `Filled in by ${people.length} friends` : 'Our album'} · ${allPhotos.length} photos`}</p>
     <small>memonestia.</small>
    </footer>
-  </div>
+  </div>}
 
   {shareable && <div className="ta-share">
    <div><strong>{ko ? '카톡·인스타·쓰레드로 자랑하기' : 'Share to KakaoTalk, Instagram, Threads'}</strong><p>{canShare ? (ko ? '링크를 연 친구는 꾸민 앨범을 바로 보고 자기 사진도 보탤 수 있어요. 인스타 스토리용 이미지도 만들어 드려요.' : 'Friends who open the link see this album and can add photos. A story image is made for Instagram, too.') : (ko ? '꾸민 앨범을 인스타 스토리 이미지로 만들어 드려요.' : 'Turn this album into an Instagram story image.')}</p></div>

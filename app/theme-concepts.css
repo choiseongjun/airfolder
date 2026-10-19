@@ -1,0 +1,148 @@
+/* Concept albums: memory receipt, vinyl player, boarding gate and time capsule. */
+.ta-style-error{margin:8px 0 0;font-size:12px;color:#b3412b;text-align:center}
+
+/* ① Memory receipt: a thermal print that feeds out of a slot */
+.swatch-receipt .ta-swatch-art{background:#f6f4ee}
+.swatch-receipt .ta-swatch-art img{filter:grayscale(1) contrast(1.1)}
+.ta-printer{position:relative;z-index:2;max-width:400px;height:22px;margin:0 auto -8px;border-radius:10px;background:linear-gradient(#3b3b3b,#1d1d1d);box-shadow:0 6px 12px #0003}
+.ta-printer span{position:absolute;left:24px;right:24px;bottom:6px;height:4px;border-radius:2px;background:#000}
+.theme-receipt{--ink:#1f1f1f;max-width:380px;border-radius:0;padding:26px 22px 40px;background:#fbfaf6;font-family:var(--font-geist-mono),ui-monospace,monospace;box-shadow:0 10px 24px #0000001f;
+ -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 12px) no-repeat,conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/16px 12px repeat-x;
+ mask:linear-gradient(#000 0 0) top/100% calc(100% - 12px) no-repeat,conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/16px 12px repeat-x;
+ animation:ta-print 2.8s steps(28,end) both}
+@keyframes ta-print{from{clip-path:inset(0 0 100% 0);transform:translateY(-14px)}to{clip-path:inset(0 0 0 0);transform:none}}
+.theme-receipt .ta-photo{animation:none;transform:none}
+.theme-receipt .ta-cover{border-bottom:2px dashed #1f1f1f55;padding-bottom:16px}
+.theme-receipt .ta-kicker{font-size:12px;font-weight:800;letter-spacing:3px}
+.theme-receipt .ta-cover h2{font:800 22px/1.3 var(--font-geist-mono),monospace;letter-spacing:-.02em;text-transform:uppercase}
+.theme-receipt .ta-cover-photo{max-width:100%}
+.theme-receipt .ta-frame img,.theme-receipt .ta-frame video{filter:grayscale(1) contrast(1.15) brightness(1.05)}
+.theme-receipt .ta-cover-meta span{background:none;border:0;color:#555;font-size:12px}
+.theme-receipt .ta-sticker:not(.ta-sticker-text){display:none}
+.theme-receipt .ta-sticker-text{background:none;color:#1f1f1f;border:2px solid #1f1f1f;font:800 11px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:4px;opacity:.75}
+.theme-receipt .ta-chapter{padding-top:6px}
+.theme-receipt .ta-chapter-head{display:flex;flex-direction:column;align-items:flex-start;gap:4px;border-bottom:1px dashed #1f1f1f44;padding-bottom:8px}
+.theme-receipt .ta-chapter-label{font:800 12px var(--font-geist-mono),monospace;letter-spacing:2px;color:#1f1f1f}
+.theme-receipt .ta-note{font-family:var(--font-hand),cursive;font-size:19px;color:#1f1f1f;text-align:left;margin:0}
+.ta-rc-items{display:flex;flex-direction:column;gap:14px;margin-top:12px}
+.ta-rc-line{display:grid;grid-template-columns:auto 1fr auto;gap:10px;margin:0 0 6px;font-size:12px;line-height:1.4}
+.ta-rc-line span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ta-rc-item .ta-frame{border:1px solid #1f1f1f22}
+.ta-rc-total{margin-top:18px;padding-top:14px;border-top:2px dashed #1f1f1f55;font-size:13px}
+.ta-rc-total p{display:flex;justify-content:space-between;margin:0 0 6px}
+.ta-rc-total p b{font-weight:800}
+.ta-rc-barcode{display:block;height:46px;margin:16px 6px 8px;background:repeating-linear-gradient(90deg,#1f1f1f 0 2px,transparent 2px 4px,#1f1f1f 4px 7px,transparent 7px 8px,#1f1f1f 8px 9px,transparent 9px 12px)}
+.ta-rc-total small{display:block;text-align:center;font-size:11px;color:#555}
+.theme-receipt .ta-end-stamp{color:#1f1f1f}
+.theme-receipt .ta-end p{font-family:var(--font-geist-mono),monospace;font-size:12px}
+
+/* ② Vinyl player: a spinning record, a sleeve that flips through the photos, and the day's song */
+.swatch-vinyl .ta-swatch-art{background:#211a16}
+.theme-vinyl{--ink:#f4ead8;background:radial-gradient(circle at 50% 18%,#3a2e26,#1b1512 70%)}
+.theme-vinyl .ta-kicker{color:#e8b04a;letter-spacing:4px;font-weight:800}
+.theme-vinyl .ta-cover h2{font-family:var(--font-editorial),Georgia,serif;color:#f4ead8}
+.theme-vinyl .ta-cover-meta span{background:#ffffff14;color:#d9cbb0}
+.theme-vinyl .ta-chapter-label{color:#e8b04a;letter-spacing:3px}
+.theme-vinyl .ta-note{color:#f4ead8}
+.theme-vinyl .ta-photo figcaption{color:#d9cbb0}
+.theme-vinyl .ta-sticker-text{background:#e8b04a;color:#211a16;font:800 11px var(--font-geist-mono),monospace;letter-spacing:2px;border-radius:3px}
+.theme-vinyl .ta-end-stamp{color:#e8b04a}
+.ta-turntable{position:relative;width:min(100%,420px);aspect-ratio:1.45;margin:20px auto 6px}
+.ta-sleeve{position:absolute;left:0;top:6%;z-index:2;width:62%;aspect-ratio:1;overflow:hidden;border-radius:4px;background:#2d241e;box-shadow:6px 8px 18px #0008}
+.ta-sleeve img,.ta-sleeve i{display:block;width:100%;height:100%;object-fit:cover;animation:ta-fade .9s ease both}
+@keyframes ta-fade{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
+.ta-record{position:absolute;right:2%;top:4%;width:64%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 2px,#1e1e1e 2px 4px);box-shadow:0 8px 20px #000a,inset 0 0 0 6px #0a0a0a;animation:ta-spin 3.4s linear infinite}
+.ta-record::after{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,#fff0,#ffffff1c 8%,#fff0 16%,#fff0 50%,#ffffff14 58%,#fff0 66%)}
+.ta-record-label{position:absolute;inset:33%;overflow:hidden;border-radius:50%;background:#e8b04a;border:3px solid #f4ead8}
+.ta-record-label img{width:100%;height:100%;object-fit:cover}
+.ta-record-label::after{content:'';position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:#1b1512}
+@keyframes ta-spin{to{transform:rotate(360deg)}}
+.ta-tonearm{position:absolute;right:0;top:0;z-index:3;width:6px;height:56%;border-radius:3px;background:linear-gradient(#d8d0c0,#8f8676);transform-origin:50% 6%;transform:rotate(24deg);box-shadow:2px 2px 4px #0006}
+.ta-tonearm::before{content:'';position:absolute;top:-8px;left:-8px;width:22px;height:22px;border-radius:50%;background:#bfb6a6}
+.ta-tonearm::after{content:'';position:absolute;bottom:-4px;left:-5px;width:16px;height:12px;border-radius:2px;background:#d8d0c0}
+.ta-nowplaying{display:flex;align-items:center;gap:10px;max-width:420px;margin:10px auto 4px;padding:10px 12px;border-radius:14px;background:#ffffff12;color:#f4ead8;text-align:left}
+.ta-nowplaying>svg{flex-shrink:0;color:#e8b04a}
+.ta-nowplaying>div{flex:1;min-width:0;display:flex;flex-direction:column}
+.ta-nowplaying small{font:700 10px var(--font-geist-mono),monospace;letter-spacing:2px;color:#c9b99c}
+.ta-nowplaying b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ta-nowplaying input{width:100%;padding:6px 8px;border:1px solid #e8b04a;border-radius:8px;background:#0003;color:#f4ead8;font:inherit;font-size:16px}
+.ta-nowplaying a,.ta-nowplaying button{flex-shrink:0;padding:7px 11px;border:0;border-radius:999px;background:#e8b04a;color:#211a16;font:inherit;font-size:12px;font-weight:800;text-decoration:none;cursor:pointer}
+.ta-nowplaying button{background:#ffffff1f;color:#f4ead8}
+.ta-jackets{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin-top:12px}
+.ta-jacket{position:relative;padding-right:14px}
+.ta-jacket-disc{position:absolute;right:0;top:8%;width:84%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#111 0 2px,#1d1d1d 2px 4px);box-shadow:0 4px 8px #0008}
+.ta-jacket .ta-photo{position:relative;z-index:1;transform:none}
+.ta-jacket .ta-frame{border-radius:3px;box-shadow:4px 6px 12px #0009}
+.ta-jacket .ta-frame img,.ta-jacket .ta-frame video{aspect-ratio:1}
+.ta-jacket-no{position:absolute;left:6px;top:6px;z-index:2;padding:2px 6px;border-radius:3px;background:#e8b04a;color:#211a16;font:800 10px var(--font-geist-mono),monospace}
+
+/* ③ Boarding gate: tear the stub to open the trip */
+.ta-gate{max-width:560px;margin:0 auto;padding:22px 14px;border-radius:22px;background:radial-gradient(#c4d4e4 1.4px,transparent 1.8px) 0 0/26px 26px,#e6eef6;text-align:center}
+.ta-gate>p{margin:12px 0 0;font-size:12px;color:#4d6b8c}
+.ta-gate-pass{display:flex;align-items:stretch;filter:drop-shadow(0 10px 18px #1f3b5b2e);animation:ta-in .4s ease-out}
+.ta-gate-main{flex:1;min-width:0;padding:18px 16px;border-radius:16px 0 0 16px;background:#fff;text-align:left;color:#1f3b5b;
+ -webkit-mask:radial-gradient(circle 10px at right 0 top 0,#0000 98%,#000) top,radial-gradient(circle 10px at right 0 bottom 0,#0000 98%,#000) bottom;-webkit-mask-size:100% 51%;-webkit-mask-repeat:no-repeat;
+ mask:radial-gradient(circle 10px at right 0 top 0,#0000 98%,#000) top,radial-gradient(circle 10px at right 0 bottom 0,#0000 98%,#000) bottom;mask-size:100% 51%;mask-repeat:no-repeat}
+.ta-gate-kicker{display:inline-block;padding:4px 9px;border-radius:4px;background:#1f3b5b;color:#fff;font:800 10px var(--font-geist-mono),monospace;letter-spacing:2px}
+.ta-gate-route{display:flex;align-items:center;gap:10px;margin:14px 0}
+.ta-gate-route>div{min-width:0}
+.ta-gate-route>div:last-child{flex:1}
+.ta-gate-route>span{color:#e8833a;font-size:20px}
+.ta-gate small{display:block;font:700 10px var(--font-geist-mono),monospace;letter-spacing:1.5px;color:#7d93ab}
+.ta-gate-route b{display:block;font:700 22px/1.2 var(--font-editorial),Georgia,serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ta-gate-meta{display:grid;grid-template-columns:repeat(4,auto);justify-content:space-between;gap:8px;padding-top:12px;border-top:1px dashed #c4d4e4}
+.ta-gate-meta b{font:800 14px var(--font-geist-mono),monospace}
+.ta-gate-stub{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:118px;flex-shrink:0;padding:14px 10px;border:0;border-left:2px dashed #c4d4e4;border-radius:0 16px 16px 0;background:#fff;color:#1f3b5b;font:inherit;cursor:grab;touch-action:pan-y;transition:transform .25s;
+ -webkit-mask:radial-gradient(circle 10px at left 0 top 0,#0000 98%,#000) top,radial-gradient(circle 10px at left 0 bottom 0,#0000 98%,#000) bottom;-webkit-mask-size:100% 51%;-webkit-mask-repeat:no-repeat;
+ mask:radial-gradient(circle 10px at left 0 top 0,#0000 98%,#000) top,radial-gradient(circle 10px at left 0 bottom 0,#0000 98%,#000) bottom;mask-size:100% 51%;mask-repeat:no-repeat}
+.ta-gate-stub:active{cursor:grabbing;transition:none}
+.ta-gate-stub img,.ta-gate-stub i{display:block;width:64px;height:64px;border-radius:8px;object-fit:cover;background:#e6eef6}
+.ta-gate-stub b{font:800 11px var(--font-geist-mono),monospace;letter-spacing:1px;color:#e8833a}
+.ta-gate-stub>span{font-size:18px;color:#e8833a;animation:ta-nudge-x 1.2s ease-in-out infinite}
+@keyframes ta-nudge-x{50%{transform:translateX(6px)}}
+.ta-gate.is-torn .ta-gate-stub{transition:transform .5s ease-in,opacity .5s;transform:translate(140px,60px) rotate(28deg)!important;opacity:0}
+.ta-gate.is-torn .ta-gate-main{transition:transform .5s ease-in,opacity .5s .1s;transform:translateY(-12px) scale(.98);opacity:0}
+.theme-ticket .ta-chapter-label{display:inline-grid;place-items:center;width:74px;height:74px;border:3px double #e8833a;border-radius:50%;transform:rotate(-12deg);font:800 11px var(--font-geist-mono),monospace;letter-spacing:1px;line-height:1.2;text-align:center}
+
+/* ④ Time capsule darkroom */
+.ta-capsule{max-width:560px;margin:0 auto;padding:30px 20px 26px;border-radius:22px;background:radial-gradient(circle at 50% 0,#5a1d1d,#1a0d0d 70%);color:#f6e7da;text-align:center;box-shadow:0 18px 40px #2a0d0d40}
+.ta-capsule-kicker{display:inline-block;padding:5px 11px;border:1px solid #ff6b5b88;border-radius:999px;color:#ff8a7a;font:800 11px var(--font-geist-mono),monospace;letter-spacing:3px}
+.ta-capsule h2{margin:14px 0 6px;font:600 26px/1.25 var(--font-editorial),Georgia,serif}
+.ta-capsule-when{margin:0;font-size:13px;color:#e2c3b4}
+.ta-capsule-count{display:block;margin:18px 0 6px;font:800 34px var(--font-geist-mono),monospace;letter-spacing:1px;color:#ff8a7a;text-shadow:0 0 18px #ff4d3a66}
+.ta-capsule-roll{display:flex;gap:6px;justify-content:center;margin:18px auto 8px;padding:10px 12px;max-width:360px;border-radius:6px;background:#0d0606;background-image:linear-gradient(90deg,#3a2020 50%,transparent 50%),linear-gradient(90deg,#3a2020 50%,transparent 50%);background-size:12px 5px;background-position:0 3px,0 calc(100% - 3px);background-repeat:repeat-x}
+.ta-capsule-roll i{flex:1;max-width:30px;aspect-ratio:3/4;border-radius:2px;background:#2a1414}
+.ta-capsule-roll i.is-filled{background:linear-gradient(135deg,#7a3b2c,#3a1a14);animation:ta-develop 2.4s ease-in-out infinite alternate;animation-delay:calc(var(--n,0) * 120ms)}
+@keyframes ta-develop{to{background:linear-gradient(135deg,#a8573f,#4e231a)}}
+.ta-capsule-stat{margin:6px 0 14px;font-size:14px;font-weight:700}
+.ta-capsule-mine{margin:0 auto 14px;max-width:360px}
+.ta-capsule-mine small{display:block;margin-bottom:6px;font-size:11px;color:#e2c3b4}
+.ta-capsule-mine div{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.ta-capsule-mine img{width:44px;height:44px;border-radius:6px;object-fit:cover;filter:sepia(1) hue-rotate(-30deg) saturate(2) brightness(.6)}
+.ta-capsule-hint{max-width:340px;margin:0 auto 16px;font-size:12px;line-height:1.6;color:#d8b4a4}
+.ta-capsule .primary-button{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:14px;background:#ff6b5b;color:#1a0d0d;font-weight:800;box-shadow:0 3px 0 #a8382c}
+.ta-capsule-open{display:block;margin:12px auto 0;padding:8px;border:0;background:none;color:#e2c3b4;font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.ta-capsule-done{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:12px 14px;border-radius:16px;background:#2a1414;color:#f6e7da}
+.ta-capsule-done svg{flex-shrink:0;color:#ff8a7a}
+.ta-capsule-done strong{display:block;font-size:14px}
+.ta-capsule-done small{display:block;font-size:12px;color:#e2c3b4}
+.ta-capsule-setup{margin:0 0 16px;padding:12px 14px;border:2px dashed var(--brand-line);border-radius:16px;background:var(--brand-softer);color:var(--ink)}
+.ta-capsule-setup summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer;list-style:none}
+.ta-capsule-setup summary::-webkit-details-marker{display:none}
+.ta-capsule-setup summary svg{color:var(--brand)}
+.ta-capsule-setup summary strong{font-size:14px}
+.ta-capsule-setup summary small{font-size:12px;color:var(--ink-soft)}
+.ta-capsule-setup p{margin:10px 0;font-size:13px;line-height:1.6;color:var(--ink-soft)}
+.ta-capsule-setup label{display:grid;gap:6px;margin-bottom:10px;font-size:12px;font-weight:700}
+.ta-capsule-setup input{padding:10px 12px;border:1px solid var(--edge);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:16px}
+.ta-capsule-setup .primary-button{display:inline-flex;align-items:center;gap:7px}
+
+@media(prefers-reduced-motion:reduce){
+ .theme-receipt,.ta-record,.ta-gate-stub>span,.ta-capsule-roll i.is-filled,.ta-sleeve img{animation:none}
+}
+@media(max-width:560px){
+ .ta-gate-stub{width:96px}
+ .ta-gate-route b{font-size:18px}
+ .ta-gate-meta{grid-template-columns:repeat(2,auto)}
+ .ta-capsule-count{font-size:28px}
+}

@@ -11,7 +11,7 @@ import './record-bundles.css';
 type Locale='ko'|'en';
 type Comment={id:string;body:string;author:string;mine:boolean;createdAt:string;revision:number;updatedAt:string};
 type DiscussionData={mine?:boolean;comments:Comment[];count:number;liked:boolean;hasMore:boolean;shared:boolean;audience?:string};
-export type MemoryItem={id:string;kind:'record'|'photo';body:string;title?:string;photos?:MemoryItem[];created?:number;day:string;shared:boolean;mine:boolean;author:string;revision:number;updatedAt:string;src?:string;audience?:string;recipients?:string[];mediaType?:string;originalAvailable?:boolean;hasPreview?:boolean};
+export type MemoryItem={id:string;kind:'record'|'photo';body:string;title?:string;photos?:MemoryItem[];created?:number;day:string;shared:boolean;mine:boolean;author:string;revision:number;updatedAt:string;src?:string;audience?:string;recipients?:string[];mediaType?:string;originalAvailable?:boolean;hasPreview?:boolean;held?:boolean};
 const emptyDiscussion:DiscussionData={comments:[],count:0,liked:false,hasMore:false,shared:false};
 function errorText(error:unknown,ko:boolean){
  const code=error instanceof Error?error.message:'';

@@ -4,6 +4,7 @@ import { ApiError, json, pool, safe, sameOrigin, transaction, uuid, viewer } fro
 import { folderDates } from '@/lib/folder-dates';
 import { trackGrowth } from '@/lib/growth';
 import { deleteAlbum, restoreAlbum } from '@/lib/album-deletion';
+import { ALBUM_THEME_IDS, CAPSULE_MAX_DAYS, SONG_MAX } from '@/lib/album-style';
 export async function GET(){return safe(async()=>{
   const who=await viewer();
   const result=await pool().query(`SELECT id,name,deleted_at,deleted_at+interval '30 days' AS expires_at,deleted_at<=now()-interval '30 days' AS expired FROM snaproom.folders WHERE owner_id=$1 AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,[who]);
@@ -11,6 +12,24 @@ export async function GET(){return safe(async()=>{
 });}
 export async function PUT(request:Request){return safe(async()=>{
   sameOrigin(request);const who=await viewer(),body=await json(request);
+  if(body.action==='style'){
+    // The owner sets the look, the song and the time capsule for everyone in the album.
+    const id=uuid(body.id),sets:string[]=[],values:unknown[]=[id,who];
+    if(body.theme!==undefined){if(!ALBUM_THEME_IDS.includes(body.theme))throw new ApiError(400,'INVALID_THEME');values.push(body.theme);sets.push('theme=$'+values.length);}
+    if(body.song!==undefined){if(typeof body.song!=='string'||body.song.trim().length>SONG_MAX)throw new ApiError(400,'INVALID_SONG');values.push(body.song.trim());sets.push('song=$'+values.length);}
+    if(body.revealAt!==undefined){
+      // 'now' opens the capsule early; there is no way to cancel it and leave held photos hidden.
+      const at=body.revealAt==='now'?new Date():new Date(String(body.revealAt));
+      if(Number.isNaN(at.getTime())||(body.revealAt!=='now'&&(at.getTime()<Date.now()+60000||at.getTime()>Date.now()+CAPSULE_MAX_DAYS*86400000)))throw new ApiError(400,'INVALID_REVEAL_TIME');
+      values.push(at.toISOString());sets.push('reveal_at=$'+values.length);
+    }
+    if(!sets.length)throw new ApiError(400,'NOTHING_TO_UPDATE');
+    await requireTerms(who);
+    const updated=await pool().query(`UPDATE snaproom.folders SET ${sets.join(',')} WHERE id=$1 AND owner_id=$2 AND deleted_at IS NULL RETURNING id`,values);
+    if(!updated.rowCount)throw new ApiError(403,'OWNER_REQUIRED');
+    if(body.revealAt==='now')await pool().query('SELECT snaproom.reveal_due_capsules($1)',[who]);
+    return Response.json({ok:true});
+  }
   if(body.action!=='restore')throw new ApiError(400,'INVALID_ACTION');
   await transaction(db=>restoreAlbum(db,uuid(body.id),who));return Response.json({ok:true});
 });}
