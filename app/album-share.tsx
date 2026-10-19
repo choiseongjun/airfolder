@@ -1,10 +1,11 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- The preview is a local object URL of the rendered story image. */
 import { useEffect, useRef, useState } from 'react';
-import { Copy, Download, Link2, MessageCircle, X } from 'lucide-react';
+import { Copy, Download, Link2, MessageCircle, Video, X } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { shareToKakao } from '@/lib/kakao-share';
 import { renderStory, type StoryTheme } from '@/lib/story-image';
+import { renderStoryVideo } from '@/lib/story-video';
 import './album-share.css';
 
 type Props = { folderId: string; title: string; theme: StoryTheme; photos: string[]; people: string[]; day: string; locale: 'ko' | 'en'; canInvite: boolean; message: (url: string) => string; onClose: () => void };
@@ -14,6 +15,7 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
  const ko = locale === 'ko', t = (a: string, b: string) => ko ? a : b;
  const canvas = useRef<HTMLCanvasElement>(null);
  const [image, setImage] = useState<Blob | null>(null), [preview, setPreview] = useState(''), [link, setLink] = useState(''), [note, setNote] = useState(''), [busy, setBusy] = useState('');
+ const [makingVideo, setMakingVideo] = useState(false), [videoProgress, setVideoProgress] = useState(0);
  useEffect(() => {
   let active = true, url = '';
   if (canvas.current) renderStory(canvas.current, { theme, title, photos, people, day, ko })
@@ -28,6 +30,20 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
  const text = link ? message(link) : '';
  const fileName = `memonestia-${theme}.jpg`;
 
+ async function video() {
+  if (makingVideo || !photos.length) return;
+  setMakingVideo(true); setVideoProgress(0); setNote('');
+  try {
+   const result = await renderStoryVideo({ title, photos, day, ko }, setVideoProgress);
+   const ext = result.mimeType.includes('mp4') ? 'mp4' : 'webm';
+   const file = new File([result.blob], `memonestia-${theme}.${ext}`, { type: result.mimeType });
+   // Phones offer Instagram Stories in the share sheet; elsewhere the clip is saved for upload.
+   if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file] }); setNote(t('공유 창에서 Instagram → 스토리를 고르세요.', 'Pick Instagram → Story in the share sheet.')); } catch { /* Closing the sheet is fine. */ } return; }
+   const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click();
+   setNote(t('영상을 저장했어요. 인스타그램 스토리에서 올려주세요.', 'Video saved. Post it to your Instagram story.'));
+  } catch { setNote(t('이 브라우저에서는 영상을 만들 수 없어요. 이미지로 공유해 주세요.', 'This browser can’t make a video here. Share the image instead.')); }
+  finally { setMakingVideo(false); }
+ }
  async function instagram() {
   if (!image) return;
   const file = new File([image], fileName, { type: 'image/jpeg' });
@@ -72,6 +88,7 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
    </div>
    <div className="share-secondary">
     <button disabled={!preview} onClick={() => { const a = document.createElement('a'); a.href = preview; a.download = fileName; a.click(); setNote(t('이미지를 저장했어요.', 'Image saved.')); }}><Download size={15} />{t('이미지 저장', 'Save image')}</button>
+    <button disabled={!photos.length || makingVideo} onClick={() => void video()}><Video size={15} />{makingVideo ? t(`영상 만드는 중 ${Math.round(videoProgress * 100)}%`, `Making video ${Math.round(videoProgress * 100)}%`) : t('영상으로 저장', 'Save as video')}</button>
     {typeof navigator !== 'undefined' && 'share' in navigator && <button disabled={!text} onClick={() => void more()}><Copy size={15} />{t('다른 앱으로', 'More apps')}</button>}
    </div>
    {note && <p className="share-note" role="status">{note}</p>}
