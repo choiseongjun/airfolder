@@ -45,10 +45,3 @@
 .qa-days{margin:14px 0 0;font-size:13px;font-weight:700;color:var(--brand)}
 .qa-edit-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink-soft)}
 .qa-edit-bar button{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid var(--brand-line);border-radius:999px;background:var(--card);color:var(--brand);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
-.qa-dupe-group{margin-bottom:22px}
-.qa-dupe-count{display:block;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--brand)}
-.qa-dupe-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
-.qa-dupe-pick{position:relative;flex:0 0 auto;width:92px;height:92px;padding:0;border:2.5px solid transparent;border-radius:12px;overflow:hidden;background:var(--brand-soft);cursor:pointer;opacity:.55}
-.qa-dupe-pick img{width:100%;height:100%;object-fit:cover}
-.qa-dupe-pick.is-chosen{border-color:var(--brand);opacity:1}
-.qa-dupe-pick.is-chosen svg{position:absolute;top:5px;right:5px;width:20px;height:20px;padding:3px;border-radius:50%;background:var(--brand);color:#fff;box-sizing:border-box}

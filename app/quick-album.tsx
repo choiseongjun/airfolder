@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Thumbnails are local object URLs of photos not uploaded yet. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowLeft, ArrowRight, Camera, Check, ImagePlus, PencilLine, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, ImagePlus, PencilLine, X } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { IMAGE_LIMIT } from '@/lib/media-limits';
 import { TERMS_VERSION } from '@/lib/policy';
@@ -37,9 +37,9 @@ async function takenAt(file: File) {
 /** The first-visit path: pick a trip's photos at once, see them sorted by day and decorated, then keep the album. */
 export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { locale: 'ko' | 'en'; onClose: () => void; onSaved: (folderId: string) => void; onBlank?: () => void }) {
   const ko = locale === 'ko', t = (a: string, b: string) => ko ? a : b;
-  const [step, setStep] = useState<'pick' | 'dedupe' | 'preview' | 'note'>('pick');
+  const [step, setStep] = useState<'pick' | 'preview' | 'note'>('pick');
   const [picks, setPicks] = useState<Pick[]>([]), [reading, setReading] = useState(false), [name, setName] = useState(''), [note, setNote] = useState('');
-  const [scanning, setScanning] = useState(false), [clusters, setClusters] = useState<Pick[][]>([]), [keep, setKeep] = useState<Record<number, string>>({});
+  const [scanning, setScanning] = useState(false), [grouped, setGrouped] = useState(0);
   const [accepted, setAccepted] = useState<boolean | null>(null), [consent, setConsent] = useState(false);
   const [saving, setSaving] = useState(''), [error, setError] = useState('');
   const urls = useRef<string[]>([]), [todayKey] = useState(() => dayKey(Date.now()));
@@ -70,8 +70,30 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { loca
   }
   function remove(id: string) { setPicks(old => old.filter(p => p.id !== id)); }
 
-  // Burst shots and retakes of the same moment get grouped so people pick one instead of
-  // uploading near-identical frames; anything that doesn't match a neighbor passes straight through.
+  /** Composes a cluster of near-identical shots into one mini-grid image, instead of making
+   *  someone decide which to throw away — nothing a guest picked ever gets silently dropped. */
+  async function composeGroup(group: Pick[]): Promise<Pick> {
+    const imgs = await Promise.all(group.slice(0, 4).map(p => new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image(); img.onload = () => resolve(img); img.onerror = reject; img.src = p.url;
+    })));
+    const cols = imgs.length > 1 ? 2 : 1, rows = Math.ceil(imgs.length / cols), gap = 12, cell = 560;
+    const w = cols * cell + gap * (cols + 1), h = rows * cell + gap * (rows + 1);
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+    imgs.forEach((img, i) => {
+      const x = gap + (i % cols) * (cell + gap), y = gap + Math.floor(i / cols) * (cell + gap);
+      const scale = Math.max(cell / img.width, cell / img.height), sw = cell / scale, sh = cell / scale;
+      ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x, y, cell, cell);
+    });
+    const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(new Error('NO_BLOB')), 'image/jpeg', .92));
+    const file = new File([blob], `moment-${group[0].id}.jpg`, { type: 'image/jpeg' });
+    const url = URL.createObjectURL(file); urls.current.push(url);
+    return { id: crypto.randomUUID(), file, url, taken: Math.min(...group.map(p => p.taken)) };
+  }
+
+  // Burst shots and retakes of the same moment get grouped into one frame, so a trip's worth of
+  // "same spot, five photos" reads as one nice tile instead of five near-duplicates in a row.
   async function proceedFromPick() {
     if (!picks.length || reading || scanning) return;
     setScanning(true);
@@ -79,11 +101,10 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { loca
       const hashes = new Map<string, string | null>();
       await Promise.all(picks.map(async p => { hashes.set(p.id, await hashImage(p.url)); }));
       const groups = groupDuplicates(picks, hashes);
-      if (groups.some(g => g.length > 1)) {
-        setClusters(groups);
-        setKeep(Object.fromEntries(groups.map((g, i) => [i, g.reduce((best, p) => p.file.size > best.file.size ? p : best).id])));
-        setStep('dedupe');
-      } else setStep('preview');
+      const merged = await Promise.all(groups.map(g => g.length > 1 ? composeGroup(g) : Promise.resolve(g[0])));
+      setPicks(merged.sort((a, b) => a.taken - b.taken));
+      setGrouped(groups.filter(g => g.length > 1).length);
+      setStep('preview');
     } finally { setScanning(false); }
   }
 
@@ -137,7 +158,7 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { loca
   return createPortal(<div className="qa-screen" role="dialog" aria-modal="true" aria-label={t('사진으로 앨범 만들기', 'Make an album from photos')}>
     <header className="qa-top">
       {step === 'pick' ? <button aria-label={t('닫기', 'Close')} onClick={onClose}><X size={20} /></button> : <button aria-label={t('뒤로', 'Back')} onClick={() => setStep(step === 'note' ? 'preview' : 'pick')}><ArrowLeft size={20} /></button>}
-      <ol aria-label={t('단계', 'Steps')}>{(['pick', 'preview'] as const).map((s, i) => <li key={s} className={s === step || (s === 'pick' && step === 'dedupe') || (s === 'preview' && step === 'note') ? 'is-on' : ''}>{i + 1}</li>)}</ol>
+      <ol aria-label={t('단계', 'Steps')}>{(['pick', 'preview'] as const).map((s, i) => <li key={s} className={s === step || (s === 'preview' && step === 'note') ? 'is-on' : ''}>{i + 1}</li>)}</ol>
       <span />
     </header>
 
@@ -156,16 +177,6 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { loca
       <div className="qa-dock"><button className="qa-primary" disabled={!picks.length || reading || scanning} onClick={() => void proceedFromPick()}>{reading ? t('찍은 날짜 읽는 중…', 'Reading dates…') : scanning ? t('비슷한 사진 찾는 중…', 'Checking for similar shots…') : picks.length ? t(`사진 ${picks.length}장으로 앨범 만들기`, `Make the album from ${picks.length}`) : t('사진을 골라 주세요', 'Choose some photos')}<ArrowRight size={18} /></button></div>
     </section>}
 
-    {step === 'dedupe' && <section className="qa-body">
-      <h2>{t('비슷한 사진은 하나만 남길까요?', 'Keep just one of each similar shot?')}</h2>
-      <p>{t('연속으로 찍힌 비슷한 사진들을 모아봤어요. 제일 잘 나온 걸 골라주세요. 나머지는 앨범에 담기지 않아요.', 'We grouped shots that look alike. Pick the best one from each — the rest won’t be added.')}</p>
-      {clusters.map((group, gi) => group.length > 1 && <div className="qa-dupe-group" key={group[0].id}>
-        <span className="qa-dupe-count">{t(`비슷한 사진 ${group.length}장`, `${group.length} similar photos`)}</span>
-        <div className="qa-dupe-row">{group.map(p => <button key={p.id} className={`qa-dupe-pick${keep[gi] === p.id ? ' is-chosen' : ''}`} aria-pressed={keep[gi] === p.id} onClick={() => setKeep(old => ({ ...old, [gi]: p.id }))}><img src={p.url} alt="" />{keep[gi] === p.id && <Check />}</button>)}</div>
-      </div>)}
-      <div className="qa-dock"><button className="qa-primary" onClick={() => { setPicks(clusters.flatMap((g, gi) => g.length > 1 ? g.filter(p => p.id === keep[gi]) : g)); setStep('preview'); }}>{t('이대로 앨범 만들기', 'Continue with these')}<ArrowRight size={18} /></button></div>
-    </section>}
-
     {step === 'note' && <section className="qa-body">
       <h2>{t('제목과 한 줄을 바꿔 볼까요?', 'Change the title or the first line?')}</h2>
       <p>{t('비워 두면 자동으로 채운 그대로 둘게요.', 'Leave them empty to keep what we filled in.')}</p>
@@ -176,6 +187,7 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank }: { loca
 
     {step === 'preview' && <section className="qa-body qa-preview">
       <div className="qa-edit-bar"><span>{dayCount > 1 ? t(`${dayCount}일로 나눠 꾸몄어요`, `Sorted into ${dayCount} days`) : t('자동으로 꾸몄어요', 'Decorated for you')}</span><button onClick={() => setStep('note')}><PencilLine size={14} />{t('제목·한 줄 바꾸기', 'Edit title & line')}</button></div>
+      {grouped > 0 && <p className="qa-days">{t(`비슷한 사진은 한 장으로 예쁘게 묶었어요 (${grouped}곳)`, `Grouped similar shots into one frame (${grouped})`)}</p>}
       <ThemeAlbum folderId="quick-preview" title={title} description="" locale={locale} browsing={false} localItems={items} onPhoto={() => {}} />
       <div className="qa-dock">
         {accepted === false && <Consent ko={ko} checked={consent} onChange={setConsent} />}
