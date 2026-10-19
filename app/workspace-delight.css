@@ -70,6 +70,19 @@
 .app-shell .tab span{border-radius:5px;background:#dce5ce}
 .app-shell .search,.app-shell[lang=en] .search{height:42px;border-radius:12px;background:#f5f3ed;border-color:#eeebe3;padding-inline:13px;color:#9a9d8c}
 .app-shell .search input{font-size:11px}
+/* The bookshelf: a quick, decorative overview above the full album grid below. */
+.bookshelf-stats{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12px;font-weight:700;color:#5a6a4e}
+.bookshelf-stats span{display:flex;align-items:center;gap:6px}
+.bookshelf-stats-dot{width:3px;height:3px;border-radius:50%;background:#b7bca5}
+.bookshelf{margin:0 0 26px}
+.shelf-row{display:flex;align-items:flex-end;gap:7px;padding:14px 4px 0;overflow-x:auto;scrollbar-width:none}
+.shelf-row::-webkit-scrollbar{display:none}
+.shelf-book{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:space-between;height:148px;padding:14px 0 10px;border:0;border-radius:4px 4px 2px 2px;box-shadow:inset 2px 0 0 #ffffff33,inset -2px 0 0 #00000022,2px 3px 6px #2b2b1a22;cursor:pointer;color:#fff;transition:transform .18s}
+.shelf-book:hover{transform:translateY(-6px)}
+.shelf-book-title{writing-mode:vertical-rl;text-orientation:mixed;font-size:12px;font-weight:700;letter-spacing:.3px;max-height:104px;overflow:hidden;text-overflow:ellipsis;color:#fff;text-shadow:0 1px 2px #00000040}
+.shelf-book-count{font-size:9px;font-weight:700;background:#ffffff40;border-radius:999px;padding:2px 6px;color:#fff;text-shadow:none}
+.shelf-plank{height:14px;margin-top:-2px;border-radius:0 0 6px 6px;background:linear-gradient(#b08a5f,#8c6a47);box-shadow:0 6px 10px #3c2a1530}
+@media(max-width:480px){.shelf-book{height:124px}.shelf-book-title{max-height:84px;font-size:11px}}
 .app-shell .room-grid,.app-shell[lang=en] .room-grid{gap:18px 15px}
 .app-shell .room-card{border:1px solid #e9e4d8;border-radius:7px 16px 16px 7px;background:#fffdf8;box-shadow:2px 3px 0 #e9e4d980,0 5px 14px #433e2d05;position:relative;padding:8px 8px 0;overflow:visible}
 .app-shell .room-card:before{content:"";position:absolute;left:2px;top:4px;bottom:4px;width:2px;background:#eae5d9;border-radius:2px;pointer-events:none}
