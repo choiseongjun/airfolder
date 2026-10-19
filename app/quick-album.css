@@ -1,0 +1,42 @@
+/* Quick album: a full-screen, three-step flow from photos to a decorated album. */
+.qa-screen{position:fixed;inset:0;z-index:110;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);overflow:auto}
+.qa-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#f3efe5ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--edge)}
+.qa-top button{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--edge);border-radius:50%;background:var(--card);color:var(--ink);cursor:pointer}
+.qa-top>span{width:38px}
+.qa-top ol{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.qa-top li{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brand-soft);color:var(--ink-soft);font-size:12px;font-weight:700}
+.qa-top li.is-on{background:var(--brand);color:#fff}
+.qa-body{width:100%;max-width:560px;margin:0 auto;padding:22px 16px 150px;box-sizing:border-box}
+.qa-body h2{margin:0 0 6px;font:600 28px/1.25 var(--font-editorial),Georgia,serif;letter-spacing:-.03em}
+.qa-body>p{margin:0 0 20px;font-size:14px;line-height:1.6;color:var(--ink-soft)}
+.qa-sources{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qa-source{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:128px;border:1.5px dashed var(--brand-line);border-radius:16px;background:var(--card);color:var(--brand);cursor:pointer}
+.qa-source strong{font-size:14px;color:var(--ink)}
+.qa-source input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.qa-thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+.qa-thumbs span{position:relative;aspect-ratio:1;overflow:hidden;border-radius:10px;background:var(--brand-soft)}
+.qa-thumbs img{width:100%;height:100%;object-fit:cover}
+.qa-thumbs button{position:absolute;top:4px;right:4px;width:26px;height:26px;border:0;border-radius:50%;background:#000a;color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.qa-sample{display:block;margin:16px auto 0;padding:8px;border:0;background:none;color:var(--brand);font:inherit;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.qa-field{display:grid;gap:8px;margin-bottom:16px;font-size:13px;font-weight:600}
+.qa-field input,.qa-field textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid var(--edge);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.qa-field input:focus,.qa-field textarea:focus{outline:none;border-color:var(--brand)}
+.qa-error{margin:10px 0 0;font-size:13px;color:#b3412b}
+.qa-dock{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#f3efe5f2;backdrop-filter:blur(10px);border-top:1px solid var(--edge)}
+.qa-dock>*{width:100%;max-width:528px;margin:0 auto;box-sizing:border-box}
+.qa-dock small{text-align:center;font-size:11px;color:var(--ink-soft)}
+.qa-dock .growth-consent{font-size:12px;color:var(--ink-soft)}
+.qa-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border:0;border-radius:14px;background:var(--brand);color:#fff;font:inherit;font-size:16px;font-weight:700;box-shadow:0 2px 0 var(--brand-press);cursor:pointer}
+.qa-primary:disabled{background:var(--brand-line);box-shadow:none;cursor:default}
+.qa-preview{padding-top:12px}
+/* The preview is about the album, so the theme picker stays a swipeable row of chips at every width. */
+.qa-preview .ta-picker{padding:10px 0 10px 12px;border-radius:14px;margin-bottom:14px}
+.qa-preview .ta-picker-head strong{font-size:14px}
+.qa-preview .ta-picker-head small{display:none}
+.qa-preview .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;overflow-x:auto;margin-top:8px;padding:3px 12px 4px 3px;scrollbar-width:none}
+.qa-preview .ta-swatch{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px}
+.qa-preview .ta-swatch:hover{transform:none}
+.qa-preview .ta-swatch-art{width:34px;height:34px;padding:3px;border-radius:50%;box-sizing:border-box}
+.qa-preview .ta-swatch-art img,.qa-preview .ta-swatch-art>i{width:100%;height:100%;aspect-ratio:auto;border:0!important;border-radius:50%;transform:none!important}
+.qa-preview .ta-swatch-deco,.qa-preview .ta-swatch>small,.qa-preview .ta-swatch>em{display:none!important}
+.qa-preview .ta-swatch>strong{margin:0;font-size:12px;white-space:nowrap}

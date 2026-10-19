@@ -87,10 +87,11 @@ export function albumShareMessage(title: string, url: string, ko: boolean, birth
 }
 
 /** `birthday` is the party date (or '' when unknown) for birthday albums; undefined otherwise. */
-export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void }) {
+/** `localItems` renders photos that are not uploaded yet (a live preview), skipping the server and sharing. */
+export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto, localItems }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void; localItems?: MemoryItem[] }) {
  const ko = locale === 'ko';
  // Owners share the album's invite link (it opens on this decorated view); members share the finished look.
- const [sharing, setSharing] = useState<'' | 'share' | 'nudge'>(''), shareable = !browsing;
+ const [sharing, setSharing] = useState<'' | 'share' | 'nudge'>(''), shareable = !browsing && !localItems;
  const share = () => setSharing('share');
  const [members, setMembers] = useState<{ id: string; name: string; mine: boolean }[]>([]);
  useEffect(() => {
@@ -101,8 +102,10 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  }, [canShare, folderId]);
  const [month, setMonth] = useState('all');
  const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined));
- const [items, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
+ const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
+ const items = localItems || fetched;
  useEffect(() => {
+  if (localItems) return;
   const controller = new AbortController();
   (async () => {
    try {
@@ -112,7 +115,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
    } catch { if (!controller.signal.aborted) setError(true); }
   })();
   return () => controller.abort();
- }, [folderId, retry]);
+ }, [folderId, retry, localItems]);
 
  const chapters = useMemo(() => {
   const list: Chapter[] = [];
@@ -129,7 +132,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  }, [items]);
  // Ongoing albums read best a month at a time: "this month of us".
  const months = [...new Set(chapters.map(c => c.day.slice(0, 7)).filter(m => /^\d{4}-\d{2}$/.test(m)))].sort().reverse();
- const monthly = birthday === undefined && months.length > 0;
+ const monthly = birthday === undefined && !localItems && months.length > 0;
  const shown = monthly && month !== 'all' ? chapters.filter(c => c.day.startsWith(month)) : chapters;
  const thisMonth = new Date().toISOString().slice(0, 7);
  const monthName = (m: string) => ko ? `${Number(m.slice(5))}월` : new Date(m + '-01T12:00:00').toLocaleString('en', { month: 'long' });
