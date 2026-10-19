@@ -42,3 +42,6 @@
 .qa-preview .ta-swatch-deco,.qa-preview .ta-swatch>small,.qa-preview .ta-swatch>em{display:none!important}
 .qa-preview .ta-swatch>strong{margin:0;font-size:12px;white-space:nowrap}
 .qa-blank{margin-top:2px;color:var(--ink-soft);font-weight:500}
+.qa-days{margin:14px 0 0;font-size:13px;font-weight:700;color:var(--brand)}
+.qa-edit-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink-soft)}
+.qa-edit-bar button{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid var(--brand-line);border-radius:999px;background:var(--card);color:var(--brand);font:inherit;font-size:12px;font-weight:700;cursor:pointer}

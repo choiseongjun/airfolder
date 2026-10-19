@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Local decorative photographs do not need remote optimization. */
 import BrandMark from '@/app/brand-mark';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Cake, Heart, Plus, ImagePlus, LockKeyhole, Camera } from 'lucide-react';
+import { ArrowRight, BookOpen, Cake, Heart, Plus, ImagePlus, Clock3, Camera } from 'lucide-react';
 import type { Locale } from './i18n';
 import { templates } from './album-book';
 import './album-templates.css';
@@ -25,9 +25,9 @@ export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:
   return <aside className="desktop-story keepsake-story">
     <div className="story-top"><Link className="brand" href="/"><span className="brand-icon"><BrandMark/></span>memonestia<span className="brand-dot">.</span></Link><span className="story-edition">A LITTLE PLACE<br/>FOR YOUR PEOPLE.</span></div>
     <div className="keepsake-story-content">
-      <span className="keepsake-kicker"><Heart size={13}/>{ko?'좋아하는 사람들과, 오래도록.':'Little moments. Closer together.'}</span>
-      <h2>{ko?'우리의 별것 아닌 날도,':'Even the ordinary days,'}<br/><em>{ko?'오래 보고 싶은 추억.':'worth keeping forever.'}</em></h2>
-      <p>{ko?'각자의 사진을 모아 우리만의 앨범으로.':'Everyone’s photos, in an album of your own.'}<br/>{ko?'한 줄의 이야기, 한 권의 추억이 차곡차곡 쌓여요.':'A little note. A lovely page. A story that grows.'}</p>
+      <span className="keepsake-kicker"><Heart size={13}/>{ko?'여행 끝나고, 딱 1분.':'One minute after the trip.'}</span>
+      <h2>{ko?'단톡방에 흩어진 여행 사진,':'Trip photos scattered in the chat,'}<br/><em>{ko?'1분 만에 우리만의 앨범책으로.':'one album book in a minute.'}</em></h2>
+      <p>{ko?'사진을 한 번에 고르면 날짜별로 나눠 알아서 꾸며요.':'Pick them all at once. We sort them by day and decorate them.'}<br/>{ko?'링크를 받은 친구들은 가입 없이 사진과 한마디를 얹어요.':'Friends add photos and a note from the link, no sign-up.'}</p>
       <div className="keepsake-collage" aria-label={ko?'사진을 모아 만든 추억 앨범 예시':'A shared photo album illustration'}>
         <div className="keepsake-paper"><span>OUR LITTLE WEEKEND</span><div className="keepsake-paper-lines"/><span className="keepsake-handwriting">{ko?'함께여서 좋았던 날':'the good little days'} ♡</span></div>
         <figure className="keepsake-photo keepsake-photo-one"><img src="/landing/sea.webp" alt=""/><figcaption>a little escape <Heart size={13}/></figcaption></figure>
@@ -35,8 +35,8 @@ export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:
         <span className="keepsake-sticker"><Heart size={20}/><span>made of<br/>little moments</span></span>
         <span className="keepsake-caption">{ko?'사진은 각자, 추억은 함께.':'Your photos. Our story.'}</span>
       </div>
-      <div className="keepsake-story-actions"><button className="story-cta" onClick={onCreate}>{ko?'나의 첫 추억 만들기':'Make your first memory'}<ArrowRight size={17}/></button><button className="keepsake-help" onClick={onHelp}>{ko?'어떻게 사용하나요?':'How does it work?'}</button></div>
-      <div className="story-note"><LockKeyhole size={13}/>{ko?'사진은 기본 비공개. 나누고 싶은 순간만 함께.':'Private by default. Share only what you choose.'}</div>
+      <div className="keepsake-story-actions"><button className="story-cta" onClick={onCreate}>{ko?'내 사진으로 1분 앨범 만들기':'Make a one-minute album'}<ArrowRight size={17}/></button><button className="keepsake-help" onClick={onHelp}>{ko?'어떻게 사용하나요?':'How does it work?'}</button></div>
+      <div className="story-note"><Clock3 size={13}/>{ko?'로그인 없이 먼저 만들어 보고, 저장할 때만 가입해요.':'Try it first without signing in. Sign up only to keep it.'}</div>
     </div>
     <div className="story-bottom"><span>YOUR MOMENTS. TOGETHER.</span><Link href={`/${locale}`}>{ko?'메모네스티아 이야기':'Meet Memonestia'} ↗</Link></div>
   </aside>;
