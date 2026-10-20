@@ -1,6 +1,15 @@
 /* Stitch warm scrapbook language for the Korean photo drawer and crew settings. */
 .app-shell[lang="ko"]{--color-ink:#30251f;--color-muted:#78675e;--color-paper:#fff9f5;--color-card:#fffefd;--color-line:#efdfd5;--color-accent:#e27d60;--color-accent-dark:#bd624a;--color-sage:#84a98c;--font-body:var(--font-stitch-sans),var(--font-stitch-kr),sans-serif;background:var(--color-paper);color:var(--color-ink);font-family:var(--font-body)}
 @media(min-width:981px){.app-shell[lang="ko"]{display:block;min-height:100vh}.app-shell[lang="ko"] .desktop-story{display:none}.app-shell[lang="ko"] .main-shell{width:min(100%,720px);margin-inline:auto;border-inline:1px solid #f3e7df;box-shadow:0 0 40px #62452b0a}}
+@media(min-width:481px){
+  body:has(.app-shell[lang="ko"]){background:#efe8e2}
+  .app-shell[lang="ko"]{width:min(100vw,480px);min-height:100dvh;margin-inline:auto;background:#fff9f5;box-shadow:0 0 42px #4f382610}
+  .app-shell[lang="ko"] .desktop-story{display:none}
+  .app-shell[lang="ko"] .main-shell{position:relative;left:auto;width:100%;max-width:480px;min-height:100dvh;margin:0;border-inline:1px solid #f3e7df;box-shadow:none}
+  .app-shell[lang="ko"] .modal-backdrop,.app-shell[lang="ko"] .lightbox{left:50%;right:auto;width:min(100vw,480px);transform:translateX(-50%)}
+  .app-shell[lang="ko"] .selection-bar,.app-shell[lang="ko"] .toast{left:50%;transform:translateX(-50%)}
+  .app-shell[lang="ko"] .save-error{left:50%;right:auto;width:min(100vw,440px);transform:translateX(-50%)}
+}
 .app-shell[lang="ko"] .topbar{background:#fff9f5eb;border-bottom:1px solid #efdfd5;backdrop-filter:blur(18px)}
 .app-shell[lang="ko"] .app-brand{color:#bd624a;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-weight:700}
 .app-shell[lang="ko"] .page-heading{padding-top:28px}

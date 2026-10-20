@@ -34,3 +34,11 @@
 .stitch-root .group-dialog{border:1px solid #efdfd5;border-radius:22px;background:#fff9f5;color:#30251f}
 .stitch-root .group-dialog input{border:1px solid #efdfd5;border-radius:12px;background:#fffefd}
 .stitch-root .group-dialog .primary-button{border:0;border-radius:12px;background:#e27d60;color:white}
+
+/* Keep Stitch screens in the same centered phone-width canvas on desktop. */
+@media(min-width:481px){
+  body:has(.stitch-root){background:#efe8e2}
+  .stitch-root.h-screen{width:min(100%,480px);max-width:480px;margin-inline:auto;box-shadow:0 0 42px #4f382610}
+  .stitch-root.fixed.inset-0{left:50%;right:auto;width:min(100vw,480px);transform:translateX(-50%);box-shadow:0 0 42px #4f382610}
+  .stitch-root header.fixed,.stitch-root nav.fixed{left:50%;right:auto;width:min(100vw,480px);max-width:480px;transform:translateX(-50%)}
+}

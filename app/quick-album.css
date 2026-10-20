@@ -79,6 +79,11 @@
 .qa-comment-field textarea{resize:vertical;min-height:72px}
 .qa-comment-field>small{text-align:right;font-size:10px;font-weight:400;color:var(--ink-soft)}
 .qa-rolling-foot{display:block}
+@media(min-width:481px){
+  body:has(.qa-screen){background:#efe8e2}
+  .qa-screen{left:50%;right:auto;width:min(100vw,480px);transform:translateX(-50%);box-shadow:0 0 42px #4f382610}
+  .qa-dock{left:50%;right:auto;width:min(100vw,480px);transform:translateX(-50%)}
+}
 .qa-days{margin:14px 0 0;font-size:13px;font-weight:700;color:var(--brand)}
 .qa-edit-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink-soft)}
 .qa-edit-bar button{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid var(--brand-line);border-radius:999px;background:var(--card);color:var(--brand);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
