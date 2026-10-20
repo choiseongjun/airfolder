@@ -67,3 +67,5 @@ mobile/android/
 *.ipa
 
 /mobile/dist-*/
+
+.vercel

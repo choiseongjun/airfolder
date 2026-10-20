@@ -1,0 +1,40 @@
+/* Stitch warm scrapbook language for the Korean photo drawer and crew settings. */
+.app-shell[lang="ko"]{--color-ink:#30251f;--color-muted:#78675e;--color-paper:#fff9f5;--color-card:#fffefd;--color-line:#efdfd5;--color-accent:#e27d60;--color-accent-dark:#bd624a;--color-sage:#84a98c;--font-body:var(--font-stitch-sans),var(--font-stitch-kr),sans-serif;background:var(--color-paper);color:var(--color-ink);font-family:var(--font-body)}
+@media(min-width:981px){.app-shell[lang="ko"]{display:block;min-height:100vh}.app-shell[lang="ko"] .desktop-story{display:none}.app-shell[lang="ko"] .main-shell{width:min(100%,720px);margin-inline:auto;border-inline:1px solid #f3e7df;box-shadow:0 0 40px #62452b0a}}
+.app-shell[lang="ko"] .topbar{background:#fff9f5eb;border-bottom:1px solid #efdfd5;backdrop-filter:blur(18px)}
+.app-shell[lang="ko"] .app-brand{color:#bd624a;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-weight:700}
+.app-shell[lang="ko"] .page-heading{padding-top:28px}
+.app-shell[lang="ko"] .page-heading h1,.app-shell[lang="ko"] .section-heading h2,.app-shell[lang="ko"] .groups-heading h2,.app-shell[lang="ko"] .group-current h3{color:#30251f;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;letter-spacing:-.035em}
+.app-shell[lang="ko"] .page-heading .eyebrow{color:#bd624a;letter-spacing:.12em}
+.app-shell[lang="ko"] .page-heading p,.app-shell[lang="ko"] .room-card-body p,.app-shell[lang="ko"] .group-current p{color:#78675e}
+.app-shell[lang="ko"] .bookshelf-stats{color:#78675e}
+.app-shell[lang="ko"] .bookshelf{background:#f4e6dc;border-color:#ead7c9;border-radius:16px}
+.app-shell[lang="ko"] .shelf-book{border:1px solid #fff9f5;border-radius:9px 9px 3px 3px;box-shadow:0 5px 12px #60432b17}
+.app-shell[lang="ko"] .shelf-plank{background:#d4a373}
+.app-shell[lang="ko"] .group-list{gap:10px}
+.app-shell[lang="ko"] .group-card,.app-shell[lang="ko"] .group-current,.app-shell[lang="ko"] .people-disclosure,.app-shell[lang="ko"] .room-card,.app-shell[lang="ko"] .content-section,.app-shell[lang="ko"] .recent-section{background:#fffefd;border:1px solid #efdfd5;border-radius:18px;box-shadow:0 5px 18px #62452b0b}
+.app-shell[lang="ko"] .group-card{padding:16px}
+.app-shell[lang="ko"] .group-card.active{border-color:#e27d60;background:#fff1e9;box-shadow:0 0 0 2px #e27d6020}
+.app-shell[lang="ko"] .group-card strong,.app-shell[lang="ko"] .room-card-title button{color:#30251f}
+.app-shell[lang="ko"] .group-symbol{background:#e6f0e5;color:#597a60}
+.app-shell[lang="ko"] .group-current{padding:18px;margin-top:14px}
+.app-shell[lang="ko"] .room-cover{border-radius:16px 16px 0 0}
+.app-shell[lang="ko"] .room-card-body{padding:15px}
+.app-shell[lang="ko"] .category-badge{background:#fff9f5e8;color:#bd624a;border:1px solid #efdfd5;border-radius:999px}
+.app-shell[lang="ko"] .folder-capture-button{color:#bd624a;background:#fff1e9;border-radius:12px}
+.app-shell[lang="ko"] .photo-item{overflow:hidden;background:#fffefd;border:1px solid #efdfd5;border-radius:14px;box-shadow:0 4px 12px #62452b0c}
+.app-shell[lang="ko"] .photo-open{background:#f4e6dc}
+.app-shell[lang="ko"] .photo-caption{color:#78675e;padding:8px 10px}
+.app-shell[lang="ko"] .filter-row .tabs .tab{border:1px solid #efdfd5;border-radius:999px;background:#fffefd;color:#78675e}
+.app-shell[lang="ko"] .tab.selected-tab{border-color:#e27d60;background:#e27d60;color:white}
+.app-shell[lang="ko"] .primary-button{background:#e27d60;border-color:#e27d60;color:white;border-radius:13px}
+.app-shell[lang="ko"] .secondary-button,.app-shell[lang="ko"] .option-button{border-color:#efdfd5;background:#fff1e9;color:#bd624a;border-radius:13px}
+.app-shell[lang="ko"] .icon-button,.app-shell[lang="ko"] .text-button{color:#bd624a}
+.app-shell[lang="ko"] .mobile-tabs{background:#fff9f5f2;border-top:1px solid #efdfd5;box-shadow:0 -5px 18px #62452b0c;backdrop-filter:blur(18px);grid-template-columns:repeat(5,minmax(0,1fr))}
+.app-shell[lang="ko"] .mobile-tabs button,.app-shell[lang="ko"] .mobile-tabs a{color:#78675e}
+.app-shell[lang="ko"] .mobile-tabs [aria-current="page"]{color:#bd624a}
+.app-shell[lang="ko"] .mobile-tabs .tab-camera>span{background:#e27d60;color:white}
+.app-shell[lang="ko"] .mobile-tabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-width:0;gap:3px;text-decoration:none;font-size:10px}
+.app-shell[lang="ko"] .modal-backdrop{background:#30251f70;backdrop-filter:blur(5px)}
+.app-shell[lang="ko"] .modal,.app-shell[lang="ko"] .profile-modal{background:#fff9f5;border:1px solid #efdfd5;border-radius:22px;box-shadow:0 24px 72px #30251f2b}
+.app-shell[lang="ko"] .account-identity,.app-shell[lang="ko"] .info-box,.app-shell[lang="ko"] .storage-meter{border-color:#efdfd5;background:#fff1e9;border-radius:14px}

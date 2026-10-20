@@ -12,7 +12,7 @@ import { redirect } from 'next/navigation';
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
 // Links that open a specific workspace flow (sign-in sheet, explore, a shared album…) skip the landing.
-const workspaceParams = ['login', 'loginError', 'returnTo', 'browse', 'quick', 'studio', 'help', 'invite', 'album', 'group', 'room', 'photo', 'section', 'view'];
+const workspaceParams = ['login', 'loginError', 'returnTo', 'browse', 'quick', 'studio', 'help', 'invite', 'album', 'group', 'room', 'photo', 'section', 'view', 'home'];
 
 export async function generateMetadata({ searchParams }: Props) {
   const { lang } = await searchParams;
@@ -42,14 +42,20 @@ async function visitor(): Promise<'guest' | 'member' | 'workspace'> {
 
 async function LocalizedWorkspace({ searchParams }: Props) {
   const params = await searchParams;
-  const { lang, browse, invite } = params;
+  const { lang, browse, invite, screen } = params;
   const locale = await requestLocale(lang);
   if (typeof invite === 'string' && /^[a-f\d]{64}$/.test(invite) && browse !== '1') redirect(`/join/${invite}?lang=${locale}`);
+  if (locale === 'ko' && params.home === '1' && (screen === 'photos' || screen === 'behind' || screen === 'settings')) redirect(`/crew/${screen}`);
   // The landing and crew home are Korean-only for now; English visitors keep the existing workspace.
-  if (locale === 'ko' && !workspaceParams.some(name => params[name] !== undefined)) {
+  const requestedHome = params.home === '1';
+  // The post-login return URL is an explicit request for the Stitch crew home.
+  // Render it directly; a transient server-side session lookup failure must not
+  // send a signed-in visitor back to the generic workspace screen.
+  if (locale === 'ko' && requestedHome) return <HomeFeed/>;
+  if (locale === 'ko' && (requestedHome || !workspaceParams.some(name => params[name] !== undefined))) {
     const who = await visitor();
-    if (who === 'guest') return <EntryLanding/>;
+    if (who === 'guest' && !requestedHome && params.loginError === undefined) return <EntryLanding/>;
     if (who === 'member') return <HomeFeed/>;
   }
-  return <Workspace key={browse==='1'?'browse':'workspace'} initialLocale={locale} browsing={browse==='1'} />;
+  return <Workspace key={browse==='1'?'browse':'workspace'} initialLocale={locale} browsing={browse==='1'} initialLogin={params.login === '1' || params.loginError !== undefined || requestedHome} />;
 }

@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- A local decorative photograph; no optimization needed. */
 import Link from 'next/link';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Icon, StitchIconFont, sansStack, serifStack, stitchRoot } from './stitch-kit';
 
 // Ported 1:1 from the Stitch screen "메모네스티아 첫 진입 & 카카오 1초 로그인 (풍성한 온보딩)".
@@ -16,24 +16,22 @@ function Showcase() {
         <Icon name="lock_reset" className="text-[13px]"/>카톡 사진 만료 방지 · 비밀 롤링페이퍼
       </div>
       <h1 style={{ fontFamily: serifStack }} className="text-[1.45rem] font-bold text-[#221a14] leading-snug tracking-tight">
-        단톡방에서 밀려 사라지는 우리 사진,<br/>
-        <span className="text-[#99452c] underline decoration-[#e27d60] decoration-wavy decoration-2">사진 뒷면에 남기는 비밀 낙서</span>
+        만료 없는 단톡방 사진,<br/><span className="text-[#99452c]">사진 뒷면 비밀 아카이브</span>
       </h1>
       <p className="text-xs text-[#55433d] mt-2 font-medium leading-relaxed">
-        단톡방 사진이 만료되기 전에 쏙—<br/>
-        앞면엔 감성 사진, 뒷면엔 친구들의 솔직한 롤링페이퍼로 영구 보관해요.
+        흩어지는 추억을 우리 크루만의 롤링페이퍼로<br/>오래 간직해요.
       </p>
     </section>
     <section className="relative w-full max-w-[320px] mx-auto pt-3 pb-2 select-none">
       <div className="absolute -top-1 left-4 z-20 w-24 h-6 bg-[#e27d60]/35 -rotate-6 rounded-xs border-dashed border-t border-b border-[#99452c]/40 shadow-xs flex items-center justify-center pointer-events-none">
-        <span className="text-[9px] font-bold text-[#7b2e17] tracking-wider uppercase">CREW MEMO #24</span>
+        <span className="text-[9px] font-bold text-[#7b2e17] tracking-wider uppercase">CREW MEMO #1</span>
       </div>
       <div className="absolute -top-2 right-6 z-20 w-9 h-9 rounded-full bg-[#fde047] shadow-md border-2 border-dashed border-[#ca8a04] flex items-center justify-center rotate-12">
         <span className="text-sm">✨</span>
       </div>
       <div className="absolute -bottom-2 -left-3 z-10 w-[92%] bg-[#fff9d2] p-3 rounded-2xl border border-[#ebd876] shadow-md rotate-[-3deg] transition-transform duration-300">
         <div className="flex items-center justify-between pb-1 mb-1 border-b border-[#ebd876]/60">
-          <span className="text-[10px] font-bold text-[#7d562d] flex items-center gap-1"><Icon name="draw" className="text-[12px]"/> 뒷면 롤링페이퍼</span>
+          <span className="text-[10px] font-bold text-[#7d562d] flex items-center gap-1"><Icon name="draw" className="text-[12px]"/> 사진 뒤 비밀 롤링페이퍼</span>
           <span className="text-[9px] text-[#9a7649] bg-[#f9edb0] px-1.5 py-0.5 rounded">🔒 크루 전용</span>
         </div>
         <p className="text-xs text-[#492a04] leading-snug font-medium">&quot;이때 서연이 맥주 쏟을 뻔한 거 실화냐ㅋㅋㅋ 평생 놀림거리 박제 완료!&quot;</p>
@@ -54,8 +52,8 @@ function Showcase() {
         </div>
         <div className="mt-3 flex items-center justify-between px-1">
           <div>
-            <p className="text-[11px] font-bold text-[#221a14]">2024. 08. 14 · 성산 해변</p>
-            <p className="text-[10px] text-[#88726c]">업로드: 민재 (사진 만료 영구 해제)</p>
+            <p className="text-[11px] font-bold text-[#221a14]">강릉 맥주 테라스 밤 🍻</p>
+            <p className="text-[10px] text-[#88726c]">우리 크루의 소중한 순간</p>
           </div>
           <div className="w-10 h-10 rounded-full border border-dashed border-[#99452c]/40 bg-[#fcebe0] flex flex-col items-center justify-center rotate-6 text-[#99452c]">
             <span className="text-[8px] font-bold leading-none uppercase tracking-tighter">SAVED</span>
@@ -69,62 +67,7 @@ function Showcase() {
         </div>
       </div>
     </section>
-    <section className="flex flex-col gap-2.5 pt-1">
-      <div className="flex items-center justify-between px-1">
-        <span className="text-xs font-bold text-[#221a14] flex items-center gap-1"><Icon name="auto_stories" className="text-[#99452c] text-[16px]"/>메모네스티아 핵심 매력 3가지</span>
-        <span className="text-[10px] text-[#88726c] font-medium">부담 없는 추억 보관</span>
-      </div>
-      <div className="grid grid-cols-1 gap-2.5">
-        <Feature icon="sticky_note_2" iconClass="bg-[#ffdbd1] text-[#99452c]" title="① 사진 뒷면 롤링페이퍼" tag={<span className="text-[9px] bg-[#c2e9c9] text-[#486a51] px-1.5 py-0.5 rounded font-semibold">비밀공간</span>}>
-          앞면엔 예쁜 사진, 뒷면엔 친구들의 솔직한 낙서와 드립! 뒤집는 순간 그날의 웃음이 재생돼요.
-        </Feature>
-        <div className="bg-white p-3.5 rounded-xl border border-[#dbc1ba]/50 shadow-xs flex items-start gap-3 relative overflow-hidden">
-          <div className="w-9 h-9 rounded-xl bg-[#c2e9c9] flex items-center justify-center text-[#43664d] shrink-0 font-bold text-sm"><Icon name="group" className="text-[20px]"/></div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#221a14]">② 1명이 안 올려도 괜찮아요</span>
-              <span className="text-[10px] font-bold text-[#43664d]">이번 달 18/25개</span>
-            </div>
-            <p className="text-[11px] text-[#55433d] mt-0.5 leading-snug">모두가 억지로 올릴 필요 없어요. 크루 전체가 함께 모은 추억 조각 게이지만 채우면 OK!</p>
-            <div className="w-full bg-[#fcebe0] h-1.5 rounded-full mt-2 overflow-hidden"><div className="bg-[#43664d] h-full rounded-full" style={{ width: '72%' }}/></div>
-          </div>
-        </div>
-        <Feature icon="grid_view" iconClass="bg-[#ffdcbd] text-[#7d562d]" title="③ 월말 9컷 룩북 무료 캡처" tag={<span className="text-[9px] bg-[#99452c]/10 text-[#99452c] px-1.5 py-0.5 rounded font-semibold">인스타용</span>}>
-          한 달이 끝나면 우리 크루만의 매거진 컷이 자동 완성! 인스타 스토리에 바로 공유할 수 있어요.
-        </Feature>
-      </div>
-    </section>
-    <section className="bg-[#fff1e9] border border-[#dbc1ba]/50 rounded-2xl p-3.5 flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#99452c] opacity-75"/><span className="relative inline-flex rounded-full h-2 w-2 bg-[#99452c]"/></span>
-          <span className="text-xs font-bold text-[#221a14]">지금 2,400+개 크루가 비밀 추억을 기록 중</span>
-        </div>
-        <span className="text-[10px] text-[#88726c]">실시간</span>
-      </div>
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-        <Crew emoji="🥐" name="연남동 빵원정대" badge="조각 19개" badgeClass="text-[#99452c] bg-[#ffdbd1]/40"/>
-        <Crew emoji="🌊" name="제주 2박3일 우정여행" badge="완성" badgeClass="text-[#43664d] bg-[#c2e9c9]/60"/>
-        <Crew emoji="☕" name="을지로 야작단" badge="조각 27개" badgeClass="text-[#7d562d] bg-[#ffdcbd]/50"/>
-      </div>
-    </section>
   </>;
-}
-
-function Feature({ icon, iconClass, title, tag, children }: { icon: string; iconClass: string; title: string; tag: ReactNode; children: ReactNode }) {
-  return <div className="bg-white p-3.5 rounded-xl border border-[#dbc1ba]/50 shadow-xs flex items-start gap-3 relative overflow-hidden">
-    <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm ${iconClass}`}><Icon name={icon} className="text-[20px]"/></div>
-    <div className="flex-1 min-w-0">
-      <div className="flex items-center gap-1.5"><span className="text-xs font-bold text-[#221a14]">{title}</span>{tag}</div>
-      <p className="text-[11px] text-[#55433d] mt-0.5 leading-snug">{children}</p>
-    </div>
-  </div>;
-}
-
-function Crew({ emoji, name, badge, badgeClass }: { emoji: string; name: string; badge: string; badgeClass: string }) {
-  return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#dbc1ba]/40 text-[11px] text-[#221a14] whitespace-nowrap ">
-    <span>{emoji}</span><span className="font-medium">{name}</span><span className={`text-[10px] font-bold px-1 rounded ${badgeClass}`}>{badge}</span>
-  </div>;
 }
 
 function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreHref, onJoin }: Actions) {
@@ -144,11 +87,11 @@ function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreH
     </button>
     <form className="w-full bg-[#fff1e9] border border-[#dbc1ba]/70 rounded-xl p-3 flex flex-col gap-2 " onSubmit={submitCode}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5"><Icon name="key" className="text-[#99452c] text-[17px]"/><span className="text-xs font-bold text-[#221a14]">초대 코드가 있으신가요?</span></div>
-        <span className="text-[10px] text-[#88726c]">친구 크루 바로 합류</span>
+        <div className="flex items-center gap-1.5"><Icon name="key" className="text-[#99452c] text-[17px]"/><span className="text-xs font-bold text-[#221a14]">친구에게 초대 링크를 받으셨나요?</span></div>
+        <span className="text-[10px] text-[#88726c]">링크 붙여넣기</span>
       </div>
       <div className="flex items-center gap-2">
-        <input aria-label="초대 코드" value={code} onChange={e => { setCode(e.target.value); setCodeError(''); }} className="flex-1 min-w-0 bg-white border border-[#dbc1ba]/50 rounded-lg px-3 py-2 text-xs text-[#221a14] uppercase tracking-wider font-semibold placeholder:text-[#88726c]/70 focus:outline-hidden focus:ring-1 focus:ring-[#99452c]" placeholder="6자리 (예: MEMO24)" type="text"/>
+        <input aria-label="초대 링크" value={code} onChange={e => { setCode(e.target.value); setCodeError(''); }} className="flex-1 min-w-0 bg-white border border-[#dbc1ba]/50 rounded-lg px-3 py-2 text-xs text-[#221a14] tracking-wide font-medium placeholder:text-[#88726c]/70 focus:outline-hidden focus:ring-1 focus:ring-[#99452c]" placeholder="초대 링크를 붙여넣어 주세요" type="text"/>
         <button className="h-9 px-4 rounded-lg bg-[#99452c] hover:bg-[#e27d60] text-white text-xs font-semibold shrink-0 transition-all active:scale-95 shadow-xs" type="submit">입장</button>
       </div>
       {codeError && <p role="alert" className="text-[10px] text-[#ba1a1a]">{codeError}</p>}

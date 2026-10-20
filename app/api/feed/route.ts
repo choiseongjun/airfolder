@@ -46,8 +46,12 @@ export async function GET(request:Request){await connection();return safe(async(
  const [photoIds,recordIds]=[ids('photo'),ids('record')];
  const people=new Set<string>([...items.map(i=>i.owner_id),...month.contributors]);
  const [attached,comments,likes]=await Promise.all([
-  db.query(`SELECT rp.record_id,p.id,p.mime,count(*) OVER(PARTITION BY rp.record_id)::int AS total,row_number() OVER(PARTITION BY rp.record_id ORDER BY rp.position) n
-   FROM snaproom.record_photos rp JOIN snaproom.photos p ON p.id=rp.photo_id WHERE rp.record_id=ANY($1::uuid[]) AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)`,[recordIds,who]),
+  db.query(`SELECT * FROM (
+    SELECT rp.record_id,p.id,p.mime,to_char(p.captured_at AT TIME ZONE $3,'YYYY-MM-DD') AS day,
+      count(*) OVER(PARTITION BY rp.record_id)::int AS total,row_number() OVER(PARTITION BY rp.record_id ORDER BY rp.position) n
+    FROM snaproom.record_photos rp JOIN snaproom.photos p ON p.id=rp.photo_id
+    WHERE rp.record_id=ANY($1::uuid[]) AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)
+   ) ranked WHERE n<=30`,[recordIds,who,zone]),
   db.query(`SELECT * FROM (SELECT c.id,c.photo_id,c.record_id,c.owner_id,c.body,c.created_at,
     count(*) OVER(PARTITION BY c.photo_id,c.record_id)::int AS total,row_number() OVER(PARTITION BY c.photo_id,c.record_id ORDER BY c.created_at DESC,c.id) n
    FROM snaproom.comments c WHERE (c.photo_id=ANY($1::uuid[]) OR c.record_id=ANY($2::uuid[])) AND NOT c.hidden AND snaproom.interaction_allowed(c.owner_id,$3)) ranked WHERE n<=2`,[photoIds,recordIds,who]),
@@ -58,7 +62,7 @@ export async function GET(request:Request){await connection();return safe(async(
  const names=new Map<string,string>((await db.query(`SELECT v.id,${NAME} AS name FROM snaproom.viewers v LEFT JOIN snaproom.accounts a ON a.viewer_id=v.id WHERE v.id=ANY($1::uuid[])`,[[...people]])).rows.map(r=>[r.id,r.name]));
  const person=(id:string)=>({id,name:names.get(id)||'',mine:id===who});
  const target=(row:{photo_id:string|null;record_id:string|null})=>row.photo_id||row.record_id;
- const media=(id:string,mime:string)=>({id,src:`/api/photos/${id}/content`,video:mime.startsWith('video/')});
+ const media=(id:string,mime:string,day?:string)=>({id,src:`/api/photos/${id}/content`,video:mime.startsWith('video/'),day:day||null});
 
  return Response.json({
   me:who,
@@ -66,7 +70,7 @@ export async function GET(request:Request){await connection();return safe(async(
   crew:{id:group,name:crew?.name??null,ownerId:crew?.owner_id??null,members:members.map(m=>({...m,mine:m.id===who}))},
   month:{count:month.count,today:month.today,goal:MONTHLY_GOAL,contributors:month.contributors.map(person)},
   items:items.map(i=>{
-   const pics=i.kind==='photo'?[media(i.id,i.mime)]:attached.rows.filter(p=>p.record_id===i.id&&p.n<=4).map(p=>media(p.id,p.mime));
+   const pics=i.kind==='photo'?[media(i.id,i.mime)]:attached.rows.filter(p=>p.record_id===i.id&&p.n<=30).map(p=>media(p.id,p.mime,p.day));
    const thread=comments.rows.filter(c=>target(c)===i.id).sort((a,b)=>a.created_at-b.created_at);
    const like=likes.rows.find(l=>target(l)===i.id);
    return {kind:i.kind,id:i.id,folderId:i.folder_id,album:i.album,author:person(i.owner_id),createdAt:i.created_at,title:i.title||'',body:i.body||'',

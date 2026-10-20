@@ -15,7 +15,7 @@ export default function EntryLanding() {
     if (sendNative('LOGIN') || leaving) return;
     setLeaving(true);
     void trackAuthEvent('login_start', 'kakao', 'web');
-    window.location.assign(`/api/auth/kakao/start?return=${encodeURIComponent('/')}`);
+    window.location.assign(`/api/auth/kakao/start?return=${encodeURIComponent('/?lang=ko&home=1')}`);
   }
   return <EntryScreen
     kakaoDisabled={leaving}

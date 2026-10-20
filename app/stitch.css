@@ -12,3 +12,24 @@
   .no-scrollbar::-webkit-scrollbar{display:none}
   .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
 }
+/* Dedicated Stitch crew settings surface. */
+.stitch-root .groups-section{margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+.stitch-root .groups-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.stitch-root .groups-heading .eyebrow{color:#bd624a;letter-spacing:.14em}
+.stitch-root .groups-heading h2{font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;color:#30251f;font-size:20px;line-height:1.3}
+.stitch-root .groups-heading .secondary-button{flex-shrink:0;border:0;border-radius:999px;background:#e27d60;color:white;padding:9px 13px;font-size:11px}
+.stitch-root .group-list{display:flex;flex-direction:column;gap:10px;overflow:visible;padding:0}
+.stitch-root .group-card{display:grid;grid-template-columns:38px 1fr auto;grid-template-rows:auto auto;align-items:center;gap:3px 10px;width:100%;min-width:0;max-width:none;min-height:72px;padding:13px 14px;border:1px solid #efdfd5;border-radius:16px;background:#fffefd;box-shadow:0 4px 14px #62452b0c}
+.stitch-root .group-card>svg:first-child,.stitch-root .group-symbol{grid-row:1/3;width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#e6f0e5;color:#597a60}
+.stitch-root .group-card strong{grid-column:2;grid-row:1;color:#30251f;font-size:13px}
+.stitch-root .group-card small{grid-column:2;grid-row:2;color:#78675e;font-size:10px}
+.stitch-root .group-card>svg:last-child{grid-column:3;grid-row:1/3;color:#bd624a}
+.stitch-root .group-card.active{border-color:#e27d60;background:#fff1e9;box-shadow:0 0 0 2px #e27d6020}
+.stitch-root .group-current,.stitch-root .people-disclosure{margin-top:13px;padding:15px;border:1px solid #efdfd5;border-radius:16px;background:#fffefd;color:#30251f;box-shadow:0 4px 14px #62452b0c}
+.stitch-root .group-current h3{font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:17px}
+.stitch-root .group-current p,.stitch-root .group-hint{color:#78675e;font-size:12px;line-height:1.7}
+.stitch-root .people-disclosure summary{color:#30251f;font-weight:700}
+.stitch-root .people-disclosure summary span{color:#78675e}
+.stitch-root .group-dialog{border:1px solid #efdfd5;border-radius:22px;background:#fff9f5;color:#30251f}
+.stitch-root .group-dialog input{border:1px solid #efdfd5;border-radius:12px;background:#fffefd}
+.stitch-root .group-dialog .primary-button{border:0;border-radius:12px;background:#e27d60;color:white}

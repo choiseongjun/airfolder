@@ -68,3 +68,6 @@ html,body{height:100%;overflow:hidden}body{background:#eeeDE7}.app-shell{display
 .brand .brand-icon svg{width:100%;height:100%}
 .brand{font-family:Arial,var(--font-geist-sans),sans-serif;font-weight:750;letter-spacing:-1.1px}
 .brand-dot{color:var(--brand)}
+.memory-flip-face{animation:memory-flip-in .34s ease-out both;transform-origin:center;backface-visibility:hidden}
+@keyframes memory-flip-in{from{opacity:.65;transform:perspective(900px) rotateY(-70deg) scale(.96)}to{opacity:1;transform:perspective(900px) rotateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.memory-flip-face{animation:none}}

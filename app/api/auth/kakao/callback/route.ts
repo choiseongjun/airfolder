@@ -14,8 +14,8 @@ export async function GET(request: Request) {
   const returnTo = safeReturnPath(saved.returnTo || null);
   const back = (error?: string) => { const url = new URL(returnTo, request.url); if (error) url.searchParams.set('loginError', error); return Response.redirect(url, 303); };
   const code = params.get('code'), state = params.get('state') || '';
-  if (params.get('error')) return back(params.get('error') === 'access_denied' ? 'LOGIN_CANCELLED' : 'LOGIN_FAILED');
-  if (!code || !saved.state || !sameState(state, saved.state)) return back('LOGIN_FAILED');
+  if (params.get('error')) return back(params.get('error') === 'access_denied' ? 'LOGIN_CANCELLED' : 'KAKAO_AUTH_REJECTED');
+  if (!code || !saved.state || !sameState(state, saved.state)) return back('LOGIN_STATE_FAILED');
   try {
     const identity = await kakaoIdentity(request, code);
     const guest = await ensureSession(request);
@@ -32,7 +32,10 @@ export async function GET(request: Request) {
     jar.set('snaproom_session', token, { httpOnly: true, secure: new URL(request.url).protocol === 'https:', sameSite: 'lax', path: '/', maxAge: 2592000 });
     return back();
   } catch (error) {
-    if (!(error instanceof ApiError)) console.error('Kakao sign-in failed:', error instanceof Error ? error.message : 'UnknownError');
-    return back(error instanceof ApiError ? error.message : 'LOGIN_FAILED');
+    const reason = error instanceof Error ? error.message : 'UnknownError';
+    if (!(error instanceof ApiError)) console.error('Kakao sign-in failed:', reason);
+    const tokenFailure = /^KAKAO_TOKEN_FAILED(?:\s+([A-Z0-9]+))?$/.exec(reason);
+    const failureCode = error instanceof ApiError ? error.message : tokenFailure ? `KAKAO_TOKEN_${tokenFailure[1] || 'FAILED'}` : reason === 'KAKAO_PROFILE_FAILED' ? reason : 'LOGIN_FAILED';
+    return back(failureCode);
   }
 }
