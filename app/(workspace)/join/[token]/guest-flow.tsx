@@ -11,6 +11,7 @@ import { trackClient } from '@/lib/growth-client';
 import { uploadFailureReason } from '@/lib/growth-events';
 import { mapLimit } from '@/lib/parallel';
 import Consent from '../../../growth/consent';
+import { AlbumKeepsake } from '../../../memory-keepsake';
 import ThemeAlbum, { Sticker } from '../../../theme-album';
 import type { MemoryItem } from '../../../memories';
 import '../../../theme-album.css';
@@ -30,6 +31,8 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
   const [joined, setJoined] = useState(false), [albums, setAlbums] = useState<Album[]>([]), [folder, setFolder] = useState(''), [group, setGroup] = useState('');
   const [items, setItems] = useState<Item[]>([]), [shared, setShared] = useState(true), [busy, setBusy] = useState(false), [error, setError] = useState(''), [retry, setRetry] = useState(0), [note, setNote] = useState(''), [nickname, setNickname] = useState('');
   const birthday = Boolean(invite?.birthday), router = useRouter();
+  const [message, setMessage] = useState(''), [messageSaved, setMessageSaved] = useState(false);
+  const messageId = useRef<string | null>(null);
   const uploading = useRef(false), staged = useRef<Item[]>([]);
   useEffect(() => { staged.current = items; }, [items]);
   // Thumbnails are object URLs; release them when the page goes away.
@@ -70,6 +73,17 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
       if (thenView && result.folderId) { router.push(`/?lang=${locale}&album=${result.folderId}&view=${nextView || 'theme'}`); return; }
       setAlbums(result.albums); setFolder(result.folderId || (result.albums.length === 1 ? result.albums[0].id : '')); setGroup(result.groupId || ''); setJoined(true);
     } catch (cause) { setError(cause instanceof Error && /INVITE/.test(cause.message) ? text('초대가 만료되었어요. 모임장에게 새 링크를 요청해 주세요.', 'The invite expired. Ask the organizer for a new link.') : text('참여하지 못했어요. 모임 정원이나 연결 상태를 확인하고 다시 시도해 주세요.', 'Could not join. Check the group capacity or your connection and try again.')); }
+    finally { setBusy(false); }
+  }
+  async function saveMessage() {
+    if (busy || !folder || !message.trim() || (!accepted && !consent)) return;
+    setBusy(true); setError('');
+    try {
+      if (!accepted) { await api('/api/policy', {method:'POST',body:JSON.stringify({version:TERMS_VERSION,accepted:true})}); setAccepted(true); }
+      messageId.current ??= crypto.randomUUID();
+      await api('/api/rolling-paper', {method:'POST',body:JSON.stringify({id:messageId.current,folderId:folder,body:message.trim(),photoIds:[]})});
+      setMessage(''); setMessageSaved(true); messageId.current=null;
+    } catch { setError(text('한마디를 저장하지 못했어요. 다시 시도해 주세요.', 'Could not save your note. Please retry.')); }
     finally { setBusy(false); }
   }
   function openPhoto(item: MemoryItem) { if (item.src) window.open(item.src, '_blank', 'noopener,noreferrer'); }
@@ -113,9 +127,9 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
       });
       if (note.trim() && completedIds.length) {
         try {
-          await api('/api/memories', { method: 'POST', body: JSON.stringify({ id: crypto.randomUUID(), folderId: folder, title: '', body: note.trim(), day: new Date().toISOString().slice(0, 10), shared, photoIds: completedIds }) });
+          await api(shared ? '/api/rolling-paper' : '/api/memories', { method: 'POST', body: JSON.stringify({ id: crypto.randomUUID(), folderId: folder, title: '', body: note.trim(), day: new Date().toISOString().slice(0, 10), shared, photoIds: shared ? completedIds.slice(0,4) : completedIds }) });
           setNote('');
-        } catch { /* The photos are already saved even if the note could not be attached. */ }
+        } catch { setMessage(note); setError(text('사진은 저장됐지만 한마디는 저장되지 않았어요. 아래 한마디 입력란에서 다시 남겨주세요.', 'Photos were saved, but the note was not. Retry in the note form.')); }
       }
     } catch { setError(text('사진을 올리지 못했어요. 연결 상태를 확인하고 다시 시도해 주세요.', 'Could not upload. Check your connection and try again.')); } finally { uploading.current = false; setBusy(false); }
   }
@@ -174,7 +188,7 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
       <span className="cute-deco cute-deco-a" aria-hidden="true"><Sticker kind="sparkle" /></span><span className="cute-deco cute-deco-b" aria-hidden="true"><Sticker kind="heart" /></span>
       <div className="growth-icon cute-icon"><Sticker kind={completed ? 'star' : joined ? 'flower' : 'heart'} /></div>
       <p className="growth-eyebrow">YOUR VIEW MAKES THE MEMORY</p><h1>{invite?.name || (error ? text('초대를 열 수 없어요', 'Unable to open this invite') : text('모임 초대를 확인하고 있어요', 'Opening your invitation'))}</h1>
-      {!joined && ready && <div className="invite-first-action"><p>{text('우리 사진에 네가 찍은 순간도 더해줘.', 'Add the moments you captured, too.')}</p><button className="growth-button" disabled={busy} onClick={() => void join()}>{text('나도 사진 보태기', 'Add my photos')}<ArrowRight size={18}/></button>{audienceNote}</div>}
+      {!joined && ready && <div className="invite-first-action"><p>{text('우리 사진에 네가 찍은 순간도 더해줘.', 'Add the moments you captured, too.')}</p><label className="growth-upload-zone"><ImagePlus size={24}/><strong>{text('내 사진 바로 고르기', 'Choose my photos')}</strong><input aria-label={text('참여할 사진 선택', 'Choose photos to contribute')} type="file" accept="image/*,.heic,.heif" multiple disabled={busy} onChange={event=>{const files=event.target.files;if(files?.length){choose(files);void join();}event.target.value='';}}/></label><button className="growth-button secondary" disabled={busy} onClick={()=>void join()}>{text('사진 없이 한마디 남기기', 'Leave just a note')}<ArrowRight size={18}/></button>{audienceNote}</div>}
       {!joined && previewCard}
       {!joined && <p className="growth-lead">{birthday ? text('생일 주인공에게 줄 앨범이에요. 함께 찍은 사진 한 장과 한마디를 남겨주세요. 생일날 예쁜 앨범 한 권으로 완성돼요.', 'A birthday album for a friend. Add a photo of you two and a short note. It turns into a pretty album by the big day.') : text('당신이 찍은 순간도 보태주세요. 앱 설치나 새 계정 가입 없이, 고른 사진만 올릴 수 있어요.', 'Add your side of the story. No app installation or new account needed. Only the photos you choose are uploaded.')}</p>}
       {birthday && <div className="bday-guest"><strong>{invite?.day && dDay(invite.day) ? `${dDay(invite.day)} · ` : ''}{text('주인공에겐 아직 비밀이에요', 'Keep it a secret for now')}</strong>{text('올린 사진과 한마디는 버스데이 테마로 자동으로 꾸며져요. 꾸미기는 신경 쓰지 않아도 돼요.', 'Your photo and note are decorated in the Birthday Film theme automatically. No decorating needed.')}</div>}
@@ -183,9 +197,10 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
       {!joined && ready && <div className="growth-form">{invite?.kind === 'group' && <p className="growth-note">{text('참여하면 이 그룹의 기존·새 앨범에 접근할 수 있으며, 멤버에게 공유된 사진만 볼 수 있어요.', 'Joining gives access to existing and future group albums, and photos shared with members.')}</p>}
         {birthday && <label className="growth-field">{text('내 이름 (사진 옆에 같이 적혀요)', 'Your name (shown with your photo)')}<input maxLength={30} disabled={busy} value={nickname} onChange={e => setNickname(e.target.value)} placeholder={text('예: 하윤', 'e.g. Hayun')} /></label>}
         {invite?.kind === 'album' && !!invite.photos && <p className="growth-note">{text(`사진 ${invite.photos}장${invite.people && invite.people > 1 ? ` · ${invite.people}명이 채웠어요` : ''}.`, `${invite.photos} photos${invite.people && invite.people > 1 ? ` from ${invite.people} people` : ''}.`)}</p>}
-        <button className={`growth-button${invite?.kind === 'album' && invite.photos ? ' secondary' : ''}`} onClick={() => void join()} disabled={busy}>{busy ? text('참여 중…', 'Joining…') : invite?.kind === 'album' && invite.photos ? text('내 사진도 보태기', 'Add my photos too') : text('참여하고 사진 고르기', 'Join & choose photos')}<ArrowRight size={18} /></button>
+
         <p className="growth-note">{text('링크를 받은 모임 멤버만 참여해 주세요. 초대 링크는 7일간 유효합니다.', 'Please join only if invited by the organizer. Invitations last 7 days.')}</p></div>}
       {joined && <>{albums.length > 1 && <label className="growth-field">{text('사진을 올릴 앨범', 'Choose an album')}<select disabled={busy || items.some(i => i.folder)} value={folder} onChange={e => setFolder(e.target.value)}><option value="">{text('앨범을 선택해 주세요', 'Select an album')}</option>{albums.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select></label>}
+        {folder && <section className="growth-form"><h2>{text('사진이 없어도 마음은 남길 수 있어요', 'A note is enough')}</h2><label className="growth-field">{text('친구에게 남길 한마디', 'A note for your friends')}<textarea maxLength={500} rows={3} disabled={busy} value={message} onChange={event=>{setMessage(event.target.value);setMessageSaved(false);messageId.current=null;}} placeholder={text('이번 여행에서 가장 웃겼던 순간은?', 'What made you laugh on this trip?')}/></label><p className="growth-note">{text('한마디는 앨범 멤버에게 공개되고 추억 카드에도 들어갈 수 있어요.', 'Album members can see your note and include it in a memory card.')}</p>{message.trim()&&!accepted&&<Consent ko={ko} checked={consent} onChange={setConsent}/>}<button className="growth-button" disabled={busy||!message.trim()||(!accepted&&!consent)} onClick={()=>void saveMessage()}>{busy?text('저장 중…','Saving…'):text('한마디 남기기','Post note')}</button>{messageSaved&&<p role="status" className="growth-success">{text('마음을 남겼어요! 앨범의 롤링페이퍼에서 함께 만든 추억 카드를 볼 수 있어요.', 'Your note is saved! Find your shared memory card in the album notes.')}<a href="#guest-memory-result">{text('함께 만든 카드 보기 →', 'View memory card →')}</a></p>}</section>}
         {!albums.length ? <p className="growth-success">{text('모임에 참여했어요. 아직 앨범이 없으니 모임장에게 앨범을 만들어 달라고 요청해 주세요.', 'You joined! Ask your organizer to create the first album, then open this invite again.')}</p> : <>
           <p className="growth-note">{text('사진을 골라 아래 버튼을 누르면 업로드됩니다. 사진 한 장당 20MB까지, 한 번에 50장.', 'Choose photos, then press the upload button. Up to 50 photos, 20 MB each.')}</p>
           <label className="growth-upload-zone"><ImagePlus size={30} /><strong>{text('함께 남길 사진 고르기', 'Choose photos to keep together')}</strong><input aria-label={text('사진 선택', 'Choose photos')} type="file" accept="image/*,.heic,.heif" multiple disabled={busy || !folder || items.length >= 50} onChange={e => { choose(e.target.files); e.target.value = ''; }} /></label>
@@ -198,6 +213,7 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
             {pending > 0 && <p className="growth-note">{text('전송이 끝날 때까지 이 화면을 열어 두세요. 성공한 사진은 다시 전송하지 않습니다. 공개 범위는 새로 전송할 사진에 적용돼요.', 'Keep this page open until uploads finish. Completed photos are not uploaded again. Audience changes apply to new uploads.')}</p>}</>}
           {completed > 0 && <p className="growth-success" role="status">{text(`${completed}장의 사진을 보탰어요. 함께한 순간이 더 풍성해졌네요.`, `${completed} photos added. Your moments are now part of the story.`)}</p>}
         </>}
+        {folder && (messageSaved || completed > 0) && <div id="guest-memory-result"><AlbumKeepsake key={`${folder}:${completed}:${messageSaved}`} folderId={folder} title={invite?.name || '우리의 추억'} ko={ko}/></div>}
         <div className="growth-links">{!pending && <>{birthday && folder ? <Link className="growth-button" href={`/?lang=${locale}&album=${folder}&view=theme`}>{text('완성되는 앨범 미리보기', 'Peek at the album')}</Link> : <Link className="growth-button secondary" href={`/?lang=${locale}${folder ? `&album=${folder}&view=theme` : group ? `&group=${group}` : ''}`}>{text('모임 앨범 보기', 'View the album')}</Link>}<Link className="growth-button secondary" href={`/${locale}/hosts`}>{text('다음 모임은 내가 열어볼래요', 'Host my next gathering')}</Link></>}
           <p className="growth-note">{text('이 브라우저에 참여 정보가 저장됩니다. 나중에 다른 기기에서도 보려면 내 공간에서 계정을 연결해 주세요.', 'Your membership is saved in this browser. Connect an account in My space to return on another device.')}</p></div>
       </>}

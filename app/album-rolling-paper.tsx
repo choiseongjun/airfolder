@@ -9,6 +9,7 @@ import PolicyGate from './policy-gate';
 import { DecorationArt, RewardStickerPicker } from './reward-decoration';
 import { REWARD_PHRASES, type RewardDecoration } from '@/lib/reward-decoration';
 import './album-rolling-paper.css';
+import MemoryKeepsake from './memory-keepsake';
 
 type Note = { id: string; body: string; author: string; mine: boolean; createdAt: string; photos: PhotoOption[]; sticker?: RewardDecoration | null };
 type PhotoOption = { id: string; name: string; mediaType: 'image' | 'video'; src: string; createdAt: string };
@@ -145,6 +146,7 @@ export default function AlbumRollingPaper({ folderId, title, locale, canInvite, 
       {error && <p className="arp-error" role="alert">{error}</p>}
     </form>
 
+    {!loading && <MemoryKeepsake title={title} photos={photoOptions} notes={notes} ko={ko}/>}
     <div className="arp-notes" aria-live="polite">
       {loading ? <p className="arp-empty">{ko ? '친구들의 마음을 모으는 중…' : 'Gathering everyone’s notes…'}</p>
         : notes.length ? notes.map((note, index) => <article key={note.id} className={`arp-note arp-note-${index % 4}`}>
