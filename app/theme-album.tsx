@@ -1,14 +1,15 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- Swatch thumbnails reuse the album's already-loaded photo URLs. */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { ArrowRight, Hourglass, Music2, Palette, Share2, Ticket, Wand2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Hourglass, Music2, Palette, Share2, Ticket, Wand2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { browseTheme } from '@/lib/browse-data';
 import type { MemoryItem } from './memories';
 import MediaView from './media-view';
 import AlbumShare from './album-share';
+import { AlbumRewardCover } from './reward-decoration';
 import './theme-album.css';
 import './theme-layouts.css';
 import './theme-concepts.css';
@@ -126,6 +127,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined, style?.theme));
  const [themePickerOpen, setThemePickerOpen] = useState(false);
+ const themeRowRef = useRef<HTMLDivElement>(null);
  const editable = !!owner && !browsing && !localItems;
  const [song, setSong] = useState(style?.song || ''), [songDraft, setSongDraft] = useState<string | null>(null);
  const [revealAt, setRevealAt] = useState(style?.revealAt || ''), [capsuleDraft, setCapsuleDraft] = useState(''), [styleError, setStyleError] = useState('');
@@ -153,7 +155,13 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
    try {
     const all: MemoryItem[] = []; let more = true;
     while (more) { const data = await api<{ items: MemoryItem[]; hasMore: boolean }>(`/api/memories?folderId=${folderId}&offset=${all.length}&timezone=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}`, { signal: controller.signal }); all.push(...data.items); more = data.hasMore; }
-    if (!controller.signal.aborted) { setItems(all.reverse()); setError(false); }
+    if (!controller.signal.aborted) {
+     // Offset pagination may overlap while records are being added. Collapse
+     // repeated rows before building the keyed chapter/photo lists.
+     const unique = new Map<string, MemoryItem>();
+     for (const item of all) unique.set(`${item.kind}:${item.id}`, item);
+     setItems([...unique.values()].reverse()); setError(false);
+    }
    } catch { if (!controller.signal.aborted) setError(true); }
   })();
   return () => controller.abort();
@@ -314,13 +322,17 @@ ${url}`;
    {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '이번 달 우리' : 'This month of us') : monthName(m)}</button>)}
   </div>}
   <details className="ta-picker" open={themePickerOpen} onToggle={event => setThemePickerOpen(event.currentTarget.open)}>
-   <summary className="ta-picker-summary"><span className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마' : 'Album theme'}</strong><small>{ko ? `${meta.ko} 적용 중 · 눌러서 변경` : `${meta.en} selected · tap to change`}</small></span><span className="ta-picker-chevron" aria-hidden="true">⌄</span></summary>
-   <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
+   <summary className="ta-picker-summary"><span className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마' : 'Album theme'}</strong><small>{ko ? `${meta.ko} 적용 중 · ${albumThemes.length}가지, 좌우로 넘겨 선택` : `${meta.en} selected · ${albumThemes.length} styles, scroll sideways`}</small></span><span className="ta-picker-chevron" aria-hidden="true">⌄</span></summary>
+   <div className={`ta-picker-rail${localItems ? ' is-compact' : ''}`}>
+    <button type="button" className="ta-picker-scroll" aria-label={ko ? '이전 앨범 테마' : 'Previous album themes'} onClick={() => themeRowRef.current?.scrollBy({ left: -220, behavior: 'smooth' })}><ArrowLeft size={17}/></button>
+    <div ref={themeRowRef} className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
     {albumThemes.map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
      <span className="ta-swatch-art" aria-hidden="true">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}<span className="ta-swatch-deco"><Deco item={decor[t.id][0]} className=""/></span></span>
      <strong>{ko ? t.ko : t.en}</strong><small>{ko ? t.hintKo : t.hintEn}</small>
      <em>{theme === t.id ? (ko ? '✓ 적용 중' : '✓ On') : (ko ? '눌러보기' : 'Try it')}</em>
     </button>)}
+    </div>
+    <button type="button" className="ta-picker-scroll" aria-label={ko ? '다음 앨범 테마' : 'Next album themes'} onClick={() => themeRowRef.current?.scrollBy({ left: 220, behavior: 'smooth' })}><ArrowRight size={17}/></button>
    </div>
   </details>
   {editable && birthday === undefined && !locked && <details className="ta-capsule-setup">
@@ -370,8 +382,9 @@ ${url}`;
     {monthly && month !== 'all' && <p className="ta-cover-note">{title}</p>}
     {description && <p className="ta-cover-note">{description}</p>}
     <p className="ta-cover-meta">{day && <span>{dotted(day)}</span>}{people.length > 0 && <span>{people.slice(0, 4).join(' · ')}{people.length > 4 ? (ko ? ` 외 ${people.length - 4}명` : ` +${people.length - 4}`) : ''}</span>}</p>
+
    </header>
-   {shown.map((chapter, ci) => <section key={chapter.id} className="ta-chapter">
+   {shown.map((chapter, ci) => <section key={`${chapter.id}:${ci}`} className="ta-chapter">
     <div className="ta-chapter-head"><span className="ta-chapter-label">{meta.chapter} {String(ci + 1).padStart(2, '0')}</span>{chapter.note && <p className="ta-note">{chapter.note}</p>}</div>
     <Deco item={decor[theme][(ci * 2 + 2) % decor[theme].length]} className="ta-at-a"/>
     {spread(chapter, ci)}

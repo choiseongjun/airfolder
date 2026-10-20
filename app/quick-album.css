@@ -1,5 +1,5 @@
 /* Quick album: a full-screen, three-step flow from photos to a decorated album. */
-.qa-screen{position:fixed;inset:0;z-index:110;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);overflow:auto}
+.qa-screen{position:fixed;inset:0;z-index:110;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);overflow:hidden;overflow-x:clip}
 .qa-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#f3efe5ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--edge)}
 .qa-top button{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--edge);border-radius:50%;background:var(--card);color:var(--ink);cursor:pointer}
 .qa-top>span{width:38px}
@@ -7,7 +7,8 @@
 .qa-top ol{display:flex;gap:6px;margin:0;padding:0;list-style:none}
 .qa-top li{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--brand-soft);color:var(--ink-soft);font-size:12px;font-weight:700}
 .qa-top li.is-on{background:var(--brand);color:#fff}
-.qa-body{width:100%;max-width:560px;margin:0 auto;padding:22px 16px 150px;box-sizing:border-box}
+.qa-body{width:100%;max-width:560px;min-height:0;flex:1;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;margin:0 auto;padding:22px 16px calc(170px + env(safe-area-inset-bottom));box-sizing:border-box}
+.qa-body::-webkit-scrollbar{display:none}
 .qa-body h2{margin:0 0 6px;font:600 28px/1.25 var(--font-editorial),Georgia,serif;letter-spacing:-.03em}
 .qa-body>p{margin:0 0 20px;font-size:14px;line-height:1.6;color:var(--ink-soft)}
 .qa-sources{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -23,7 +24,7 @@
 .qa-field input,.qa-field textarea{width:100%;box-sizing:border-box;padding:13px 14px;border:1px solid var(--edge);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
 .qa-field input:focus,.qa-field textarea:focus{outline:none;border-color:var(--brand)}
 .qa-error{margin:10px 0 0;font-size:13px;color:#b3412b}
-.qa-dock{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#f3efe5f2;backdrop-filter:blur(10px);border-top:1px solid var(--edge)}
+.qa-dock{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#f3efe5f2;backdrop-filter:blur(10px);border-top:1px solid var(--edge)}
 .qa-dock>*{width:100%;max-width:528px;margin:0 auto;box-sizing:border-box}
 .qa-dock small{text-align:center;font-size:11px;color:var(--ink-soft)}
 .qa-dock .growth-consent{font-size:12px;color:var(--ink-soft)}
@@ -32,10 +33,12 @@
 .qa-primary:disabled{background:var(--brand-line);box-shadow:none;cursor:default}
 .qa-preview{padding-top:12px}
 /* The preview is about the album, so the theme picker stays a swipeable row of chips at every width. */
+.qa-preview .ta-picker-rail{display:block;margin-top:8px}
+.qa-preview .ta-picker-scroll{display:none}
 .qa-preview .ta-picker{padding:10px 0 10px 12px;border-radius:14px;margin-bottom:14px}
 .qa-preview .ta-picker-head strong{font-size:14px}
 .qa-preview .ta-picker-head small{display:none}
-.qa-preview .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;overflow-x:auto;margin-top:8px;padding:3px 12px 4px 3px;scrollbar-width:none}
+.qa-preview .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-x:auto;margin-top:0;padding:3px 12px 8px 3px;scrollbar-width:thin;touch-action:pan-x}
 .qa-preview .ta-swatch{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px}
 .qa-preview .ta-swatch:hover{transform:none}
 .qa-preview .ta-swatch-art{width:34px;height:34px;padding:3px;border-radius:50%;box-sizing:border-box}
@@ -66,19 +69,6 @@
 .qa-source strong{font-size:12px;text-align:center}
 .qa-thumbs span{box-shadow:0 2px 9px #30251f12}
 .qa-cover-badge{position:absolute;left:4px;bottom:4px;max-width:calc(100% - 8px);padding:4px 6px;border-radius:6px;background:#99452ce8;color:#fff;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qa-rolling-card{margin-top:21px;padding:14px;border:1px solid #eddfc6;border-radius:16px;background:#fff8e7;box-shadow:0 3px 12px #62452b0a}
-.qa-rolling-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.qa-rolling-head>span{display:grid;gap:4px}
-.qa-rolling-head b{font:600 16px/1.3 var(--font-editorial),Georgia,serif;color:var(--ink)}
-.qa-rolling-head small,.qa-rolling-foot{font-size:11px;line-height:1.5;color:var(--ink-soft)}
-.qa-switch{position:relative;width:43px;height:25px;flex:none;padding:3px;border:0;border-radius:999px;background:#c7c2b6;cursor:pointer}
-.qa-switch i{display:block;width:19px;height:19px;border-radius:50%;background:white;box-shadow:0 1px 3px #0003;transition:transform .18s}
-.qa-switch.is-on{background:var(--brand)}
-.qa-switch.is-on i{transform:translateX(18px)}
-.qa-comment-field{position:relative;margin:12px 0 5px}
-.qa-comment-field textarea{resize:vertical;min-height:72px}
-.qa-comment-field>small{text-align:right;font-size:10px;font-weight:400;color:var(--ink-soft)}
-.qa-rolling-foot{display:block}
 @media(min-width:481px){
   body:has(.qa-screen){background:#efe8e2}
   .qa-screen{left:50%;right:auto;width:min(100vw,480px);transform:translateX(-50%);box-shadow:0 0 42px #4f382610}

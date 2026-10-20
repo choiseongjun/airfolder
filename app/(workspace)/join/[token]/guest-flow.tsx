@@ -22,7 +22,7 @@ type PublicAlbum = { folderId: string; style: { theme: string; song: string }; i
 function dDay(day: string) { const now = new Date(), today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()); const left = Math.round((Date.parse(day + 'T00:00:00Z') - today) / 86400000); return left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : ''; }
 type Album = { id: string; name: string };
 type Item = { id: string; file: File; status: 'waiting' | 'uploading' | 'done' | 'failed'; error?: string; shared?: boolean; folder?: string; preview?: string };
-export default function GuestFlow({ token, locale }: { token: string; locale: string }) {
+export default function GuestFlow({ token, locale, nextView }: { token: string; locale: string; nextView?: 'rolling' }) {
   const ko = locale === 'ko', text = (a: string, b: string) => ko ? a : b;
   const [invite, setInvite] = useState<Invite | null>(null), [ready, setReady] = useState(false), [accepted, setAccepted] = useState(false), [consent, setConsent] = useState(false);
   const [publicAlbum, setPublicAlbum] = useState<PublicAlbum | null>(null);
@@ -67,7 +67,7 @@ export default function GuestFlow({ token, locale }: { token: string; locale: st
       if (!accepted) { await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) }); setAccepted(true); }
       const result = await api<{ folderId?: string; groupId?: string; albums: Album[] }>('/api/join', { method: 'POST', body: JSON.stringify({ token, name: nickname.trim() || undefined }) });
       // A shared album link should land on the decorated album itself, not the upload form.
-      if (thenView && result.folderId) { router.push(`/?lang=${locale}&album=${result.folderId}&view=theme`); return; }
+      if (thenView && result.folderId) { router.push(`/?lang=${locale}&album=${result.folderId}&view=${nextView || 'theme'}`); return; }
       setAlbums(result.albums); setFolder(result.folderId || (result.albums.length === 1 ? result.albums[0].id : '')); setGroup(result.groupId || ''); setJoined(true);
     } catch (cause) { setError(cause instanceof Error && /INVITE/.test(cause.message) ? text('초대가 만료되었어요. 모임장에게 새 링크를 요청해 주세요.', 'The invite expired. Ask the organizer for a new link.') : text('참여하지 못했어요. 모임 정원이나 연결 상태를 확인하고 다시 시도해 주세요.', 'Could not join. Check the group capacity or your connection and try again.')); }
     finally { setBusy(false); }

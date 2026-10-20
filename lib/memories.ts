@@ -15,7 +15,7 @@ export function targetSpec(kind: unknown, value: unknown) {
 export async function targetAccess(db: PoolClient, who: string, kind: unknown, id: unknown) {
  const target=targetSpec(kind,id);
  // Serialize interactions with visibility changes and deletes. Access is always checked at the parent.
- const result=await db.query(`SELECT t.*,f.owner_id AS manager FROM snaproom.${target.table} t JOIN snaproom.folders f ON f.id=t.folder_id JOIN snaproom.members m ON m.folder_id=t.folder_id AND m.viewer_id=$2 WHERE f.deleted_at IS NULL AND t.id=$1 AND snaproom.can_view(t.owner_id,t.shared,t.recipients,$2) FOR UPDATE OF t`,[target.id,who]);
+ const result=await db.query(`SELECT t.*,f.owner_id AS manager FROM snaproom.${target.table} t JOIN snaproom.folders f ON f.id=t.folder_id JOIN snaproom.members m ON m.folder_id=t.folder_id AND m.viewer_id=$2 WHERE f.deleted_at IS NULL AND t.deleted_at IS NULL AND t.id=$1 AND snaproom.can_view(t.owner_id,t.shared,t.recipients,$2) FOR UPDATE OF t`,[target.id,who]);
  if(!result.rowCount) throw new ApiError(404,'NOT_FOUND');
  return {...target,...result.rows[0]};
 }

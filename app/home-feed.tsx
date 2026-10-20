@@ -2,15 +2,21 @@
 /* eslint-disable @next/next/no-img-element -- Photo URLs need the viewer's session cookie; an optimizer cannot fetch them. */
 import Link from 'next/link';
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { CircleHelp, Trash2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
+import { TERMS_VERSION } from '@/lib/policy';
 import { Icon, StitchIconFont, sansStack, stitchRoot } from './stitch-kit';
+import { RollingPaper } from './rolling-paper';
+import QuickAlbum from './quick-album';
+import FeedAlbumView from './feed-album-view';
 
 // The signed-in home: the Stitch "프라이빗 크루 데일리 홈 피드" layout filled with the viewer's own crew.
 // Decorative mockup details without persisted data are omitted from the signed-in feed.
 type Person = { id: string; name: string; mine: boolean };
 type Media = { id: string; src: string; video: boolean; day: string | null };
-export type FeedItem = { kind: 'photo' | 'record'; id: string; folderId: string; album: string; author: Person; createdAt: string; title: string; body: string; photos: Media[]; photoCount: number; comments: { id: string; body: string; author: Person; createdAt: string }[]; commentCount: number; likes: number; liked: boolean };
-export type FeedData = { me: string; groups: { id: string; name: string; members: number }[]; crew: { id: string | null; name: string | null; ownerId: string | null; members: Person[] }; month: { count: number; today: number; goal: number; contributors: Person[] }; items: FeedItem[] };
+export type FeedItem = { kind: 'photo' | 'record'; id: string; folderId: string; album: string; author: Person; createdAt: string; title: string; body: string; photos: Media[]; photoCount: number; comments: { id: string; body: string; author: Person; createdAt: string }[]; commentCount: number; likes: number; liked: boolean; shared: boolean; recipients: string[]; revision: number; day: string };
+export type FeedAlbum = {id:string;name:string;category:string;photoCount:number;cover:string|null;updatedAt:string};
+export type FeedData = { me: string; groups: { id: string; name: string; members: number }[]; albums:FeedAlbum[]; crew: { id: string | null; name: string | null; ownerId: string | null; members: Person[] }; month: { count: number; today: number; goal: number; contributors: Person[] }; items: FeedItem[] };
 
 const STORAGE_KEY = 'memonestia.feedGroup';
 const avatarTones = ['bg-[#bf9061] text-[#492a04]', 'bg-[#f0dfd5] text-[#55433d]', 'bg-[#ffb5a0] text-[#3b0900]', 'bg-[#c2e9c9] text-[#486a51]'];
@@ -23,15 +29,23 @@ function formatTimestamp(iso: string) {
 }
 const detailHref = (item: FeedItem) => item.kind === 'photo' ? `/?lang=ko&album=${item.folderId}&photo=${item.id}` : `/?lang=ko&album=${item.folderId}&view=photos`;
 
-export type FeedActions = { onSelectGroup: (id: string | null) => void; onLike: (item: FeedItem) => void; onComment: (item: FeedItem, body: string) => Promise<string | null>; onOpenBundle?: (item: FeedItem, mode: 'gallery' | 'slideshow') => void };
+export type FeedActions = { onSelectGroup: (id: string | null) => void; onCreateGroup?: (name: string) => Promise<void>; onLike: (item: FeedItem) => void; onComment: (item: FeedItem, body: string) => Promise<string | null>; onDelete: (item: FeedItem) => Promise<string | null>; onRefresh?: () => void; onOpenBundle?: (item: FeedItem, mode: 'gallery' | 'slideshow') => void };
 
 export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedActions }) {
   const [feedFilter, setFeedFilter] = useState<'all' | 'trips' | 'month' | 'notes'>('all');
   const [picking, setPicking] = useState(false);
+  const [openedAlbum, setOpenedAlbum] = useState<FeedAlbum | null>(null);
   const [fullBundle, setFullBundle] = useState<{ item: FeedItem; mode: 'gallery' | 'slideshow' } | null>(null);
+  const [creatingSpace, setCreatingSpace] = useState(false);
+  const [spaceName, setSpaceName] = useState('');
+  const [spaceError, setSpaceError] = useState('');
+  const [spaceBusy, setSpaceBusy] = useState(false);
+  const [termsGate, setTermsGate] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [termsBusy, setTermsBusy] = useState(false);
   const { crew, month } = data;
   useEffect(() => { const filter = new URLSearchParams(window.location.search).get('filter'); if (filter === 'notes' || filter === 'trips' || filter === 'month') setFeedFilter(filter); }, []);
-  const crewHref = `/?lang=ko&section=rooms${crew.id ? `&group=${crew.id}` : ''}`;
+  const crewHref = '/crew/settings';
   const screenHref = (next: 'home'|'photos'|'behind'|'settings') => next === 'home' ? '/?lang=ko&home=1' : `/crew/${next}`;
   const createAlbumHref = `/?lang=ko&quick=1${crew.id ? `&group=${encodeURIComponent(crew.id)}` : ''}&returnTo=${encodeURIComponent('/?lang=ko&home=1')}`;
   const remaining = Math.max(month.goal - month.count, 0);
@@ -43,13 +57,14 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
     return true;
   });
   const invite = crew.id && <Link href={crewHref} className="flex items-center gap-1.5 bg-[#f6e5db] hover:bg-[#f0dfd5] transition-colors px-2.5 py-1.5 rounded-full shrink-0 text-[#55433d] active:scale-95"><div className="w-6 h-6 rounded-full border-2 border-dashed border-[#88726c] flex items-center justify-center text-[#99452c]"><Icon name="person_add" className="text-[14px]"/></div><span className={`${label} font-medium`}>+ 친구 초대</span></Link>;
+  if (openedAlbum) return <FeedAlbumView key={openedAlbum.id} album={openedAlbum} onBack={() => setOpenedAlbum(null)}/>;
   if (fullBundle) return <FullBundleView item={fullBundle.item} initialMode={fullBundle.mode} onBack={() => setFullBundle(null)} actions={actions}/>;
   return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] antialiased`} style={{ fontFamily: sansStack }}>
     <StitchIconFont/>
     <header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 pt-[env(safe-area-inset-top,0px)] bg-[#fff8f5]/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] md:rounded-b-2xl md:border-x md:border-b md:border-[#efdfd5]">
       <div className="px-5 pt-2 pb-2 flex flex-col gap-2 md:px-8 md:py-3 md:gap-2">
         <div className="h-10 flex items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2"><Link href={crewHref} aria-label="크루 목록으로 돌아가기" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="arrow_back" className="text-[22px]"/></Link><div className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#30251f]">우리 크루 조각</span><span className="block truncate text-[10px] text-[#78675e]">멤버 {crew.members.length}명</span></div></div>
+          <div className="flex min-w-0 items-center gap-2"><Link href={crewHref} aria-label="크루 설정으로 이동" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="settings" className="text-[22px]"/></Link><div className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#30251f]">우리 크루 조각</span><span className="block truncate text-[10px] text-[#78675e]">멤버 {crew.members.length}명</span></div></div>
           <div className="flex shrink-0 items-center gap-1"><button type="button" aria-label="북마크" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="bookmark_border" className="text-[21px]"/></button><button type="button" aria-label="공유" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="share" className="text-[21px]"/></button><Link href="/crew/settings" aria-label="내 계정" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#99452c] shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></Link></div>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -73,12 +88,33 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
                 <button key={g.id ?? 'personal'} role="menuitem" type="button" onClick={() => { setPicking(false); actions.onSelectGroup(g.id); }} className={`flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-left hover:bg-[#fcebe0] ${g.id === crew.id ? 'bg-[#fff1e9] text-[#99452c] font-bold' : 'text-[#221a14]'}`}>
                   <span className="stitch-sans text-[0.875rem] leading-[1.25rem] truncate">{g.name}</span><span className={`${label} text-[#88726c] shrink-0`}>{g.id ? `${g.members}명` : '나만'}</span>
                 </button>)}
+              {actions.onCreateGroup && <button role="menuitem" type="button" onClick={async () => { setPicking(false); setSpaceName(''); setSpaceError(''); setCreatingSpace(true); try { const policy=await api<{accepted:boolean}>('/api/policy'); setTermsGate(!policy.accepted); } catch { setSpaceError('이용 규칙 동의 상태를 확인하지 못했어요. 다시 시도해 주세요.'); } }} className="flex items-center gap-2 border-t border-[#f0e4dc] px-3 py-2.5 text-left text-sm font-semibold text-[#99452c] hover:bg-[#fff1e9]"><Icon name="add_circle" className="text-lg"/>새 앨범 공간 만들기</button>}
           </div>}
         </section>
         <section className="relative mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-[#fcebe0] to-[#f6e5db] px-3.5 py-3 md:px-6 md:py-5 md:rounded-2xl shadow-[0_4px_16px_-2px_rgba(112,100,92,0.08)]">
           <div className="flex items-center justify-between gap-2"><span className={`${label} font-semibold text-[#55433d]`}>이번 달 모인 조각</span><span className="text-xs font-bold text-[#99452c]">{month.count} / {month.goal}개</span></div>
+          <p className="mt-1.5 text-[11px] leading-5 text-[#78675e]">사진 1장 또는 영상 1개가 추억 1조각이에요.</p>
           <div className="w-full bg-white/80 h-2 rounded-full overflow-hidden p-0.5 shadow-inner mt-2"><div className="bg-[#99452c] h-full rounded-full transition-all" style={{ width: `${percent}%` }}/></div>
           <div className="flex items-center justify-between gap-2 mt-2"><span className={`${label} text-[#55433d] truncate`}>{remaining ? `우리 크루가 함께 ${remaining}조각 더 모아요` : '이번 달 조각을 모두 모았어요 🎉'}</span><span className="flex items-center -space-x-1.5 shrink-0">{month.contributors.slice(0, 4).map(p => <span key={p.id} className={`w-5 h-5 rounded-full border border-[#f6e5db] text-[9px] flex items-center justify-center ${p.mine ? 'font-bold' : ''} ${tone(p)}`}>{initial(p)}</span>)}</span></div>
+          <details className="group mt-3 border-t border-[#e6cdbd] pt-1">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-xs font-semibold text-[#99452c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99452c] [&::-webkit-details-marker]:hidden">
+              <span className="flex items-center gap-1.5"><CircleHelp aria-hidden="true" size={16} className="shrink-0"/>조각이 뭐예요?</span>
+              <Icon name="expand_more" className="text-lg transition-transform group-open:rotate-180"/>
+            </summary>
+            <div className="rounded-xl bg-white/70 p-3.5 text-xs leading-6 text-[#55433d]">
+              <p className="stitch-serif mb-3 text-sm font-semibold text-[#30251f]">함께 모은 순간을 ‘조각’이라고 불러요.</p>
+              <dl className="space-y-3">
+                <div><dt className="font-semibold text-[#30251f]">어떻게 세나요?</dt><dd>사진 3장과 영상 1개를 올리면 4조각이에요. 앨범이나 기록으로 묶어도 사진·영상 개수대로 세며, 글·댓글·롤링페이퍼는 포함하지 않아요.</dd></div>
+                <div><dt className="font-semibold text-[#30251f]">어떤 조각이 포함되나요?</dt><dd>{crew.id ? '지금 선택한 크루의 앨범에서 내가 볼 수 있는 사진·영상' : '내 공간의 앨범에서 내가 볼 수 있는 사진·영상'} 중 이번 달에 업로드한 것만 세어요. 촬영한 날짜와는 관계없고, 삭제한 항목은 제외돼요.</dd></div>
+                <div><dt className="font-semibold text-[#30251f]">{month.goal}개는 무슨 뜻인가요?</dt><dd>{crew.id ? '크루가 함께 모으는' : '내 공간에 모으는'} 월간 목표예요. 업로드 한도가 아니어서 넘겨도 계속 올릴 수 있고, 매일 채울 필요는 없어요.</dd></div>
+                <div><dt className="font-semibold text-[#30251f]">다음 달에는요?</dt><dd>새 달에 업로드한 조각을 다시 세어요. 이전에 올린 사진·영상은 앨범에 그대로 남아요.</dd></div>
+              </dl>
+            </div>
+          </details>
+        </section>
+        <section className="mb-5" aria-label="크루 앨범">
+          <div className="mb-2 flex items-center justify-between"><h2 id="feed-albums" className="stitch-serif scroll-mt-24 text-base font-semibold text-[#30251f]">우리 앨범</h2><span className="text-[10px] text-[#78675e]">{data.albums.length}개</span></div>
+          {data.albums.length ? <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 no-scrollbar">{data.albums.map(album=><button type="button" key={album.id} onClick={()=>setOpenedAlbum(album)} className="text-left w-36 shrink-0 overflow-hidden rounded-xl border border-[#efdfd5] bg-white shadow-[0_3px_12px_rgba(112,100,92,.07)]"><div className="aspect-[4/3] bg-[#f3e5dc]">{album.cover?<img src={album.cover} alt="" className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center text-3xl text-[#b89170]">📖</div>}</div><div className="p-2.5"><strong className="block truncate text-xs text-[#30251f]">{album.name}</strong><span className="mt-1 block text-[10px] text-[#78675e]">{album.category} · 사진 {album.photoCount}장</span></div></button>)}</div> : <p className="rounded-xl bg-white/80 px-3 py-3 text-[11px] text-[#78675e]">아직 앨범이 없어요. 사진을 담으면 이곳에서 바로 볼 수 있어요.</p>}
         </section>
         <section className="flex items-center gap-2 overflow-x-auto no-scrollbar mb-4 md:mb-6" aria-label="피드 보기">
           {([{ id: 'all', text: '전체 피드' }, { id: 'trips', text: '✈️ 여행·이벤트' }, { id: 'month', text: '📅 이번 달' }, { id: 'notes', text: '🏷️ 뒷면 낙서' }] as const).map(filter => <button key={filter.id} type="button" aria-pressed={feedFilter === filter.id} onClick={() => setFeedFilter(filter.id)} className={`px-3 py-1.5 rounded-full ${label} shrink-0 transition-colors ${feedFilter === filter.id ? 'bg-[#99452c] text-white font-semibold shadow-xs' : 'bg-[#fcebe0] text-[#55433d] hover:bg-[#f6e5db]'}`}>{filter.text}</button>)}
@@ -108,6 +144,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
           <Link key={tab.text} href={tab.href} className="flex flex-col items-center justify-center gap-0.5 text-[#55433d] transition-colors hover:text-[#221a14]"><Icon name={tab.icon} className="text-[22px]"/><span className={`${label} font-[500]`}>{tab.text}</span></Link>)}
       </div>
     </nav>
+    {creatingSpace && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#30251f]/55 px-5" onMouseDown={event => { if(event.target===event.currentTarget&&!spaceBusy&&!termsBusy)setCreatingSpace(false); }}><section role="dialog" aria-modal="true" aria-labelledby="new-space-title" className="w-full max-w-sm rounded-2xl border border-[#efdfd5] bg-[#fff8f5] p-5 shadow-2xl"><div className="mb-4 flex items-start justify-between gap-3"><div><span className="text-[10px] font-semibold uppercase tracking-[.16em] text-[#99452c]">New album space</span><h2 id="new-space-title" className="stitch-serif mt-1 text-xl font-semibold text-[#30251f]">새 앨범 공간 만들기</h2><p className="mt-1 text-xs leading-5 text-[#78675e]">가족, 친구, 여행처럼 함께 기록할 사람들별로 공간을 만들어요.</p></div><button type="button" aria-label="닫기" disabled={spaceBusy||termsBusy} onClick={()=>setCreatingSpace(false)} className="rounded-lg px-2 py-1 text-[#78675e] hover:bg-[#f6e5db]">✕</button></div>{termsGate ? <div className="space-y-4"><div className="rounded-xl border border-[#e6d6ca] bg-white p-4"><p className="text-sm font-semibold text-[#30251f]">공간을 만들기 전에 동의가 필요해요</p><p className="mt-1 text-xs leading-5 text-[#78675e]">아래 문서를 확인한 뒤 체크하고 동의해 주세요. 동의 후 이 창으로 돌아와 공간을 만들 수 있어요.</p><div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold"><Link className="text-[#99452c] underline underline-offset-2" href="/terms" target="_blank">이용약관 · 커뮤니티 규칙 보기 ↗</Link><Link className="text-[#99452c] underline underline-offset-2" href="/privacy" target="_blank">개인정보 처리 안내 보기 ↗</Link></div><label className="mt-4 flex cursor-pointer items-start gap-2.5 border-t border-[#f0e4dc] pt-3 text-xs leading-5 text-[#55433d]"><input type="checkbox" checked={termsChecked} onChange={event=>setTermsChecked(event.target.checked)} className="mt-1 accent-[#99452c]"/><span>이용약관과 커뮤니티 규칙에 동의하고 개인정보 처리 안내를 확인했습니다.</span></label></div>{spaceError&&<p role="alert" className="text-xs text-[#a33b2f]">{spaceError}</p>}<button type="button" disabled={!termsChecked||termsBusy} onClick={async()=>{setTermsBusy(true);setSpaceError('');try{await api('/api/policy',{method:'POST',body:JSON.stringify({version:TERMS_VERSION,accepted:true})});setTermsGate(false);setTermsChecked(false);}catch{setSpaceError('동의를 저장하지 못했어요. 연결을 확인하고 다시 시도해 주세요.');}finally{setTermsBusy(false);}}} className="w-full rounded-xl bg-[#99452c] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{termsBusy?'동의 저장 중…':'동의하고 공간 만들기로 돌아가기'}</button></div> : <form onSubmit={async event=>{event.preventDefault();if(!spaceName.trim()||!actions.onCreateGroup)return;setSpaceBusy(true);setSpaceError('');try{await actions.onCreateGroup(spaceName.trim());setCreatingSpace(false);setSpaceName('');}catch(error){if(error instanceof Error&&error.message==='TERMS_REQUIRED'){setTermsGate(true);setSpaceError('');}else setSpaceError(error instanceof Error&&error.message==='GROUP_LIMIT'?'만들 수 있는 공간 수(50개)에 도달했어요.':'공간을 만들지 못했어요. 잠시 후 다시 시도해 주세요.');}finally{setSpaceBusy(false);}}} className="space-y-3"><label className="block text-xs font-semibold text-[#55433d]">공간 이름<input autoFocus required maxLength={80} value={spaceName} onChange={event=>setSpaceName(event.target.value)} placeholder="예: 우리 가족, 대학 친구들" className="mt-1.5 w-full rounded-xl border border-[#e6d6ca] bg-white px-3 py-3 text-sm text-[#30251f] outline-none focus:border-[#99452c]"/></label>{spaceError&&<p role="alert" className="text-xs text-[#a33b2f]">{spaceError}</p>}<button type="submit" disabled={spaceBusy||!spaceName.trim()} className="w-full rounded-xl bg-[#99452c] px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">{spaceBusy?'만드는 중…':'공간 만들기'}</button></form>}</section></div>}
   </div>;
 }
 
@@ -255,6 +292,7 @@ function FeedCard({ item, index, owner, actions }: { item: FeedItem; index: numb
   const cover = item.photos[0];
   const days = [...new Set(item.photos.map(photo => photo.day).filter((day): day is string => Boolean(day)))];
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false); const [editing, setEditing] = useState(false); const [deleteConfirm, setDeleteConfirm] = useState(false); const [actionError, setActionError] = useState(''); const [actionBusy, setActionBusy] = useState(false);
   const visiblePhotos = selectedDay ? item.photos.filter(photo => photo.day === selectedDay) : item.photos;
   const activeMedia = visiblePhotos[activePhoto] ?? visiblePhotos[0] ?? cover;
   async function submit(e: FormEvent) {
@@ -277,14 +315,17 @@ function FeedCard({ item, index, owner, actions }: { item: FeedItem; index: numb
           <span className="stitch-sans text-[0.8125rem] leading-[1.25rem] font-[400] text-[#55433d] truncate">{formatTimestamp(item.createdAt)} · {item.album}</span>
         </div>
       </div>
-      <Link href={detailHref(item)} aria-label="자세히 보기" className="w-8 h-8 rounded-full flex items-center justify-center text-[#55433d] hover:bg-[#fcebe0] transition-colors shrink-0"><Icon name="more_horiz" className="text-[20px]"/></Link>
+      <div className="relative shrink-0"><button type="button" aria-label="게시물 메뉴" aria-expanded={menuOpen} onClick={()=>setMenuOpen(open=>!open)} className="flex h-8 w-8 items-center justify-center rounded-full text-[#55433d] transition-colors hover:bg-[#fcebe0]"><Icon name="more_horiz" className="text-[20px]"/></button>{menuOpen&&<div className="absolute right-0 top-9 z-30 w-48 rounded-xl border border-[#efdfd5] bg-white p-1.5 shadow-xl">{item.author.mine?<>{item.kind==='record'&&<button type="button" onClick={()=>{setActionError('');setEditing(true);setMenuOpen(false);}} className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-[#30251f] hover:bg-[#fff5ef]"><Icon name="edit_note" className="text-lg text-[#99452c]"/>수정</button>}<button type="button" onClick={()=>{setActionError('');setDeleteConfirm(true);setMenuOpen(false);}} className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-[#a33224] hover:bg-[#fff1ee]"><Trash2 size={16} strokeWidth={1.8} aria-hidden="true"/>삭제</button></>:<p className="m-0 px-3 py-2 text-xs leading-relaxed text-[#78675e]">내가 작성한 게시물만 수정하거나 삭제할 수 있어요.</p>}</div>}</div>
     </div>
+    {editing&&item.kind==='record'&&<QuickAlbum locale="ko" onClose={()=>setEditing(false)} onSaved={()=>{setEditing(false);actions.onRefresh?.();}} editItem={{id:item.id,folderId:item.folderId,title:item.title,body:item.body,day:item.day,shared:item.shared,recipients:item.recipients,revision:item.revision,photos:item.photos}}/>}
+    {deleteConfirm&&<div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#30251f]/45 p-5 backdrop-blur-[2px]" role="presentation" onMouseDown={event=>{if(event.target===event.currentTarget&&!actionBusy)setDeleteConfirm(false);}}><section role="alertdialog" aria-modal="true" aria-labelledby={`delete-feed-${item.id}`} aria-describedby={`delete-desc-${item.id}`} className="w-full max-w-sm rounded-[26px] border border-[#efdfd5] bg-[#fffaf7] p-6 shadow-2xl"><span className="mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-[#f9e9df] text-[#a94835]"><Trash2 size={21} strokeWidth={1.8} aria-hidden="true"/></span><h2 id={`delete-feed-${item.id}`} className="stitch-serif text-xl font-semibold text-[#30251f]">이 기록을 숨길까요?</h2><p id={`delete-desc-${item.id}`} className="mt-2 text-sm leading-relaxed text-[#78675e]">{item.kind==='record'?'피드와 앨범에서 기록과 연결 사진이 숨겨집니다. 저장된 파일은 지워지지 않아요.':'피드와 앨범에서 사진이 숨겨집니다. 저장된 파일은 지워지지 않아요.'}</p>{actionError&&<p role="alert" className="mt-3 text-sm text-red-700">{actionError}</p>}<div className="mt-6 flex justify-end gap-2"><button type="button" disabled={actionBusy} onClick={()=>setDeleteConfirm(false)} className="rounded-full border border-[#e8d8ce] bg-white px-4 py-2.5 text-sm font-semibold text-[#55433d]">취소</button><button type="button" disabled={actionBusy} onClick={async()=>{setActionBusy(true);setActionError('');const problem=await actions.onDelete(item);setActionBusy(false);if(problem)setActionError(problem);else setDeleteConfirm(false);}} className="rounded-full bg-[#99452c] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{actionBusy?'숨기는 중…':'숨기기'}</button></div></section></div>}
+    {actionError&&!editing&&<p role="alert" className="mb-2 text-xs text-red-700">{actionError}</p>}
     {item.kind === 'record' && item.photoCount > 4 && <div className="rounded-xl bg-[#fff8f5] px-1 pt-1 pb-3">
       <div className="flex items-center justify-between gap-2 mb-1"><span className={`${label} text-[#7d562d] font-semibold`}>✈️ 여행 · 이벤트 묶음</span><span className={`${label} text-[#88726c]`}>{item.photoCount}장의 조각</span></div>
       <h2 className="stitch-serif text-[1.25rem] leading-snug font-semibold text-[#221a14]">{item.title || '우리의 여행 기록'}</h2>
       {item.body && <p className="stitch-sans text-[0.8125rem] leading-relaxed text-[#55433d] mt-1.5 whitespace-pre-line">{item.body}</p>}
     </div>}
-    {cover && <div className={`relative w-full rounded-xl overflow-hidden bg-[#fff1e9] ${item.kind === 'record' && item.photoCount > 4 ? 'aspect-[1.4]' : index % 2 === 0 ? 'aspect-[3/4]' : 'aspect-square'}`}>
+    {cover && <div className={`relative w-full rounded-xl overflow-hidden bg-[#fff1e9] ${backside ? '' : item.kind === 'record' && item.photoCount > 4 ? 'aspect-[1.4]' : index % 2 === 0 ? 'aspect-[3/4]' : 'aspect-square'}`}>
       {!backside ? <div key="front" className="memory-flip-face relative h-full w-full">
         <button type="button" onClick={() => setBackside(true)} aria-label="사진을 뒤집어 메모 보기" className="absolute inset-0 z-0 block h-full w-full text-left">
           {activeMedia?.video ? <video src={activeMedia.src} muted playsInline preload="metadata" className="w-full h-full object-cover"/> : <img alt={item.title || `${item.author.name}의 조각`} className="w-full h-full object-cover select-none" src={activeMedia?.src}/>}
@@ -292,16 +333,7 @@ function FeedCard({ item, index, owner, actions }: { item: FeedItem; index: numb
         {item.title && item.photos.length <= 1 && <div className="absolute bottom-3 left-3 bg-[#ffffff]/95 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-md -rotate-1 max-w-[85%]"><p className="stitch-serif text-[13px] text-[#221a14] font-medium leading-tight">“{item.title}”</p></div>}
         {item.photoCount > 1 && <span className={`absolute top-3 left-3 px-2 py-0.5 bg-[#ffffff]/85 backdrop-blur-xs rounded ${label} text-[#7d562d] font-[500]`}>{activePhoto + 1} / {visiblePhotos.length}{item.photoCount > visiblePhotos.length ? ` · 전체 ${item.photoCount}장` : ''} · {item.kind === 'record' ? '모아보기' : '사진'}</span>}
         {!backside && item.photos.length > 1 && item.photoCount <= 4 && <div className="absolute bottom-2 left-2 right-2 z-20 flex gap-1.5 overflow-x-auto no-scrollbar">{visiblePhotos.map((photo, idx) => <button key={photo.id} type="button" aria-label={`사진 ${idx + 1}`} aria-pressed={activePhoto === idx} onClick={() => setActivePhoto(idx)} className={`w-10 h-10 rounded-md overflow-hidden border-2 shrink-0 ${activePhoto === idx ? 'border-white ring-1 ring-[#99452c]' : 'border-white/60 opacity-75'}`}><img src={photo.src} alt="" className="w-full h-full object-cover"/></button>)}</div>}
-      </div> : <div key="back" className="memory-flip-face absolute inset-0 overflow-y-auto p-5 flex flex-col justify-center bg-[#fff9d2] text-[#492a04]">
-        <div className="text-center mb-4"><span className="text-2xl">✉️</span><p className="stitch-serif text-lg font-semibold mt-1">사진 뒷면 롤링페이퍼</p><p className="text-xs text-[#7d562d] mt-1">{item.commentCount}개의 추억 메모</p></div>
-        {item.body && <p className="text-sm leading-relaxed whitespace-pre-line border-y border-[#ebd876] py-3">{item.body}</p>}
-        <div className="space-y-2 mt-3">{item.comments.map(c => <p key={c.id} className="text-sm leading-relaxed"><b>{c.author.mine ? '나' : c.author.name}</b> · {c.body}</p>)}
-          {!item.comments.length && !item.body && <p className="text-center text-sm text-[#7d562d]">첫 메모를 남겨 추억의 뒷면을 채워보세요.</p>}
-          {item.commentCount > item.comments.length && <Link href={detailHref(item)} className="block text-center text-xs text-[#7d562d] underline">메모 모두 보기</Link>}
-        </div>
-        <div className="flex justify-center gap-2 mt-4" aria-label="빠른 메모 스티커">{['🥐','🍺','💖','✨','🥹'].map(sticker => <button type="button" key={sticker} aria-label={`${sticker} 메모 남기기`} disabled={sending} onClick={async () => { setSending(true); setError(''); const problem = await actions.onComment(item, sticker); setSending(false); if (problem) setError(problem); }} className="w-9 h-9 rounded-full bg-white/80 hover:bg-white text-lg disabled:opacity-50">{sticker}</button>)}</div>
-        {error && <p role="alert" className="text-center text-xs text-[#ba1a1a] mt-2">{error}</p>}
-      </div>}
+      </div> : <RollingPaper item={item} photo={activeMedia} onComment={actions.onComment}/>}
       <button type="button" onClick={() => setBackside(v => !v)} aria-label={backside ? '사진 앞면 보기' : '사진 뒷면 메모 보기'} className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 backdrop-blur-xs px-2.5 py-1.5 rounded-full shadow-xs text-[#221a14]"><Icon name="flip" className="text-[15px] text-[#99452c]"/><span className={`${label} font-[500]`}>{backside ? '사진 보기' : '뒷면 메모'}</span></button>
     </div>}
     {item.kind === 'record' && item.photoCount > 4 && days.length > 1 && <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-3" aria-label="여행 날짜 선택">
@@ -317,7 +349,7 @@ function FeedCard({ item, index, owner, actions }: { item: FeedItem; index: numb
       <button type="button" aria-pressed={item.liked} onClick={() => actions.onLike(item)} className={`flex items-center gap-1 px-2.5 py-1 rounded-full transition-colors ${item.liked ? 'bg-[#ffdbd1]' : 'bg-[#fcebe0] hover:bg-[#f6e5db]'}`}><span className="text-[13px]">💖</span><span className={`${label} text-[#221a14] font-semibold`}>{item.likes}</span></button>
       <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#fff1e9] text-[#55433d] ${label} font-[500]`}><Icon name="edit_note" className="text-[15px]"/>{item.commentCount}</span>
     </div>
-    {(memos || backside) && <div className="relative mt-3 pt-2">
+    {memos && !backside && <div className="relative mt-3 pt-2">
       <div className="relative space-y-2 rounded-xl bg-[#fcebe0] p-3 shadow-inner">
         <div className="pointer-events-none absolute -top-2 left-6 h-3.5 w-12 rotate-2 bg-[#dbc1ba]/40"/>
         <div className="flex items-center justify-between pb-1">
@@ -369,6 +401,7 @@ export default function HomeFeed() {
   useEffect(() => { void load(readGroup()); }, [load]);
   const actions: FeedActions = {
     onSelectGroup(id) { saveGroup(id); setData(null); void load(id ?? 'personal'); },
+    async onCreateGroup(name) { const result = await api<{id:string}>('/api/groups', { method: 'POST', body: JSON.stringify({ name }) }); saveGroup(result.id); setData(null); await load(result.id); },
     onLike(item) {
       const toggle = (liked: boolean) => setData(d => d && { ...d, items: d.items.map(i => i.kind === item.kind && i.id === item.id ? { ...i, liked, likes: i.likes + (liked ? 1 : -1) } : i) });
       toggle(!item.liked);
@@ -381,12 +414,20 @@ export default function HomeFeed() {
         return null;
       } catch (error) { return commentErrors[error instanceof Error ? error.message : ''] ?? '댓글을 남기지 못했어요.'; }
     },
+    async onDelete(item) {
+      try {
+        await api(item.kind === 'record' ? '/api/memories' : '/api/photos', { method: 'DELETE', body: JSON.stringify({ id: item.id }) });
+        await load(data?.crew.id ?? 'personal');
+        return null;
+      } catch { return '게시물을 삭제하지 못했어요. 권한과 연결을 확인해 주세요.'; }
+    },
+    onRefresh() { void load(data?.crew.id ?? 'personal'); },
   };
   if (data) return <CrewFeedView data={data} actions={actions}/>;
   return <div className={`${stitchRoot} h-screen flex flex-col items-center justify-center gap-3 bg-[#fff8f5] text-[#55433d] px-6 text-center`} style={{ fontFamily: sansStack }}>
     <StitchIconFont/>
     {failed
-      ? <><p className="stitch-sans text-[0.9375rem]">피드를 불러오지 못했어요.</p><div className="flex gap-2"><button type="button" onClick={() => { setFailed(false); void load(readGroup()); }} className="px-4 py-2 rounded-xl bg-[#99452c] text-[#ffffff] stitch-sans text-[0.8125rem] font-semibold">다시 시도</button><Link href="/?lang=ko&section=rooms" className="px-4 py-2 rounded-xl bg-[#fcebe0] stitch-sans text-[0.8125rem] font-semibold">앨범으로 가기</Link></div></>
+      ? <><p className="stitch-sans text-[0.9375rem]">피드를 불러오지 못했어요.</p><div className="flex gap-2"><button type="button" onClick={() => { setFailed(false); void load(readGroup()); }} className="px-4 py-2 rounded-xl bg-[#99452c] text-[#ffffff] stitch-sans text-[0.8125rem] font-semibold">다시 시도</button><Link href="/crew/photos" className="px-4 py-2 rounded-xl bg-[#fcebe0] stitch-sans text-[0.8125rem] font-semibold">사진 서랍으로 가기</Link></div></>
       : <p role="status" className="stitch-sans text-[0.9375rem]">추억 조각을 불러오는 중…</p>}
   </div>;
 }

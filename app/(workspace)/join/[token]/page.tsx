@@ -3,7 +3,7 @@ import { requestLocale } from '@/lib/request-locale';
 import { hash, pool } from '@/lib/server';
 import GuestFlow from './guest-flow';
 import '../../../growth/growth.css';
-type Props = { params: Promise<{ token: string }>; searchParams: Promise<{ lang?: string }> };
+type Props = { params: Promise<{ token: string }>; searchParams: Promise<{ lang?: string; next?: string }> };
 export async function generateMetadata({ params, searchParams }: Props) {
  const { token } = await params, { lang } = await searchParams;
  let name: string | null = null, birthday = false;
@@ -26,5 +26,6 @@ export async function generateMetadata({ params, searchParams }: Props) {
 }
 export default function Page(props: Props) { return <Suspense fallback={<main className="growth-page" aria-busy="true">Memonestia</main>}><Content {...props} /></Suspense>; }
 async function Content({ params, searchParams }: Props) {
-  return <GuestFlow token={(await params).token} locale={await requestLocale((await searchParams).lang)} />;
+  const query = await searchParams;
+  return <GuestFlow token={(await params).token} locale={await requestLocale(query.lang)} nextView={query.next === 'rolling' ? 'rolling' : undefined} />;
 }

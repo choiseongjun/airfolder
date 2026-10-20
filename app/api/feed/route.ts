@@ -26,20 +26,25 @@ export async function GET(request:Request){await connection();return safe(async(
 
  const scope=`SELECT f.id,f.name FROM snaproom.folders f JOIN snaproom.members m ON m.folder_id=f.id AND m.viewer_id=$1
   WHERE f.deleted_at IS NULL AND (($2::uuid IS NULL AND f.group_id IS NULL) OR f.group_id=$2)`;
+ const albums=(await db.query(`WITH scope AS (${scope})
+  SELECT f.id,f.name,f.category,f.updated_at,
+   (SELECT count(*)::int FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)) AS photo_count,
+   (SELECT p.id FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND p.mime NOT LIKE 'video/%' AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1) ORDER BY p.captured_at DESC,p.id LIMIT 1) AS cover_id
+  FROM snaproom.folders f JOIN scope s ON s.id=f.id ORDER BY f.updated_at DESC,f.id LIMIT 24`,[who,group])).rows;
  const month=(await db.query(`WITH scope AS (${scope}), uploads AS (
    SELECT p.owner_id,p.created_at AT TIME ZONE $3 AS local FROM snaproom.photos p JOIN scope s ON s.id=p.folder_id
-   WHERE snaproom.can_view(p.owner_id,p.shared,p.recipients,$1) AND p.created_at AT TIME ZONE $3>=date_trunc('month',now() AT TIME ZONE $3))
+   WHERE p.deleted_at IS NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1) AND p.created_at AT TIME ZONE $3>=date_trunc('month',now() AT TIME ZONE $3))
   SELECT count(*)::int AS count,count(*) FILTER (WHERE local>=date_trunc('day',now() AT TIME ZONE $3))::int AS today,
    COALESCE(array_agg(DISTINCT owner_id::text),'{}'::text[]) AS contributors FROM uploads`,[who,group,zone])).rows[0];
 
  const items=(await db.query(`WITH scope AS (${scope})
   SELECT * FROM (
-   SELECT 'record' AS kind,r.id,r.folder_id,s.name AS album,r.owner_id,r.created_at,r.title,r.body,NULL AS mime FROM snaproom.records r JOIN scope s ON s.id=r.folder_id
-    WHERE snaproom.can_view(r.owner_id,r.shared,r.recipients,$1)
+   SELECT 'record' AS kind,r.id,r.folder_id,s.name AS album,r.owner_id,r.created_at,r.title,r.body,NULL AS mime,r.shared,r.recipients,r.revision,r.recorded_on::date AS day FROM snaproom.records r JOIN scope s ON s.id=r.folder_id
+    WHERE r.deleted_at IS NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$1)
    UNION ALL
-   SELECT 'photo',p.id,p.folder_id,s.name,p.owner_id,p.created_at,'','',p.mime FROM snaproom.photos p JOIN scope s ON s.id=p.folder_id
-    WHERE snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)
-     AND NOT EXISTS(SELECT 1 FROM snaproom.record_photos rp JOIN snaproom.records r ON r.id=rp.record_id WHERE rp.photo_id=p.id AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$1))
+   SELECT 'photo',p.id,p.folder_id,s.name,p.owner_id,p.created_at,'','',p.mime,p.shared,p.recipients,0::int AS revision,p.captured_at::date AS day FROM snaproom.photos p JOIN scope s ON s.id=p.folder_id
+    WHERE p.deleted_at IS NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)
+     AND NOT EXISTS(SELECT 1 FROM snaproom.record_photos rp JOIN snaproom.records r ON r.id=rp.record_id WHERE rp.photo_id=p.id AND r.deleted_at IS NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$1))
   ) feed ORDER BY created_at DESC,id LIMIT 12`,[who,group])).rows;
 
  const ids=(kind:string)=>items.filter(i=>i.kind===kind).map(i=>i.id);
@@ -50,7 +55,7 @@ export async function GET(request:Request){await connection();return safe(async(
     SELECT rp.record_id,p.id,p.mime,to_char(p.captured_at AT TIME ZONE $3,'YYYY-MM-DD') AS day,
       count(*) OVER(PARTITION BY rp.record_id)::int AS total,row_number() OVER(PARTITION BY rp.record_id ORDER BY rp.position) n
     FROM snaproom.record_photos rp JOIN snaproom.photos p ON p.id=rp.photo_id
-    WHERE rp.record_id=ANY($1::uuid[]) AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)
+    WHERE rp.record_id=ANY($1::uuid[]) AND p.deleted_at IS NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)
    ) ranked WHERE n<=30`,[recordIds,who,zone]),
   db.query(`SELECT * FROM (SELECT c.id,c.photo_id,c.record_id,c.owner_id,c.body,c.created_at,
     count(*) OVER(PARTITION BY c.photo_id,c.record_id)::int AS total,row_number() OVER(PARTITION BY c.photo_id,c.record_id ORDER BY c.created_at DESC,c.id) n
@@ -67,6 +72,7 @@ export async function GET(request:Request){await connection();return safe(async(
  return Response.json({
   me:who,
   groups:groups.map(g=>({id:g.id,name:g.name,members:g.members})),
+  albums:albums.map(a=>({id:a.id,name:a.name,category:a.category,photoCount:a.photo_count,cover:a.cover_id?`/api/photos/${a.cover_id}/content`:null,updatedAt:a.updated_at})),
   crew:{id:group,name:crew?.name??null,ownerId:crew?.owner_id??null,members:members.map(m=>({...m,mine:m.id===who}))},
   month:{count:month.count,today:month.today,goal:MONTHLY_GOAL,contributors:month.contributors.map(person)},
   items:items.map(i=>{
@@ -74,7 +80,7 @@ export async function GET(request:Request){await connection();return safe(async(
    const thread=comments.rows.filter(c=>target(c)===i.id).sort((a,b)=>a.created_at-b.created_at);
    const like=likes.rows.find(l=>target(l)===i.id);
    return {kind:i.kind,id:i.id,folderId:i.folder_id,album:i.album,author:person(i.owner_id),createdAt:i.created_at,title:i.title||'',body:i.body||'',
-    photos:pics,photoCount:i.kind==='photo'?1:attached.rows.find(p=>p.record_id===i.id)?.total??0,
+    photos:pics,photoCount:i.kind==='photo'?1:attached.rows.find(p=>p.record_id===i.id)?.total??0,shared:i.shared,recipients:i.owner_id===who?i.recipients:[],revision:i.revision,day:new Date(i.day).toISOString().slice(0,10),
     comments:thread.map(c=>({id:c.id,body:c.body,author:person(c.owner_id),createdAt:c.created_at})),commentCount:thread[0]?.total??0,
     likes:like?.count??0,liked:like?.liked??false};
   }),

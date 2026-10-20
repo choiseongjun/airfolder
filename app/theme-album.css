@@ -46,7 +46,14 @@
 .ta-picker-head svg{color:var(--brand)}
 .ta-picker-head strong{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:20px;color:var(--ink)}
 .ta-picker-head small{font-size:11px;color:#998b78;margin-left:auto}
-.ta-picker-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+.ta-picker-rail{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:6px;margin-top:12px;min-width:0}
+.ta-picker-scroll{display:grid;place-items:center;width:30px;height:38px;border:1px solid var(--edge);border-radius:999px;background:#fff;color:var(--brand);cursor:pointer}
+.ta-picker-scroll:hover{background:var(--brand-softer)}
+.ta-picker-row{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(150px,180px);gap:10px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;margin-top:0;padding:3px 4px 10px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;touch-action:pan-x;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--brand-line) transparent}
+.ta-picker-row::-webkit-scrollbar{height:6px}
+.ta-picker-row::-webkit-scrollbar-thumb{border-radius:999px;background:var(--brand-line)}
+.ta-picker-row::-webkit-scrollbar-track{background:transparent}
+.ta-swatch{scroll-snap-align:start}
 .ta-swatch{min-width:0;text-align:left;border:2px solid var(--edge);background:#fff;border-radius:18px;padding:8px 8px 10px;cursor:pointer;transition:transform .15s ease-out,box-shadow .15s;color:var(--ink)}
 .ta-swatch:hover{transform:translateY(-2px);box-shadow:0 8px 16px #6b513318}
 .ta-swatch[aria-pressed=true]{outline:none;border-color:var(--brand-line);background:var(--brand-softer)}
@@ -254,7 +261,8 @@
  .ta-picker{padding:10px 0 10px 12px;border-radius:14px;margin-bottom:14px}
  .ta-picker-head strong{font-size:13px}
  .ta-picker-head small{display:none}
- .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;overflow-x:auto;margin-top:8px;padding:3px 12px 4px 3px;scrollbar-width:none}
+ .ta-picker-rail{grid-template-columns:30px minmax(0,1fr) 30px;gap:4px;margin-top:8px}
+ .ta-picker-row{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;overflow-x:auto;margin-top:0;padding:3px 4px 8px;scrollbar-width:thin}
  .ta-swatch{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px}
  .ta-swatch:hover{transform:none}
  .ta-swatch-art{width:34px;height:34px;padding:3px;border-radius:50%;box-sizing:border-box}

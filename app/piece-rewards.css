@@ -1,0 +1,80 @@
+@layer utilities {
+  .piece-rewards-root { margin:0 0 18px; border:1px solid #eadbca; border-radius:18px; overflow:hidden; background:#fffcf6; color:#49362a; box-shadow:0 5px 18px #59453608; }
+  .piece-rewards-hero { display:flex; align-items:center; gap:8px; padding:12px 14px 8px; background:linear-gradient(125deg,#f4eddf,#fffaf1 65%,#e9efdf); }
+  .piece-rewards-portrait { width:100px; flex-shrink:0; }
+  .piece-rewards-portrait svg { display:block; width:100%; height:auto; }
+  .piece-rewards-heroText { min-width:0; }
+  .piece-rewards-eyebrow { display:flex; align-items:center; gap:4px; font-size:10px; color:#8a6b4e; }
+  .piece-rewards-heroText h3 { margin:6px 0 3px; font-family:var(--font-stitch-serif),serif; font-size:17px; font-weight:650; line-height:1.4; }
+  .piece-rewards-heroText p { margin:0; font-size:11px; line-height:1.7; color:#897360; }
+  .piece-rewards-badge { display:inline-flex; align-items:center; gap:4px; flex-wrap:wrap; margin-top:8px; font-size:9px; color:#6d7654; }
+  .piece-rewards-next { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:10px 16px 15px; font-size:10px; color:#806a55; }
+  .piece-rewards-next b { color:#99452c; }
+  .piece-rewards-next progress { appearance:none; width:100%; height:5px; border:0; border-radius:20px; overflow:hidden; background:#eee5d6; }
+  .piece-rewards-next progress::-webkit-progress-bar { background:#eee5d6; }
+  .piece-rewards-next progress::-webkit-progress-value { background:#859571; border-radius:20px; }
+  .piece-rewards-next progress::-moz-progress-bar { background:#859571; border-radius:20px; }
+  .piece-rewards-collection { border-top:1px solid #eee4d6; }
+  .piece-rewards-collection>summary { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 16px; min-height:48px; list-style:none; cursor:pointer; font-size:12px; font-weight:650; color:#99452c; }
+  .piece-rewards-collection>summary>span { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .piece-rewards-collection>summary small { font-size:9px; font-weight:400; color:#8c7c6c; }
+  .piece-rewards-collection>summary::-webkit-details-marker { display:none; }
+  .piece-rewards-collection[open]>summary>svg { transform:rotate(180deg); }
+  .piece-rewards-intro { margin:0 16px 14px; font-size:11px; line-height:1.8; color:#887360; }
+  .piece-rewards-use { margin:0 12px 14px; padding:12px; border:1px dashed #c9d3ba; border-radius:10px; background:#f2f5e9; font-size:11px; line-height:1.8; color:#667450; }
+  .piece-rewards-use b { font-weight:650; }
+  .piece-rewards-use p { margin:4px 0 8px; }
+  .piece-rewards-use a { display:inline-flex; align-items:center; min-height:36px; color:#99452c; font-weight:650; }
+  .piece-rewards-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; margin:0 12px 14px; padding:4px; border-radius:12px; background:#f1eade; }
+  .piece-rewards-tabs button { min-height:44px; border:0; border-radius:9px; background:transparent; color:#87715d; font-size:11px; cursor:pointer; }
+  .piece-rewards-tabs button small { display:block; margin-top:2px; font-size:9px; }
+  .piece-rewards-tabs button[aria-pressed=true] { background:#fffcf6; color:#99452c; font-weight:700; box-shadow:0 2px 5px #5945360a; }
+  .piece-rewards-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding:0 12px 16px; }
+  .piece-rewards-item { min-width:0; border:1px solid #ecdfd0; border-radius:13px; padding:8px; background:#fffefa; }
+  .piece-rewards-selected { border-color:#9baa87; box-shadow:0 0 0 1px #9baa87; }
+  .piece-rewards-art { position:relative; display:flex; align-items:center; justify-content:center; height:120px; border-radius:8px; }
+  .piece-rewards-art>svg { width:115px; height:115px; }
+  .piece-rewards-lock { position:absolute; bottom:5px; right:5px; display:flex; align-items:center; gap:3px; border-radius:20px; background:#fffcf2ed; padding:4px 7px; color:#796951; font-size:9px; }
+  .piece-rewards-item h4 { font-size:12px; font-weight:650; margin:9px 1px 4px; line-height:1.6; }
+  .piece-rewards-item p { margin:0 1px 10px; font-size:10px; color:#8b7864; line-height:1.7; min-height:34px; }
+  .piece-rewards-item button { display:flex; align-items:center; justify-content:center; gap:4px; min-height:40px; width:100%; border:0; border-radius:8px; background:#99452c; color:white; font-size:10px; font-weight:650; cursor:pointer; }
+  .piece-rewards-item button:disabled { cursor:default; background:#f2ede4; color:#857361; }
+  .piece-rewards-selected button:disabled { background:#e6eddd; color:#596d43; }
+  .piece-rewards-medal { display:flex; align-items:center; flex-direction:column; justify-content:center; width:69px; height:80px; clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%); color:#6b513c; }
+  .piece-rewards-medal small { font-weight:700; font-size:12px; }
+  .piece-rewards-miniCard { display:flex; align-items:center; flex-direction:column; border:5px solid; background:#fffcf6; padding:6px; box-shadow:0 2px 6px #59453610; transform:rotate(-4deg); }
+  .piece-rewards-miniCard span { font-size:6px; letter-spacing:1px; }
+  .piece-rewards-miniCard svg { width:62px; height:62px; }
+  .piece-rewards-miniCard b { font-size:8px; }
+  .piece-rewards-cardSection { padding:14px 16px; border-top:1px solid #eadfcd; }
+  .piece-rewards-cardSection h4 { font-size:14px; font-weight:650; margin:0 0 6px; }
+  .piece-rewards-cardSection p { font-size:11px; line-height:1.8; color:#887360; margin:0 0 12px; }
+  .piece-rewards-cardSection label { display:block; font-size:11px; margin-bottom:5px; }
+  .piece-rewards-cardSection select { width:100%; min-height:44px; border:1px solid #ddceb9; border-radius:8px; padding:8px; background:#fffefa; color:#594536; font-size:12px; }
+  .piece-rewards-postcard { display:flex; flex-direction:column; align-items:center; text-align:center; margin:14px 0; border:12px solid; background:#fffcf6; padding:22px 12px; color:#594536; }
+  .piece-rewards-postcard>span { font-size:7px; letter-spacing:1px; }
+  .piece-rewards-postcard h4 { margin:14px 0 6px; font-family:var(--font-stitch-serif),serif; font-size:22px; }
+  .piece-rewards-postcard p { overflow-wrap:anywhere; }
+  .piece-rewards-postcard svg { width:75%; max-width:200px; }
+  .piece-rewards-postcard strong { font-size:12px; }
+  .piece-rewards-postcard small { font-size:9px; margin-top:8px; color:#8b7864; }
+  .piece-rewards-download { display:flex; align-items:center; justify-content:center; gap:7px; width:100%; min-height:46px; background:#99452c; color:white; border:0; border-radius:10px; font-size:12px; font-weight:650; cursor:pointer; }
+  .piece-rewards-download:disabled { opacity:.5; }
+  .piece-rewards-empty { display:flex; align-items:center; gap:8px; padding:16px; border:1px dashed #d9c9b0; border-radius:10px; font-size:11px; line-height:1.8; color:#8b7864; }
+  .piece-rewards-empty svg { flex-shrink:0; }
+  .piece-rewards-rules { margin:0 16px 14px; font-size:11px; color:#877360; line-height:1.9; }
+  .piece-rewards-rules summary { cursor:pointer; min-height:44px; padding-top:10px; }
+  .piece-rewards-rules p { margin-bottom:8px; }
+  .piece-rewards-notice,.piece-rewards-error { margin:0; padding:12px 16px; font-size:11px; line-height:1.8; }
+  .piece-rewards-notice { color:#567146; background:#eef3e7; }
+  .piece-rewards-error { color:#a13d32; background:#fff0e9; }
+  .piece-rewards-error button { color:inherit; text-decoration:underline; padding:8px; }
+  .piece-rewards-root button:focus-visible,.piece-rewards-root summary:focus-visible,.piece-rewards-root select:focus-visible { outline:2px solid #99452c; outline-offset:2px; }
+  @media(max-width:360px) {
+    .piece-rewards-portrait { width:78px; }
+    .piece-rewards-heroText h3 { font-size:15px; }
+    .piece-rewards-collection>summary small { display:none; }
+    .piece-rewards-art { height:100px; }
+    .piece-rewards-art>svg { width:95px; height:95px; }
+  }
+}

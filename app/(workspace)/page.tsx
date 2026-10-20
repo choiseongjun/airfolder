@@ -45,6 +45,7 @@ async function LocalizedWorkspace({ searchParams }: Props) {
   const { lang, browse, invite, screen } = params;
   const locale = await requestLocale(lang);
   if (typeof invite === 'string' && /^[a-f\d]{64}$/.test(invite) && browse !== '1') redirect(`/join/${invite}?lang=${locale}`);
+  if (locale === 'ko' && params.section === 'rooms' && params.album === undefined) redirect('/?lang=ko&home=1');
   if (locale === 'ko' && params.home === '1' && (screen === 'photos' || screen === 'behind' || screen === 'settings')) redirect(`/crew/${screen}`);
   // The landing and crew home are Korean-only for now; English visitors keep the existing workspace.
   const requestedHome = params.home === '1';

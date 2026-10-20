@@ -26,6 +26,11 @@ try {
   await db.query(readFileSync(new URL('../db/017_upload_sessions.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/018_admin.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/019_growth_analytics.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/027_rolling_paper.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/028_rolling_paper_photos.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/029_memory_soft_delete.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/030_piece_rewards.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/031_reward_decorations.sql', import.meta.url), 'utf8'));
   await db.query('COMMIT');
   const storage = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } }).storage;
   const bucket = env.SUPABASE_STORAGE_BUCKET;

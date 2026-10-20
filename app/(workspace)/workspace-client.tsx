@@ -31,6 +31,7 @@ import FaceSearch from "../face-search";
 import StorageMeter from "../storage-meter";
 import AlbumBook from "../album-book";
 import ThemeAlbum, { albumShareMessage, savedTheme } from "../theme-album";
+import AlbumRollingPaper from "../album-rolling-paper";
 import AlbumShare from "../album-share";
 import { WorkspaceStory, StudioTeaser, EmptyBookshelf } from "../workspace-delight";
 import QuickAlbum from "../quick-album";
@@ -156,7 +157,9 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
     const album=rooms.find(r=>r.id===params.get("album"));
     const group=album?(album.groupId||null):params.get("group")||null;
     const section=["private","shared","groups"].includes(params.get("section")||"")?params.get("section")!:"rooms";
-    const view=params.get("view")==="book"?"book":params.get("view")==="timeline"?"timeline":params.get("view")==="photos"?"photos":"theme";
+    const rawView=params.get("view");
+    if(rawView==="rolling"){params.delete("view");window.history.replaceState(window.history.state,"",`${window.location.pathname}${params.size?`?${params}`:""}${window.location.hash}`);}
+    const view=rawView==="book"?"book":rawView==="timeline"?"timeline":rawView==="photos"?"photos":"theme";
     lastLocation.current=locationKey(group,album?.id||null,photo?.id||null,section,view);
     setActiveGroup(group);setActiveRoom(album?.id||null);setPreview(photo);setPage(section);setFolderView(view);
     setModal(params.get("help")==="1"?"help":params.get("login")==="1"?"profile":null);setSelected([]);setQuery("");
@@ -196,8 +199,13 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
   const video = useRef<HTMLVideoElement>(null); const stream = useRef<MediaStream | null>(null); const file = useRef<HTMLInputElement>(null);
   const room = rooms.find(r => r.id === activeRoom); const inviteRoom = rooms.find(r => r.id === cameraRoom);
   const mergeRemote = useCallback((data: { rooms: Room[]; photos: Photo[]; account?: Account | null }) => {
-    setRooms(data.rooms); setAccount(data.account ?? null);
-    setPhotos(old => [...old.filter(p => !p.demo && p.uploadStatus !== "uploaded" && !data.photos.some(remote => remote.id === p.id)), ...data.photos]);
+    // A retried create/refresh can briefly surface the same row twice. Keep one
+    // canonical entity per database ID before rendering keyed album/photo lists.
+    const roomsById = new Map(data.rooms.map(room => [room.id, room]));
+    const photosById = new Map(data.photos.map(photo => [photo.id, photo]));
+    const remotePhotos = [...photosById.values()];
+    setRooms([...roomsById.values()]); setAccount(data.account ?? null);
+    setPhotos(old => [...old.filter(p => !p.demo && p.uploadStatus !== "uploaded" && !remotePhotos.some(remote => remote.id === p.id)), ...remotePhotos]);
   }, []);
   const refreshWorkspace = useCallback(async () => { const data = await api<{rooms: Room[]; photos: Photo[]}>("/api/workspace"); mergeRemote(data); setServerError(false); }, [mergeRemote]);
   useEffect(()=>{
@@ -396,9 +404,9 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
     onJoin={token => window.location.assign(`/join/${token}?lang=${locale}`)}
   />;
   const gallery = (items: Photo[], compact = false) => <div className={`photo-grid ${compact ? "compact" : ""}`}>{items.map(p => <article className={`photo-item ${sessionIds.includes(p.id) && p.uploadStatus === "uploaded" ? "memory-just-added" : ""} ${selected.includes(p.id) ? "selected" : ""}`} key={p.id}><button className="photo-open" onClick={() => setPreview(p)} aria-label={locale === "en" ? `View ${photoTitle(p)}` : `${photoTitle(p)} 크게 보기`}><MediaView src={p.src} name={photoTitle(p)} mediaType={p.mediaType}/></button><button disabled={p.mine === false} className="select-photo" aria-label={locale === "en" ? `Select ${photoTitle(p)}` : `${photoTitle(p)} 선택`} onClick={() => toggle(p.id)}>{selected.includes(p.id) && <Check size={13} />}</button><span className={`privacy-tag ${p.shared ? "is-shared" : ""}`}>{p.shared ? <Users size={11} /> : <LockKeyhole size={11} />}{p.audience==="selected"?(locale==="ko"?"선택 공개":"Selected members"):p.shared ? t("공유됨") : t("나만 보기")}</span><div className="photo-caption"><span>{roomTitle(rooms.find(r => r.id === p.roomId))}</span><span>{p.uploadStatus === "failed" ? <button onClick={()=>setPhotos(old=>old.map(item=>item.id===p.id?{...item,uploadStatus:"pending"}:item))}>{t("다시 전송")}</button> : p.uploadStatus === "pending" || p.uploadStatus === "uploading" ? t("업로드 중") : p.mine === false ? t("멤버 사진") : t("서버 저장됨")}</span></div></article>)}</div>;
-  return <div className={`app-shell ${stitchFonts}${isAlbumPhotosView ? " album-media-shell" : ""}`} lang={locale} data-native={nativeApp} data-browsing={browsing}>
+  return <div className={`app-shell ${stitchFonts}`} lang={locale} data-native={nativeApp} data-browsing={browsing}>
     {!isAlbumPhotosView && <WorkspaceStory locale={locale} onCreate={openQuick} onHelp={()=>setModal("help")}/>}
-    <div className="main-shell">{!isAlbumPhotosView && <header className="topbar"><Link className="brand app-brand" href="/" aria-label={t("Memonestia 홈")}><span className="brand-icon"><BrandMark/></span>memonestia<span className="brand-dot">.</span></Link><div className="header-tools"><label className="language-picker"><Globe2 size={15}/><select aria-label="Language / 언어" disabled={!localeReady} value={locale} onChange={e => changeLanguage(e.target.value)}><option value="en">English</option><option value="ko">한국어</option></select></label><span className="local-status"><span />{t("개인 작업공간")}</span><button className="icon-button" title={t("알림")} onClick={() => setModal("notifications")}><Bell size={18} />{unreadCount>0&&<i aria-label={locale==="ko"?`새 소식 ${unreadCount}개`:`${unreadCount} unread updates`}/>}</button><button className="header-avatar" onClick={() => setModal("profile")} aria-label={t("내 계정")}>S</button></div></header>}
+    <div className="main-shell"><header className="topbar"><Link className="brand app-brand" href="/" aria-label={t("Memonestia 홈")}><span className="brand-icon"><BrandMark/></span>memonestia<span className="brand-dot">.</span></Link><div className="header-tools"><label className="language-picker"><Globe2 size={15}/><select aria-label="Language / 언어" disabled={!localeReady} value={locale} onChange={e => changeLanguage(e.target.value)}><option value="en">English</option><option value="ko">한국어</option></select></label><span className="local-status"><span />{t("개인 작업공간")}</span><button className="icon-button" title={t("알림")} onClick={() => setModal("notifications")}><Bell size={18} />{unreadCount>0&&<i aria-label={locale==="ko"?`새 소식 ${unreadCount}개`:`${unreadCount} unread updates`}/>}</button><button className="header-avatar" onClick={() => setModal("profile")} aria-label={t("내 계정")}>S</button></div></header>
     {(busy || authBusy || photos.some(p=>p.uploadStatus==="uploading")) && <div className="workspace-progress" role="status" aria-live="polite"><span className="activity-spinner" aria-hidden="true"/>{authBusy?(locale==="ko"?"로그인 연결 중…":"Connecting your account…"):busy?(locale==="ko"?"변경사항 저장 중…":"Saving changes…"):(locale==="ko"?"사진을 안전하게 올리는 중…":"Uploading your memories…")}</div>}
     {ready&&!browsing&&(modal==="create"||modal==="collect"||modal==="join"||modal==="discussion"||studio)&&<PolicyGate key={viewerId} ko={locale==="ko"}/>}
     <main className={isAlbumPhotosView ? "album-media-main" : ""}>{browsing&&<div className="browse-ribbon"><span><BookOpen size={15}/>{locale==="ko"?"앨범 둘러보는 중":"Exploring albums"}</span><button onClick={()=>setModal("help")} aria-label={locale==="ko"?"둘러보기 안내":"About exploring"}><CircleHelp size={16}/></button><a href={`/?lang=${locale}`}>{locale==="ko"?"내 공간으로":"My space"}<ArrowRight size={13}/></a></div>}{serverError && <div className="server-banner" role="alert">{t("서버에 연결하지 못했어요. 기기에 대기 중인 사진은 유지됩니다.")}<button onClick={()=>{if(ready)void refreshWorkspace().catch(()=>setServerError(true));else setRetryConnection(v=>v+1);}}>{t("다시 시도")}</button></div>}{!ready && !serverError && <WorkspaceLoading ko={locale==="ko"}/>}{ready && (isAlbumPhotosView ? <AlbumMediaLibrary photos={visiblePhotos} locale={locale} title={roomTitle(room!)} onBack={() => setFolderView("theme")} onOpen={setPreview}/> : <>
@@ -412,6 +420,7 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
       {room && !browsing && <button className="secondary-button full" onClick={()=>setModal("face-search")}><ScanFace size={17}/>{locale==="ko"?"내가 나온 사진 찾기 · AI":"Find photos of me · AI"}</button>}
       {room && folderView === "theme" && <button type="button" className="album-all-media-link" onClick={() => { setQuery(""); setFolderView("photos"); }}><span className="album-all-media-icon"><Images size={19}/></span><span className="album-all-media-copy"><strong>{locale === "ko" ? `사진·영상 ${visiblePhotos.length}개 모두 보기` : `View all ${visiblePhotos.length} photos & videos`}</strong><small>{locale === "ko" ? "앨범에 모인 순간을 한 번에 둘러보세요" : "Browse every moment in this album"}</small></span><ArrowRight size={18}/></button>}
       {room && folderView === "theme" && <ThemeAlbum key={room.id+viewerId+photos.filter(p=>p.roomId===room.id&&p.uploadStatus==="uploaded").map(p=>p.id).join()} folderId={room.id} title={roomTitle(room)} description={roomSummary(room)} locale={locale} browsing={browsing} birthday={room.category==="생일"?room.endDate||"":undefined} canShare={!browsing&&!room.groupId&&room.mine!==false} style={{theme:room.theme||"",song:room.song||"",revealAt:room.revealAt||"",held:room.held||0,heldPeople:room.heldPeople||0}} owner={!browsing&&room.mine!==false} onChanged={()=>void refreshWorkspace().catch(()=>{})} onPhoto={item=>setPreview({id:item.id,roomId:room.id,src:item.src!,name:item.body,mediaType:item.mediaType,originalAvailable:item.originalAvailable,recipients:item.recipients,audience:item.audience,shared:item.shared,mine:item.mine,created:item.created||Date.now(),uploadStatus:"uploaded"})}/>}
+      {room && folderView === "theme" && !browsing && <AlbumRollingPaper key={room.id} folderId={room.id} title={roomTitle(room)} locale={locale} canInvite={!room.groupId&&room.mine!==false}/>}
       {room && folderView === "book" && <AlbumBook key={room.id+viewerId+photos.filter(p=>p.roomId===room.id&&p.uploadStatus==="uploaded").map(p=>p.id).join()} folderId={room.id} title={roomTitle(room)} description={roomSummary(room)} locale={locale} onAdd={browsing?undefined:openCollect} onPhoto={item=>setPreview({id:item.id,roomId:room.id,src:item.src!,name:item.body,mediaType:item.mediaType,originalAvailable:item.originalAvailable,recipients:item.recipients,audience:item.audience,shared:item.shared,mine:item.mine,created:item.created||Date.now(),uploadStatus:"uploaded"})}/>}
       {page !== "groups" && !room && <section className="content-section">{!firstVisit && <div className="section-heading"><h2>{page === "rooms" ? (locale==="ko"?"한 권씩 쌓이는 우리":"Stories on our shelf") : t("사진")}<span>{page === "rooms" ? filteredRooms.length : visiblePhotos.length}</span></h2><div className="section-actions">{<select aria-label={t("정렬")} value={sort} onChange={e => setSort(e.target.value)}><option value="recent">{t("최근 활동순")}</option><option value="name">{t("이름순")}</option><option value="old">{t("오래된 사진순")}</option></select>}<div className="view-switch"><button className={!listView ? "chosen" : ""} onClick={() => setListView(false)} aria-label={t("그리드 보기")}><Grid2X2 size={16}/></button><button className={listView ? "chosen" : ""} onClick={() => setListView(true)} aria-label={t("목록 보기")}><List size={17}/></button></div></div></div>}
       {!firstVisit && <div className="filter-row"><div className="tabs">{!room && page === "rooms" ? ["전체", "여행", "모임", "업무", "개인"].map(f => <button className={filter === f ? "tab selected-tab" : "tab"} onClick={() => setFilter(f)} key={f}>{t(f)}{f === "전체" && <span>{rooms.filter(r=>(browsing&&!activeGroup||(r.groupId||null)===activeGroup)).length}</span>}</button>) : <span className="gallery-hint"><ShieldCheck size={15}/>{page === "private" ? t("나에게만 보이는 사진") : room ? t("저장과 공개는 따로, 내 선택대로") : t("공개 범위를 직접 관리하세요")}</span>}</div><label className="search"><Search size={16}/><input aria-label={t("방 또는 사진 검색")} value={query} onChange={e => setQuery(e.target.value)} placeholder={!room && page === "rooms" ? t("방 이름으로 검색") : t("사진 검색")}/><span>⌘ K</span></label></div>}
@@ -423,9 +432,9 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
       {!room&&page==="rooms"&&<StudioTeaser locale={locale} onCreate={openStudio}/>}
       <footer className="main-footer"><span><LockKeyhole size={13}/>{t("담는 건 자유롭게, 공유는 선택적으로.")}</span><span><Link href={`/${locale}`}>{locale === "ko" ? "Memonestia 소개" : "About Memonestia"} ↗</Link></span></footer>
     </>)}</main>
-    {!isAlbumPhotosView && <nav className="mobile-tabs" aria-label={locale === "en" ? "Main navigation" : "주요 메뉴"}>
+    <nav className="mobile-tabs" aria-label={locale === "en" ? "Main navigation" : "주요 메뉴"}>
       {locale === "ko" ? <><a href="/?lang=ko&home=1"><Heart size={21}/><span>홈 피드</span></a><a href="/crew/photos"><FolderOpen size={21}/><span>사진 서랍</span></a><button className="tab-camera" onClick={openQuick} aria-label="앨범 생성"><span><Plus size={24}/></span><small>앨범 생성</small></button><a href="/crew/behind"><BookHeart size={21}/><span>비하인드</span></a><a href="/crew/settings"><Settings size={21}/><span>크루 설정</span></a></> : <><button aria-current={page === "rooms" ? "page" : undefined} onClick={()=>navigate("rooms")}><FolderOpen size={21}/><span>Our spaces</span></button><button aria-current={page === "private" ? "page" : undefined} onClick={()=>navigate("private")}><LockKeyhole size={21}/><span>{t("나만 보기")}</span></button><button className="tab-camera" onClick={openQuick}><span><Plus size={24}/></span><small>New album</small></button><button aria-current={page === "shared" ? "page" : undefined} onClick={()=>navigate("shared")}><Users size={21}/><span>공유한 사진</span></button><button onClick={()=>browsing?window.location.assign(`/?lang=${locale}&login=1`):setModal("profile")}><span className="tab-account">{!ready ? <span className="activity-spinner"/> : account?.name.slice(0,1).toUpperCase() || "M"}</span><span>{t("내 계정")}</span></button></>}
-    </nav>}
+    </nav>
     </div>
     {ready&&!browsing&&!account&&photos.some(p=>p.mine!==false&&p.uploadStatus==="uploaded")&&<AccountNudge ko={locale==="ko"} viewerId={viewerId} onConnect={()=>setModal("profile")}/>}
     {studio&&<MemoryStudio ko={locale==="ko"} guest={!account} onConnect={()=>{closeStudio();setModal("profile");}} albums={rooms} photos={photos} initialAlbum={activeRoom} onClose={closeStudio} onSaved={id=>{closeStudio();void refreshWorkspace().then(()=>{setActiveRoom(id);setPage("rooms");setFolderView("theme");}).catch(()=>setServerError(true));}}/>}
@@ -464,9 +473,21 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
       })()}<details className="account-settings"><summary>{locale==="ko"?"개인정보 및 이용 설정":"Privacy & preferences"}</summary><AnalyticsPreference ko={locale==="ko"}/><nav className="legal-links"><Link href="/terms">{locale==="ko"?"이용약관 · 커뮤니티 규칙":"Terms & community rules"}</Link><Link href="/privacy">{locale==="ko"?"개인정보 처리 안내":"Privacy"}</Link><Link href="/support">{locale==="ko"?"도움말 및 문의":"Support"}</Link><Link href="/delete-account" onClick={e=>{if(nativeApp){e.preventDefault();sendNative("DELETE_ACCOUNT");}}}>{locale==="ko"?"계정 삭제":"Delete account"}</Link></nav><BlockedUsers ko={locale==="ko"}/></details>{account && <button className="logout-button" disabled={authBusy || hasUnsentPhotos} onClick={logout}>{t("로그아웃")}</button>}</>}
       {modal === "notifications" && <>{nativeApp&&<><button className="primary-button full" onClick={()=>sendNative("NOTIFICATIONS_ON")}>{locale==="ko"?"기기 알림 켜기":"Enable device notifications"}</button><button className="secondary-button full" onClick={()=>sendNative("NOTIFICATIONS_OFF")}>{locale==="ko"?"기기 알림 끄기":"Disable device notifications"}</button></>}<Notifications locale={locale} onOpen={id=>{setActiveRoom(id);setPage("rooms");setModal(null);}}/></>}
     </section></div>}
-    {quick && <QuickAlbum locale={locale} groupId={activeGroup} onClose={closeQuick} onBlank={()=>{setQuick(false);setModal("create");}} onSaved={id=>{
+    {quick && navigationReady && <QuickAlbum locale={locale} groupId={activeGroup} onClose={closeQuick} onBlank={()=>{setQuick(false);setModal("create");}} onSaved={id=>{
       setQuick(false);
-      const url=new URL(window.location.href);url.searchParams.delete("returnTo");window.history.replaceState(window.history.state,"",url);
+      try { window.localStorage.setItem("memonestia.feedGroup",activeGroup||"personal"); } catch {}
+      const currentUrl=new URL(window.location.href),returnTo=currentUrl.searchParams.get("returnTo");
+      if(returnTo?.startsWith("/")&&!returnTo.startsWith("//")){
+        // Keep the new Stitch feed/subpage flow after creation; the legacy
+        // workspace album route is only the fallback for direct creation.
+        window.location.assign(returnTo);
+        return;
+      }
+      // Point the browser location at the newly created album so stale query
+      // parameters cannot restore the previous album or its legacy sub-view.
+      const url=currentUrl;url.searchParams.delete("returnTo");url.searchParams.delete("photo");url.searchParams.delete("view");url.searchParams.delete("bookPage");url.searchParams.set("album",id);url.searchParams.delete("section");
+      window.history.replaceState(null,"",url);
+      setActiveRoom(id);setPage("rooms");setFolderView("theme");
       void refreshWorkspace().then(()=>{setActiveRoom(id);setPage("rooms");setFolderView("theme");setToast(locale==="ko"?"앨범을 저장했어요.":"Album saved.");
         // The album now exists: the moment signing in has a reason (keep it on any phone).
         if(!account)window.setTimeout(()=>setModal("profile"),1400);}).catch(()=>setServerError(true));

@@ -1,0 +1,75 @@
+/* Stitch resets unlayered element styles; shared album controls belong in its utility layer. */
+@layer utilities {
+.reward-cover{position:relative;width:100%;margin:18px auto 0;color:#594536}
+.reward-cover-keepsake{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px auto 16px;padding:10px 18px;width:fit-content;max-width:100%;background:#fffaf0;border:1px dashed #dbc7ac;border-radius:16px;box-shadow:0 3px 10px #5945360a;transform:rotate(-2deg)}
+.reward-cover-keepsake>span{font-size:11px;color:#8e7255}
+.reward-decoration-art{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;max-width:100%;width:140px;margin:0 auto}
+.reward-decoration-art>svg{display:block;width:100%;height:auto}
+.reward-cover-keepsake .reward-decoration-art{width:90px;margin:0}
+.reward-decoration-bubble{position:relative;display:block;padding:8px 12px;border:1px solid #d3b997;border-radius:14px;background:#fffdf5;color:#775537;font-size:12px;font-weight:700;line-height:1.5;text-align:center;overflow-wrap:anywhere;box-shadow:2px 3px 0 #d3b99733}
+.reward-decoration-bubble:after{content:"";position:absolute;left:48%;bottom:-5px;width:8px;height:8px;background:#fffdf5;border-bottom:1px solid #d3b997;border-right:1px solid #d3b997;transform:rotate(45deg)}
+.reward-decoration-tools{padding:0 12px;border:1px solid #e8d9c7;border-radius:12px;background:#fffaf2;text-align:left;max-width:420px;margin:0 auto}
+.reward-decoration-tools>summary{display:flex;align-items:center;gap:7px;min-height:46px;cursor:pointer;list-style:none;color:#99452c;font-size:11px;font-weight:700}
+.reward-decoration-tools>summary::-webkit-details-marker{display:none}
+.reward-decoration-tools>summary>svg:last-child{margin-left:auto}
+.reward-decoration-tools[open]>summary>svg:last-child{transform:rotate(180deg)}
+.reward-decoration-tools>p,.reward-decoration-empty{font-size:11px;line-height:1.8;color:#806e5b;margin:0 0 12px}
+.reward-decoration-empty a{display:block;color:#99452c;text-decoration:underline;padding-top:8px}
+.reward-decoration-preview{display:flex;align-items:center;justify-content:center;background:#f3ecdf;border-radius:12px;padding:12px;margin-bottom:12px}
+.reward-decoration-choices{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center;margin-bottom:12px}
+.reward-decoration-choices label{font-size:11px;color:#80684e}
+.reward-decoration-choices select{width:100%;min-width:0;min-height:42px;padding:8px;border:1px solid #decbb3;border-radius:8px;background:#fffefa;color:#594536;font-size:12px}
+.reward-decoration-primary{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:10px;margin:0 0 12px;border:0;border-radius:9px;background:#99452c;color:#fff;font-size:12px;font-weight:700;cursor:pointer}
+.reward-decoration-primary:disabled,.reward-decoration-remove:disabled{opacity:.5;cursor:default}
+.reward-decoration-tools button.reward-decoration-primary{color:#fff}
+.reward-decoration-remove{display:flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:8px;margin:0 auto 8px;background:transparent;color:#806e5b;border:0;font-size:11px;text-decoration:underline;cursor:pointer}
+.reward-note-sticker{margin:12px 0}
+.reward-decoration-selected{display:flex;align-items:center;justify-content:center;gap:8px;background:#f4ecdf;border:1px dashed #d8b992;border-radius:12px;margin-top:10px;padding:10px}
+.reward-decoration-selected>.reward-decoration-art{width:105px;margin:0}
+.reward-decoration-selected>span{font-size:10px;line-height:1.7;color:#886c4c;max-width:100px}
+.arp-note>.reward-decoration-art{margin:4px auto 14px;width:125px}
+.reward-decoration-tools button:focus-visible,.reward-decoration-tools summary:focus-visible,.reward-decoration-tools select:focus-visible{outline:2px solid #99452c;outline-offset:2px}
+@media(max-width:360px){.reward-decoration-choices{grid-template-columns:1fr;gap:4px}.reward-decoration-choices select{margin-bottom:5px}.reward-cover-keepsake{gap:6px;padding:8px}}
+
+.album-rolling-paper{display:block;margin:16px 0 24px;overflow:hidden;border:1px solid #efdfd5;border-radius:18px;background:linear-gradient(180deg,#fffaf4,#fff5e8);color:#30251f;box-shadow:0 6px 20px #62452b0b}
+.arp-summary{display:flex;align-items:center;gap:11px;min-height:70px;padding:12px 15px;cursor:pointer;list-style:none}
+.arp-summary::-webkit-details-marker{display:none}
+.arp-summary::marker{content:""}
+.arp-summary-icon{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:12px;background:#f7e7dc;color:#bd624a}
+.arp-summary-copy{display:grid;gap:3px;min-width:0;flex:1}
+.arp-summary-copy>span{color:#bd624a;font-size:9px;font-weight:800;letter-spacing:.12em}
+.arp-summary-copy strong{font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:14px;letter-spacing:-.02em}
+.arp-chevron{flex:0 0 auto;color:#a98776;transition:transform .18s ease}
+.album-rolling-paper[open] .arp-chevron{transform:rotate(180deg)}
+.arp-expanded{padding:0 16px 16px}
+.arp-heading{position:relative;padding:0 0 16px;border-bottom:1px dashed #dec9b8}
+.arp-heading h2{margin:8px 0 4px;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:clamp(23px,5vw,30px);letter-spacing:-.04em}
+.arp-heading p{max-width:35em;margin:0;color:#78675e;font-size:11px;line-height:1.6}
+.arp-count{flex:0 0 auto;border-radius:999px;background:#f3e8dd;padding:5px 9px;color:#8e5d48;font-size:9px;font-weight:700}
+.arp-invite{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:8px 11px;border:1px solid #e8c7b8;border-radius:999px;background:#fff;color:#9b503d;font-size:10px;font-weight:700}.arp-invite:disabled{opacity:.5}
+.arp-compose{margin:16px 0 20px;padding:14px;border:1px solid #ead9ca;border-radius:16px;background:#fffefd}
+.arp-compose>label{display:flex;align-items:center;gap:7px;color:#7d562d;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:14px;font-weight:700}
+.arp-compose textarea{display:block;width:100%;min-height:78px;margin-top:10px;padding:10px 11px;resize:vertical;border:1px solid #f0e4da;border-radius:11px;background:#fffaf6;color:#30251f;font:inherit;font-size:12px;line-height:1.65;outline:none}
+.arp-compose textarea:focus{border-color:#d89077;box-shadow:0 0 0 3px #e27d601c}
+.arp-compose-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.arp-compose-foot small{color:#907e74;font-size:9px}
+.arp-compose-foot button{display:flex;align-items:center;gap:6px;padding:9px 13px;border:0;border-radius:999px;background:#bd624a;color:#fff;font-size:10px;font-weight:700}
+.arp-compose-foot button:disabled{opacity:.45;cursor:not-allowed}
+.arp-photo-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}.arp-photo-tools small{color:#907e74;font-size:9px}
+.arp-photo-toggle{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid #ead9ca;border-radius:999px;background:#fff7ee;color:#8a5946;font-size:10px;font-weight:700}
+.arp-photo-upload{padding:7px 10px;border:1px solid #ead9ca;border-radius:999px;background:#fff;color:#8a5946;font-size:10px;font-weight:700}.arp-photo-upload:disabled{opacity:.5}
+.arp-photo-picker{display:flex;gap:8px;overflow-x:auto;margin-top:10px;padding:4px 1px 8px;overscroll-behavior-x:contain;touch-action:pan-x}
+.arp-photo-picker>button{position:relative;flex:0 0 70px;width:70px;height:70px;padding:0;overflow:hidden;border:2px solid transparent;border-radius:10px;background:#f1e6dc}.arp-photo-picker>button.is-selected{border-color:#bd624a;box-shadow:0 0 0 2px #bd624a28}.arp-photo-picker img,.arp-photo-picker video{width:100%;height:100%;object-fit:cover}.arp-photo-picker>button>span{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#fff;color:#99452c;font-size:14px;font-weight:700;box-shadow:0 1px 4px #0002}.arp-photo-picker>p{display:grid;gap:5px;margin:0;color:#8c776c;font-size:10px;line-height:1.6}.arp-photo-picker>p a{color:#a3533d;font-weight:700}.arp-photo-picker>small{align-self:center;flex:0 0 auto;color:#907e74;font-size:9px}
+.arp-selected-photos{display:flex;gap:6px;margin-top:10px;overflow-x:auto}.arp-selected-photos img,.arp-selected-photos video{width:52px;height:52px;object-fit:cover;border:3px solid white;border-radius:5px;box-shadow:0 2px 6px #62452b1c}
+.arp-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.arp-note{position:relative;min-height:112px;padding:20px 13px 11px;border:1px solid #eee0c8;border-radius:4px 4px 12px 4px;background:#fff4cf;box-shadow:0 4px 10px #62452b0c;transform:rotate(-.6deg)}
+.arp-note-1{background:#fbe8df;transform:rotate(.7deg)}.arp-note-2{background:#e9f0e3;transform:rotate(.4deg)}.arp-note-3{background:#eee9f4;transform:rotate(-.8deg)}
+.arp-tape{position:absolute;top:-6px;left:calc(50% - 25px);width:50px;height:14px;background:#e5c993b8;transform:rotate(-2deg)}
+.arp-note p{margin:0 0 14px;white-space:pre-wrap;overflow-wrap:anywhere;color:#44352d;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:12px;line-height:1.7}
+.arp-note-photos{display:grid;grid-template-columns:1fr;gap:5px;margin:0 0 12px;padding:5px;background:#fffdf8;box-shadow:0 2px 6px #62452b18;transform:rotate(-.4deg)}.arp-note-photos.has-many{grid-template-columns:repeat(2,minmax(0,1fr))}.arp-note-photos img,.arp-note-photos video{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.arp-note-photos.has-many img,.arp-note-photos.has-many video{aspect-ratio:1/1}
+.arp-note footer{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #795d3a1c;padding-top:7px;color:#79695e;font-size:9px}
+.arp-note footer span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.arp-empty{grid-column:1/-1;padding:20px 8px;text-align:center;color:#907e74;font-size:11px;line-height:1.6}
+.arp-error{margin:9px 0 0;color:#9b3f2e;font-size:10px}
+@media(max-width:380px){.arp-summary{gap:8px;padding:10px 11px}.arp-summary-copy strong{font-size:13px}.arp-count{padding:4px 7px;font-size:8px}.arp-expanded{padding:0 11px 12px}.arp-notes{grid-template-columns:1fr}}
+
+}

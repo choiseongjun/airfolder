@@ -20,16 +20,16 @@ export async function POST(request: Request) {
     const id = folder.rows[0].id;
     const rows = await pool().query(`WITH items AS (
       SELECT id,owner_id,'image' AS media_type,true AS has_preview,false AS original_available,recorded_on::timestamptz AS captured_time,body,to_char(recorded_on,'YYYY-MM-DD') AS day,recorded_on::timestamp AS sort_date,'record' AS kind,updated_at,revision,title
-       FROM snaproom.records WHERE folder_id=$1 AND NOT safety_hidden
+       FROM snaproom.records WHERE folder_id=$1 AND deleted_at IS NULL AND NOT safety_hidden
       UNION ALL SELECT id,owner_id,CASE WHEN mime LIKE 'video/%' THEN 'video' ELSE 'image' END,preview_path IS NOT NULL OR NOT original_available,original_available,captured_at,name,to_char(captured_at AT TIME ZONE $2,'YYYY-MM-DD'),captured_at AT TIME ZONE $2,'photo',created_at,0,''
-       FROM snaproom.photos p WHERE folder_id=$1 AND NOT safety_hidden
-       AND NOT EXISTS(SELECT 1 FROM snaproom.record_photos rp JOIN snaproom.records r ON r.id=rp.record_id WHERE rp.photo_id=p.id AND NOT r.safety_hidden)
+       FROM snaproom.photos p WHERE folder_id=$1 AND deleted_at IS NULL AND NOT safety_hidden
+       AND NOT EXISTS(SELECT 1 FROM snaproom.record_photos rp JOIN snaproom.records r ON r.id=rp.record_id WHERE rp.photo_id=p.id AND r.deleted_at IS NULL AND NOT r.safety_hidden)
     ) SELECT i.*,COALESCE(a.display_name,v.display_name,'') AS author FROM items i LEFT JOIN snaproom.accounts a ON a.viewer_id=i.owner_id JOIN snaproom.viewers v ON v.id=i.owner_id ORDER BY sort_date DESC,id DESC LIMIT 200`,
       [id, timezone]);
     const recordIds = rows.rows.filter(r => r.kind === 'record').map(r => r.id);
     const attachments = recordIds.length ? await pool().query(
       `SELECT rp.record_id,p.*,rp.position FROM snaproom.record_photos rp JOIN snaproom.photos p ON p.id=rp.photo_id
-       WHERE rp.record_id=ANY($1::uuid[]) AND p.folder_id=$2 AND NOT p.safety_hidden ORDER BY rp.position`,
+       WHERE rp.record_id=ANY($1::uuid[]) AND p.folder_id=$2 AND p.deleted_at IS NULL AND NOT p.safety_hidden ORDER BY rp.position`,
       [recordIds, id]) : { rows: [] as { record_id: string; id: string; name: string; mime: string; original_available: boolean; captured_at: Date }[] };
     const token = body.token as string;
     const items = rows.rows.map(r => ({

@@ -69,8 +69,8 @@
 .app-shell[lang="ko"] .album-media-empty span{font-size:11px}
 .app-shell[lang="ko"].album-media-shell{width:100%;max-width:none;min-height:100dvh;margin:0;background:#f6f1e9;box-shadow:none}
 .app-shell[lang="ko"] .album-media-shell{width:100%;max-width:none}
-.app-shell[lang="ko"] .album-media-main{min-height:100dvh;padding:0;background:#f6f1e9}
-.app-shell[lang="ko"] .album-media-drawer{width:min(100%,1180px);min-height:100dvh;margin:0 auto;padding:clamp(22px,4vw,52px) clamp(18px,5vw,64px) 64px;border:0;border-radius:0;background:#f6f1e9;box-shadow:none}
+.app-shell[lang="ko"] .album-media-main{min-height:0;padding:0;background:#f6f1e9}
+.app-shell[lang="ko"] .album-media-drawer{width:min(100%,1180px);min-height:0;margin:0 auto;padding:clamp(22px,4vw,52px) clamp(18px,5vw,64px) calc(88px + env(safe-area-inset-bottom,0px));border:0;border-radius:0;background:#f6f1e9;box-shadow:none}
 .app-shell[lang="ko"] .album-media-drawer-head{align-items:center;padding:4px 0 26px;border-bottom:1px solid #ddd2c4}
 .app-shell[lang="ko"] .album-media-drawer-head h2{margin:10px 0 5px;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:clamp(30px,4vw,48px);letter-spacing:-.045em}
 .app-shell[lang="ko"] .album-media-drawer-head p{font-size:13px}

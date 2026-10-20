@@ -13,10 +13,22 @@ import type { MemoryItem } from './memories';
 import Consent from './growth/consent';
 import './quick-album.css';
 
-type Pick = { id: string; file: File; url: string; taken: number };
+type Pick = { id: string; file?: File; url: string; taken: number; video?: boolean };
 type Day = { key: string; picks: Pick[]; note: string };
+type EditAlbumItem = { id: string; folderId: string; title: string; body: string; day: string; shared: boolean; recipients: string[]; revision: number; photos: { id: string; src: string; video: boolean; day: string | null }[] };
 const MAX_PHOTOS = 30, PER_CHAPTER = 8;
-const SAMPLES = ['/explore/photo-0.jpg', '/explore/photo-5.jpg', '/explore/photo-11.jpg', '/explore/photo-28.jpg', '/explore/photo-32.jpg', '/explore/photo-36.jpg'];
+const SAMPLES = [
+  '/explore/album-samples/cafe-friends.jpg',
+  '/explore/album-samples/family-birthday.jpg',
+  '/explore/album-samples/hiking-friends.jpg',
+  '/explore/album-samples/spring-picnic.jpg',
+  '/explore/album-samples/bbq-friends.jpg',
+  '/explore/album-samples/jeju-couple.jpg',
+  '/explore/album-samples/festival-friends.jpg',
+  '/explore/album-samples/autumn-family.jpg',
+  '/explore/photo-43.jpg',
+  '/explore/photo-44.jpg',
+];
 // Ready-made handwritten lines, so nobody has to type anything for the album to feel finished.
 const STAMPS = {
   ko: ['함께여서 좋았던 날 ♡', '오늘의 우리, 맑음', '배부르고 행복했던 순간', '이 장면은 꼭 남겨야 해', '돌아가고 싶은 그 시간', '웃음이 끊이지 않던 하루'],
@@ -36,10 +48,10 @@ async function takenAt(file: File) {
 }
 
 /** The first-visit path: pick a trip's photos at once, see them sorted by day and decorated, then keep the album. */
-export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId = null }: { locale: 'ko' | 'en'; onClose: () => void; onSaved: (folderId: string) => void; onBlank?: () => void; groupId?: string | null }) {
+export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId = null, editItem }: { locale: 'ko' | 'en'; onClose: () => void; onSaved: (folderId: string) => void; onBlank?: () => void; groupId?: string | null; editItem?: EditAlbumItem }) {
   const ko = locale === 'ko', t = (a: string, b: string) => ko ? a : b;
   const [step, setStep] = useState<'pick' | 'preview' | 'note'>('pick');
-  const [picks, setPicks] = useState<Pick[]>([]), [reading, setReading] = useState(false), [name, setName] = useState(''), [note, setNote] = useState(''), [firstComment, setFirstComment] = useState(''), [withRollingPaper, setWithRollingPaper] = useState(true);
+  const [picks, setPicks] = useState<Pick[]>(() => editItem ? editItem.photos.map(photo => ({ id: photo.id, url: photo.src, taken: new Date(`${photo.day || editItem.day}T12:00:00`).getTime(), video: photo.video })) : []), [reading, setReading] = useState(false), [name, setName] = useState(editItem?.title || ''), [note, setNote] = useState(editItem?.body || '');
   const [crewMeta, setCrewMeta] = useState<{name: string; members: number} | null>(null);
   const [scanning, setScanning] = useState(false), [grouped, setGrouped] = useState(0);
   const [accepted, setAccepted] = useState<boolean | null>(null), [consent, setConsent] = useState(false);
@@ -52,23 +64,33 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
 
   async function add(files: File[], times?: number[]) {
     const room = MAX_PHOTOS - picks.length;
-    const usable = files.filter(f => f.size && f.size <= IMAGE_LIMIT && (f.type.startsWith('image/') || /\.(heic|heif|jpe?g|png|webp)$/i.test(f.name))).slice(0, room);
+    const usable = files.filter(f => f.size && f.size <= IMAGE_LIMIT && (f.type.startsWith('image/') || f.type.startsWith('video/') || /\.(heic|heif|jpe?g|png|webp|mp4|mov|webm)$/i.test(f.name))).slice(0, room);
     setError(files.length > usable.length ? t(`사진은 ${MAX_PHOTOS}장, 장당 20MB까지 담을 수 있어요.`, `Up to ${MAX_PHOTOS} photos, 20 MB each.`) : '');
     if (!usable.length) return;
     setReading(true);
     const fresh = await Promise.all(usable.map(async (file, i) => {
       const url = URL.createObjectURL(file); urls.current.push(url);
-      return { id: crypto.randomUUID(), file, url, taken: times?.[i] ?? await takenAt(file) };
+      return { id: crypto.randomUUID(), file, url, taken: times?.[i] ?? await takenAt(file), video: file.type.startsWith('video/') };
     }));
     setPicks(old => [...old, ...fresh].sort((a, b) => a.taken - b.taken));
     setReading(false);
   }
   async function addSamples() {
     try {
-      const files = await Promise.all(SAMPLES.map(async (src, i) => new File([await (await fetch(src)).blob()], `sample-${i + 1}.jpg`, { type: 'image/jpeg' })));
+      const shuffled = [...SAMPLES];
+      for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+      const sampleCount = [6, 8, 10][Math.floor(Math.random() * 3)];
+      const selected = shuffled.slice(0, sampleCount);
+      const files = await Promise.all(selected.map(async (src, i) => {
+        const response = await fetch(src);
+        if (!response.ok) throw new Error('SAMPLE_LOAD_FAILED');
+        return new File([await response.blob()], `sample-${i + 1}.jpg`, { type: 'image/jpeg' });
+      }));
       // Sample photos carry no camera time, so spread them over a two-day trip to show the day split.
       const start = new Date(); start.setDate(start.getDate() - 2); start.setHours(10, 20, 0, 0);
-      await add(files, [0, 200, 465, 1450, 1630, 1805].map(min => start.getTime() + min * 60000));
+      const secondDayStart = Math.ceil(selected.length / 2);
+      const times = selected.map((_, i) => (i < secondDayStart ? i * 110 : 1440 + (i - secondDayStart) * 110));
+      await add(files, times.map(min => start.getTime() + min * 60000));
     } catch { setError(t('샘플 사진을 불러오지 못했어요.', 'Could not load the sample photos.')); setReading(false); }
   }
   function remove(id: string) { setPicks(old => old.filter(p => p.id !== id)); }
@@ -122,27 +144,42 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
     return out.map((d, i) => ({ ...d, note: i === 0 && note.trim() ? note.trim() : STAMPS[locale][i % STAMPS[locale].length] }));
   }, [picks, note, locale]);
   const dayCount = new Set(days.map(d => d.key)).size;
-  const first = days[0]?.key || todayKey, last = days[days.length - 1]?.key || first;
+  const first = days[0]?.key || editItem?.day || todayKey, last = days[days.length - 1]?.key || first;
   const month = Number(first.slice(5, 7));
   const autoTitle = dayCount > 1 ? t(`${month}월의 ${dayCount - 1}박 ${dayCount}일`, `${dayCount} days together`) : t(`${month}월 ${Number(first.slice(8))}일, 우리`, 'Our little day');
-  const title = name.trim() || autoTitle;
+  const title = editItem ? name.trim() : name.trim() || autoTitle;
   const items = useMemo<MemoryItem[]>(() => days.map((d, i) => ({
     id: `quick-${i}`, kind: 'record', body: d.note, day: d.key, shared: true, mine: true, author: '', revision: 0, updatedAt: '',
-    photos: d.picks.map(p => ({ id: p.id, kind: 'photo' as const, body: '', src: p.url, day: d.key, created: p.taken, shared: true, mine: true, author: '', revision: 0, updatedAt: '', mediaType: 'image' })),
+    photos: d.picks.map(p => ({ id: p.id, kind: 'photo' as const, body: '', src: p.url, day: d.key, created: p.taken, shared: true, mine: true, author: '', revision: 0, updatedAt: '', mediaType: p.video ? 'video' : 'image' })),
   })), [days]);
 
   async function save() {
-    if (saving || !picks.length || (!accepted && !consent)) return;
+    if (saving || (!picks.length && !editItem) || (!accepted && !consent)) return;
     setError('');
     try {
       if (!accepted) { setSaving(t('약관 확인 중…', 'Confirming…')); await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) }); setAccepted(true); }
+      if (editItem) {
+        const fresh = picks.filter((p): p is Pick & { file: File } => Boolean(p.file));
+        let sent = 0;
+        await mapLimit(fresh, 2, async p => {
+          const form = new FormData();
+          form.set('id', p.id); form.set('folderId', editItem.folderId); form.set('file', p.file, p.file.name); form.set('name', p.file.name);
+          form.set('created', String(p.taken)); form.set('shared', String(editItem.shared)); form.set('recipients', JSON.stringify(editItem.recipients));
+          await api('/api/photos', { method: 'POST', body: form });
+          sent++; setSaving(t(`사진 올리는 중 ${sent}/${fresh.length}`, `Uploading ${sent}/${fresh.length}`));
+        });
+        setSaving(t('수정 내용 저장 중…', 'Saving changes…'));
+        await api('/api/memories', { method: 'PATCH', body: JSON.stringify({ id: editItem.id, revision: editItem.revision, title: title.slice(0, 120), body: note, day: first, shared: editItem.shared, recipients: editItem.recipients, photoIds: picks.map(p => p.id) }) });
+        onSaved(editItem.folderId);
+        return;
+      }
       setSaving(t('앨범 만드는 중…', 'Creating album…'));
       const { id: folderId } = await api<{ id: string }>('/api/folders', { method: 'POST', body: JSON.stringify({ name: title, category: dayCount > 1 ? '여행' : '모임', description: note.trim().slice(0, 200), startDate: first, endDate: last, groupId }) });
       const uploaded = new Set<string>();
       let sent = 0;
       // 2 at once, not strictly one-by-one — the server caps staged uploads at 2 concurrent
       // sessions per viewer (app/api/photos/uploads/route.ts), so this is as fast as it gets.
-      await mapLimit(picks, 2, async p => {
+      await mapLimit(picks.filter((p): p is Pick & { file: File } => Boolean(p.file)), 2, async p => {
         const form = new FormData();
         form.set('id', p.id); form.set('folderId', folderId); form.set('file', p.file, p.file.name); form.set('name', p.file.name);
         form.set('created', String(p.taken)); form.set('shared', 'true');
@@ -154,7 +191,6 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
         const photoIds = d.picks.map(p => p.id).filter(id => uploaded.has(id));
         if (photoIds.length) await api('/api/memories', { method: 'POST', body: JSON.stringify({ id: crypto.randomUUID(), folderId, title: '', body: d.note, day: d.key, shared: true, photoIds }) }).catch(() => {});
       }
-      if (withRollingPaper && firstComment.trim() && picks[0] && uploaded.has(picks[0].id)) await api('/api/discussion', { method: 'POST', body: JSON.stringify({ kind: 'photo', targetId: picks[0].id, action: 'comment', id: crypto.randomUUID(), body: firstComment.trim() }) }).catch(() => {});
       // Keep the theme they picked in the preview.
       try { const picked = localStorage.getItem('memonestia-album-theme:quick-preview'); if (picked) { localStorage.setItem('memonestia-album-theme:' + folderId, picked); localStorage.removeItem('memonestia-album-theme:quick-preview'); } } catch {}
       onSaved(folderId);
@@ -162,21 +198,21 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
     finally { setSaving(''); }
   }
 
-  return createPortal(<div className="qa-screen" role="dialog" aria-modal="true" aria-label={t('새 앨범 만들기', 'Create a new album')}>
+  return createPortal(<div className="qa-screen" role="dialog" aria-modal="true" aria-label={editItem ? t('기록 수정', 'Edit memory') : t('새 앨범 만들기', 'Create a new album')}>
     <header className="qa-top">
       {step === 'pick' ? <button aria-label={t('닫기', 'Close')} onClick={onClose}><X size={20} /></button> : <button aria-label={t('뒤로', 'Back')} onClick={() => setStep(step === 'note' ? 'preview' : 'pick')}><ArrowLeft size={20} /></button>}
-      <strong className="qa-title">{t('앨범 만들기', 'Create Album')}</strong>
+      <strong className="qa-title">{editItem ? t('기록 수정', 'Edit Memory') : t('앨범 만들기', 'Create Album')}</strong>
       <ol aria-label={t('단계', 'Steps')}>{(['pick', 'preview'] as const).map((s, i) => <li key={s} className={s === step || (s === 'preview' && step === 'note') ? 'is-on' : ''}>{i + 1}</li>)}</ol>
     </header>
 
     {step === 'pick' && <section className="qa-body">
       <div className="qa-crew-card"><span className="qa-crew-lock">⌑</span><span><b>{crewMeta?.name || t('내 공간', 'My space')}</b><small>{crewMeta ? t(`멤버 ${crewMeta.members}명 · 비공개 보관함`, `${crewMeta.members} members · private album`) : t('나만 볼 수 있는 비공개 보관함', 'A private album only you can see')}</small></span><i>비공개</i></div>
-      <span className="qa-eyebrow">{t('새 추억 보관함 생성 중', 'A NEW MEMORY ALBUM')}</span>
-      <h2>{t('앨범에 어떤 이름을 붙일까요?', 'What should we call this album?')}</h2>
+      <span className="qa-eyebrow">{editItem ? t('기존 기록 수정 중', 'EDITING A MEMORY') : t('새 추억 보관함 생성 중', 'A NEW MEMORY ALBUM')}</span>
+      <h2>{editItem ? t('앨범 이름과 사진을 확인해 주세요', 'Check the title and photos') : t('앨범에 어떤 이름을 붙일까요?', 'What should we call this album?')}</h2>
       <label className="qa-field">{t('앨범 이름', 'Album name')}<input maxLength={60} value={name} onChange={e => setName(e.target.value)} placeholder={autoTitle} /></label>
       <div className="qa-date-card"><span className="qa-date-icon">▦</span><span><b>{t('기억된 날짜', 'Memory dates')}</b><small>{picks.length ? `${new Date(first + 'T12:00:00').toLocaleDateString(ko ? 'ko-KR' : 'en-US')}${first !== last ? ` — ${new Date(last + 'T12:00:00').toLocaleDateString(ko ? 'ko-KR' : 'en-US')}` : ''}` : t('사진 촬영일을 읽어 자동으로 정리해요', 'Dates are read from the selected photos')}</small></span><span className="qa-date-auto">EXIF</span></div>
-      <div className="qa-theme-note"><span>✦</span><span><b>{t('커버 테마 톤', 'Cover theme')}</b><small>{t('따뜻한 테라코타 · 미리보기에서 변경 가능', 'Warm terracotta · change it in preview')}</small></span><ArrowRight size={16}/></div>
-      <div className="qa-photo-heading"><span><b>{t('기록 조각들', 'Photo moments')}</b><small>{picks.length}{t('장 선택됨', ' selected')}</small></span><small>{t(`최대 ${MAX_PHOTOS}장`, `Up to ${MAX_PHOTOS}`)}</small></div>
+      <div className="qa-theme-note"><span>✦</span><span><b>{t('앨범책 스타일', 'Album style')}</b><small>{t('앨범의 배경과 사진 배치예요. 사진을 고른 뒤 미리보기에서 바꿀 수 있어요.', 'Controls the album background and photo layout. Choose photos first, then change it in the preview.')}</small></span></div>
+      <div className="qa-photo-heading"><span><b>{editItem ? t('현재 기록 사진', 'Current photos') : t('기록 조각들', 'Photo moments')}</b><small>{picks.length}{t('장 선택됨', ' selected')}</small></span><small>{t(`최대 ${MAX_PHOTOS}장`, `Up to ${MAX_PHOTOS}`)}</small></div>
       <div className="qa-sources">
         <label className="qa-source"><ImagePlus size={26} /><strong>{t('앨범에서 여러 장 고르기', 'Choose photos')}</strong><input type="file" accept="image/*,.heic,.heif" multiple onChange={e => { void add(Array.from(e.target.files || [])); e.target.value = ''; }} /></label>
         <label className="qa-source"><Camera size={26} /><strong>{t('사진 찍기', 'Take a photo')}</strong><input type="file" accept="image/*" capture="environment" onChange={e => { void add(Array.from(e.target.files || [])); e.target.value = ''; }} /></label>
@@ -185,17 +221,17 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
       {picks.length > 0 && <div className="qa-thumbs">{picks.map((p,i) => <span key={p.id}><img src={p.url} alt="" />{i===0&&<b className="qa-cover-badge">★ {t('대표 커버','Cover')}</b>}<button aria-label={t('빼기', 'Remove')} onClick={() => remove(p.id)}>×</button></span>)}</div>}
       {!picks.length && !reading && <button className="qa-sample" onClick={() => void addSamples()}>{t('사진이 없으면 샘플 사진으로 먼저 해보기', 'No photos handy? Try it with sample photos')}</button>}
       {!picks.length && !reading && onBlank && <button className="qa-sample qa-blank" onClick={onBlank}>{t('사진 없이 빈 앨범부터 만들기', 'Start an empty album instead')}</button>}
-      <section className="qa-rolling-card"><div className="qa-rolling-head"><span><b>{t('첫 장 뒷면 롤링페이퍼', 'First photo’s rolling paper')}</b><small>{t('첫 코멘트를 앨범 첫 사진 뒷면에 남겨요.', 'Add a first note to the back of your cover photo.')}</small></span><button type="button" role="switch" aria-checked={withRollingPaper} onClick={() => setWithRollingPaper(v => !v)} className={`qa-switch ${withRollingPaper?'is-on':''}`} aria-label={t('첫 롤링페이퍼 코멘트 켜기','Enable first rolling paper note')}><i/></button></div>{withRollingPaper&&<label className="qa-field qa-comment-field"><textarea maxLength={300} rows={2} value={firstComment} onChange={e=>setFirstComment(e.target.value)} placeholder={t('오늘 웨이팅 1시간 한 보람이 있었다 진짜… 뒷면에 후기를 남겨줘!','That one-hour wait was worth it… leave a note on the back!')}/><small>{firstComment.length}/300</small></label>}<small className="qa-rolling-foot">{t('앨범 첫 장 뒷면에 함께 저장돼요.', 'Saved on the back of the first photo.')}</small></section>
       {error && <p className="qa-error" role="alert">{error}</p>}
-      <div className="qa-dock"><button className="qa-primary" disabled={!picks.length || reading || scanning} onClick={() => void proceedFromPick()}>{reading ? t('찍은 날짜 읽는 중…', 'Reading dates…') : scanning ? t('비슷한 사진 찾는 중…', 'Checking for similar shots…') : picks.length ? t(`${picks.length}장의 조각으로 앨범 미리보기`, `Preview album with ${picks.length} photos`) : t('사진을 골라 주세요', 'Choose some photos')}<ArrowRight size={18} /></button></div>
+      <div className="qa-dock"><button className="qa-primary" disabled={!picks.length || reading || scanning} onClick={() => editItem ? setStep('preview') : void proceedFromPick()}>{reading ? t('찍은 날짜 읽는 중…', 'Reading dates…') : scanning ? t('비슷한 사진 찾는 중…', 'Checking for similar shots…') : picks.length ? t(`${picks.length}장의 조각으로 앨범 미리보기`, `Preview album with ${picks.length} photos`) : t('사진을 골라 주세요', 'Choose some photos')}<ArrowRight size={18} /></button></div>
     </section>}
 
     {step === 'note' && <section className="qa-body">
-      <h2>{t('제목과 한 줄을 바꿔 볼까요?', 'Change the title or the first line?')}</h2>
-      <p>{t('비워 두면 자동으로 채운 그대로 둘게요.', 'Leave them empty to keep what we filled in.')}</p>
+      <h2>{editItem ? t('이 기록의 내용을 고쳐 볼까요?', 'Edit this memory') : t('제목과 한 줄을 바꿔 볼까요?', 'Change the title or the first line?')}</h2>
+      <p>{editItem ? t('기존 사진과 내용을 불러왔어요. 저장하면 이 기록에 반영돼요.', 'The current photos and text are loaded. Saving updates this memory.') : t('비워 두면 자동으로 채운 그대로 둘게요.', 'Leave them empty to keep what we filled in.')}</p>
       <label className="qa-field">{t('앨범 이름', 'Album name')}<input maxLength={60} value={name} onChange={e => setName(e.target.value)} placeholder={autoTitle} /></label>
-      <label className="qa-field">{t('첫 장의 한 줄', 'First page line')}<textarea maxLength={120} rows={2} value={note} onChange={e => setNote(e.target.value)} placeholder={STAMPS[locale][0]} /></label>
-      <div className="qa-dock"><button className="qa-primary" onClick={() => setStep('preview')}>{t('앨범으로 돌아가기', 'Back to the album')}<ArrowRight size={18} /></button></div>
+      <label className="qa-field">{t('첫 장의 한 줄', 'First page line')}<textarea maxLength={editItem ? 4000 : 120} rows={editItem ? 5 : 2} value={note} onChange={e => setNote(e.target.value)} placeholder={STAMPS[locale][0]} /></label>
+      {editItem && <><p className="qa-photo-heading"><b>현재 기록 사진 · {picks.length}장</b></p><div className="qa-thumbs">{picks.map(p=><span key={p.id}>{p.video?<video src={p.url} muted playsInline/>:<img src={p.url} alt=""/>}<button aria-label="사진 빼기" onClick={()=>remove(p.id)}>×</button></span>)}</div></>}
+      <div className="qa-dock"><button className="qa-primary" onClick={() => setStep('preview')}>{editItem ? t('미리보기', 'Preview changes') : t('앨범으로 돌아가기', 'Back to the album')}<ArrowRight size={18} /></button></div>
     </section>}
 
     {step === 'preview' && <section className="qa-body qa-preview">
@@ -205,8 +241,8 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
       <div className="qa-dock">
         {accepted === false && <Consent ko={ko} checked={consent} onChange={setConsent} />}
         {error && <p className="qa-error" role="alert">{error}</p>}
-        <button className="qa-primary" disabled={!!saving || accepted === null || (!accepted && !consent)} onClick={() => void save()}>{saving || t('이 앨범 저장하기', 'Keep this album')}<ArrowRight size={18} /></button>
-        <small>{t('저장하면 링크 하나로 친구들이 가입 없이 사진과 한마디를 얹을 수 있어요.', 'Once saved, friends can add photos and a note from one link, no sign-up needed.')}</small>
+        <button className="qa-primary" disabled={!!saving || accepted === null || (!accepted && !consent) || (!picks.length && !editItem)} onClick={() => void save()}>{saving || (editItem ? t('수정 사항 저장하기', 'Save changes') : t('이 앨범 저장하기', 'Keep this album'))}<ArrowRight size={18} /></button>
+        <small>{editItem ? t('사진을 빼면 이 기록에서 숨김 처리돼요.', 'Removed photos are hidden from this memory.') : t('저장하면 링크 하나로 친구들이 가입 없이 사진과 한마디를 얹을 수 있어요.', 'Once saved, friends can add photos and a note from one link, no sign-up needed.')}</small>
       </div>
     </section>}
   </div>, document.body);

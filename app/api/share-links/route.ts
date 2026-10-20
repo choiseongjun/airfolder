@@ -12,8 +12,8 @@ export async function POST(request:Request){return safe(async()=>{
  const ids=[...new Set(body.ids.map(uuid))],id=randomUUID(),token=randomBytes(32).toString('hex');
  await transaction(async db=>{
   const record=body.recordId?uuid(body.recordId):null;
-  if(record){const valid=await db.query(`SELECT r.id FROM snaproom.records r WHERE r.id=$1 AND r.owner_id=$2 AND r.shared AND ($4='members' OR cardinality(r.recipients)=0) AND (SELECT count(*) FROM snaproom.record_photos WHERE record_id=r.id AND photo_id=ANY($3::uuid[]))=cardinality($3::uuid[]) FOR SHARE`,[record,who,ids,access]);if(!valid.rowCount)throw new ApiError(403,'RECORD_NOT_SHAREABLE');}
-  const photos=await db.query(`SELECT p.id FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id AND m.viewer_id=$2 WHERE snaproom.album_active(p.folder_id) AND p.id=ANY($1::uuid[]) AND p.owner_id=$2 AND p.shared AND ($3='members' OR cardinality(p.recipients)=0) FOR SHARE OF p,m`,[ids,who,access]);
+  if(record){const valid=await db.query(`SELECT r.id FROM snaproom.records r WHERE r.id=$1 AND r.deleted_at IS NULL AND r.owner_id=$2 AND r.shared AND ($4='members' OR cardinality(r.recipients)=0) AND (SELECT count(*) FROM snaproom.record_photos WHERE record_id=r.id AND photo_id=ANY($3::uuid[]))=cardinality($3::uuid[]) FOR SHARE`,[record,who,ids,access]);if(!valid.rowCount)throw new ApiError(403,'RECORD_NOT_SHAREABLE');}
+  const photos=await db.query(`SELECT p.id FROM snaproom.photos p JOIN snaproom.members m ON m.folder_id=p.folder_id AND m.viewer_id=$2 WHERE p.deleted_at IS NULL AND snaproom.album_active(p.folder_id) AND p.id=ANY($1::uuid[]) AND p.owner_id=$2 AND p.shared AND ($3='members' OR cardinality(p.recipients)=0) FOR SHARE OF p,m`,[ids,who,access]);
   if(photos.rowCount!==ids.length)throw new ApiError(403,'PUBLIC_OWN_PHOTOS_REQUIRED');
   await db.query('INSERT INTO snaproom.share_links(id,token_hash,owner_id,access,record_id) VALUES($1,$2,$3,$4,$5)',[id,hash(token),who,access,record]);
   await db.query('INSERT INTO snaproom.share_link_photos(link_id,photo_id) SELECT $1,unnest($2::uuid[])',[id,ids]);
