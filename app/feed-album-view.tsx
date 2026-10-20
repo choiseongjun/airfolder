@@ -7,16 +7,16 @@ import type { FeedAlbum } from './home-feed';
 import ThemeAlbum from './theme-album';
 import AlbumRollingPaper from './album-rolling-paper';
 
-/** Feed album links open the same themed album surface used by the workspace. */
-export default function FeedAlbumView({ album, onBack }: { album: FeedAlbum; onBack: () => void }) {
+/** Shared album surface for the Stitch feed and photo drawer. */
+export default function FeedAlbumView({ album, onBack, backLabel = '피드로 돌아가기' }: { album: FeedAlbum; onBack: () => void; backLabel?: string }) {
   const [tab, setTab] = useState<'album' | 'paper'>('album');
   const [photo, setPhoto] = useState<MemoryItem | null>(null);
-  return <div className="h-screen overflow-y-auto bg-[#fff8f5] text-[#30251f]">
+  return <div className="mx-auto h-screen w-full max-w-[480px] overflow-y-auto bg-[#fff8f5] text-[#30251f]" style={{height:'100dvh'}}>
     <header className={`${stitchRoot} sticky top-0 z-50 border-b border-[#efdfd5] bg-[#fff8f5]/95 px-5 py-4 backdrop-blur`} style={{ fontFamily: sansStack }}>
       <StitchIconFont/>
       <div className="mx-auto flex max-w-md items-center gap-3">
-        <button type="button" onClick={onBack} aria-label="피드로 돌아가기" className="rounded-full bg-white p-2"><Icon name="arrow_back"/></button>
-        <span className="stitch-serif font-semibold text-[#99452c]">{album.name}</span>
+        <button type="button" autoFocus onClick={onBack} aria-label={backLabel} className="shrink-0 rounded-full bg-white p-2"><Icon name="arrow_back"/></button>
+        <h1 className="stitch-serif min-w-0 truncate font-semibold text-[#99452c]">{album.name}</h1>
       </div>
     </header>
     <div className="mx-auto max-w-md px-4 pb-16 pt-3">
