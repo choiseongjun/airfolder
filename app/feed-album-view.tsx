@@ -43,7 +43,7 @@ export default function FeedAlbumView({ album, onBack }: { album: FeedAlbum; onB
         {([{ id: 'decorate', name: '표지 꾸미기' }, { id: 'photos', name: '사진 조각' }, { id: 'paper', name: '스티커 롤링페이퍼' }] as const).map(item =>
           <button type="button" key={item.id} aria-pressed={tab === item.id} onClick={() => setTab(item.id)} className={`flex-1 rounded-xl px-2 py-3 text-xs font-semibold ${tab === item.id ? 'bg-white text-[#99452c] shadow-sm' : 'text-[#78675e]'}`}>{item.name}</button>)}
       </div>
-      {tab === 'decorate' && <AlbumRewardCover folderId={album.id} ko owner/>}
+      {tab === 'decorate' && <AlbumRewardCover folderId={album.id} ko owner photoSrc={album.cover ?? undefined}/>}
       {tab === 'paper' && <AlbumRollingPaper folderId={album.id} title={album.name} locale="ko" canInvite={false} initiallyOpen rewardsEnabled/>}
       {tab === 'photos' && (loading ? <p role="status">사진을 불러오는 중…</p> : failed ? <p role="alert">사진을 불러오지 못했어요. 피드로 돌아갔다 다시 열어주세요.</p> : photos.length ? <div className="grid grid-cols-2 gap-3">
         {photos.map(photo => <figure key={photo.id} className="overflow-hidden rounded-xl border-4 border-white bg-white shadow-sm">

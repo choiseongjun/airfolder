@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Hourglass, Music2, Palette, Share2, Ticket, Wand2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Hourglass, Music2, Palette, Share2, Sticker as StickerIcon, Ticket, Wand2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { browseTheme } from '@/lib/browse-data';
 import type { MemoryItem } from './memories';
@@ -127,6 +127,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined, style?.theme));
  const [themePickerOpen, setThemePickerOpen] = useState(false);
+ const [studioOpen, setStudioOpen] = useState(false);
  const themeRowRef = useRef<HTMLDivElement>(null);
  const editable = !!owner && !browsing && !localItems;
  const [song, setSong] = useState(style?.song || ''), [songDraft, setSongDraft] = useState<string | null>(null);
@@ -321,6 +322,10 @@ ${url}`;
    <button aria-pressed={month === 'all'} onClick={() => setMonth('all')}>{ko ? '전체' : 'All'}</button>
    {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '이번 달 우리' : 'This month of us') : monthName(m)}</button>)}
   </div>}
+  {editable && <section className="ta-studio-entry" aria-label={ko ? '다꾸 스튜디오' : 'Album decoration studio'}>
+   <div className="ta-studio-entry-head"><span className="ta-studio-entry-icon"><StickerIcon size={19}/></span><div><small>{ko ? '앨범을 우리답게 꾸며요' : 'MAKE IT YOURS'}</small><strong>{ko ? '다꾸 스튜디오' : 'Decoration studio'}</strong><p>{ko ? '사진 위에 스티커를 붙이고 모은 캐릭터도 더해요.' : 'Place stickers on your photo and add collected characters.'}</p></div><button type="button" aria-expanded={studioOpen} onClick={() => setStudioOpen(open => !open)}>{studioOpen ? (ko ? '닫기' : 'Close') : (ko ? '꾸미기' : 'Decorate')}</button></div>
+   {studioOpen && <AlbumRewardCover folderId={folderId} ko={ko} owner initiallyOpen photoSrc={cover?.src}/>}
+  </section>}
   <details className="ta-picker" open={themePickerOpen} onToggle={event => setThemePickerOpen(event.currentTarget.open)}>
    <summary className="ta-picker-summary"><span className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마' : 'Album theme'}</strong><small>{ko ? `${meta.ko} 적용 중 · ${albumThemes.length}가지, 좌우로 넘겨 선택` : `${meta.en} selected · ${albumThemes.length} styles, scroll sideways`}</small></span><span className="ta-picker-chevron" aria-hidden="true">⌄</span></summary>
    <div className={`ta-picker-rail${localItems ? ' is-compact' : ''}`}>

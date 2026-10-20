@@ -1,4 +1,16 @@
 /* Themed album: one vertical keepsake decorated automatically from photos and short notes. */
+.ta-studio-entry{margin:14px 0;padding:12px;border:1px solid #ead9c9;border-radius:18px;background:linear-gradient(135deg,#fffaf2,#f8eee5);box-shadow:0 4px 16px #5b39200a;color:#594536}
+.ta-studio-entry-head{display:flex;align-items:center;gap:11px}
+.ta-studio-entry-icon{display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:14px;background:#f0d9c9;color:#99452c}
+.ta-studio-entry-head>div{min-width:0;flex:1}
+.ta-studio-entry-head>div>small{display:block;color:#a07259;font-size:9px;font-weight:700;letter-spacing:.12em}
+.ta-studio-entry-head strong{display:block;margin-top:2px;font-family:var(--font-serif,Georgia,serif);font-size:17px}
+.ta-studio-entry-head p{margin:3px 0 0;color:#806e5b;font-size:11px;line-height:1.5}
+.ta-studio-entry-head>button{flex:0 0 auto;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:#99452c;color:white;font-size:12px;font-weight:700;cursor:pointer}
+.ta-studio-entry .reward-cover{margin:12px 0 0;padding-top:10px;border-top:1px solid #ead9c9}
+.ta-studio-entry .reward-decoration-tools{max-width:none}
+.ta-studio-entry .reward-decoration-tools>summary{font-size:12px}
+@media(max-width:380px){.ta-studio-entry{padding:10px}.ta-studio-entry-head{gap:8px}.ta-studio-entry-head>button{padding:0 11px}}
 .ta-wrap{margin-top:14px}
 .folder-view-tabs .folder-view-theme{display:flex;align-items:center;justify-content:center;gap:5px;color:var(--brand)}
 .folder-view-tabs .folder-view-theme[aria-pressed=true]{color:#b0623f}
