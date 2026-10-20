@@ -9,6 +9,7 @@ function route({ provider = 'apple.com', validIdentity = true, revokeOK = true }
   class ApiError extends Error { constructor(status, code) { super(code); this.status = status; } }
   const db = { query: async (sql, params) => { writes.push({ sql, params }); return { rows: [] }; } };
   const imports = {
+    '@/lib/safety': { requireTerms: async () => { throw new Error('Account deletion must not require terms acceptance'); } },
     'node:crypto': crypto,
     'next/headers': { cookies: async () => ({ set: (...args) => cookieChanges.push(args) }) },
     '@/lib/server': {

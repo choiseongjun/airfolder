@@ -11,12 +11,14 @@ import QuickAlbum from './quick-album';
 import FeedAlbumView from './feed-album-view';
 import MemoryLoading from './memory-loading';
 import BrandMark from './brand-mark';
+import PhotoNotes from './photo-notes';
+import type { NoteColor, NoteOptions } from '@/lib/comment-note';
 
 // The signed-in home: the Stitch "프라이빗 크루 데일리 홈 피드" layout filled with the viewer's own crew.
 // Decorative mockup details without persisted data are omitted from the signed-in feed.
 type Person = { id: string; name: string; mine: boolean };
 type Media = { id: string; src: string; video: boolean; day: string | null };
-export type FeedItem = { kind: 'photo' | 'record'; id: string; folderId: string; album: string; author: Person; createdAt: string; title: string; body: string; photos: Media[]; photoCount: number; comments: { id: string; body: string; author: Person; createdAt: string }[]; commentCount: number; likes: number; liked: boolean; shared: boolean; recipients: string[]; revision: number; day: string };
+export type FeedItem = { kind: 'photo' | 'record'; id: string; folderId: string; album: string; author: Person; createdAt: string; title: string; body: string; photos: Media[]; photoCount: number; comments: { id: string; body: string; author: Person; createdAt: string; color?: NoteColor; photoId?: string }[]; commentCount: number; likes: number; liked: boolean; shared: boolean; recipients: string[]; revision: number; day: string };
 export type FeedAlbum = {id:string;name:string;category:string;photoCount:number;cover:string|null;updatedAt:string};
 export type FeedData = { me: string; groups: { id: string; name: string; members: number; mine:boolean; ownerName:string;isPublic:boolean }[]; publicGroups?:{id:string;name:string;description:string;ownerName:string;members:number}[]; albums:FeedAlbum[]; crew: { id: string | null; name: string | null; ownerId: string | null; members: Person[] }; month: { count: number; today: number; goal: number; contributors: Person[] }; items: FeedItem[] };
 
@@ -31,7 +33,7 @@ function formatTimestamp(iso: string) {
 }
 const detailHref = (item: FeedItem) => item.kind === 'photo' ? `/?lang=ko&album=${item.folderId}&photo=${item.id}` : `/?lang=ko&album=${item.folderId}&view=photos`;
 
-export type FeedActions = { onSelectGroup: (id: string | null) => void; onCreateGroup?: (name: string,isPublic?:boolean) => Promise<void>; onJoinPublicGroup?:(id:string)=>Promise<void>; onLike: (item: FeedItem) => void; onComment: (item: FeedItem, body: string) => Promise<string | null>; onDelete: (item: FeedItem) => Promise<string | null>; onRefresh?: () => void; onOpenBundle?: (item: FeedItem, mode: 'gallery' | 'slideshow') => void };
+export type FeedActions = { onSelectGroup: (id: string | null) => void; onCreateGroup?: (name: string,isPublic?:boolean) => Promise<void>; onJoinPublicGroup?:(id:string)=>Promise<void>; onLike: (item: FeedItem) => void; onComment: (item: FeedItem, body: string, options?: NoteOptions) => Promise<string | null>; onDelete: (item: FeedItem) => Promise<string | null>; onRefresh?: () => void; onOpenBundle?: (item: FeedItem, mode: 'gallery' | 'slideshow') => void };
 
 function SpacePickerModal({ children, onClose }: { children: ReactNode; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -324,23 +326,14 @@ function FullBundleView({ item, initialMode, onBack, actions }: { item: FeedItem
 }
 
 function FeedCard({ item, index, owner, actions }: { item: FeedItem; index: number; owner: string | null; actions: FeedActions }) {
-  const [draft, setDraft] = useState(''); const [sending, setSending] = useState(false); const [error, setError] = useState('');
   const [backside, setBackside] = useState(false); const [activePhoto, setActivePhoto] = useState(0);
-  const memos = true;
+
   const cover = item.photos[0];
   const days = [...new Set(item.photos.map(photo => photo.day).filter((day): day is string => Boolean(day)))];
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false); const [editing, setEditing] = useState(false); const [deleteConfirm, setDeleteConfirm] = useState(false); const [actionError, setActionError] = useState(''); const [actionBusy, setActionBusy] = useState(false);
   const visiblePhotos = selectedDay ? item.photos.filter(photo => photo.day === selectedDay) : item.photos;
   const activeMedia = visiblePhotos[activePhoto] ?? visiblePhotos[0] ?? cover;
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    if (!draft.trim() || sending) return;
-    setSending(true); setError('');
-    const problem = await actions.onComment(item, draft.trim());
-    setSending(false);
-    if (problem) setError(problem); else setDraft('');
-  }
   return <article className="relative flex flex-col bg-[#ffffff] rounded-2xl shadow-[0_4px_20px_-2px_rgba(112,100,92,0.08)] p-3.5 transition-transform hover:-translate-y-0.5">
     {index % 2 === 0
       ? <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#ffdcbd]/70 backdrop-blur-xs -rotate-2 z-10 pointer-events-none"/>
@@ -387,28 +380,7 @@ function FeedCard({ item, index, owner, actions }: { item: FeedItem; index: numb
       <button type="button" aria-pressed={item.liked} onClick={() => actions.onLike(item)} className={`flex items-center gap-1 px-2.5 py-1 rounded-full transition-colors ${item.liked ? 'bg-[#ffdbd1]' : 'bg-[#fcebe0] hover:bg-[#f6e5db]'}`}><span className="text-[13px]">💖</span><span className={`${label} text-[#221a14] font-semibold`}>{item.likes}</span></button>
       <span className={`flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#fff1e9] text-[#55433d] ${label} font-[500]`}><Icon name="edit_note" className="text-[15px]"/>{item.commentCount}</span>
     </div>
-    {memos && !backside && <div className="relative mt-3 pt-2">
-      <div className="relative space-y-2 rounded-xl bg-[#fcebe0] p-3 shadow-inner">
-        <div className="pointer-events-none absolute -top-2 left-6 h-3.5 w-12 rotate-2 bg-[#dbc1ba]/40"/>
-        <div className="flex items-center justify-between pb-1">
-          <span className={`${label} flex items-center gap-1 font-bold text-[#55433d]`}><Icon name="edit_note" className="text-[14px]"/>포스트잇 댓글 ({item.commentCount})</span>
-          <span className="text-[10px] text-[#7d562d]">조각원 전용 낙서</span>
-        </div>
-        {item.comments.map(c => <div key={c.id} className="flex items-start gap-2 rounded-lg bg-white/80 p-2">
-          <div className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-bold ${tone(c.author)}`}>{initial(c.author)}</div>
-          <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex items-center justify-between"><span className={`${label} text-[#221a14] font-bold`}>{c.author.mine ? '나' : c.author.name}</span><time className="text-[10px] text-[#55433d]">{formatTimestamp(c.createdAt)}</time></div>
-            <p className="stitch-sans text-[0.8125rem] font-[400] text-[#221a14] leading-tight mt-0.5 whitespace-pre-line break-words">{c.body}</p>
-          </div>
-        </div>)}
-        {item.commentCount > item.comments.length && <Link href={detailHref(item)} className={`block px-2 ${label} font-[500] text-[#7d562d]`}>댓글 {item.commentCount}개 모두 보기</Link>}
-        <form className="flex items-center gap-2 pt-1" onSubmit={submit}>
-          <input aria-label="포스트잇 댓글" value={draft} maxLength={1000} onChange={e => { setDraft(e.target.value); setError(''); }} className="flex-1 min-w-0 bg-[#ffffff] px-3 py-1.5 rounded-lg text-[0.8125rem] leading-[1.25rem] font-[400] stitch-sans text-[#221a14] placeholder:text-[#55433d]/60 focus:outline-hidden" placeholder="나도 한마디 포스트잇 남기기..." type="text"/>
-          <button aria-label="메모 붙이기" disabled={sending || !draft.trim()} className="w-8 h-8 rounded-lg bg-[#bf9061] text-[#492a04] flex items-center justify-center hover:opacity-90 active:scale-95 transition-all disabled:opacity-50" type="submit"><Icon name="send" className="text-[16px]"/></button>
-        </form>
-        {error && <p role="alert" className="text-[11px] text-[#ba1a1a] px-1">{error} <Link href={detailHref(item)} className="underline">앨범에서 남기기</Link></p>}
-      </div>
-    </div>}
+    {!backside && <PhotoNotes item={item} photo={activeMedia} onComment={actions.onComment}/>}
     <div className="flex items-center justify-between pt-3 mt-1 text-[#55433d]">
       {item.kind === 'record' && item.photoCount > 4 ? <button type="button" onClick={() => actions.onOpenBundle?.(item, 'slideshow')} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-[#fcebe0] transition-colors active:scale-95"><Icon name="cached" className="text-[18px] text-[#43664d]"/><span className={`${label} font-[500]`}>{item.photoCount}장 전체 슬라이드 & 뒷면 순회하기</span></button> : <Link href={detailHref(item)} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-[#fcebe0] transition-colors active:scale-95"><Icon name="cached" className="text-[18px] text-[#43664d]"/><span className={`${label} font-[500]`}>비하인드 뒷면</span></Link>}
       {item.kind === 'record' && item.photoCount > 4 ? <button type="button" onClick={() => actions.onOpenBundle?.(item, 'gallery')} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-[#fcebe0] transition-colors active:scale-95"><Icon name="photo_library" className="text-[18px] text-[#7d562d]"/><span className={`${label} font-[500]`}>전체 사진 보기</span></button> : <Link href={detailHref(item)} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg hover:bg-[#fcebe0] transition-colors active:scale-95"><Icon name="photo_library" className="text-[18px] text-[#7d562d]"/><span className={`${label} font-[500]`}>앨범 보기</span></Link>}
@@ -482,10 +454,10 @@ export default function HomeFeed() {
       toggle(!item.liked);
       api('/api/discussion', { method: 'POST', body: JSON.stringify({ kind: item.kind, targetId: item.id, action: 'like', liked: !item.liked }) }).catch(() => toggle(item.liked));
     },
-    async onComment(item, body) {
+    async onComment(item, body, options) {
       try {
-        await api('/api/discussion', { method: 'POST', body: JSON.stringify({ kind: item.kind, targetId: item.id, action: 'comment', id: crypto.randomUUID(), body }) });
-        void load(data?.crew.id ?? 'personal');
+        await api('/api/discussion', { method: 'POST', body: JSON.stringify({ kind: item.kind, targetId: item.id, action: 'comment', id: crypto.randomUUID(), body, ...options }) });
+        await load(data?.crew.id ?? 'personal');
         return null;
       } catch (error) { return commentErrors[error instanceof Error ? error.message : ''] ?? '댓글을 남기지 못했어요.'; }
     },

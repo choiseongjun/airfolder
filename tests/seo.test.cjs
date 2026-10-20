@@ -12,6 +12,7 @@ function load(file, env = {}, imports = {}) {
   const loaded = { exports: {} };
   vm.runInNewContext(code, { module: loaded, exports: loaded.exports, URL, process: { env }, require(name) {
     if (name === './public-locale' || name === '@/lib/public-locale') return load('lib/public-locale.ts');
+    if (name === './[lang]/make/guides') return load('app/[lang]/make/guides.ts');
     assert.ok(name in imports, `Unexpected import: ${name}`);
     return imports[name];
   } });
@@ -36,11 +37,16 @@ test('production remains crawlable when SITE_URL is missing', () => {
   assert.equal(robots.rules.disallow, '/api/');
   assert.equal(robots.sitemap, 'https://memonestia.xyz/sitemap.xml');
   const sitemap = load('app/sitemap.ts', {}, imports).default();
-  assert.equal(sitemap.length, 6);
+  const guides = load('app/[lang]/make/guides.ts').guides;
+  assert.equal(sitemap.length, 6 + 2 * (guides.length + 1));
   assert.deepEqual(Array.from(sitemap, item => item.url).sort(), [
     'https://memonestia.xyz/en', 'https://memonestia.xyz/en-ph', 'https://memonestia.xyz/en/hosts', 'https://memonestia.xyz/id',
     'https://memonestia.xyz/ko', 'https://memonestia.xyz/ko/hosts',
-  ]);
+    ...['ko', 'en'].flatMap(lang => [
+      `https://memonestia.xyz/${lang}/make`,
+      ...guides.map(guide => `https://memonestia.xyz/${lang}/make/${guide.slug}`),
+    ]),
+  ].sort());
 });
 
 test('public entry chooses Philippines and Indonesia without overriding explicit preferences', () => {

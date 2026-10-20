@@ -4,6 +4,9 @@
 .stitch-root.stitch-root.stitch-root :not(.material-symbols-outlined):not(.settings-group-manager):not(.settings-group-manager *){all:revert-layer}
 .stitch-root.stitch-root.stitch-root .material-symbols-outlined{font-size:revert-layer}
 @layer utilities{
+  @keyframes note-arrive{from{opacity:0;transform:translateY(-9px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .note-arrive{animation:note-arrive .32s ease-out both}
+  @media(prefers-reduced-motion:reduce){.note-arrive{animation:none}}
   .stitch-sans{font-family:var(--font-stitch-sans),var(--font-stitch-kr),sans-serif}
   .stitch-serif{font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif}
   /* Tailwind v3's defaults, which Stitch renders with; v4 here maps font-sans/mono to Geist. */

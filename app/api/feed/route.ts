@@ -67,9 +67,9 @@ export async function GET(request:Request){await connection();return safe(async(
     FROM snaproom.record_photos rp JOIN snaproom.photos p ON p.id=rp.photo_id
     WHERE rp.record_id=ANY($1::uuid[]) AND p.deleted_at IS NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$2)
    ) ranked WHERE n<=30`,[recordIds,who,zone]),
-  db.query(`SELECT * FROM (SELECT c.id,c.photo_id,c.record_id,c.owner_id,c.body,c.created_at,
+  db.query(`SELECT * FROM (SELECT c.id,c.photo_id,c.record_id,c.owner_id,c.body,c.created_at,c.note_color,c.note_photo_id,
     count(*) OVER(PARTITION BY c.photo_id,c.record_id)::int AS total,row_number() OVER(PARTITION BY c.photo_id,c.record_id ORDER BY c.created_at DESC,c.id) n
-   FROM snaproom.comments c WHERE (c.photo_id=ANY($1::uuid[]) OR c.record_id=ANY($2::uuid[])) AND NOT c.hidden AND snaproom.interaction_allowed(c.owner_id,$3)) ranked WHERE n<=2`,[photoIds,recordIds,who]),
+   FROM snaproom.comments c WHERE (c.photo_id=ANY($1::uuid[]) OR c.record_id=ANY($2::uuid[])) AND NOT c.hidden AND snaproom.interaction_allowed(c.owner_id,$3)) ranked WHERE n<=3`,[photoIds,recordIds,who]),
   db.query(`SELECT photo_id,record_id,count(*)::int AS count,COALESCE(bool_or(owner_id=$3),false) AS liked FROM snaproom.reactions
    WHERE (photo_id=ANY($1::uuid[]) OR record_id=ANY($2::uuid[])) AND snaproom.interaction_allowed(owner_id,$3) GROUP BY photo_id,record_id`,[photoIds,recordIds,who]),
  ]);
@@ -92,7 +92,7 @@ export async function GET(request:Request){await connection();return safe(async(
    const like=likes.rows.find(l=>target(l)===i.id);
    return {kind:i.kind,id:i.id,folderId:i.folder_id,album:i.album,author:person(i.owner_id),createdAt:i.created_at,title:i.title||'',body:i.body||'',
     photos:pics,photoCount:i.kind==='photo'?1:attached.rows.find(p=>p.record_id===i.id)?.total??0,shared:i.shared,recipients:i.owner_id===who?i.recipients:[],revision:i.revision,day:new Date(i.day).toISOString().slice(0,10),
-    comments:thread.map(c=>({id:c.id,body:c.body,author:person(c.owner_id),createdAt:c.created_at})),commentCount:thread[0]?.total??0,
+    comments:thread.map(c=>({id:c.id,body:c.body,author:person(c.owner_id),createdAt:c.created_at,color:c.note_color,photoId:pics.some(p=>p.id===c.note_photo_id)?c.note_photo_id:undefined})),commentCount:thread[0]?.total??0,
     likes:like?.count??0,liked:like?.liked??false};
   }),
  },{headers:{'Cache-Control':'private, no-store'}});

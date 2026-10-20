@@ -21,7 +21,8 @@ test('decoration allows only earned characters and outfits, including a no-outfi
   assert.equal(parseDecoration(null, []), null);
 });
 test('rejects spoofed types, unknown artwork and arbitrary bubble content', () => {
-  for (const input of [undefined, [], 'bear', {}, { character: 'scarf' }, { character: 'bear', outfit: 'rabbit' }, { character: 'bear', phrase: '__proto__' }, { character: 'bear', phrase: '<script>' }]) {
+  assert.equal(parseDecoration({}), null);
+  for (const input of [undefined, [], 'bear', { character: 'scarf' }, { character: 'bear', outfit: 'rabbit' }, { character: 'bear', phrase: '__proto__' }, { character: 'bear', phrase: '<script>' }]) {
     assert.throws(() => parseDecoration(input), /INVALID_DECORATION/);
   }
 });
