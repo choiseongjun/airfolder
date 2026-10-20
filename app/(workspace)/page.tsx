@@ -6,6 +6,7 @@ import { requestLocale } from '@/lib/request-locale';
 import { hash, pool, sessionToken } from '@/lib/server';
 import Workspace from './workspace-client';
 import EntryLanding from './entry-landing';
+import HomeFeed from '../home-feed';
 import { redirect } from 'next/navigation';
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -25,17 +26,17 @@ export default function Page(props: Props) {
   </Suspense>;
 }
 
-async function signedIn() {
-  // Native shells authenticate with a bearer token and handle sign-in themselves.
-  if ((await headers()).has('authorization')) return true;
+async function visitor(): Promise<'guest' | 'member' | 'workspace'> {
+  // Native shells authenticate with a bearer token and keep their own workspace flow.
+  if ((await headers()).has('authorization')) return 'workspace';
   try {
     const token = await sessionToken();
-    if (!token) return false;
+    if (!token) return 'guest';
     const result = await pool().query('SELECT 1 FROM snaproom.sessions s JOIN snaproom.accounts a ON a.viewer_id=s.viewer_id WHERE s.token_hash=$1 AND s.expires_at>now() LIMIT 1', [hash(token)]);
-    return Boolean(result.rowCount);
+    return result.rowCount ? 'member' : 'guest';
   } catch {
     // If the check fails, the workspace shows its own connection state.
-    return true;
+    return 'workspace';
   }
 }
 
@@ -44,7 +45,11 @@ async function LocalizedWorkspace({ searchParams }: Props) {
   const { lang, browse, invite } = params;
   const locale = await requestLocale(lang);
   if (typeof invite === 'string' && /^[a-f\d]{64}$/.test(invite) && browse !== '1') redirect(`/join/${invite}?lang=${locale}`);
-  // The landing is Korean-only for now; English visitors keep the existing first-visit flow.
-  if (locale === 'ko' && !workspaceParams.some(name => params[name] !== undefined) && !(await signedIn())) return <EntryLanding/>;
+  // The landing and crew home are Korean-only for now; English visitors keep the existing workspace.
+  if (locale === 'ko' && !workspaceParams.some(name => params[name] !== undefined)) {
+    const who = await visitor();
+    if (who === 'guest') return <EntryLanding/>;
+    if (who === 'member') return <HomeFeed/>;
+  }
   return <Workspace key={browse==='1'?'browse':'workspace'} initialLocale={locale} browsing={browse==='1'} />;
 }
