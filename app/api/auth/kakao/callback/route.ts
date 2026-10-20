@@ -32,6 +32,7 @@ export async function GET(request: Request) {
     jar.set('snaproom_session', token, { httpOnly: true, secure: new URL(request.url).protocol === 'https:', sameSite: 'lax', path: '/', maxAge: 2592000 });
     return back();
   } catch (error) {
+    if (!(error instanceof ApiError)) console.error('Kakao sign-in failed:', error instanceof Error ? error.message : 'UnknownError');
     return back(error instanceof ApiError ? error.message : 'LOGIN_FAILED');
   }
 }

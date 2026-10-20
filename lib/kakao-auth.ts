@@ -31,7 +31,8 @@ export async function kakaoIdentity(request: Request, code: string): Promise<Ide
   const body = new URLSearchParams({ grant_type: 'authorization_code', client_id: kakaoClientId(), redirect_uri: kakaoRedirectUri(request), code });
   if (process.env.KAKAO_CLIENT_SECRET) body.set('client_secret', process.env.KAKAO_CLIENT_SECRET);
   const token = await fetch('https://kauth.kakao.com/oauth/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' }, body, signal: AbortSignal.timeout(10000) });
-  if (!token.ok) throw new Error('KAKAO_TOKEN_FAILED');
+  // Kakao's error code (e.g. KOE010 for a missing or wrong client secret) carries no secret; keep it for the log.
+  if (!token.ok) throw new Error(`KAKAO_TOKEN_FAILED ${await token.json().then((e: { error_code?: string }) => e.error_code || token.status, () => token.status)}`);
   const { access_token: accessToken } = await token.json() as { access_token?: string };
   if (!accessToken) throw new Error('KAKAO_TOKEN_FAILED');
   const me = await fetch('https://kapi.kakao.com/v2/user/me', { headers: { Authorization: `Bearer ${accessToken}` }, signal: AbortSignal.timeout(10000) });

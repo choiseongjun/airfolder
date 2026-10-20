@@ -129,10 +129,10 @@ export default function Home({ initialLocale, browsing=false }: { initialLocale:
   useEffect(()=>{
     // Kakao's redirect comes back with ?loginError=CODE when sign-in did not finish.
     const url=new URL(window.location.href),code=url.searchParams.get("loginError");if(!code)return;
-    // login=1 makes the URL restore open the account sheet, where the message is shown.
-    url.searchParams.delete("loginError");url.searchParams.set("login","1");window.history.replaceState(window.history.state,"",url);
     const ko=locale==="ko",message=code==="LOGIN_CANCELLED"?(ko?"카카오 로그인을 취소했어요. 다시 시작할 수 있어요.":"Kakao sign-in was cancelled."):code==="AUTH_NOT_CONFIGURED"?(ko?"카카오 로그인 연결 설정이 아직 완료되지 않았어요.":"Kakao sign-in is not set up yet."):code==="LOGOUT_FIRST"?(ko?"다른 계정으로 로그인하려면 먼저 로그아웃해 주세요.":"Sign out first to use a different account."):code==="ACCOUNT_DELETION_PENDING"?(ko?"삭제 요청된 계정이라 로그인할 수 없어요.":"This account is scheduled for deletion."):(ko?"카카오 로그인을 완료하지 못했어요. 다시 시도해 주세요.":"Could not finish Kakao sign-in. Please try again.");
-    const timer=window.setTimeout(()=>setAuthError(message),0);return()=>window.clearTimeout(timer);
+    // Rewrite the URL in the same tick as the message, so a cancelled first run (Strict Mode) still finds the code.
+    // login=1 makes the URL restore open the account sheet, where the message is shown.
+    const timer=window.setTimeout(()=>{url.searchParams.delete("loginError");url.searchParams.set("login","1");window.history.replaceState(window.history.state,"",url);setAuthError(message);},0);return()=>window.clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps -- Read the redirect result once on arrival.
   },[]);
   const [viewerId, setViewerId] = useState(""); const [serverError, setServerError] = useState(false); const [retryConnection, setRetryConnection] = useState(0); const [busy, setBusy] = useState(false); const [inviteUrl, setInviteUrl] = useState(""); const [joinToken, setJoinToken] = useState(""); const uploading = useRef(new Set<string>());
