@@ -45,6 +45,29 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
   const [termsBusy, setTermsBusy] = useState(false);
   const { crew, month } = data;
   useEffect(() => { const filter = new URLSearchParams(window.location.search).get('filter'); if (filter === 'notes' || filter === 'trips' || filter === 'month') setFeedFilter(filter); }, []);
+  useEffect(() => {
+    const syncAlbumFromUrl = () => {
+      const id = new URLSearchParams(window.location.search).get('album');
+      setOpenedAlbum(id ? data.albums.find(album => album.id === id) ?? null : null);
+    };
+    syncAlbumFromUrl();
+    window.addEventListener('popstate', syncAlbumFromUrl);
+    return () => window.removeEventListener('popstate', syncAlbumFromUrl);
+  }, [data.albums]);
+  function openAlbum(album: FeedAlbum) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('album', album.id);
+    url.searchParams.delete('view'); url.searchParams.delete('photo');
+    window.history.pushState({ ...(window.history.state || {}), feedAlbumId: album.id }, '', url);
+    setOpenedAlbum(album);
+  }
+  function closeAlbum() {
+    if (window.history.state?.feedAlbumId) { window.history.back(); return; }
+    const url = new URL(window.location.href);
+    url.searchParams.delete('album'); url.searchParams.delete('view'); url.searchParams.delete('photo');
+    window.history.replaceState(null, '', url);
+    setOpenedAlbum(null);
+  }
   const crewHref = '/crew/settings';
   const screenHref = (next: 'home'|'photos'|'behind'|'settings') => next === 'home' ? '/?lang=ko&home=1' : `/crew/${next}`;
   const createAlbumHref = `/?lang=ko&quick=1${crew.id ? `&group=${encodeURIComponent(crew.id)}` : ''}&returnTo=${encodeURIComponent('/?lang=ko&home=1')}`;
@@ -57,7 +80,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
     return true;
   });
   const invite = crew.id && <Link href={crewHref} className="flex items-center gap-1.5 bg-[#f6e5db] hover:bg-[#f0dfd5] transition-colors px-2.5 py-1.5 rounded-full shrink-0 text-[#55433d] active:scale-95"><div className="w-6 h-6 rounded-full border-2 border-dashed border-[#88726c] flex items-center justify-center text-[#99452c]"><Icon name="person_add" className="text-[14px]"/></div><span className={`${label} font-medium`}>+ 친구 초대</span></Link>;
-  if (openedAlbum) return <FeedAlbumView key={openedAlbum.id} album={openedAlbum} onBack={() => setOpenedAlbum(null)}/>;
+  if (openedAlbum) return <FeedAlbumView key={openedAlbum.id} album={openedAlbum} onBack={closeAlbum}/>;
   if (fullBundle) return <FullBundleView item={fullBundle.item} initialMode={fullBundle.mode} onBack={() => setFullBundle(null)} actions={actions}/>;
   return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] antialiased`} style={{ fontFamily: sansStack }}>
     <StitchIconFont/>
@@ -114,7 +137,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
         </section>
         <section className="mb-5" aria-label="크루 앨범">
           <div className="mb-2 flex items-center justify-between"><h2 id="feed-albums" className="stitch-serif scroll-mt-24 text-base font-semibold text-[#30251f]">우리 앨범</h2><span className="text-[10px] text-[#78675e]">{data.albums.length}개</span></div>
-          {data.albums.length ? <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 no-scrollbar">{data.albums.map(album=><button type="button" key={album.id} onClick={()=>setOpenedAlbum(album)} className="text-left w-36 shrink-0 overflow-hidden rounded-xl border border-[#efdfd5] bg-white shadow-[0_3px_12px_rgba(112,100,92,.07)]"><div className="aspect-[4/3] bg-[#f3e5dc]">{album.cover?<img src={album.cover} alt="" className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center text-3xl text-[#b89170]">📖</div>}</div><div className="p-2.5"><strong className="block truncate text-xs text-[#30251f]">{album.name}</strong><span className="mt-1 block text-[10px] text-[#78675e]">{album.category} · 사진 {album.photoCount}장</span></div></button>)}</div> : <p className="rounded-xl bg-white/80 px-3 py-3 text-[11px] text-[#78675e]">아직 앨범이 없어요. 사진을 담으면 이곳에서 바로 볼 수 있어요.</p>}
+          {data.albums.length ? <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 no-scrollbar">{data.albums.map(album=><button type="button" key={album.id} onClick={()=>openAlbum(album)} className="text-left w-36 shrink-0 overflow-hidden rounded-xl border border-[#efdfd5] bg-white shadow-[0_3px_12px_rgba(112,100,92,.07)]"><div className="aspect-[4/3] bg-[#f3e5dc]">{album.cover?<img src={album.cover} alt="" className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center text-3xl text-[#b89170]">📖</div>}</div><div className="p-2.5"><strong className="block truncate text-xs text-[#30251f]">{album.name}</strong><span className="mt-1 block text-[10px] text-[#78675e]">{album.category} · 사진 {album.photoCount}장</span></div></button>)}</div> : <p className="rounded-xl bg-white/80 px-3 py-3 text-[11px] text-[#78675e]">아직 앨범이 없어요. 사진을 담으면 이곳에서 바로 볼 수 있어요.</p>}
         </section>
         <section className="flex items-center gap-2 overflow-x-auto no-scrollbar mb-4 md:mb-6" aria-label="피드 보기">
           {([{ id: 'all', text: '전체 피드' }, { id: 'trips', text: '✈️ 여행·이벤트' }, { id: 'month', text: '📅 이번 달' }, { id: 'notes', text: '🏷️ 뒷면 낙서' }] as const).map(filter => <button key={filter.id} type="button" aria-pressed={feedFilter === filter.id} onClick={() => setFeedFilter(filter.id)} className={`px-3 py-1.5 rounded-full ${label} shrink-0 transition-colors ${feedFilter === filter.id ? 'bg-[#99452c] text-white font-semibold shadow-xs' : 'bg-[#fcebe0] text-[#55433d] hover:bg-[#f6e5db]'}`}>{filter.text}</button>)}

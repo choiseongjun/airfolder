@@ -1,6 +1,6 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- Thumbnails are local object URLs of photos not uploaded yet. */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, ArrowRight, Camera, ImagePlus, PencilLine, X } from 'lucide-react';
 import { api } from '@/lib/client-api';
@@ -11,6 +11,7 @@ import { mapLimit } from '@/lib/parallel';
 import ThemeAlbum from './theme-album';
 import type { MemoryItem } from './memories';
 import Consent from './growth/consent';
+import { STUDIO_STICKERS, STUDIO_STICKER_COPY, type StudioSticker } from '@/lib/reward-decoration';
 import './quick-album.css';
 
 type Pick = { id: string; file?: File; url: string; taken: number; video?: boolean };
@@ -34,6 +35,11 @@ const STAMPS = {
   ko: ['함께여서 좋았던 날 ♡', '오늘의 우리, 맑음', '배부르고 행복했던 순간', '이 장면은 꼭 남겨야 해', '돌아가고 싶은 그 시간', '웃음이 끊이지 않던 하루'],
   en: ['the good little days ♡', 'us, sunny all day', 'full and happy', 'this one we keep', 'take me back here', 'we never stopped laughing'],
 };
+const STUDIO_CATEGORIES = [
+  { id: 'jokes', label: '🔥 킹받는 장난' },
+  { id: 'cafe', label: '📦 카페&디저트' },
+  { id: 'roast', label: '🗨️ 단톡 팩폭' },
+] as const;
 const dayKey = (ms: number) => { const d = new Date(ms); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 
 /** When the photo was taken: the camera's EXIF time, else the file's own date. */
@@ -55,6 +61,8 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
   const [crewMeta, setCrewMeta] = useState<{name: string; members: number} | null>(null);
   const [scanning, setScanning] = useState(false), [grouped, setGrouped] = useState(0);
   const [accepted, setAccepted] = useState<boolean | null>(null), [consent, setConsent] = useState(false);
+  const [studioStickers, setStudioStickers] = useState<StudioSticker[]>([]), [studioTab, setStudioTab] = useState<typeof STUDIO_CATEGORIES[number]['id']>('jokes'), [selectedStudioSticker, setSelectedStudioSticker] = useState<string | null>(null);
+  const studioStage = useRef<HTMLDivElement>(null), studioDragging = useRef<string | null>(null);
   const [saving, setSaving] = useState(''), [error, setError] = useState('');
   const urls = useRef<string[]>([]), [todayKey] = useState(() => dayKey(Date.now()));
   useEffect(() => { let active = true; api<{ accepted: boolean }>('/api/policy').then(p => { if (active) setAccepted(p.accepted); }).catch(() => { if (active) setAccepted(false); }); return () => { active = false; }; }, []);
@@ -94,6 +102,19 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
     } catch { setError(t('샘플 사진을 불러오지 못했어요.', 'Could not load the sample photos.')); setReading(false); }
   }
   function remove(id: string) { setPicks(old => old.filter(p => p.id !== id)); }
+  function addStudioSticker(sticker: typeof STUDIO_STICKERS[number]) {
+    if (studioStickers.length >= 12) return;
+    const index = studioStickers.length;
+    const item: StudioSticker = { id: crypto.randomUUID(), sticker: sticker.id, kind: sticker.kind, x: 20 + (index % 4) * 20, y: 23 + Math.floor(index / 4) * 24, size: sticker.kind === 'soundcon' ? 48 : 40, rotation: 0 };
+    setStudioStickers(old => [...old, item]); setSelectedStudioSticker(item.id);
+  }
+  function moveStudioSticker(event: PointerEvent<HTMLDivElement>) {
+    const moving = studioDragging.current, bounds = studioStage.current?.getBoundingClientRect();
+    if (!moving || !bounds) return;
+    const x = Math.max(5, Math.min(95, (event.clientX - bounds.left) / bounds.width * 100));
+    const y = Math.max(5, Math.min(95, (event.clientY - bounds.top) / bounds.height * 100));
+    setStudioStickers(old => old.map(item => item.id === moving ? { ...item, x, y } : item));
+  }
 
   /** Composes a cluster of near-identical shots into one mini-grid image, instead of making
    *  someone decide which to throw away — nothing a guest picked ever gets silently dropped. */
@@ -174,7 +195,7 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
         return;
       }
       setSaving(t('앨범 만드는 중…', 'Creating album…'));
-      const { id: folderId } = await api<{ id: string }>('/api/folders', { method: 'POST', body: JSON.stringify({ name: title, category: dayCount > 1 ? '여행' : '모임', description: note.trim().slice(0, 200), startDate: first, endDate: last, groupId }) });
+      const { id: folderId } = await api<{ id: string }>('/api/folders', { method: 'POST', body: JSON.stringify({ name: title, category: dayCount > 1 ? '여행' : '모임', description: note.trim().slice(0, 200), startDate: first, endDate: last, groupId, decoration: studioStickers.length ? { stickers: studioStickers } : undefined }) });
       const uploaded = new Set<string>();
       let sent = 0;
       // 2 at once, not strictly one-by-one — the server caps staged uploads at 2 concurrent
@@ -236,6 +257,21 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
 
     {step === 'preview' && <section className="qa-body qa-preview">
       <div className="qa-edit-bar"><span>{dayCount > 1 ? t(`${dayCount}일로 나눠 꾸몄어요`, `Sorted into ${dayCount} days`) : t('자동으로 꾸몄어요', 'Decorated for you')}</span><button onClick={() => setStep('note')}><PencilLine size={14} />{t('제목·한 줄 바꾸기', 'Edit title & line')}</button></div>
+      {!editItem && <section className="qa-studio" aria-label={t('앨범 꾸미기', 'Decorate album')}>
+        <div className="qa-studio-title"><span>✦</span><div><small>{t('앨범 생성 전에 바로 꾸며요', 'DECORATE BEFORE SAVING')}</small><strong>{t('다꾸 스튜디오', 'Sticker studio')}</strong><p>{t('스티커·이모지·사운드콘을 사진에 붙여 원하는 곳에 놓아보세요.', 'Add stickers, emoji and sound-con reactions to your cover photo.')}</p></div></div>
+        <div className="qa-studio-stage" ref={studioStage} onPointerMove={moveStudioSticker} onPointerUp={() => { studioDragging.current = null; }} onPointerCancel={() => { studioDragging.current = null; }}>
+          {picks.find(p => !p.video) ? <img src={picks.find(p => !p.video)!.url} alt="" draggable={false}/> : <div className="qa-studio-empty">{t('앨범 사진을 고르면 표지가 여기에 보여요.', 'Choose photos to preview the album cover.')}</div>}
+          {studioStickers.map(item => { const art = STUDIO_STICKERS.find(sticker => sticker.id === item.sticker)!; const copy = STUDIO_STICKER_COPY[item.sticker]; const bubble = item.sticker.startsWith('bubble-'); return <button type="button" key={item.id} aria-label={t(`${copy.title} 이동`, `Move ${copy.title}`)} aria-pressed={selectedStudioSticker === item.id} className={`qa-studio-sticker${bubble ? ' qa-studio-bubble' : ''}${selectedStudioSticker === item.id ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, fontSize: `${item.size}px`, transform: `translate(-50%,-50%) rotate(${item.rotation}deg)` }} onPointerDown={event => { event.preventDefault(); studioDragging.current = item.id; setSelectedStudioSticker(item.id); event.currentTarget.parentElement?.setPointerCapture(event.pointerId); }} onClick={() => setSelectedStudioSticker(item.id)}><span>{art.emoji}</span><b>{copy.title}</b>{bubble && <small>{copy.caption}</small>}</button>; })}
+        </div>
+        <p className="qa-studio-hint">{t('스티커를 길게 눌러 사진 위 원하는 위치로 끌고, 크기도 조절해 보세요!', 'Press and drag a sticker onto the photo, then adjust its size.')}</p>
+        <div className="qa-studio-tabs" role="group" aria-label={t('스티커 카테고리', 'Sticker categories')}>
+          {STUDIO_CATEGORIES.map(item => <button type="button" key={item.id} aria-pressed={studioTab === item.id} onClick={() => setStudioTab(item.id)}>{item.label}</button>)}
+        </div>
+        <div className="qa-studio-palette">{STUDIO_STICKERS.filter(item => STUDIO_STICKER_COPY[item.id]?.category === studioTab).map(item => <button type="button" key={item.id} title={item.name} disabled={studioStickers.length >= 12} onClick={() => addStudioSticker(item)}><span>{item.emoji}</span><b>{STUDIO_STICKER_COPY[item.id].title}</b><small>{STUDIO_STICKER_COPY[item.id].caption}</small></button>)}</div>
+        <div className="qa-studio-combo"><strong>♡ {t('감정 콤보 스티커', 'Mood stickers')}</strong><span>{t(`내가 고른 ${studioStickers.length}개`, `${studioStickers.length} selected`)}</span><div>{['💗','🥐','🤣','🔥','💸'].map((emoji,index)=>{ const stickerId = ['heart','croissant','laugh','fire','money'][index]; const count = studioStickers.filter(item => item.sticker === stickerId).length; return <button type="button" key={emoji} aria-label={t(`${emoji} 이모지 추가`, `Add ${emoji}`)} onClick={()=>addStudioSticker(STUDIO_STICKERS.find(item=>item.id===stickerId)!)}>{emoji}<small>{count}</small></button>; })}</div></div>
+        {selectedStudioSticker && <div className="qa-studio-adjust"><label>{t('스티커 크기', 'Sticker size')}<input type="range" min="24" max="88" value={studioStickers.find(item => item.id === selectedStudioSticker)?.size ?? 40} onChange={event => setStudioStickers(old => old.map(item => item.id === selectedStudioSticker ? { ...item, size: Number(event.target.value) } : item))}/></label><button type="button" onClick={() => { setStudioStickers(old => old.filter(item => item.id !== selectedStudioSticker)); setSelectedStudioSticker(null); }}>{t('선택 삭제', 'Remove')}</button></div>}
+        {studioStickers.length >= 12 && <p className="qa-studio-limit">{t('앨범 하나에 꾸미기 요소를 최대 12개까지 넣을 수 있어요.', 'Up to 12 decorations per album.')}</p>}
+      </section>}
       {grouped > 0 && <p className="qa-days">{t(`비슷한 사진은 한 장으로 예쁘게 묶었어요 (${grouped}곳)`, `Grouped similar shots into one frame (${grouped})`)}</p>}
       <ThemeAlbum folderId="quick-preview" title={title} description="" locale={locale} browsing={false} localItems={items} onPhoto={() => {}} />
       <div className="qa-dock">

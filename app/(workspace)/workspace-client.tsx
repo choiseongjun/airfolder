@@ -478,9 +478,11 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
       try { window.localStorage.setItem("memonestia.feedGroup",activeGroup||"personal"); } catch {}
       const currentUrl=new URL(window.location.href),returnTo=currentUrl.searchParams.get("returnTo");
       if(returnTo?.startsWith("/")&&!returnTo.startsWith("//")){
-        // Keep the new Stitch feed/subpage flow after creation; the legacy
-        // workspace album route is only the fallback for direct creation.
-        window.location.assign(returnTo);
+        // Return to the requested surface and open the newly saved album there.
+        const destination=new URL(returnTo,window.location.origin);
+        destination.searchParams.set("album",id);
+        destination.searchParams.delete("view");destination.searchParams.delete("photo");
+        window.location.assign(destination.pathname+destination.search+destination.hash);
         return;
       }
       // Point the browser location at the newly created album so stale query

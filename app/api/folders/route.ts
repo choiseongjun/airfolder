@@ -5,6 +5,7 @@ import { folderDates } from '@/lib/folder-dates';
 import { trackGrowth } from '@/lib/growth';
 import { deleteAlbum, restoreAlbum } from '@/lib/album-deletion';
 import { ALBUM_THEME_IDS, CAPSULE_MAX_DAYS, SONG_MAX } from '@/lib/album-style';
+import { allowedAlbumDecoration } from '@/lib/album-rewards';
 export async function GET(){return safe(async()=>{
   const who=await viewer();
   const result=await pool().query(`SELECT id,name,deleted_at,deleted_at+interval '30 days' AS expires_at,deleted_at<=now()-interval '30 days' AS expired FROM snaproom.folders WHERE owner_id=$1 AND deleted_at IS NOT NULL ORDER BY deleted_at DESC`,[who]);
@@ -75,6 +76,11 @@ export async function POST(request: Request) {
       if(groupId){await db.query('SELECT id FROM snaproom.groups WHERE id=$1 FOR UPDATE',[groupId]);const m=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[groupId,who]);if(!m.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');}
       await db.query('INSERT INTO snaproom.folders(id,owner_id,name,category,description,starts_on,ends_on,group_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [id, who, body.name.trim(), category, body.description || '', ...dates,groupId]);
       await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2) ON CONFLICT DO NOTHING', [id, who]);
+      if (body.decoration !== undefined) {
+        const decoration = await allowedAlbumDecoration(db, who, id, body.decoration);
+        if (decoration?.phrase) delete decoration.phrase;
+        await db.query('UPDATE snaproom.folders SET reward_cover=$2 WHERE id=$1', [id, decoration ? JSON.stringify(decoration) : null]);
+      }
       return true;
     });
     if (created) trackGrowth({ event: 'album_created', who, key: `album_created:${id}`, contextId: id,

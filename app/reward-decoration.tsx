@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronDown, Gift, Sticker, Trash2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { REWARDS } from '@/lib/piece-rewards';
-import { REWARD_PHRASES, STUDIO_STICKERS, type AlbumRewardData, type RewardDecoration, type RewardPhrase, type StudioSticker } from '@/lib/reward-decoration';
+import { REWARD_PHRASES, STUDIO_STICKERS, STUDIO_STICKER_COPY, type AlbumRewardData, type RewardDecoration, type RewardPhrase, type StudioSticker } from '@/lib/reward-decoration';
 import { RewardFriend } from './reward-friend';
 import './reward-decoration.css';
 
@@ -62,12 +62,12 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
   const [failed, setFailed] = useState(false);
   const [stickerDraft, setStickerDraft] = useState<StudioSticker[] | null>(null);
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
-  const [stickerCategory, setStickerCategory] = useState<'cafe' | 'talk' | 'memory'>('cafe');
+  const [stickerCategory, setStickerCategory] = useState<'jokes' | 'cafe' | 'roast'>('jokes');
   const stageRef = useRef<HTMLDivElement>(null);
   const dragging = useRef<string | null>(null);
   useEffect(() => { if (data) setStickerDraft(data.cover?.stickers ?? []); }, [data]);
   const stickers = stickerDraft ?? data?.cover?.stickers ?? [];
-  const choice = draft ?? (data ? defaultDecoration(data) : null);
+  const choice = draft ?? (data?.cover?.character ? defaultDecoration(data) : null);
   async function save(value: RewardDecoration | null) {
     setBusy(true); setMessage(''); setFailed(false);
     try {
@@ -79,7 +79,7 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
   }
   function addSticker(id: StudioSticker['sticker']) {
     if (stickers.length >= 12) return;
-    const item: StudioSticker = { id: crypto.randomUUID(), sticker: id, x: 50, y: 52, size: 42, rotation: Math.round(Math.random() * 20 - 10) };
+    const item: StudioSticker = { id: crypto.randomUUID(), sticker: id, kind: STUDIO_STICKERS.find(sticker => sticker.id === id)!.kind, x: 50, y: 52, size: 42, rotation: Math.round(Math.random() * 20 - 10) };
     setStickerDraft([...stickers, item]); setSelectedSticker(item.id);
   }
   function moveSticker(event: PointerEvent<HTMLDivElement>) {
@@ -90,30 +90,30 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
     setStickerDraft(stickers.map(item => item.id === moving ? { ...item, x, y } : item));
   }
   async function saveStickers() {
-    const character = choice?.character ?? data?.cover?.character ?? (data ? defaultDecoration(data)?.character : undefined);
+    const character = choice?.character ?? data?.cover?.character;
     const outfit = character ? choice?.outfit ?? data?.cover?.outfit : undefined;
     const value = stickers.length ? { ...(character ? { character } : {}), ...(outfit ? { outfit } : {}), stickers } : character ? { character, ...(outfit ? { outfit } : {}) } : null;
     await save(value);
   }
-  const stickerGroups: Record<typeof stickerCategory, string[]> = {
-    cafe: ['croissant', 'coffee'], talk: ['alarm', 'money', 'sunglasses', 'crown'], memory: ['heart', 'sparkles', 'flower', 'camera', 'laugh', 'fire'],
-  };
   if (loadError) return <div className="reward-cover"><p role="alert">{ko ? '표지 장식을 불러오지 못했어요.' : 'Could not load the cover decoration.'} <button type="button" onClick={retry}>{ko ? '다시 시도' : 'Retry'}</button></p></div>;
   return <div className="reward-cover">
-    {data?.cover && <div className="reward-cover-keepsake"><DecorationArt value={data.cover} ko={ko}/><span>{ko ? '우리의 추억 친구' : 'Our memory friend'}</span></div>}
+    {data?.cover?.stickers?.length ? <div className="reward-cover-keepsake reward-cover-saved-scene" aria-label={ko ? '저장된 앨범 꾸미기' : 'Saved album decorations'}>
+      {photoSrc ? <img className="reward-cover-saved-photo" src={photoSrc} alt=""/> : <div className="reward-cover-saved-empty">{ko ? '사진 위에 붙인 우리 스티커' : 'Our stickers on this album'}</div>}
+      {data.cover.stickers.map(item => { const art = STUDIO_STICKERS.find(sticker => sticker.id === item.sticker)!; const copy = STUDIO_STICKER_COPY[item.sticker]; const bubble = item.sticker.startsWith('bubble-'); return <span key={item.id} className={`reward-cover-saved-sticker${bubble ? ' is-bubble' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, transform: `translate(-50%,-50%) rotate(${item.rotation}deg) scale(${item.size / 48})` }}>{art.emoji}<b>{copy?.title ?? art.name}</b>{bubble && <small>{copy?.caption}</small>}</span>; })}
+    </div> : data?.cover && <div className="reward-cover-keepsake"><DecorationArt value={data.cover} ko={ko}/><span>{ko ? '우리의 추억 친구' : 'Our memory friend'}</span></div>}
     {owner && <details className="reward-decoration-tools" open={initiallyOpen}>
       <summary><Gift size={15}/>{ko ? '앨범 표지 꾸미기' : 'Decorate the album cover'}<ChevronDown size={15}/></summary>
       {!data ? <p>{ko ? '보관함을 확인하는 중…' : 'Loading your collection…'}</p> : !data.canEdit ? <p>{ko ? '앨범 주인만 표지를 꾸밀 수 있어요.' : 'Only the album owner can decorate the cover.'}</p> : <>
         <div className="reward-studio">
           <div className="reward-studio-stage" ref={stageRef} onPointerMove={moveSticker} onPointerUp={() => { dragging.current = null; }} onPointerCancel={() => { dragging.current = null; }}>
             {photoSrc ? <img src={photoSrc} alt="" draggable={false}/> : <div className="reward-studio-empty">{ko ? '사진이 모이면 여기에 표지가 보여요' : 'Your album cover will appear here'}</div>}
-            {stickers.map(item => { const sticker = STUDIO_STICKERS.find(candidate => candidate.id === item.sticker)!; return <button type="button" key={item.id} aria-label={ko ? `${sticker.name} 스티커 이동` : `Move ${sticker.name} sticker`} aria-pressed={selectedSticker === item.id} className={`reward-studio-sticker${selectedSticker === item.id ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, fontSize: `${item.size}px`, transform: `translate(-50%,-50%) rotate(${item.rotation}deg)` }} onPointerDown={event => { event.preventDefault(); dragging.current = item.id; setSelectedSticker(item.id); event.currentTarget.parentElement?.setPointerCapture(event.pointerId); }} onClick={() => setSelectedSticker(item.id)}>{sticker.emoji}</button>; })}
+            {stickers.map(item => { const sticker = STUDIO_STICKERS.find(candidate => candidate.id === item.sticker)!; const copy = STUDIO_STICKER_COPY[item.sticker]; const bubble = item.sticker.startsWith('bubble-'); return <button type="button" key={item.id} aria-label={ko ? `${copy?.title ?? sticker.name} 스티커 이동` : `Move ${copy?.title ?? sticker.name} sticker`} aria-pressed={selectedSticker === item.id} className={`reward-studio-sticker${bubble ? ' is-bubble' : ''}${selectedSticker === item.id ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, fontSize: `${item.size}px`, transform: `translate(-50%,-50%) rotate(${item.rotation}deg)` }} onPointerDown={event => { event.preventDefault(); dragging.current = item.id; setSelectedSticker(item.id); event.currentTarget.parentElement?.setPointerCapture(event.pointerId); }} onClick={() => setSelectedSticker(item.id)}><span>{sticker.emoji}</span><b>{copy?.title ?? sticker.name}</b>{bubble && <small>{copy?.caption}</small>}</button>; })}
           </div>
           <p className="reward-studio-hint">{ko ? '스티커를 골라 붙이고, 사진 위에서 끌어 원하는 자리에 놓으세요.' : 'Pick a sticker, then drag it to the spot you like.'}</p>
           <div className="reward-studio-categories" role="group" aria-label={ko ? '스티커 종류' : 'Sticker categories'}>
-            {([{ id: 'cafe', label: '🥐 카페&디저트' }, { id: 'talk', label: '🔥 단톡 팩폭' }, { id: 'memory', label: '💬 추억 스티커' }] as const).map(category => <button type="button" key={category.id} aria-pressed={stickerCategory === category.id} onClick={() => setStickerCategory(category.id)}>{category.label}</button>)}
+            {([{ id: 'jokes', label: '🔥 킹받는 장난' }, { id: 'cafe', label: '📦 카페&디저트' }, { id: 'roast', label: '🗨️ 단톡 팩폭' }] as const).map(category => <button type="button" key={category.id} aria-pressed={stickerCategory === category.id} onClick={() => setStickerCategory(category.id)}>{category.label}</button>)}
           </div>
-          <div className="reward-studio-sticker-grid">{STUDIO_STICKERS.filter(item => stickerGroups[stickerCategory].includes(item.id)).map(item => <button type="button" key={item.id} title={item.name} aria-label={`${item.name} 스티커 추가`} disabled={busy || stickers.length >= 12} onClick={() => addSticker(item.id)}><span>{item.emoji}</span><small>{item.name}</small></button>)}</div>
+          <div className="reward-studio-sticker-grid">{STUDIO_STICKERS.filter(item => STUDIO_STICKER_COPY[item.id]?.category === stickerCategory).map(item => <button type="button" key={item.id} title={item.name} aria-label={`${STUDIO_STICKER_COPY[item.id].title} 스티커 추가`} disabled={busy || stickers.length >= 12} onClick={() => addSticker(item.id)}><span>{item.emoji}</span><b>{STUDIO_STICKER_COPY[item.id].title}</b><small>{STUDIO_STICKER_COPY[item.id].caption}</small></button>)}</div>
           {selectedSticker && <div className="reward-studio-adjust"><label>{ko ? '크기' : 'Size'}<input type="range" min="24" max="96" value={stickers.find(item => item.id === selectedSticker)?.size ?? 42} onChange={event => setStickerDraft(stickers.map(item => item.id === selectedSticker ? { ...item, size: Number(event.target.value) } : item))}/></label><button type="button" onClick={() => { setStickerDraft(stickers.filter(item => item.id !== selectedSticker)); setSelectedSticker(null); }}>{ko ? '선택 스티커 삭제' : 'Remove sticker'}</button></div>}
           <button type="button" className="reward-decoration-primary" disabled={busy} onClick={() => void saveStickers()}>{busy ? (ko ? '저장 중…' : 'Saving…') : (ko ? '꾸민 표지 저장' : 'Save decorated cover')}</button>
           {stickers.length >= 12 && <p className="reward-studio-limit">{ko ? '스티커는 한 앨범에 12개까지 붙일 수 있어요.' : 'Up to 12 stickers per album.'}</p>}
