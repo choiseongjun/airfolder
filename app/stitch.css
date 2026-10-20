@@ -1,0 +1,14 @@
+/* The app's global element rules (button{background:none}, h1{display:flex}, main{padding…}) are unlayered,
+   so they beat Tailwind's layered utilities. Roll them back inside Stitch-ported screens so they render as
+   exported. Icon glyphs keep their own (also unlayered) Material Symbols rules, except the size class. */
+.stitch-root.stitch-root.stitch-root :not(.material-symbols-outlined){all:revert-layer}
+.stitch-root.stitch-root.stitch-root .material-symbols-outlined{font-size:revert-layer}
+@layer utilities{
+  .stitch-sans{font-family:var(--font-stitch-sans),var(--font-stitch-kr),sans-serif}
+  .stitch-serif{font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif}
+  /* Tailwind v3's defaults, which Stitch renders with; v4 here maps font-sans/mono to Geist. */
+  .stitch-system{font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"}
+  .stitch-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+  .no-scrollbar::-webkit-scrollbar{display:none}
+  .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+}

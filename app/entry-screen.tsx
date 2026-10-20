@@ -2,29 +2,15 @@
 /* eslint-disable @next/next/no-img-element -- A local decorative photograph; no optimization needed. */
 import Link from 'next/link';
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { Literata, Noto_Sans_KR, Plus_Jakarta_Sans } from 'next/font/google';
-import './entry-hero.css';
+import { Icon, StitchIconFont, sansStack, serifStack, stitchRoot } from './stitch-kit';
 
 // Ported 1:1 from the Stitch screen "메모네스티아 첫 진입 & 카카오 1초 로그인 (풍성한 온보딩)".
 // Colors are that screen's own Material palette, written as literal values so the app theme stays untouched.
-const entrySans = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-entry-sans', preload: false });
-const entrySerif = Literata({ subsets: ['latin'], variable: '--font-entry-serif', preload: false });
-// Stitch renders Korean glyphs in a sans fallback, under both the sans and the serif face.
-const entryKorean = Noto_Sans_KR({ subsets: ['latin'], variable: '--font-entry-kr', preload: false });
-const fontVars = `${entrySans.variable} ${entrySerif.variable} ${entryKorean.variable}`;
-const sansStack = 'var(--font-entry-sans), var(--font-entry-kr), sans-serif';
-const serifStack = 'var(--font-entry-serif), var(--font-entry-kr), serif';
-const iconFont = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&icon_names=auto_stories,draw,favorite,flip,grid_view,group,key,local_bar,lock_reset,sticky_note_2,visibility&display=block';
-
-function Icon({ name, className = '', filled = false }: { name: string; className?: string; filled?: boolean }) {
-  return <span aria-hidden="true" className={`material-symbols-outlined ${className}`} style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}>{name}</span>;
-}
-
 type Actions = { onKakao: () => void; onApple: () => void; appleDisabled: boolean; kakaoDisabled: boolean; exploreHref: string; onJoin: (token: string) => void };
 
 function Showcase() {
   return <>
-    <link rel="stylesheet" href={iconFont} precedence="default"/>
+    <StitchIconFont/>
     <section className="text-center px-2">
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f6e5db] text-[#7d562d] text-[11px] font-semibold mb-2.5 border border-[#7d562d]/20">
         <Icon name="lock_reset" className="text-[13px]"/>카톡 사진 만료 방지 · 비밀 롤링페이퍼
@@ -39,7 +25,7 @@ function Showcase() {
       </p>
     </section>
     <section className="relative w-full max-w-[320px] mx-auto pt-3 pb-2 select-none">
-      <div className="absolute -top-1 left-4 z-20 w-24 h-6 bg-[#e27d60]/35 backdrop-blur-xs -rotate-6 rounded-sm border-dashed border-t border-b border-[#99452c]/40 shadow-sm flex items-center justify-center pointer-events-none">
+      <div className="absolute -top-1 left-4 z-20 w-24 h-6 bg-[#e27d60]/35 -rotate-6 rounded-xs border-dashed border-t border-b border-[#99452c]/40 shadow-xs flex items-center justify-center pointer-events-none">
         <span className="text-[9px] font-bold text-[#7b2e17] tracking-wider uppercase">CREW MEMO #24</span>
       </div>
       <div className="absolute -top-2 right-6 z-20 w-9 h-9 rounded-full bg-[#fde047] shadow-md border-2 border-dashed border-[#ca8a04] flex items-center justify-center rotate-12">
@@ -59,10 +45,10 @@ function Showcase() {
       <div className="relative z-10 bg-white p-3 pb-5 rounded-2xl shadow-[0_14px_32px_-8px_rgba(153,69,44,0.22)] border border-[#dbc1ba]/50 rotate-[1.5deg] hover:rotate-0 transition-all duration-300">
         <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#fcebe0] shadow-inner">
           <img alt="크루 맥주 테라스 밤" className="w-full h-full object-cover" src="/entry/terrace.jpg"/>
-          <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-md text-white text-[11px] font-medium flex items-center gap-1.5 shadow-sm">
+          <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-md text-white text-[11px] font-medium flex items-center gap-1.5 shadow-xs">
             <Icon name="local_bar" className="text-[14px] text-[#ffdbd1]"/><span>강릉 맥주 테라스의 밤 🍻</span>
           </div>
-          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-bold text-[#99452c] shadow-sm flex items-center gap-0.5">
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[10px] font-bold text-[#99452c] shadow-xs flex items-center gap-0.5">
             <Icon name="flip" className="text-[12px]"/><span>뒷면 낙서 보기</span>
           </div>
         </div>
@@ -78,7 +64,7 @@ function Showcase() {
         </div>
       </div>
       <div className="relative z-20 mt-4 flex justify-end">
-        <div className="inline-flex items-center gap-1 bg-[#f0dfd5] px-3 py-1 rounded-full border border-[#99452c]/20 shadow-sm text-[11px] font-semibold text-[#99452c]">
+        <div className="inline-flex items-center gap-1 bg-[#f0dfd5] px-3 py-1 rounded-full border border-[#99452c]/20 shadow-xs text-[11px] font-semibold text-[#99452c]">
           <Icon name="favorite" className="text-[13px]" filled/><span>광고·결제 없는 100% 무료 토이프로젝트</span>
         </div>
       </div>
@@ -92,7 +78,7 @@ function Showcase() {
         <Feature icon="sticky_note_2" iconClass="bg-[#ffdbd1] text-[#99452c]" title="① 사진 뒷면 롤링페이퍼" tag={<span className="text-[9px] bg-[#c2e9c9] text-[#486a51] px-1.5 py-0.5 rounded font-semibold">비밀공간</span>}>
           앞면엔 예쁜 사진, 뒷면엔 친구들의 솔직한 낙서와 드립! 뒤집는 순간 그날의 웃음이 재생돼요.
         </Feature>
-        <div className="bg-white p-3.5 rounded-xl border border-[#dbc1ba]/50 shadow-sm flex items-start gap-3 relative overflow-hidden">
+        <div className="bg-white p-3.5 rounded-xl border border-[#dbc1ba]/50 shadow-xs flex items-start gap-3 relative overflow-hidden">
           <div className="w-9 h-9 rounded-xl bg-[#c2e9c9] flex items-center justify-center text-[#43664d] shrink-0 font-bold text-sm"><Icon name="group" className="text-[20px]"/></div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
@@ -126,7 +112,7 @@ function Showcase() {
 }
 
 function Feature({ icon, iconClass, title, tag, children }: { icon: string; iconClass: string; title: string; tag: ReactNode; children: ReactNode }) {
-  return <div className="bg-white p-3.5 rounded-xl border border-[#dbc1ba]/50 shadow-sm flex items-start gap-3 relative overflow-hidden">
+  return <div className="bg-white p-3.5 rounded-xl border border-[#dbc1ba]/50 shadow-xs flex items-start gap-3 relative overflow-hidden">
     <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm ${iconClass}`}><Icon name={icon} className="text-[20px]"/></div>
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-1.5"><span className="text-xs font-bold text-[#221a14]">{title}</span>{tag}</div>
@@ -136,7 +122,7 @@ function Feature({ icon, iconClass, title, tag, children }: { icon: string; icon
 }
 
 function Crew({ emoji, name, badge, badgeClass }: { emoji: string; name: string; badge: string; badgeClass: string }) {
-  return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#dbc1ba]/40 text-[11px] text-[#221a14] whitespace-nowrap shadow-xs">
+  return <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-[#dbc1ba]/40 text-[11px] text-[#221a14] whitespace-nowrap ">
     <span>{emoji}</span><span className="font-medium">{name}</span><span className={`text-[10px] font-bold px-1 rounded ${badgeClass}`}>{badge}</span>
   </div>;
 }
@@ -156,14 +142,14 @@ function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreH
       <svg className="w-5 h-5 text-[#191919]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-5.52 0-10 3.58-10 8c0 2.82 1.83 5.3 4.63 6.75l-.97 3.58c-.08.31.25.56.51.38l4.35-2.88c.48.06.98.09 1.48.09 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>
       <span className="text-[15px] font-bold text-[#191919]">카카오로 1초 만에 시작하기</span>
     </button>
-    <form className="w-full bg-[#fff1e9] border border-[#dbc1ba]/70 rounded-xl p-3 flex flex-col gap-2 shadow-xs" onSubmit={submitCode}>
+    <form className="w-full bg-[#fff1e9] border border-[#dbc1ba]/70 rounded-xl p-3 flex flex-col gap-2 " onSubmit={submitCode}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5"><Icon name="key" className="text-[#99452c] text-[17px]"/><span className="text-xs font-bold text-[#221a14]">초대 코드가 있으신가요?</span></div>
         <span className="text-[10px] text-[#88726c]">친구 크루 바로 합류</span>
       </div>
       <div className="flex items-center gap-2">
-        <input aria-label="초대 코드" value={code} onChange={e => { setCode(e.target.value); setCodeError(''); }} className="flex-1 min-w-0 bg-white border border-[#dbc1ba]/50 rounded-lg px-3 py-2 text-xs text-[#221a14] uppercase tracking-wider font-semibold placeholder:text-[#88726c]/70 focus:outline-none focus:ring-1 focus:ring-[#99452c]" placeholder="6자리 (예: MEMO24)" type="text"/>
-        <button className="h-9 px-4 rounded-lg bg-[#99452c] hover:bg-[#e27d60] text-white text-xs font-semibold shrink-0 transition-all active:scale-95 shadow-sm" type="submit">입장</button>
+        <input aria-label="초대 코드" value={code} onChange={e => { setCode(e.target.value); setCodeError(''); }} className="flex-1 min-w-0 bg-white border border-[#dbc1ba]/50 rounded-lg px-3 py-2 text-xs text-[#221a14] uppercase tracking-wider font-semibold placeholder:text-[#88726c]/70 focus:outline-hidden focus:ring-1 focus:ring-[#99452c]" placeholder="6자리 (예: MEMO24)" type="text"/>
+        <button className="h-9 px-4 rounded-lg bg-[#99452c] hover:bg-[#e27d60] text-white text-xs font-semibold shrink-0 transition-all active:scale-95 shadow-xs" type="submit">입장</button>
       </div>
       {codeError && <p role="alert" className="text-[10px] text-[#ba1a1a]">{codeError}</p>}
     </form>
@@ -183,7 +169,7 @@ function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreH
 
 // The full Stitch page — its own header, story and sign-in footer.
 export function EntryScreen(actions: Actions) {
-  return <div className={`entry-root ${fontVars} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] selection:bg-[#ffdbd1] selection:text-[#99452c]`} style={{ fontFamily: sansStack }}>
+  return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] selection:bg-[#ffdbd1] selection:text-[#99452c]`} style={{ fontFamily: sansStack }}>
     <div className="min-h-full flex flex-col">
     <header className="pt-[max(env(safe-area-inset-top),12px)] sticky top-0 z-30 bg-[#fff8f5]/90 backdrop-blur-md border-b border-[#dbc1ba]/30 w-full px-5 pb-2.5">
       <div className="flex items-center justify-between h-12 max-w-md mx-auto">
@@ -191,7 +177,7 @@ export function EntryScreen(actions: Actions) {
           <span style={{ fontFamily: serifStack }} className="text-xl tracking-tight text-[#99452c] font-bold">메모네스티아</span>
           <span className="text-[10px] tracking-widest text-[#88726c] font-semibold uppercase bg-[#fcebe0] px-1.5 py-0.5 rounded">MEMONESTIA</span>
         </div>
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#c2e9c9]/80 text-[#486a51] text-xs font-semibold shadow-sm">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#c2e9c9]/80 text-[#486a51] text-xs font-semibold shadow-xs">
           <span className="w-1.5 h-1.5 rounded-full bg-[#43664d] animate-pulse"/>100% 무료 비공개
         </span>
       </div>

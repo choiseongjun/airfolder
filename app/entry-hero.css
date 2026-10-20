@@ -1,9 +1,0 @@
-/* The app's global element rules (button{background:none}, h1{display:flex}, main{padding…}) are unlayered,
-   so they beat Tailwind's layered utilities. Roll them back inside this screen so it renders as its Stitch export.
-   Icon glyphs keep their own (also unlayered) Material Symbols rules. */
-.entry-root.entry-root.entry-root :not(.material-symbols-outlined){all:revert-layer}
-.entry-root.entry-root.entry-root .material-symbols-outlined{font-size:revert-layer}
-@layer utilities{
-  .no-scrollbar::-webkit-scrollbar{display:none}
-  .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
-}

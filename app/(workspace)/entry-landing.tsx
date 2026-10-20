@@ -13,7 +13,7 @@ export default function EntryLanding() {
     appleDisabled={false}
     onKakao={() => { if (sendNative('LOGIN')) return; window.location.assign(kakaoEnabled ? `/api/auth/kakao/start?return=${encodeURIComponent('/')}` : signInSheet); }}
     onApple={() => { if (sendNative('LOGIN')) return; window.location.assign(signInSheet); }}
-    exploreHref="/?browse=1&lang=ko"
+    exploreHref="/browse"
     onJoin={token => window.location.assign(`/join/${token}?lang=ko`)}
   />;
 }
