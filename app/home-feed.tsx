@@ -106,10 +106,10 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
     <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-[#efdfd5] bg-[#fff8f5]/95 pt-[env(safe-area-inset-top,0px)] shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-2 px-5 pb-2 pt-2 md:max-w-[1200px] md:px-8 md:pb-3 md:pt-3">
         <div className="flex h-10 items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2"><Link href={crewHref} aria-label="크루 설정으로 이동" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="cottage" className="text-[22px] text-[#99452c]"/></Link><div className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#30251f]">메모네스티아</span><span className="block truncate text-[10px] text-[#78675e]">함께 모으는 사진과 이야기</span></div></div>
+          <div className="flex min-w-0 items-center gap-2"><button type="button" aria-label="공간 선택" aria-expanded={picking} aria-haspopup="menu" onClick={() => setPicking(v => !v)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="cottage" className="text-[22px] text-[#99452c]"/></button><div className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#30251f]">메모네스티아</span><span className="block truncate text-[10px] text-[#78675e]">함께 모으는 사진과 이야기</span></div></div>
           <div className="flex shrink-0 items-center gap-1"><button type="button" onClick={() => void shareSpace()} aria-label="공간 피드 공유" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="share" className="text-[21px]"/></button><Link href="/crew/settings" aria-label="계정 및 크루 설정" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#99452c] shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></Link></div>
         </div>
-        <div className="flex min-w-0 items-center justify-between gap-2">
+        {crew.id && <div className="flex min-w-0 items-center justify-between gap-2">
           <button type="button" aria-expanded={picking} aria-haspopup="menu" onClick={() => setPicking(v => !v)} className="group flex min-w-0 items-center gap-2 rounded-xl px-1 py-1 text-left hover:bg-[#fff1e9]">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f6e5db] text-[#99452c]"><Icon name={crew.id ? 'groups' : 'person'} className="text-[18px]"/></span><span className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#221a14]">{crew.name ?? '내 개인 공간'}</span><span className="block truncate text-[10px] text-[#78675e]">{crew.id ? `${crew.members.length}명 · ${data.groups.find(group => group.id === crew.id)?.mine ? '내가 만든 공간' : '초대받은 공간'}` : '나만 볼 수 있는 공간'}</span></span><Icon name="expand_more" className="shrink-0 text-[18px] text-[#55433d] transition-transform group-hover:translate-y-0.5"/>
           </button>
@@ -117,14 +117,14 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
           <div className="ml-auto hidden max-w-[55%] items-center gap-1.5 overflow-x-auto no-scrollbar md:flex" aria-label="크루 멤버">
             {crew.members.map(m => <div key={m.id} className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/80 px-2 py-1"><div className={`flex h-6 w-6 items-center justify-center rounded-full ${label} ${m.mine ? 'font-bold' : 'font-[500]'} ${tone(m)}`}>{initial(m)}</div><span className="text-[10px] text-[#55433d]">{m.mine ? '나' : m.name}</span></div>)}
           </div>
-        </div>
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden" aria-label="크루 멤버">
+        </div>}
+        {crew.id && <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden" aria-label="크루 멤버">
           {crew.members.map(m => <div key={m.id} className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/80 px-2 py-1"><div className={`flex h-6 w-6 items-center justify-center rounded-full ${label} ${m.mine ? 'font-bold' : 'font-[500]'} ${tone(m)}`}>{initial(m)}</div><span className="text-[10px] text-[#55433d]">{m.mine ? '나' : m.name}</span></div>)}
-        </div>
+        </div>}
         {shareNotice && <p role="status" className="absolute right-4 top-full mt-2 rounded-xl bg-[#30251f] px-3 py-2 text-xs text-white shadow-lg md:right-8">{shareNotice}</p>}
       </div>
     </header>
-    <main className="memory-feed-enter mx-auto flex min-h-screen w-full max-w-md flex-col relative bg-[#fff8f5] px-[1.25rem] pb-24 pt-[10.2rem] md:max-w-[1200px] md:px-8 md:pt-[8.5rem]">
+    <main className={`memory-feed-enter mx-auto flex min-h-screen w-full max-w-md flex-col relative bg-[#fff8f5] px-[1.25rem] pb-24 md:max-w-[1200px] md:px-8 ${crew.id ? 'pt-[calc(10.2rem+env(safe-area-inset-top,0px))] md:pt-[calc(8.5rem+env(safe-area-inset-top,0px))]' : 'pt-[calc(5rem+env(safe-area-inset-top,0px))] md:pt-[calc(5.5rem+env(safe-area-inset-top,0px))]'}`}>
       <div className="flex flex-col w-full pb-8">
         <section className="flex flex-col gap-[0.5rem] pt-[0.25rem] mb-[1rem]">
           {picking && <div role="menu" aria-label="공간 선택" className="relative z-40 min-w-[17rem] max-w-full rounded-xl bg-white p-1.5 shadow-[0_8px_24px_rgba(112,100,92,0.18)] md:max-w-sm">

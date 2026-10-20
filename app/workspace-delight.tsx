@@ -15,13 +15,13 @@ export function EmptyBookshelf({locale,onCreate,onStudio,onTrial}:{locale:Locale
       <div className="core-entry-note"><span>{ko?'사진 뒤에 남긴 한마디':'A NOTE ON THE BACK'}</span><p>{ko?'“별거 아닌 하루였는데, 너희랑 있어서 오래 기억날 것 같아.”':'“An ordinary day that became a favorite because we were together.”'}</p><small>♡ &nbsp; {ko?'친구들이 남긴 비밀 메모':'A little note from your people'}</small></div>
       <div className="core-entry-filmstrip"><img src="/landing/sea.webp" alt=""/><img src="/landing/picnic.webp" alt=""/><img src="/landing/friends.webp" alt=""/><span>+1</span></div>
     </div>
-    <div className="core-entry-copy"><span className="core-entry-kicker"><Heart size={13}/>{ko?'100% 무료 · 초대한 크루만':'PRIVATE CREW · ALWAYS FREE'}</span>
+    <div className="core-entry-copy"><span className="core-entry-kicker"><Heart size={13}/>{ko?'초대한 친구들과 함께':'JUST YOU AND YOUR FRIENDS'}</span>
       <h3 id="first-book-title">{ko?<>우리들만의 사진 뒷면<br/>비밀 일기장, 메모네스티아</>:<>A private little diary<br/>behind your photos.</>}</h3>
       <p>{ko?'단톡방 대화에 묻히는 사진을 우리끼리 모으고, 뒷면에는 그날의 메모를 남겨요.':'Keep the photos that get buried in chat, then leave the little stories on their backs.'}</p>
       <div className="core-entry-compare"><div><small>{ko?'단체 채팅방':'GROUP CHAT'}</small><strong>{ko?'대화에 묻혀 찾기 어려운 사진':'Photos lost in the scroll'}</strong></div><ArrowRight size={16}/><div><small>MEMONESTIA</small><strong>{ko?'모아두고 뒷면에 메모':'Saved photos, notes on the back'}</strong></div></div>
       <div className="core-entry-points"><span>01 &nbsp;{ko?'사진 1~4장 한 기록에':'1–4 photos in one memory'}</span><span>02 &nbsp;{ko?'여행 사진은 날짜별로 묶기':'Trips grouped by day'}</span><span>03 &nbsp;{ko?'친구끼리 비밀 롤링페이퍼':'Private notes for your crew'}</span></div>
       <div className="core-entry-actions"><button className="primary-button" onClick={onTrial}><Camera size={17}/>{ko?'사진으로 시작하기':'Start with your photos'}<ArrowRight size={16}/></button><button className="secondary-button" onClick={onCreate}><Plus size={16}/>{ko?'크루 앨범 만들기':'Create a crew album'}</button><Link href={exploreHref}><BookOpen size={15}/>{ko?'예시 먼저 둘러보기':'Explore an example'}</Link></div>
-      <small className="core-entry-reassurance">{ko?'가입 전에도 둘러볼 수 있어요 · 광고와 결제 없이 운영해요':'Take a look before signing in · No ads or payments'}</small>
+      <small className="core-entry-reassurance">{ko?'가입 전에도 둘러볼 수 있어요':'Take a look before signing in'}</small>
       <Link className="core-entry-birthday" href={`/birthday?lang=${locale}`}><Cake size={14}/>{ko?'친구 생일 앨범 만들기':'Make a birthday album'}</Link>
       <button className="core-entry-studio" onClick={onStudio}><ImagePlus size={14}/>{ko?'사진 카드도 만들어보기':'Make a photo card'}</button>
     </div>
@@ -35,7 +35,7 @@ export function WorkspaceStory({locale,onCreate,onHelp}:{locale:Locale;onCreate:
     <div className="keepsake-story-content">
       <span className="keepsake-kicker"><Heart size={13}/>{ko?'우리끼리만 보는 비밀 아카이브':'A PRIVATE PLACE FOR YOUR CREW'}</span>
       <h2>{ko?'우리들만의 사진 뒷면':'A little diary'}<br/><em>{ko?'비밀 일기장, 메모네스티아':'behind your photos.'}</em></h2>
-      <p>{ko?'단톡방에 묻힌 사진은 크루 앨범에, 그날의 마음은 사진 뒷면에 남겨요.':'Keep the photos out of the chat scroll. Leave your stories on the back.'}<br/>{ko?'초대한 친구들만 함께하는 무료 공간이에요.':'A free private space, shared only with invited friends.'}</p>
+      <p>{ko?'단톡방에 묻힌 사진은 크루 앨범에, 그날의 마음은 사진 뒷면에 남겨요.':'Keep the photos out of the chat scroll. Leave your stories on the back.'}<br/>{ko?'초대한 친구들만 함께하는 공간이에요.':'A private space, shared only with invited friends.'}</p>
       <div className="keepsake-collage" aria-label={ko?'사진을 모아 만든 추억 앨범 예시':'A shared photo album illustration'}>
         <div className="keepsake-paper"><span>OUR LITTLE WEEKEND</span><div className="keepsake-paper-lines"/><span className="keepsake-handwriting">{ko?'함께여서 좋았던 날':'the good little days'} ♡</span></div>
         <figure className="keepsake-photo keepsake-photo-one"><img src="/landing/sea.webp" alt=""/><figcaption>a little escape <Heart size={13}/></figcaption></figure>

@@ -61,11 +61,6 @@ function Showcase() {
           </div>
         </div>
       </div>
-      <div className="relative z-20 mt-4 flex justify-end">
-        <div className="inline-flex items-center gap-1 bg-[#f0dfd5] px-3 py-1 rounded-full border border-[#99452c]/20 shadow-xs text-[11px] font-semibold text-[#99452c]">
-          <Icon name="favorite" className="text-[13px]" filled/><span>광고·결제 없는 100% 무료 토이프로젝트</span>
-        </div>
-      </div>
     </section>
   </>;
 }
@@ -106,9 +101,6 @@ function CallToAction({ onKakao, onGoogle, onApple, appleDisabled, googleDisable
       {codeError && <p role="alert" className="text-[10px] text-[#ba1a1a]">{codeError}</p>}
     </form>
     <div className="flex items-center justify-center pt-1"><Link className="hover:text-[#99452c] transition-colors flex items-center gap-1 py-1 text-xs font-medium text-[#55433d]" href={exploreHref}><Icon name="visibility" className="text-[15px]"/>로그인 없이 둘러보기</Link></div>
-    <div className="text-center pt-0.5 pb-2">
-      <p className="text-[10px] text-[#88726c] leading-tight">100% 무료 · 비영리 토이프로젝트 · 상업적 광고 및 결제 없음</p>
-    </div>
   </>;
 }
 
@@ -122,9 +114,6 @@ export function EntryScreen(actions: Actions) {
           <span style={{ fontFamily: serifStack }} className="text-xl tracking-tight text-[#99452c] font-bold">메모네스티아</span>
           <span className="text-[10px] tracking-widest text-[#88726c] font-semibold uppercase bg-[#fcebe0] px-1.5 py-0.5 rounded">MEMONESTIA</span>
         </div>
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#c2e9c9]/80 text-[#486a51] text-xs font-semibold shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#43664d] animate-pulse"/>100% 무료 비공개
-        </span>
       </div>
     </header>
     <main className="flex-1 w-full max-w-md mx-auto px-4 py-4 flex flex-col gap-6"><Showcase/></main>
