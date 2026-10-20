@@ -48,11 +48,12 @@ async function LocalizedWorkspace({ searchParams }: Props) {
   if (locale === 'ko' && params.home === '1' && (screen === 'photos' || screen === 'behind' || screen === 'settings')) redirect(`/crew/${screen}`);
   // The landing and crew home are Korean-only for now; English visitors keep the existing workspace.
   const requestedHome = params.home === '1';
+  const requestedAlbumView = typeof params.album === 'string' && (params.view === 'timeline' || params.view === 'photos' || params.view === 'book');
   // The post-login return URL is an explicit request for the Stitch crew home.
   // Render it directly; a transient server-side session lookup failure must not
   // send a signed-in visitor back to the generic workspace screen.
-  if (locale === 'ko' && requestedHome) return <HomeFeed/>;
-  if (locale === 'ko' && (requestedHome || !workspaceParams.some(name => params[name] !== undefined))) {
+  if (locale === 'ko' && requestedHome && !requestedAlbumView) return <HomeFeed/>;
+  if (locale === 'ko' && ((requestedHome && !requestedAlbumView) || !workspaceParams.some(name => params[name] !== undefined))) {
     const who = await visitor();
     if (who === 'guest' && !requestedHome && params.loginError === undefined) return <EntryLanding/>;
     if (who === 'member') return <HomeFeed/>;

@@ -125,6 +125,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const [month, setMonth] = useState('all');
  const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined, style?.theme));
+ const [themePickerOpen, setThemePickerOpen] = useState(false);
  const editable = !!owner && !browsing && !localItems;
  const [song, setSong] = useState(style?.song || ''), [songDraft, setSongDraft] = useState<string | null>(null);
  const [revealAt, setRevealAt] = useState(style?.revealAt || ''), [capsuleDraft, setCapsuleDraft] = useState(''), [styleError, setStyleError] = useState('');
@@ -312,8 +313,8 @@ ${url}`;
    <button aria-pressed={month === 'all'} onClick={() => setMonth('all')}>{ko ? '전체' : 'All'}</button>
    {months.slice(0, 12).map(m => <button key={m} aria-pressed={month === m} onClick={() => setMonth(m)}>{m === thisMonth ? (ko ? '이번 달 우리' : 'This month of us') : monthName(m)}</button>)}
   </div>}
-  <div className="ta-picker">
-   <div className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마 눌러보기' : 'Tap a theme to try it'}</strong><small>{ko ? '사진과 메모는 그대로, 꾸미기는 자동으로' : 'Same photos and notes, decorated for you'}</small></div>
+  <details className="ta-picker" open={themePickerOpen} onToggle={event => setThemePickerOpen(event.currentTarget.open)}>
+   <summary className="ta-picker-summary"><span className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마' : 'Album theme'}</strong><small>{ko ? `${meta.ko} 적용 중 · 눌러서 변경` : `${meta.en} selected · tap to change`}</small></span><span className="ta-picker-chevron" aria-hidden="true">⌄</span></summary>
    <div className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
     {albumThemes.map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
      <span className="ta-swatch-art" aria-hidden="true">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}<span className="ta-swatch-deco"><Deco item={decor[t.id][0]} className=""/></span></span>
@@ -321,7 +322,7 @@ ${url}`;
      <em>{theme === t.id ? (ko ? '✓ 적용 중' : '✓ On') : (ko ? '눌러보기' : 'Try it')}</em>
     </button>)}
    </div>
-  </div>
+  </details>
   {editable && birthday === undefined && !locked && <details className="ta-capsule-setup">
    <summary><Hourglass size={16}/><strong>{ko ? '타임캡슐로 만들기' : 'Make it a time capsule'}</strong><small>{ko ? '각자 올린 사진을 정한 시간에 한꺼번에 공개' : 'Everyone’s photos open together at a set time'}</small></summary>
    <p>{ko ? '여행이나 모임 중에 각자 사진을 올려 두면, 공개 시간까지는 올린 사람만 볼 수 있어요. 시간이 되면 모두에게 동시에 열려요.' : 'During the trip everyone adds photos, visible only to themselves. At the set time they open for everyone at once.'}</p>

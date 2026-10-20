@@ -13,75 +13,28 @@ export default function BrowseScreen() {
   const [memos, setMemos] = useState(true);
   return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] antialiased`} style={{ fontFamily: sansStack }}>
 <StitchIconFont/>
-<header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 pt-[env(safe-area-inset-top,0px)] bg-[#fff8f5]/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div className="h-16 px-[1.25rem] flex items-center justify-between gap-[0.25rem]"><div className="flex items-center gap-[0.25rem] min-w-0 flex-1"><Link href="/" aria-label="뒤로 가기" className="w-11 h-11 -ml-[0.25rem] flex items-center justify-center rounded-xl text-[#221a14] hover:bg-[#fcebe0] active:scale-95 transition-transform shrink-0"><Icon name="arrow_back" className="text-[22px]"/></Link><div className="flex flex-col min-w-0 pr-[0.25rem]"><div className="flex items-center gap-[0.25rem]"><span className="stitch-serif text-[1.25rem] leading-[1.75rem] font-[500] text-[#221a14] truncate">우리 크루 조각</span></div><div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#43664d] shrink-0 animate-pulse"></span><span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500] text-[#55433d] truncate">실시간 4명 접속중</span></div></div></div><div className="flex items-center gap-[0.25rem] shrink-0"><button aria-label="책갈피 보관함" className="w-11 h-11 flex items-center justify-center rounded-xl text-[#55433d] hover:text-[#221a14] hover:bg-[#fcebe0] active:scale-95 transition-transform" type="button"><Icon name="bookmark_border" className="text-[22px]"/></button><button aria-label="공유하기" className="w-11 h-11 flex items-center justify-center rounded-xl text-[#55433d] hover:text-[#221a14] hover:bg-[#fcebe0] active:scale-95 transition-transform" type="button"><Icon name="share" className="text-[22px]"/></button><button type="button" aria-label="로그인하기" onClick={signIn} className="w-8 h-8 rounded-full bg-[#99452c] flex items-center justify-center ml-0.5 shrink-0 shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></button></div></div></header><main className="flex flex-col relative w-full max-w-md mx-auto pt-16 pb-24 bg-[#fff8f5] min-h-screen px-[1.25rem]"><div className="flex flex-col w-full pb-8">
+<header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md z-50 pt-[env(safe-area-inset-top,0px)] bg-[#fff8f5]/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div className="h-16 px-[1.25rem] flex items-center justify-between gap-[0.25rem]"><div className="flex items-center gap-[0.25rem] min-w-0 flex-1"><Link href="/" aria-label="뒤로 가기" className="w-11 h-11 -ml-[0.25rem] flex items-center justify-center rounded-xl text-[#221a14] hover:bg-[#fcebe0] active:scale-95 transition-transform shrink-0"><Icon name="arrow_back" className="text-[22px]"/></Link><div className="flex flex-col min-w-0 pr-[0.25rem]"><div className="flex items-center gap-[0.25rem]"><span className="stitch-serif text-[1.25rem] leading-[1.75rem] font-[500] text-[#221a14] truncate">우리 크루 조각</span></div><span className="stitch-sans text-[0.6875rem] leading-[0.875rem] text-[#55433d] truncate">샘플 화면</span></div></div><div className="flex items-center gap-[0.25rem] shrink-0"><button aria-label="책갈피 보관함" className="w-11 h-11 flex items-center justify-center rounded-xl text-[#55433d] hover:text-[#221a14] hover:bg-[#fcebe0] active:scale-95 transition-transform" type="button"><Icon name="bookmark_border" className="text-[22px]"/></button><button aria-label="공유하기" className="w-11 h-11 flex items-center justify-center rounded-xl text-[#55433d] hover:text-[#221a14] hover:bg-[#fcebe0] active:scale-95 transition-transform" type="button"><Icon name="share" className="text-[22px]"/></button><button type="button" aria-label="로그인하기" onClick={signIn} className="w-8 h-8 rounded-full bg-[#99452c] flex items-center justify-center ml-0.5 shrink-0 shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></button></div></div></header><main className="flex flex-col relative w-full max-w-md mx-auto pt-16 pb-24 bg-[#fff8f5] min-h-screen px-[1.25rem]"><div className="flex flex-col w-full pb-8">
 <section className="flex flex-col gap-[0.5rem] pt-[0.25rem] mb-[1rem]">
+<div className="rounded-xl border border-[#ead7ca] bg-[#fff1e9] px-3 py-2.5 text-xs leading-5 text-[#55433d]">로그인 전 디자인 미리보기입니다. 아래 사진과 이름은 예시이며 실제 크루 데이터가 아닙니다.</div>
 <div className="flex items-center justify-between">
 <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#fcebe0] hover:bg-[#f6e5db] transition-colors text-left group" type="button">
 <span className="stitch-serif text-[1.25rem] leading-[1.75rem] font-[500] text-[#221a14] flex items-center gap-1">
-          연남동 빵원정대 🥐
+          연남동 빵원정대 · 예시
           <Icon name="expand_more" className="text-[18px] text-[#55433d] group-hover:translate-y-0.5 transition-transform"/>
 </span>
 </button>
 <span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500] text-[#7d562d] bg-[#ffdcbd]/60 px-2.5 py-1 rounded-full">
-        4인의 아카이브
+        예시 크루
       </span>
 </div>
-<div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-<div className="flex items-center gap-1.5 bg-[#ffffff] shadow-[0_2px_8px_rgba(112,100,92,0.06)] px-2.5 py-1.5 rounded-full shrink-0">
-<div className="relative">
-<div className="w-6 h-6 rounded-full bg-[#99452c] flex items-center justify-center text-[#ffffff] stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-bold">
-            나
-          </div>
-<span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#43664d] border-2 border-[#ffffff]"></span>
-</div>
-<span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] text-[#221a14] font-medium">나 (기록중)</span>
-</div>
-<div className="flex items-center gap-1.5 bg-[#ffffff] shadow-[0_2px_8px_rgba(112,100,92,0.06)] px-2.5 py-1.5 rounded-full shrink-0">
-<div className="relative">
-<div className="w-6 h-6 rounded-full bg-[#bf9061] text-[#492a04] flex items-center justify-center stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500]">
-            연
-          </div>
-<span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#43664d] border-2 border-[#ffffff]"></span>
-</div>
-<div className="flex flex-col">
-<span className="stitch-sans text-[0.6875rem] tracking-[0.03em] text-[#221a14] font-medium leading-none">서연</span>
-<span className="text-[9px] text-[#55433d] leading-tight">10분 전</span>
-</div>
-</div>
-<div className="flex items-center gap-1.5 bg-[#ffffff] shadow-[0_2px_8px_rgba(112,100,92,0.06)] px-2.5 py-1.5 rounded-full shrink-0">
-<div className="relative">
-<div className="w-6 h-6 rounded-full bg-[#f0dfd5] text-[#55433d] flex items-center justify-center stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500]">
-            호
-          </div>
-<Icon name="music_note" className="text-[10px] text-[#43664d] absolute -bottom-1 -right-1 bg-[#ffffff] rounded-full p-0.5"/>
-</div>
-<div className="flex flex-col">
-<span className="stitch-sans text-[0.6875rem] tracking-[0.03em] text-[#221a14] font-medium leading-none">준호</span>
-<span className="text-[9px] text-[#55433d] leading-tight">BGM 감상중</span>
-</div>
-</div>
-<div className="flex items-center gap-1.5 bg-[#ffffff] shadow-[0_2px_8px_rgba(112,100,92,0.06)] px-2.5 py-1.5 rounded-full shrink-0">
-<div className="relative">
-<div className="w-6 h-6 rounded-full bg-[#ffb5a0] text-[#3b0900] flex items-center justify-center stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500]">
-            민
-          </div>
-<span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#99452c] animate-ping"></span>
-</div>
-<div className="flex flex-col">
-<span className="stitch-sans text-[0.6875rem] tracking-[0.03em] text-[#221a14] font-medium leading-none">민우</span>
-<span className="text-[9px] text-[#99452c] font-semibold leading-tight">방금 올림!</span>
-</div>
-</div>
-<button type="button" onClick={signIn} className="flex items-center gap-1.5 bg-[#f6e5db] hover:bg-[#f0dfd5] transition-colors px-2.5 py-1.5 rounded-full shrink-0 text-[#55433d] active:scale-95"><div className="w-6 h-6 rounded-full border-2 border-dashed border-[#88726c] flex items-center justify-center text-[#99452c]"><Icon name="person_add" className="text-[14px]"/></div><span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-medium">+ 친구 초대</span></button></div>
 </section>
-<div className="relative mb-[1.5rem] rounded-xl overflow-hidden shadow-[0_4px_16px_-2px_rgba(112,100,92,0.08)] bg-gradient-to-br from-[#fcebe0] to-[#f6e5db] p-4 flex flex-col gap-3"><div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-20 h-4 bg-[#99452c]/20 backdrop-blur-xs -rotate-1 rounded-xs pointer-events-none"></div><div className="flex items-start justify-between gap-2 mt-1"><div className="flex items-center gap-1.5"><span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#e27d60] text-[#ffffff]"><Icon name="auto_awesome" className="text-[14px]"/></span><span className="stitch-sans text-[0.875rem] leading-[1.25rem] text-[#221a14] font-bold tracking-tight">크루 공동 조각 게이지</span></div><span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] text-[#99452c] bg-[#ffb5a0]/40 px-2.5 py-0.5 rounded-full font-bold">18 / 25개 달성 (72%)</span></div><div className="space-y-1.5"><div className="flex items-center justify-between text-[0.8125rem] leading-[1.25rem] font-medium"><p className="stitch-serif text-[1.25rem] font-[500] text-[#221a14] leading-snug">“이번 달 크루 조각 완성까지 7장 남음! 🥐”</p></div><p className="stitch-sans text-[0.8125rem] leading-[1.25rem] font-[400] text-[#55433d]">단톡방 대신 부담 없이 사진 올리고 낙서 남기기! 우리끼리 모으는 이달의 디지털 조각들 ✨</p><div className="w-full bg-[#ffffff]/80 h-2.5 rounded-full overflow-hidden p-0.5 shadow-inner mt-1"><div className="bg-[#99452c] h-full rounded-full transition-all" style={{width:'72%'}}></div></div></div><div className="flex items-center justify-between pt-1"><div className="flex items-center -space-x-1.5"><div className="w-6 h-6 rounded-full bg-[#bf9061] text-[#492a04] text-[10px] flex items-center justify-center shadow-xs">연</div><div className="w-6 h-6 rounded-full bg-[#f0dfd5] text-[#221a14] text-[10px] flex items-center justify-center shadow-xs">호</div><div className="w-6 h-6 rounded-full bg-[#ffb5a0] text-[#3b0900] text-[10px] flex items-center justify-center shadow-xs">민</div><div className="w-6 h-6 rounded-full bg-[#c2e9c9] text-[#486a51] text-[10px] flex items-center justify-center shadow-xs font-bold">나</div><span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500] text-[#55433d] pl-3">오늘 4명 전원 기여 중</span></div><button onClick={signIn} className="flex items-center gap-1.5 bg-[#99452c] hover:bg-[#7b2e17] text-[#ffffff] px-3.5 py-1.5 rounded-xl stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500] shadow-[0_2px_8px_rgba(153,69,44,0.25)] active:scale-95 transition-all" type="button"><Icon name="photo_camera" className="text-[16px]"/><span>합산 조각 보태기</span></button></div></div>
 <section className="flex items-center justify-between gap-2 mb-[1rem]">
 <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
 <button className="px-3 py-1.5 rounded-full bg-[#99452c] text-[#ffffff] stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-semibold shadow-xs shrink-0" type="button">
         전체 피드
       </button>
 <button className="px-3 py-1.5 rounded-full bg-[#fcebe0] hover:bg-[#f6e5db] text-[#55433d] stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500] transition-colors shrink-0" type="button">
-        오늘의 조각 (4)
+        오늘 사진
       </button>
 <button className="px-3 py-1.5 rounded-full bg-[#fcebe0] hover:bg-[#f6e5db] text-[#55433d] stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] font-[500] transition-colors shrink-0" type="button">
         추억 북마크
@@ -105,7 +58,7 @@ export default function BrowseScreen() {
           </div>
 <div className="flex flex-col">
 <div className="flex items-center gap-1.5"><span className="stitch-sans text-[0.875rem] leading-[1.25rem] tracking-[0.01em] text-[#221a14] font-bold">서연</span><span className="text-[11px] text-[#7d562d] bg-[#ffdcbd]/50 px-1.5 rounded font-medium">크루장</span><span className="text-[10px] text-[#43664d] bg-[#c2e9c9] px-1.5 rounded font-semibold flex items-center gap-0.5"><span>게스트 조각 (지우 합류 💫)</span></span></div>
-<span className="stitch-sans text-[0.8125rem] leading-[1.25rem] font-[400] text-[#55433d]">2시간 전 · 성수동 어니언 ☕</span>
+<span className="stitch-sans text-[0.8125rem] leading-[1.25rem] font-[400] text-[#55433d]">예시 기록 · 성수동 어니언 ☕</span>
 </div>
 </div>
 <button aria-label="메뉴 더보기" className="w-8 h-8 rounded-full flex items-center justify-center text-[#55433d] hover:bg-[#fcebe0] transition-colors" type="button">
@@ -178,7 +131,7 @@ export default function BrowseScreen() {
 <div className="flex flex-col flex-1 min-w-0">
 <div className="flex items-center justify-between">
 <span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] text-[#221a14] font-bold">준호</span>
-<span className="text-[10px] text-[#55433d]">1시간 전</span>
+<span className="text-[10px] text-[#55433d]">예시 기록</span>
 </div>
 <p className="stitch-sans text-[0.8125rem] font-[400] text-[#221a14] leading-tight mt-0.5">
                 너 아까 3시에 잔다더니 결국 성수동 갔냐 ㅋㅋㅋ ☕️
@@ -192,7 +145,7 @@ export default function BrowseScreen() {
 <div className="flex flex-col flex-1 min-w-0">
 <div className="flex items-center justify-between">
 <span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] text-[#221a14] font-bold">민우</span>
-<span className="text-[10px] text-[#55433d]">45분 전</span>
+<span className="text-[10px] text-[#55433d]">예시 기록</span>
 </div>
 <p className="stitch-sans text-[0.8125rem] font-[400] text-[#221a14] leading-tight mt-0.5">
                 저기 소금빵 맛있음 내 몫 하나만 포장 요망 🙏🥖
@@ -234,7 +187,7 @@ export default function BrowseScreen() {
 <span className="stitch-sans text-[0.875rem] leading-[1.25rem] tracking-[0.01em] text-[#221a14] font-bold">민우</span>
 <span className="w-1.5 h-1.5 rounded-full bg-[#99452c]"></span>
 </div>
-<span className="stitch-sans text-[0.8125rem] leading-[1.25rem] font-[400] text-[#55433d]">10분 전 · 집 책상 🌙</span>
+<span className="stitch-sans text-[0.8125rem] leading-[1.25rem] font-[400] text-[#55433d]">예시 기록 · 집 책상 🌙</span>
 </div>
 </div>
 <button aria-label="메뉴 더보기" className="w-8 h-8 rounded-full flex items-center justify-center text-[#55433d] hover:bg-[#fcebe0] transition-colors" type="button">
@@ -260,7 +213,7 @@ export default function BrowseScreen() {
 <div className="flex flex-col flex-1 min-w-0">
 <div className="flex items-center justify-between">
 <span className="stitch-sans text-[0.6875rem] leading-[0.875rem] tracking-[0.03em] text-[#221a14] font-bold">서연</span>
-<span className="text-[10px] text-[#55433d]">3분 전</span>
+<span className="text-[10px] text-[#55433d]">예시 기록</span>
 </div>
 <p className="stitch-sans text-[0.8125rem] font-[400] text-[#221a14] leading-tight mt-0.5">
               냥이 졸귀 ㅠㅠ 이름이 뭐더라? 발바닥 젤리 보고 싶음 🐾
@@ -298,7 +251,7 @@ export default function BrowseScreen() {
 <button onClick={signIn} className="w-full flex items-center justify-center gap-2 bg-[#99452c] hover:bg-[#7b2e17] text-[#ffffff] py-3 px-5 rounded-2xl shadow-[0_8px_24px_rgba(153,69,44,0.35)] active:scale-98 transition-all group" type="button">
 <Icon name="add_circle" className="text-[20px] transition-transform group-hover:rotate-90"/>
 <span className="stitch-sans text-[0.875rem] leading-[1.25rem] font-[600] tracking-wide">+ 오늘 내 조각 남기기</span>
-<span className="ml-1 text-[11px] bg-[#ffffff]/20 px-2 py-0.5 rounded-full stitch-system">1장 남음</span>
+<span className="ml-1 text-[11px] bg-[#ffffff]/20 px-2 py-0.5 rounded-full stitch-system">예시 화면</span>
 </button>
 </div>
 </div>

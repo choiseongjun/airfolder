@@ -36,6 +36,12 @@
 
 /* Theme picker */
 .ta-picker{background:var(--card);border:2px solid var(--edge);border-radius:22px;padding:14px;margin-bottom:18px;box-shadow:0 4px 0 var(--edge)}
+.ta-picker-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none}
+.ta-picker-summary::-webkit-details-marker{display:none}
+.ta-picker-summary .ta-picker-head{flex:1;min-width:0}
+.ta-picker-chevron{width:30px;height:30px;display:grid;place-items:center;flex:none;border-radius:50%;background:var(--brand-softer);color:var(--brand);font-size:20px;line-height:1;transition:transform .18s ease-out}
+.ta-picker[open] .ta-picker-chevron{transform:rotate(180deg)}
+.ta-picker:not([open]){padding-bottom:12px}
 .ta-picker-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--ink)}
 .ta-picker-head svg{color:var(--brand)}
 .ta-picker-head strong{font-family:var(--font-editorial),Georgia,serif;font-weight:600;font-size:20px;color:var(--ink)}

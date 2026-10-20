@@ -34,6 +34,56 @@
 .app-shell[lang="ko"] .photo-item{overflow:hidden;background:#fffefd;border:1px solid #efdfd5;border-radius:14px;box-shadow:0 4px 12px #62452b0c}
 .app-shell[lang="ko"] .photo-open{background:#f4e6dc}
 .app-shell[lang="ko"] .photo-caption{color:#78675e;padding:8px 10px}
+.app-shell[lang="ko"] .album-all-media-link{width:100%;display:flex;align-items:center;gap:13px;margin:0 0 18px;padding:14px 16px;text-align:left;border:1px solid #ead8cc;border-radius:16px;background:linear-gradient(115deg,#fff1e9,#fffdfa 72%);color:#30251f;box-shadow:0 5px 16px #62452b0b}
+.app-shell[lang="ko"] .album-all-media-link:hover{border-color:#e7b7a3;transform:translateY(-1px);box-shadow:0 8px 20px #62452b12}
+.app-shell[lang="ko"] .album-all-media-icon{width:42px;height:42px;display:grid;place-items:center;flex:none;border-radius:13px;background:#f2d8c9;color:#a64d34}
+.app-shell[lang="ko"] .album-all-media-copy{display:grid;gap:4px;flex:1;min-width:0}
+.app-shell[lang="ko"] .album-all-media-copy strong{font-family:var(--font-editorial),Georgia,serif;font-size:16px;font-weight:650}
+.app-shell[lang="ko"] .album-all-media-copy small{font-size:11px;color:#806c62}
+.app-shell[lang="ko"] .album-all-media-link>svg{color:#a64d34}
+.app-shell[lang="ko"] .album-media-drawer{margin:-5px 0 28px;padding:18px 16px 22px;border:1px solid #efdfd5;border-radius:20px;background:#fffdfa;box-shadow:0 8px 26px #62452b0c}
+.app-shell[lang="ko"] .album-media-drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:2px 1px 15px;border-bottom:1px solid #f0e4dc}
+.app-shell[lang="ko"] .album-media-drawer-head h2{margin:5px 0 3px;font-family:var(--font-editorial),Georgia,serif;font-size:23px;letter-spacing:-.45px;color:#30251f}
+.app-shell[lang="ko"] .album-media-drawer-head p{margin:0;color:#806c62;font-size:11px;line-height:1.55}
+.app-shell[lang="ko"] .album-media-eyebrow{display:block;overflow:hidden;color:#a16b55;font-size:8px;font-weight:750;letter-spacing:1.1px;text-overflow:ellipsis;white-space:nowrap}
+.app-shell[lang="ko"] .album-media-drawer-head>button{display:flex;align-items:center;gap:5px;flex:none;padding:9px 10px;border:1px solid #ead8cc;border-radius:11px;background:#fff1e9;color:#99452c;font-size:10px;font-weight:700}
+.app-shell[lang="ko"] .album-media-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0 12px}
+.app-shell[lang="ko"] .album-media-toolbar>small{color:#907d72;font-size:9px;white-space:nowrap}
+.app-shell[lang="ko"] .album-media-filters{display:flex;gap:5px;min-width:0}
+.app-shell[lang="ko"] .album-media-filters button{display:flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid #eddfd6;border-radius:999px;background:#fff;color:#78675e;font-size:9px;font-weight:650;white-space:nowrap}
+.app-shell[lang="ko"] .album-media-filters button[aria-pressed="true"]{border-color:#99452c;background:#99452c;color:#fff}
+.app-shell[lang="ko"] .album-media-filters button span{font:700 8px var(--font-geist-mono),monospace;opacity:.78}
+.app-shell[lang="ko"] .album-media-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.app-shell[lang="ko"] .album-media-card{min-width:0;padding:7px 7px 0;border:1px solid #eadfd6;border-radius:12px 12px 10px 10px;background:#fffefa;box-shadow:0 4px 13px #62452b0b;transform:rotate(calc((var(--card-index) - 2.5)*.16deg))}
+.app-shell[lang="ko"] .album-media-open{position:relative;display:block;width:100%;aspect-ratio:4/4.7;overflow:hidden;padding:0;border-radius:7px;background:#f0e7df}
+.app-shell[lang="ko"] .album-media-open img,.app-shell[lang="ko"] .album-media-open video{display:block;width:100%;height:100%;object-fit:cover;transition:transform .22s ease}
+.app-shell[lang="ko"] .album-media-open:hover img,.app-shell[lang="ko"] .album-media-open:hover video{transform:scale(1.025)}
+.app-shell[lang="ko"] .album-media-video{position:absolute;left:8px;bottom:8px;display:flex;align-items:center;gap:5px;padding:5px 8px;border:1px solid #ffffff70;border-radius:999px;background:#30251fc7;color:white;font-size:8px;font-weight:700;letter-spacing:.45px;backdrop-filter:blur(8px)}
+.app-shell[lang="ko"] .album-media-video>span{display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#fff;color:#99452c;font-size:7px}
+.app-shell[lang="ko"] .album-media-caption{display:flex;justify-content:space-between;gap:5px;padding:8px 2px 7px;color:#78675e;font-size:8px}
+.app-shell[lang="ko"] .album-media-caption time{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-shell[lang="ko"] .album-media-caption span{flex:none;color:#a16b55}
+.app-shell[lang="ko"] .album-media-empty{display:grid;justify-items:center;gap:9px;padding:42px 16px;text-align:center;color:#806c62}
+.app-shell[lang="ko"] .album-media-empty svg{color:#b26a4e}
+.app-shell[lang="ko"] .album-media-empty strong{font-family:var(--font-editorial),Georgia,serif;font-size:17px;color:#30251f}
+.app-shell[lang="ko"] .album-media-empty span{font-size:11px}
+.app-shell[lang="ko"].album-media-shell{width:100%;max-width:none;min-height:100dvh;margin:0;background:#f6f1e9;box-shadow:none}
+.app-shell[lang="ko"] .album-media-shell{width:100%;max-width:none}
+.app-shell[lang="ko"] .album-media-main{min-height:100dvh;padding:0;background:#f6f1e9}
+.app-shell[lang="ko"] .album-media-drawer{width:min(100%,1180px);min-height:100dvh;margin:0 auto;padding:clamp(22px,4vw,52px) clamp(18px,5vw,64px) 64px;border:0;border-radius:0;background:#f6f1e9;box-shadow:none}
+.app-shell[lang="ko"] .album-media-drawer-head{align-items:center;padding:4px 0 26px;border-bottom:1px solid #ddd2c4}
+.app-shell[lang="ko"] .album-media-drawer-head h2{margin:10px 0 5px;font-family:var(--font-stitch-serif),var(--font-stitch-kr),serif;font-size:clamp(30px,4vw,48px);letter-spacing:-.045em}
+.app-shell[lang="ko"] .album-media-drawer-head p{font-size:13px}
+.app-shell[lang="ko"] .album-media-drawer-head>button{padding:11px 15px;border-radius:999px;font-size:12px}
+.app-shell[lang="ko"] .album-media-toolbar{padding:22px 0 18px}
+.app-shell[lang="ko"] .album-media-filters button{padding:9px 14px;font-size:11px}
+.app-shell[lang="ko"] .album-media-toolbar>small{font-size:11px}
+.app-shell[lang="ko"] .album-media-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.app-shell[lang="ko"] .album-media-card{padding:8px 8px 0;border-color:#dfd4c7;border-radius:11px;background:#fffdf8}
+.app-shell[lang="ko"] .album-media-open{aspect-ratio:1/1;border-radius:6px}
+.app-shell[lang="ko"] .album-media-caption{padding:11px 3px 9px;font-size:10px}
+@media(min-width:700px){.app-shell[lang="ko"].album-media-shell .main-shell{width:100%;max-width:none;border:0;box-shadow:none}.app-shell[lang="ko"] .album-media-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.app-shell[lang="ko"] .album-media-card{transform:none}.app-shell[lang="ko"] .album-media-open{aspect-ratio:1/1}}
+@media(min-width:1100px){.app-shell[lang="ko"] .album-media-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}}
 .app-shell[lang="ko"] .filter-row .tabs .tab{border:1px solid #efdfd5;border-radius:999px;background:#fffefd;color:#78675e}
 .app-shell[lang="ko"] .tab.selected-tab{border-color:#e27d60;background:#e27d60;color:white}
 .app-shell[lang="ko"] .primary-button{background:#e27d60;border-color:#e27d60;color:white;border-radius:13px}

@@ -6,7 +6,7 @@ import { Icon, StitchIconFont, sansStack, serifStack, stitchRoot } from './stitc
 
 // Ported 1:1 from the Stitch screen "메모네스티아 첫 진입 & 카카오 1초 로그인 (풍성한 온보딩)".
 // Colors are that screen's own Material palette, written as literal values so the app theme stays untouched.
-type Actions = { onKakao: () => void; onApple: () => void; appleDisabled: boolean; kakaoDisabled: boolean; exploreHref: string; onJoin: (token: string) => void };
+type Actions = { onKakao: () => void; onGoogle: () => void; onApple: () => void; kakaoDisabled: boolean; googleDisabled: boolean; appleDisabled: boolean; authError?: string; exploreHref: string; onJoin: (token: string) => void };
 
 function Showcase() {
   return <>
@@ -70,7 +70,7 @@ function Showcase() {
   </>;
 }
 
-function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreHref, onJoin }: Actions) {
+function CallToAction({ onKakao, onGoogle, onApple, appleDisabled, googleDisabled, kakaoDisabled, authError, exploreHref, onJoin }: Actions) {
   const [code, setCode] = useState(''); const [codeError, setCodeError] = useState('');
   function submitCode(e: FormEvent) {
     e.preventDefault();
@@ -85,6 +85,15 @@ function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreH
       <svg className="w-5 h-5 text-[#191919]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-5.52 0-10 3.58-10 8c0 2.82 1.83 5.3 4.63 6.75l-.97 3.58c-.08.31.25.56.51.38l4.35-2.88c.48.06.98.09 1.48.09 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>
       <span className="text-[15px] font-bold text-[#191919]">카카오로 1초 만에 시작하기</span>
     </button>
+    <button className="w-full h-12 rounded-xl border border-[#dbc1ba]/70 bg-white hover:bg-[#fffaf8] active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-sm" disabled={googleDisabled} onClick={onGoogle} type="button">
+      <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.3 2.98-7.36Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.41l-3.23-2.51c-.9.6-2.06.96-3.39.96-2.61 0-4.82-1.76-5.61-4.12H3.05v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.39 13.92a6 6 0 0 1 0-3.84V7.49H3.05a10 10 0 0 0 0 9.02l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.96c1.47 0 2.79.51 3.83 1.51L18.7 4.6A9.62 9.62 0 0 0 12 2a10 10 0 0 0-8.95 5.49l3.34 2.59C7.18 7.72 9.39 5.96 12 5.96Z"/></svg>
+      <span className="text-[15px] font-semibold text-[#221a14]">Google로 계속하기</span>
+    </button>
+    <button className="w-full h-12 rounded-xl bg-[#221a14] hover:bg-black active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-sm" disabled={appleDisabled} onClick={onApple} type="button">
+      <svg className="h-[19px] w-[19px] fill-white" viewBox="0 0 170 170" aria-hidden="true"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.66-7.85-11.9-14.43-6-9.4-10.74-20.08-14.22-32.04-3.48-11.97-5.22-23.01-5.22-33.14 0-14.72 3.63-26.69 10.89-35.91 7.26-9.21 16.27-13.93 27.04-14.15 5.26 0 11.08 1.45 17.47 4.35 6.39 2.9 10.22 4.41 11.49 4.54 1.77-.28 5.92-1.89 12.44-4.83 6.52-2.94 12.24-4.27 17.16-3.99 12.37.77 22.18 5.48 29.43 14.13-10.74 6.53-15.99 15.69-15.75 27.47.24 9.3 3.82 17.06 10.74 23.27 6.92 6.21 15.17 9.8 24.75 10.79-2.22 6.6-4.99 13.57-8.31 20.91zM119.22 33.11c0-7.39 2.65-14.35 7.95-20.89 5.3-6.53 11.91-10.85 19.82-12.95.24 1.13.36 2.19.36 3.18 0 7.39-2.73 14.48-8.19 21.27-5.46 6.79-12.18 11.09-20.16 12.89-.24-1.13-.36-2.19-.36-3.18z"/></svg>
+      <span className="text-[15px] font-semibold text-white">Apple로 계속하기</span>
+    </button>
+    {authError && <p role="alert" className="rounded-lg bg-[#ffdad6] px-3 py-2 text-center text-[11px] text-[#93000a]">{authError}</p>}
     <form className="w-full bg-[#fff1e9] border border-[#dbc1ba]/70 rounded-xl p-3 flex flex-col gap-2 " onSubmit={submitCode}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5"><Icon name="key" className="text-[#99452c] text-[17px]"/><span className="text-xs font-bold text-[#221a14]">친구에게 초대 링크를 받으셨나요?</span></div>
@@ -96,14 +105,7 @@ function CallToAction({ onKakao, onApple, appleDisabled, kakaoDisabled, exploreH
       </div>
       {codeError && <p role="alert" className="text-[10px] text-[#ba1a1a]">{codeError}</p>}
     </form>
-    <div className="flex items-center justify-center gap-3 text-xs text-[#55433d] font-medium pt-1">
-      <Link className="hover:text-[#99452c] transition-colors flex items-center gap-1 py-1" href={exploreHref}><Icon name="visibility" className="text-[15px]"/>로그인 없이 둘러보기</Link>
-      <span className="text-[#dbc1ba]">|</span>
-      <button className="hover:text-[#99452c] transition-colors flex items-center gap-1 py-1 disabled:opacity-50" disabled={appleDisabled} onClick={onApple} type="button">
-        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 170 170" aria-hidden="true"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.66-7.85-11.9-14.43-6-9.4-10.74-20.08-14.22-32.04-3.48-11.97-5.22-23.01-5.22-33.14 0-14.72 3.63-26.69 10.89-35.91 7.26-9.21 16.27-13.93 27.04-14.15 5.26 0 11.08 1.45 17.47 4.35 6.39 2.9 10.22 4.41 11.49 4.54 1.77-.28 5.92-1.89 12.44-4.83 6.52-2.94 12.24-4.27 17.16-3.99 12.37.77 22.18 5.48 29.43 14.13-10.74 6.53-15.99 15.69-15.75 27.47.24 9.3 3.82 17.06 10.74 23.27 6.92 6.21 15.17 9.8 24.75 10.79-2.22 6.6-4.99 13.57-8.31 20.91zM119.22 33.11c0-7.39 2.65-14.35 7.95-20.89 5.3-6.53 11.91-10.85 19.82-12.95.24 1.13.36 2.19.36 3.18 0 7.39-2.73 14.48-8.19 21.27-5.46 6.79-12.18 11.09-20.16 12.89-.24-1.13-.36-2.19-.36-3.18z"/></svg>
-        애플 계정으로 계속하기
-      </button>
-    </div>
+    <div className="flex items-center justify-center pt-1"><Link className="hover:text-[#99452c] transition-colors flex items-center gap-1 py-1 text-xs font-medium text-[#55433d]" href={exploreHref}><Icon name="visibility" className="text-[15px]"/>로그인 없이 둘러보기</Link></div>
     <div className="text-center pt-0.5 pb-2">
       <p className="text-[10px] text-[#88726c] leading-tight">100% 무료 · 비영리 토이프로젝트 · 상업적 광고 및 결제 없음</p>
     </div>
