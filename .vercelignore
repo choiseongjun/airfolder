@@ -1,0 +1,10 @@
+# Local Android workspace and build outputs are not part of the web deployment.
+/mobile/
+/.tools/
+/artifacts/
+
+# Development APK is a local ignored artifact, not a production web asset.
+/public/downloads/
+
+# Local TypeScript incremental cache.
+tsconfig.tsbuildinfo
