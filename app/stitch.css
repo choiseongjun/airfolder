@@ -11,6 +11,7 @@
   .stitch-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
   .no-scrollbar::-webkit-scrollbar{display:none}
   .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  .film-strip-track{background-image:radial-gradient(circle at 4px 3px,#cfb99f 2px,transparent 2.5px),radial-gradient(circle at 4px 3px,#cfb99f 2px,transparent 2.5px);background-position:0 0,0 100%;background-size:14px 6px;background-repeat:repeat-x;padding-top:9px;padding-bottom:9px}
 }
 /* Dedicated Stitch crew settings surface. */
 .stitch-root .groups-section{margin:0;padding:0;border:0;background:transparent;box-shadow:none}

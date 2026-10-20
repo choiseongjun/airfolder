@@ -3,6 +3,14 @@ import { randomBytes } from 'node:crypto';
 import { ApiError, hash, json, pool, safe, sameOrigin, transaction, viewer } from '@/lib/server';
 import { firebaseAdminAuth } from '@/lib/firebase-server';
 import { identityFromVerifiedClaims } from '@/lib/auth-core';
+import { requireTerms } from '@/lib/safety';
+export async function PATCH(request:Request){return safe(async()=>{
+  sameOrigin(request);const who=await viewer(),body=await json(request);await requireTerms(who);
+  if(typeof body.name!=='string'||!body.name.trim()||body.name.trim().length>40)throw new ApiError(400,'INVALID_PROFILE_NAME');
+  const name=body.name.trim();const result=await pool().query('UPDATE snaproom.accounts SET display_name=$2 WHERE viewer_id=$1 RETURNING display_name AS name',[who,name]);
+  if(!result.rowCount)throw new ApiError(404,'ACCOUNT_NOT_FOUND');
+  return Response.json({name:result.rows[0].name},{headers:{'Cache-Control':'no-store'}});
+});}
 export async function DELETE(request:Request){return safe(async()=>{
   sameOrigin(request);const who=await viewer(),body=await json(request);
   if(body.confirm!=='DELETE')throw new ApiError(400,'CONFIRM_DELETION');
