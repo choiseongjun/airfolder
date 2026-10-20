@@ -171,8 +171,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const chapters = useMemo(() => {
   const list: Chapter[] = [];
   for (const item of items || []) {
-   // Photos bundled under a note inherit its writer, so every print carries a friend's name.
-   const photos = (item.kind === 'photo' ? [item] : item.photos || []).filter(p => p.src).map(p => p.author ? p : { ...p, author: item.author });
+   const photos = (item.kind === 'photo' ? [item] : item.photos || []).filter(p => p.src);
    const note = item.kind === 'record' ? (item.body || item.title || '').trim() : '';
    const last = list[list.length - 1];
    // Loose photos from the same day read better as one spread than as many one-photo chapters.
@@ -249,7 +248,7 @@ ${url}`;
    <button onClick={() => onPhoto(p)} aria-label={ko ? `${caption || title} 크게 보기` : `Open ${caption || title}`}>
     <span className="ta-frame"><MediaView src={p.src!} name={caption || title} mediaType={p.mediaType}/>{theme === 'film' && p.day && <span className="ta-date-stamp" aria-hidden="true">{stamp(p.day)}</span>}</span>
    </button>
-   {!bare && (caption || p.author) && <figcaption>{caption && <span className="ta-caption">{caption}</span>}{p.author && <span className="ta-by">— {p.author}</span>}</figcaption>}
+   {caption && <figcaption><span className="ta-caption">{caption}</span></figcaption>}
   </figure>;
  }
  const captionOf = (p: MemoryItem) => p.body && !fileLike.test(p.body.trim()) ? p.body : '';

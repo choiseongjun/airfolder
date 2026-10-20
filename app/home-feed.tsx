@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Photo URLs need the viewer's session cookie; an optimizer cannot fetch them. */
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, X } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { TERMS_VERSION } from '@/lib/policy';
 import { Icon, StitchIconFont, sansStack, stitchRoot } from './stitch-kit';
@@ -10,6 +10,7 @@ import { RollingPaper } from './rolling-paper';
 import QuickAlbum from './quick-album';
 import FeedAlbumView from './feed-album-view';
 import MemoryLoading from './memory-loading';
+import BrandMark from './brand-mark';
 
 // The signed-in home: the Stitch "프라이빗 크루 데일리 홈 피드" layout filled with the viewer's own crew.
 // Decorative mockup details without persisted data are omitted from the signed-in feed.
@@ -31,6 +32,20 @@ function formatTimestamp(iso: string) {
 const detailHref = (item: FeedItem) => item.kind === 'photo' ? `/?lang=ko&album=${item.folderId}&photo=${item.id}` : `/?lang=ko&album=${item.folderId}&view=photos`;
 
 export type FeedActions = { onSelectGroup: (id: string | null) => void; onCreateGroup?: (name: string,isPublic?:boolean) => Promise<void>; onJoinPublicGroup?:(id:string)=>Promise<void>; onLike: (item: FeedItem) => void; onComment: (item: FeedItem, body: string) => Promise<string | null>; onDelete: (item: FeedItem) => Promise<string | null>; onRefresh?: () => void; onOpenBundle?: (item: FeedItem, mode: 'gallery' | 'slideshow') => void };
+
+function SpacePickerModal({ children, onClose }: { children: ReactNode; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const node = dialog.current;
+    const trigger = document.activeElement as HTMLElement | null;
+    node?.showModal();
+    return () => { node?.close(); trigger?.focus(); };
+  }, []);
+  return <dialog ref={dialog} aria-labelledby="space-picker-title" onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === event.currentTarget) onClose(); }} className="fixed inset-0 m-auto w-[calc(100%-2rem)] max-w-[420px] max-h-[80dvh] overflow-hidden rounded-3xl border border-[#efdfd5] bg-[#fffaf7] p-0 text-[#30251f] shadow-2xl backdrop:bg-[#30251f]/40 backdrop:backdrop-blur-sm">
+    <div className="flex items-start justify-between gap-4 border-b border-[#efdfd5] px-5 py-4"><div><h2 id="space-picker-title" className="stitch-serif text-xl font-semibold">어디로 갈까요?</h2><p className="mt-1 text-xs text-[#78675e]">함께 추억을 모을 공간을 선택하세요.</p></div><button type="button" autoFocus aria-label="공간 선택 닫기" onClick={onClose} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f6e5db] text-[#99452c]"><X size={18} aria-hidden="true"/></button></div>
+    <div className="max-h-[calc(80dvh-100px)] overflow-y-auto overscroll-contain p-3">{children}</div>
+  </dialog>;
+}
 
 export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedActions }) {
   const [picking, setPicking] = useState(false);
@@ -105,39 +120,36 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
     <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-[#efdfd5] bg-[#fff8f5]/95 pt-[env(safe-area-inset-top,0px)] shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-2 px-5 pb-2 pt-2 md:max-w-[1200px] md:px-8 md:pb-3 md:pt-3">
         <div className="flex h-10 items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2"><button type="button" aria-label="공간 선택" aria-expanded={picking} aria-haspopup="menu" onClick={() => setPicking(v => !v)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="cottage" className="text-[22px] text-[#99452c]"/></button><div className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#30251f]">메모네스티아</span><span className="block truncate text-[10px] text-[#78675e]">함께 모으는 사진과 이야기</span></div></div>
+          <Link href={`/?lang=ko&home=1&group=${encodeURIComponent(crew.id ?? "personal")}`} aria-label="메모네스티아 홈" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"><BrandMark/></Link>
           <div className="flex shrink-0 items-center gap-1"><button type="button" onClick={() => void shareSpace()} aria-label="공간 피드 공유" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="share" className="text-[21px]"/></button><Link href="/crew/settings" aria-label="계정 및 크루 설정" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#99452c] shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></Link></div>
         </div>
-        {crew.id && <div className="flex min-w-0 items-center justify-between gap-2">
-          <button type="button" aria-expanded={picking} aria-haspopup="menu" onClick={() => setPicking(v => !v)} className="group flex min-w-0 items-center gap-2 rounded-xl px-1 py-1 text-left hover:bg-[#fff1e9]">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f6e5db] text-[#99452c]"><Icon name={crew.id ? 'groups' : 'person'} className="text-[18px]"/></span><span className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#221a14]">{crew.name ?? '내 개인 공간'}</span><span className="block truncate text-[10px] text-[#78675e]">{crew.id ? `${crew.members.length}명 · ${data.groups.find(group => group.id === crew.id)?.mine ? '내가 만든 공간' : '초대받은 공간'}` : '나만 볼 수 있는 공간'}</span></span><Icon name="expand_more" className="shrink-0 text-[18px] text-[#55433d] transition-transform group-hover:translate-y-0.5"/>
+        <div className="flex min-w-0 items-center justify-between gap-2">
+          <button type="button" aria-expanded={picking} aria-haspopup="dialog" onClick={() => setPicking(v => !v)} className="group flex min-w-0 items-center gap-2 rounded-xl px-1 py-1 text-left hover:bg-[#fff1e9]">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f6e5db] text-[#99452c]"><Icon name={crew.id ? 'groups' : 'person'} className="text-[18px]"/></span><span className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#221a14]">{crew.name ?? '내 개인 공간'}</span><span className="block truncate text-[10px] text-[#78675e]">{crew.id ? `${crew.members.length}명 · ${data.groups.find(group => group.id === crew.id)?.mine ? '내가 만든 공간' : '초대받은 공간'}` : '눌러서 다른 크루로 이동'}</span></span><Icon name="expand_more" className="shrink-0 text-[18px] text-[#55433d] transition-transform group-hover:translate-y-0.5"/>
           </button>
           {invite}
-          <div className="ml-auto hidden max-w-[55%] items-center gap-1.5 overflow-x-auto no-scrollbar md:flex" aria-label="크루 멤버">
-            {crew.members.map(m => <div key={m.id} className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/80 px-2 py-1"><div className={`flex h-6 w-6 items-center justify-center rounded-full ${label} ${m.mine ? 'font-bold' : 'font-[500]'} ${tone(m)}`}>{initial(m)}</div><span className="text-[10px] text-[#55433d]">{m.mine ? '나' : m.name}</span></div>)}
-          </div>
-        </div>}
-        {crew.id && <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden" aria-label="크루 멤버">
+
+        </div>
+        {crew.id && <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar" aria-label="크루 멤버">
           {crew.members.map(m => <div key={m.id} className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/80 px-2 py-1"><div className={`flex h-6 w-6 items-center justify-center rounded-full ${label} ${m.mine ? 'font-bold' : 'font-[500]'} ${tone(m)}`}>{initial(m)}</div><span className="text-[10px] text-[#55433d]">{m.mine ? '나' : m.name}</span></div>)}
         </div>}
         {shareNotice && <p role="status" className="absolute right-4 top-full mt-2 rounded-xl bg-[#30251f] px-3 py-2 text-xs text-white shadow-lg md:right-8">{shareNotice}</p>}
       </div>
     </header>
-    <main className={`memory-feed-enter mx-auto flex min-h-screen w-full max-w-md flex-col relative bg-[#fff8f5] px-[1.25rem] pb-24 md:max-w-[1200px] md:px-8 ${crew.id ? 'pt-[calc(10.2rem+env(safe-area-inset-top,0px))] md:pt-[calc(8.5rem+env(safe-area-inset-top,0px))]' : 'pt-[calc(5rem+env(safe-area-inset-top,0px))] md:pt-[calc(5.5rem+env(safe-area-inset-top,0px))]'}`}>
-      <div className="flex flex-col w-full pb-8">
-        <section className="flex flex-col gap-[0.5rem] pt-[0.25rem] mb-[1rem]">
-          {picking && <div role="menu" aria-label="공간 선택" className="relative z-40 min-w-[17rem] max-w-full rounded-xl bg-white p-1.5 shadow-[0_8px_24px_rgba(112,100,92,0.18)] md:max-w-sm">
-              <button role="menuitem" type="button" onClick={() => { setPicking(false); actions.onSelectGroup(null); }} className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[#fcebe0] ${crew.id === null ? 'bg-[#fff1e9] font-bold text-[#99452c]' : 'text-[#221a14]'}`}><span><span className="block truncate text-sm">내 개인 공간</span><span className="mt-0.5 block text-[10px] font-normal text-[#88726c]">나만 볼 수 있는 앨범과 사진</span></span><span className={`${label} shrink-0 text-[#88726c]`}>개인</span></button>
-              {data.groups.some(group => group.mine) && <><p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[.12em] text-[#88726c]">내가 만든 공간</p>{data.groups.filter(group => group.mine).map(g => <button key={g.id} role="menuitem" type="button" onClick={() => { setPicking(false); actions.onSelectGroup(g.id); }} className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[#fcebe0] ${g.id === crew.id ? 'bg-[#fff1e9] font-bold text-[#99452c]' : 'text-[#221a14]'}`}><span className="min-w-0"><span className="block truncate text-sm">{g.name}</span><span className="mt-0.5 block truncate text-[10px] font-normal text-[#88726c]">내가 만든 공간 · 멤버 {g.members}명</span></span><Icon name="chevron_right" className="shrink-0 text-base text-[#88726c]"/></button>)}</>}
-              {data.groups.some(group => !group.mine) && <><p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[.12em] text-[#88726c]">초대받은 공간</p>{data.groups.filter(group => !group.mine).map(g => <button key={g.id} role="menuitem" type="button" onClick={() => { setPicking(false); actions.onSelectGroup(g.id); }} className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[#fcebe0] ${g.id === crew.id ? 'bg-[#fff1e9] font-bold text-[#99452c]' : 'text-[#221a14]'}`}><span className="min-w-0"><span className="block truncate text-sm">{g.name}</span><span className="mt-0.5 block truncate text-[10px] font-normal text-[#88726c]">{g.ownerName}님이 만든 공간 · 멤버 {g.members}명</span></span><Icon name="chevron_right" className="shrink-0 text-base text-[#88726c]"/></button>)}</>}
+    {picking && <SpacePickerModal onClose={() => setPicking(false)}>
+              <button type="button" aria-pressed={crew.id === null} onClick={() => { setPicking(false); actions.onSelectGroup(null); }} className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[#fcebe0] ${crew.id === null ? 'bg-[#fff1e9] font-bold text-[#99452c]' : 'text-[#221a14]'}`}><span><span className="block truncate text-sm">내 개인 공간</span><span className="mt-0.5 block text-[10px] font-normal text-[#88726c]">개인 앨범과 초대받은 추억</span></span><span className={`${label} shrink-0 text-[#88726c]`}>개인</span></button>
+              {data.groups.some(group => group.mine) && <><p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[.12em] text-[#88726c]">내가 만든 공간</p>{data.groups.filter(group => group.mine).map(g => <button key={g.id} type="button" aria-pressed={g.id === crew.id} onClick={() => { setPicking(false); actions.onSelectGroup(g.id); }} className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[#fcebe0] ${g.id === crew.id ? 'bg-[#fff1e9] font-bold text-[#99452c]' : 'text-[#221a14]'}`}><span className="min-w-0"><span className="block truncate text-sm">{g.name}</span><span className="mt-0.5 block truncate text-[10px] font-normal text-[#88726c]">내가 만든 공간 · 멤버 {g.members}명</span></span><Icon name={g.id === crew.id ? "check_circle" : "chevron_right"} className="shrink-0 text-lg text-[#99452c]"/></button>)}</>}
+              {data.groups.some(group => !group.mine) && <><p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[.12em] text-[#88726c]">초대받은 공간</p>{data.groups.filter(group => !group.mine).map(g => <button key={g.id} type="button" aria-pressed={g.id === crew.id} onClick={() => { setPicking(false); actions.onSelectGroup(g.id); }} className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-[#fcebe0] ${g.id === crew.id ? 'bg-[#fff1e9] font-bold text-[#99452c]' : 'text-[#221a14]'}`}><span className="min-w-0"><span className="block truncate text-sm">{g.name}</span><span className="mt-0.5 block truncate text-[10px] font-normal text-[#88726c]">{g.ownerName}님이 만든 공간 · 멤버 {g.members}명</span></span><Icon name={g.id === crew.id ? "check_circle" : "chevron_right"} className="shrink-0 text-lg text-[#99452c]"/></button>)}</>}
               {!data.groups.length && <p className="px-3 py-3 text-xs leading-5 text-[#78675e]">아직 참여 중인 공용 공간이 없어요. 친구의 초대 링크로 참여하면 이곳에 표시돼요.</p>}
-              <p className="px-3 pb-1 pt-3 text-[10px] font-bold uppercase tracking-[.12em] text-[#88726c]">공개 공간 둘러보기</p>
+              <details className="my-3 rounded-2xl border border-[#efdfd5] bg-white"><summary className="cursor-pointer px-3 py-3 text-xs font-semibold text-[#78675e]">다른 공개 공간 둘러보기</summary>
               {publicGroups.map(group=><div key={group.id} className="flex items-center gap-2 rounded-lg px-3 py-2.5"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f6e5db] text-[#99452c]"><Icon name="groups" className="text-base"/></span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold">{group.name}</span><span className="block truncate text-[10px] text-[#88726c]">{group.ownerName}님 · 멤버 {group.members}명</span></span><button type="button" disabled={!!joiningSpace} onClick={async()=>{if(!actions.onJoinPublicGroup)return;setJoiningSpace(group.id);setSpaceError('');try{await actions.onJoinPublicGroup(group.id);setPicking(false);}catch{setSpaceError('공간에 참여하지 못했어요. 다시 시도해 주세요.');}finally{setJoiningSpace(null);}}} className="shrink-0 rounded-full bg-[#99452c] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50">{joiningSpace===group.id?'참여 중…':'참여'}</button></div>)}
               {spaceError&&!creatingSpace&&<p role="alert" className="px-3 pb-2 text-xs text-[#a33b2f]">{spaceError}</p>}
               {!publicGroups.length&&<p className="px-3 pb-3 text-xs leading-5 text-[#78675e]">공개로 설정한 공간이 아직 없어요. 내 공간에서 공개 설정을 켜면 여기에 표시돼요.</p>}
-              {actions.onCreateGroup && <button role="menuitem" type="button" onClick={async () => { setPicking(false); setSpaceName(''); setSpacePublic(false); setSpaceError(''); setCreatingSpace(true); try { const policy=await api<{accepted:boolean}>('/api/policy'); setTermsGate(!policy.accepted); } catch { setSpaceError('이용 규칙 동의 상태를 확인하지 못했어요. 다시 시도해 주세요.'); } }} className="flex items-center gap-2 border-t border-[#f0e4dc] px-3 py-2.5 text-left text-sm font-semibold text-[#99452c] hover:bg-[#fff1e9]"><Icon name="add_circle" className="text-lg"/>새 앨범 공간 만들기</button>}
-          </div>}
-        </section>
+              </details>
+              {actions.onCreateGroup && <button type="button" onClick={async () => { setPicking(false); setSpaceName(''); setSpacePublic(false); setSpaceError(''); setCreatingSpace(true); try { const policy=await api<{accepted:boolean}>('/api/policy'); setTermsGate(!policy.accepted); } catch { setSpaceError('이용 규칙 동의 상태를 확인하지 못했어요. 다시 시도해 주세요.'); } }} className="flex items-center gap-2 border-t border-[#f0e4dc] px-3 py-2.5 text-left text-sm font-semibold text-[#99452c] hover:bg-[#fff1e9]"><Icon name="add_circle" className="text-lg"/>새 앨범 공간 만들기</button>}
+    </SpacePickerModal>}
+    <main className={`memory-feed-enter mx-auto flex min-h-screen w-full max-w-md flex-col relative bg-[#fff8f5] px-[1.25rem] pb-24 md:max-w-[1200px] md:px-8 ${crew.id ? 'pt-[calc(10.2rem+env(safe-area-inset-top,0px))] md:pt-[calc(10.2rem+env(safe-area-inset-top,0px))]' : 'pt-[calc(8.5rem+env(safe-area-inset-top,0px))] md:pt-[calc(8.5rem+env(safe-area-inset-top,0px))]'}`}>
+      <div className="flex flex-col w-full pb-8">
         {!data.albums.length && albumWelcome}
         <section className="mb-5" aria-label="공간 앨범">
           <div className="mb-2 flex items-center justify-between"><h2 id="feed-albums" className="stitch-serif scroll-mt-24 text-base font-semibold text-[#30251f]">최근 앨범</h2><span className="text-[10px] text-[#78675e]">{data.albums.length}개</span></div>
