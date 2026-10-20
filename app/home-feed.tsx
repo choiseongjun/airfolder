@@ -52,10 +52,10 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
   if (fullBundle) return <FullBundleView item={fullBundle.item} initialMode={fullBundle.mode} onBack={() => setFullBundle(null)} actions={actions}/>;
   return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] antialiased`} style={{ fontFamily: sansStack }}>
     <StitchIconFont/>
-    <header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[780px] z-50 pt-[env(safe-area-inset-top,0px)] bg-[#fff8f5]/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] md:rounded-b-2xl md:border-x md:border-b md:border-[#efdfd5]">
+    <header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 pt-[env(safe-area-inset-top,0px)] bg-[#fff8f5]/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] md:rounded-b-2xl md:border-x md:border-b md:border-[#efdfd5]">
       <div className="px-5 pt-2 pb-2 flex flex-col gap-2 md:px-8 md:py-3 md:gap-2">
         <div className="h-10 flex items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2"><Link href="/?lang=ko&home=1" aria-label="뒤로" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="arrow_back" className="text-[22px]"/></Link><div className="min-w-0"><div className="flex items-center gap-1.5"><span className="stitch-serif truncate text-[1rem] font-semibold text-[#30251f]">우리 크루 조각</span><span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#7a8f6b]"/></div><span className="block truncate text-[10px] text-[#78675e]">실시간 {crew.members.length}명 접속중</span></div></div>
+          <div className="flex min-w-0 items-center gap-2"><Link href={crewHref} aria-label="크루 목록으로 돌아가기" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[#30251f] hover:bg-[#f6e5db]"><Icon name="arrow_back" className="text-[22px]"/></Link><div className="min-w-0"><div className="flex items-center gap-1.5"><span className="stitch-serif truncate text-[1rem] font-semibold text-[#30251f]">우리 크루 조각</span><span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#7a8f6b]"/></div><span className="block truncate text-[10px] text-[#78675e]">실시간 {crew.members.length}명 접속중</span></div></div>
           <div className="flex shrink-0 items-center gap-1"><button type="button" aria-label="북마크" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="bookmark_border" className="text-[21px]"/></button><button type="button" aria-label="공유" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="share" className="text-[21px]"/></button><Link href="/crew/settings" aria-label="내 계정" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#99452c] shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></Link></div>
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -97,7 +97,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
             <p className="stitch-sans text-[0.8125rem] leading-[1.25rem] text-[#55433d]">첫 사진을 올리면 {crew.id ? '크루 모두의' : '나만의'} 피드가 시작돼요.</p>
           </div>}
         </div>
-        <div className="sticky bottom-3 mt-6 z-30 self-center w-full max-w-sm px-2">
+        <div className="mt-6 self-center w-full max-w-sm px-2">
           <Link href={createAlbumHref} className="w-full flex items-center justify-center gap-2 bg-[#99452c] hover:bg-[#7b2e17] text-[#ffffff] py-3 px-5 rounded-2xl shadow-[0_8px_24px_rgba(153,69,44,0.35)] active:scale-98 transition-all group">
             <Icon name="photo_camera" className="text-[20px] transition-transform group-hover:rotate-[-8deg]"/>
             <span className="stitch-sans text-[0.875rem] leading-[1.25rem] font-[600] tracking-wide">새 여행 조각 묶음 올리기</span><span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">최대 30장</span>
@@ -105,7 +105,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
         </div>
       </div>
     </main>
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md md:max-w-2xl z-50 pb-[env(safe-area-inset-bottom,0px)] bg-[#fff8f5]/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(112,100,92,0.06)] md:rounded-t-2xl md:border-x md:border-t md:border-[#efdfd5]" aria-label="주요 메뉴">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 pb-[env(safe-area-inset-bottom,0px)] bg-[#fff8f5]/95 backdrop-blur-xl shadow-[0_-2px_12px_rgba(112,100,92,0.06)] md:rounded-t-2xl md:border-x md:border-t md:border-[#efdfd5]" aria-label="주요 메뉴">
       <div className="grid h-16 grid-cols-5 items-center px-2 md:h-[4.5rem] md:px-4">
         {[{ href: screenHref('home'), icon: 'cottage', text: '홈 피드', current: true }, { href: screenHref('photos'), icon: 'photo_library', text: '사진 서랍' }].map(tab =>
           <Link key={tab.text} href={tab.href} aria-current={tab.current ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${tab.current ? 'text-[#99452c] font-bold' : 'text-[#55433d] hover:text-[#221a14]'}`}><Icon name={tab.icon} className="text-[22px]"/><span className={`${label} font-[500]`}>{tab.text}</span></Link>)}
