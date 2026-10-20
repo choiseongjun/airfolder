@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronDown, Gift, Sticker, Trash2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { REWARDS } from '@/lib/piece-rewards';
-import { REWARD_PHRASES, STUDIO_STICKERS, STUDIO_STICKER_COPY, type AlbumRewardData, type RewardDecoration, type RewardPhrase, type StudioSticker } from '@/lib/reward-decoration';
+import { REWARD_PHRASES, STUDIO_STICKERS, STUDIO_STICKER_COPY, nextStickerPosition, type AlbumRewardData, type RewardDecoration, type RewardPhrase, type StudioSticker } from '@/lib/reward-decoration';
 import { RewardFriend } from './reward-friend';
 import './reward-decoration.css';
 
@@ -79,7 +79,7 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
   }
   function addSticker(id: StudioSticker['sticker']) {
     if (stickers.length >= 12) return;
-    const item: StudioSticker = { id: crypto.randomUUID(), sticker: id, kind: STUDIO_STICKERS.find(sticker => sticker.id === id)!.kind, x: 50, y: 52, size: 42, rotation: Math.round(Math.random() * 20 - 10) };
+    const item: StudioSticker = { id: crypto.randomUUID(), sticker: id, kind: STUDIO_STICKERS.find(sticker => sticker.id === id)!.kind, ...nextStickerPosition(stickers), size: 32, rotation: 0 };
     setStickerDraft([...stickers, item]); setSelectedSticker(item.id);
   }
   function moveSticker(event: PointerEvent<HTMLDivElement>) {
@@ -110,6 +110,11 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
             {stickers.map(item => { const sticker = STUDIO_STICKERS.find(candidate => candidate.id === item.sticker)!; const copy = STUDIO_STICKER_COPY[item.sticker]; const bubble = item.sticker.startsWith('bubble-'); return <button type="button" key={item.id} aria-label={ko ? `${copy?.title ?? sticker.name} 스티커 이동` : `Move ${copy?.title ?? sticker.name} sticker`} aria-pressed={selectedSticker === item.id} className={`reward-studio-sticker${bubble ? ' is-bubble' : ''}${selectedSticker === item.id ? ' is-selected' : ''}`} style={{ left: `${item.x}%`, top: `${item.y}%`, fontSize: `${item.size}px`, transform: `translate(-50%,-50%) rotate(${item.rotation}deg)` }} onPointerDown={event => { event.preventDefault(); dragging.current = item.id; setSelectedSticker(item.id); event.currentTarget.parentElement?.setPointerCapture(event.pointerId); }} onClick={() => setSelectedSticker(item.id)}><span>{sticker.emoji}</span><b>{copy?.title ?? sticker.name}</b>{bubble && <small>{copy?.caption}</small>}</button>; })}
           </div>
           <p className="reward-studio-hint">{ko ? '스티커를 골라 붙이고, 사진 위에서 끌어 원하는 자리에 놓으세요.' : 'Pick a sticker, then drag it to the spot you like.'}</p>
+          {stickers.length > 0 && <button type="button" disabled={busy} onClick={() => {
+            const arranged: StudioSticker[] = [];
+            for (const item of stickers) arranged.push({ ...item, ...nextStickerPosition(arranged), size: 32, rotation: 0 });
+            setStickerDraft(arranged);
+          }}>{ko ? '가장자리로 가지런히 정돈' : 'Arrange around the edges'}</button>}
           <div className="reward-studio-categories" role="group" aria-label={ko ? '스티커 종류' : 'Sticker categories'}>
             {([{ id: 'jokes', label: '🔥 킹받는 장난' }, { id: 'cafe', label: '📦 카페&디저트' }, { id: 'roast', label: '🗨️ 단톡 팩폭' }] as const).map(category => <button type="button" key={category.id} aria-pressed={stickerCategory === category.id} onClick={() => setStickerCategory(category.id)}>{category.label}</button>)}
           </div>

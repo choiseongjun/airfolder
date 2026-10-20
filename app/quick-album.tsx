@@ -11,7 +11,7 @@ import { mapLimit } from '@/lib/parallel';
 import ThemeAlbum from './theme-album';
 import type { MemoryItem } from './memories';
 import Consent from './growth/consent';
-import { STUDIO_STICKERS, STUDIO_STICKER_COPY, type StudioSticker } from '@/lib/reward-decoration';
+import { STUDIO_STICKERS, STUDIO_STICKER_COPY, nextStickerPosition, type StudioSticker } from '@/lib/reward-decoration';
 import './quick-album.css';
 
 type Pick = { id: string; file?: File; url: string; taken: number; video?: boolean };
@@ -104,8 +104,7 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
   function remove(id: string) { setPicks(old => old.filter(p => p.id !== id)); }
   function addStudioSticker(sticker: typeof STUDIO_STICKERS[number]) {
     if (studioStickers.length >= 12) return;
-    const index = studioStickers.length;
-    const item: StudioSticker = { id: crypto.randomUUID(), sticker: sticker.id, kind: sticker.kind, x: 20 + (index % 4) * 20, y: 23 + Math.floor(index / 4) * 24, size: sticker.kind === 'soundcon' ? 48 : 40, rotation: 0 };
+    const item: StudioSticker = { id: crypto.randomUUID(), sticker: sticker.id, kind: sticker.kind, ...nextStickerPosition(studioStickers), size: 32, rotation: 0 };
     setStudioStickers(old => [...old, item]); setSelectedStudioSticker(item.id);
   }
   function moveStudioSticker(event: PointerEvent<HTMLDivElement>) {

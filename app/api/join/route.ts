@@ -1,10 +1,8 @@
 import { ApiError, hash, json, pool, safe, sameOrigin, transaction, viewer } from '@/lib/server';
-import { requireTerms } from '@/lib/safety';
 import { trackGrowth } from '@/lib/growth';
 export async function POST(request: Request) {
   return safe(async () => {
     sameOrigin(request); const who = await viewer(), body = await json(request);
-    await requireTerms(who);
     if (typeof body.token !== 'string' || !/^[a-f\d]{64}$/.test(body.token)) throw new ApiError(400, 'INVALID_INVITE');
     const nickname = typeof body.name === 'string' ? body.name.trim() : '';
     if (nickname.length > 30) throw new ApiError(400, 'INVALID_NAME');

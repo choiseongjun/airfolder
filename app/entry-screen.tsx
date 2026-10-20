@@ -13,13 +13,13 @@ function Showcase() {
     <StitchIconFont/>
     <section className="text-center px-2">
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f6e5db] text-[#7d562d] text-[11px] font-semibold mb-2.5 border border-[#7d562d]/20">
-        <Icon name="lock_reset" className="text-[13px]"/>카톡 사진 만료 방지 · 비밀 롤링페이퍼
+        <Icon name="photo_library" className="text-[13px]"/>친구들과 함께 채우는 추억 앨범
       </div>
       <h1 style={{ fontFamily: serifStack }} className="text-[1.45rem] font-bold text-[#221a14] leading-snug tracking-tight">
-        만료 없는 단톡방 사진,<br/><span className="text-[#99452c]">사진 뒷면 비밀 아카이브</span>
+        같이 찍은 사진,<br/><span className="text-[#99452c]">우리의 앨범으로 남겨요</span>
       </h1>
       <p className="text-xs text-[#55433d] mt-2 font-medium leading-relaxed">
-        흩어지는 추억을 우리 크루만의 롤링페이퍼로<br/>오래 간직해요.
+        여행과 모임의 사진을 한곳에 모으고,<br/>친구들과 꾸미며 그날의 이야기를 남겨요.
       </p>
     </section>
     <section className="relative w-full max-w-[320px] mx-auto pt-3 pb-2 select-none">

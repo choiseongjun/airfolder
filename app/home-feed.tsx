@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Photo URLs need the viewer's session cookie; an optimizer cannot fetch them. */
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { CircleHelp, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { TERMS_VERSION } from '@/lib/policy';
 import { Icon, StitchIconFont, sansStack, stitchRoot } from './stitch-kit';
@@ -33,7 +33,6 @@ const detailHref = (item: FeedItem) => item.kind === 'photo' ? `/?lang=ko&album=
 export type FeedActions = { onSelectGroup: (id: string | null) => void; onCreateGroup?: (name: string,isPublic?:boolean) => Promise<void>; onJoinPublicGroup?:(id:string)=>Promise<void>; onLike: (item: FeedItem) => void; onComment: (item: FeedItem, body: string) => Promise<string | null>; onDelete: (item: FeedItem) => Promise<string | null>; onRefresh?: () => void; onOpenBundle?: (item: FeedItem, mode: 'gallery' | 'slideshow') => void };
 
 export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedActions }) {
-  const [feedFilter, setFeedFilter] = useState<'all' | 'trips' | 'month' | 'notes'>(() => { if (typeof window === 'undefined') return 'all'; const filter = new URLSearchParams(window.location.search).get('filter'); return filter === 'notes' || filter === 'trips' || filter === 'month' ? filter : 'all'; });
   const [picking, setPicking] = useState(false);
   const [openedAlbum, setOpenedAlbum] = useState<FeedAlbum | null>(null);
   const [fullBundle, setFullBundle] = useState<{ item: FeedItem; mode: 'gallery' | 'slideshow' } | null>(null);
@@ -47,7 +46,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
   const [termsChecked, setTermsChecked] = useState(false);
   const [termsBusy, setTermsBusy] = useState(false);
   const [shareNotice, setShareNotice] = useState('');
-  const { crew, month } = data;
+  const { crew } = data;
   const publicGroups = data.publicGroups ?? [];
   useEffect(() => {
     const syncAlbumFromUrl = () => {
@@ -77,14 +76,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
   const currentGroup = crew.id ?? 'personal';
   const screenHref = (next: 'home'|'photos'|'behind'|'settings') => next === 'home' ? `/?lang=ko&home=1&group=${encodeURIComponent(currentGroup)}` : `/crew/${next}?group=${encodeURIComponent(currentGroup)}`;
   const createAlbumHref = `/?lang=ko&quick=1&group=${encodeURIComponent(currentGroup)}&returnTo=${encodeURIComponent(`/?lang=ko&home=1&group=${encodeURIComponent(currentGroup)}`)}`;
-  const remaining = Math.max(month.goal - month.count, 0);
-  const percent = Math.min(Math.round(month.count / month.goal * 100), 100);
-  const items = data.items.filter(item => {
-    if (feedFilter === 'trips') return item.kind === 'record' && item.photoCount > 4;
-    if (feedFilter === 'month') { const date = new Date(item.createdAt); const now = new Date(); return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth(); }
-    if (feedFilter === 'notes') return item.commentCount > 0 || Boolean(item.body.trim());
-    return true;
-  });
+  const items = data.items;
   const invite = crew.id && <Link href={`${crewHref}?group=${encodeURIComponent(crew.id)}`} className="flex items-center gap-1.5 bg-[#f6e5db] hover:bg-[#f0dfd5] transition-colors px-2.5 py-1.5 rounded-full shrink-0 text-[#55433d] active:scale-95"><div className="w-6 h-6 rounded-full border-2 border-dashed border-[#88726c] flex items-center justify-center text-[#99452c]"><Icon name="person_add" className="text-[14px]"/></div><span className={`${label} font-medium`}>+ 친구 초대</span></Link>;
   async function shareSpace() {
     const url = new URL(window.location.href);
@@ -99,6 +91,13 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
       window.setTimeout(() => setShareNotice(''), 3200);
     }
   }
+  const albumWelcome = (<section className="mb-6 rounded-2xl bg-[#fcebe0] p-5">
+          <p className="text-xs font-semibold text-[#99452c]">함께 채우는 추억 앨범</p>
+          <h1 className="stitch-serif mt-2 text-2xl font-semibold leading-snug text-[#30251f]">{data.albums.length ? '그날의 이야기를 이어가요' : '우리의 첫 앨범을 만들어볼까요?'}</h1>
+          <p className="mt-2 text-sm leading-6 text-[#78675e]">사진을 모으고, 친구를 초대하고,<br/>함께 웃었던 순간을 한마디로 남겨요.</p>
+          <Link href={createAlbumHref} className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#99452c] px-4 py-3 text-sm font-semibold text-white"><Icon name="add_a_photo" className="text-xl"/>{data.albums.length ? '새 추억 앨범 만들기' : '사진으로 첫 앨범 만들기'}</Link>
+          <p className="mt-3 text-center text-[11px] leading-5 text-[#78675e]">사진 선택 → 앨범 완성 → 친구 초대</p>
+        </section>);
   if (openedAlbum) return <FeedAlbumView key={openedAlbum.id} album={openedAlbum} onBack={closeAlbum}/>;
   if (fullBundle) return <FullBundleView item={fullBundle.item} initialMode={fullBundle.mode} onBack={() => setFullBundle(null)} actions={actions}/>;
   return <div className={`${stitchRoot} crew-feed-shell h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] antialiased`} style={{ fontFamily: sansStack }}>
@@ -139,46 +138,25 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
               {actions.onCreateGroup && <button role="menuitem" type="button" onClick={async () => { setPicking(false); setSpaceName(''); setSpacePublic(false); setSpaceError(''); setCreatingSpace(true); try { const policy=await api<{accepted:boolean}>('/api/policy'); setTermsGate(!policy.accepted); } catch { setSpaceError('이용 규칙 동의 상태를 확인하지 못했어요. 다시 시도해 주세요.'); } }} className="flex items-center gap-2 border-t border-[#f0e4dc] px-3 py-2.5 text-left text-sm font-semibold text-[#99452c] hover:bg-[#fff1e9]"><Icon name="add_circle" className="text-lg"/>새 앨범 공간 만들기</button>}
           </div>}
         </section>
-        <section className="relative mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-[#fcebe0] to-[#f6e5db] px-3.5 py-3 md:px-6 md:py-5 md:rounded-2xl shadow-[0_4px_16px_-2px_rgba(112,100,92,0.08)]">
-          <div className="flex items-center justify-between gap-2"><span className={`${label} font-semibold text-[#55433d]`}>이번 달 모인 조각</span><span className="text-xs font-bold text-[#99452c]">{month.count} / {month.goal}개</span></div>
-          <p className="mt-1.5 text-[11px] leading-5 text-[#78675e]">사진 1장 또는 영상 1개가 추억 1조각이에요.</p>
-          <div className="w-full bg-white/80 h-2 rounded-full overflow-hidden p-0.5 shadow-inner mt-2"><div className="bg-[#99452c] h-full rounded-full transition-all" style={{ width: `${percent}%` }}/></div>
-          <div className="flex items-center justify-between gap-2 mt-2"><span className={`${label} text-[#55433d] truncate`}>{remaining ? crew.id ? `${crew.name} 멤버가 함께 ${remaining}조각 더 모아요` : `내 개인 공간에 ${remaining}조각 더 모아요` : '이번 달 조각을 모두 모았어요 🎉'}</span><span className="flex items-center -space-x-1.5 shrink-0">{month.contributors.slice(0, 4).map(p => <span key={p.id} className={`w-5 h-5 rounded-full border border-[#f6e5db] text-[9px] flex items-center justify-center ${p.mine ? 'font-bold' : ''} ${tone(p)}`}>{initial(p)}</span>)}</span></div>
-          <details className="group mt-3 border-t border-[#e6cdbd] pt-1">
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg text-xs font-semibold text-[#99452c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#99452c] [&::-webkit-details-marker]:hidden">
-              <span className="flex items-center gap-1.5"><CircleHelp aria-hidden="true" size={16} className="shrink-0"/>조각이 뭐예요?</span>
-              <Icon name="expand_more" className="text-lg transition-transform group-open:rotate-180"/>
-            </summary>
-            <div className="rounded-xl bg-white/70 p-3.5 text-xs leading-6 text-[#55433d]">
-              <p className="stitch-serif mb-3 text-sm font-semibold text-[#30251f]">함께 모은 순간을 ‘조각’이라고 불러요.</p>
-              <dl className="space-y-3">
-                <div><dt className="font-semibold text-[#30251f]">어떻게 세나요?</dt><dd>사진 3장과 영상 1개를 올리면 4조각이에요. 앨범이나 기록으로 묶어도 사진·영상 개수대로 세며, 글·댓글·롤링페이퍼는 포함하지 않아요.</dd></div>
-                <div><dt className="font-semibold text-[#30251f]">어떤 조각이 포함되나요?</dt><dd>{crew.id ? '지금 선택한 크루의 앨범에서 내가 볼 수 있는 사진·영상' : '내 공간의 앨범에서 내가 볼 수 있는 사진·영상'} 중 이번 달에 업로드한 것만 세어요. 촬영한 날짜와는 관계없고, 삭제한 항목은 제외돼요.</dd></div>
-                <div><dt className="font-semibold text-[#30251f]">{month.goal}개는 무슨 뜻인가요?</dt><dd>{crew.id ? '크루가 함께 모으는' : '내 공간에 모으는'} 월간 목표예요. 업로드 한도가 아니어서 넘겨도 계속 올릴 수 있고, 매일 채울 필요는 없어요.</dd></div>
-                <div><dt className="font-semibold text-[#30251f]">다음 달에는요?</dt><dd>새 달에 업로드한 조각을 다시 세어요. 이전에 올린 사진·영상은 앨범에 그대로 남아요.</dd></div>
-              </dl>
-            </div>
-          </details>
-        </section>
+        {!data.albums.length && albumWelcome}
         <section className="mb-5" aria-label="공간 앨범">
-          <div className="mb-2 flex items-center justify-between"><h2 id="feed-albums" className="stitch-serif scroll-mt-24 text-base font-semibold text-[#30251f]">{crew.id ? '이 공간의 앨범' : '내 앨범'}</h2><span className="text-[10px] text-[#78675e]">{data.albums.length}개</span></div>
-          {data.albums.length ? <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 no-scrollbar">{data.albums.map(album=><button type="button" key={album.id} onClick={()=>openAlbum(album)} className="text-left w-36 shrink-0 overflow-hidden rounded-xl border border-[#efdfd5] bg-white shadow-[0_3px_12px_rgba(112,100,92,.07)]"><div className="aspect-[4/3] bg-[#f3e5dc]">{album.cover?<img src={album.cover} alt="" className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center text-3xl text-[#b89170]">📖</div>}</div><div className="p-2.5"><strong className="block truncate text-xs text-[#30251f]">{album.name}</strong><span className="mt-1 block text-[10px] text-[#78675e]">{album.category} · 사진 {album.photoCount}장</span></div></button>)}</div> : <p className="rounded-xl bg-white/80 px-3 py-3 text-[11px] text-[#78675e]">아직 앨범이 없어요. 사진을 담으면 이곳에서 바로 볼 수 있어요.</p>}
+          <div className="mb-2 flex items-center justify-between"><h2 id="feed-albums" className="stitch-serif scroll-mt-24 text-base font-semibold text-[#30251f]">최근 앨범</h2><span className="text-[10px] text-[#78675e]">{data.albums.length}개</span></div>
+          {data.albums.length ? <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 no-scrollbar">{data.albums.map(album=><button type="button" key={album.id} onClick={()=>openAlbum(album)} className="text-left w-48 shrink-0 overflow-hidden rounded-xl border border-[#efdfd5] bg-white shadow-[0_3px_12px_rgba(112,100,92,.07)]"><div className="aspect-[4/3] bg-[#f3e5dc]">{album.cover?<img src={album.cover} alt="" className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center text-3xl text-[#b89170]">📖</div>}</div><div className="p-2.5"><strong className="block truncate text-xs text-[#30251f]">{album.name}</strong><span className="mt-1 block text-[10px] text-[#78675e]">사진 {album.photoCount}장 · 앨범 열기</span></div></button>)}</div> : <p className="rounded-xl bg-white/80 px-3 py-3 text-[11px] text-[#78675e]">아직 앨범이 없어요. 사진을 담으면 이곳에서 바로 볼 수 있어요.</p>}
         </section>
-        <section className="flex items-center gap-2 overflow-x-auto no-scrollbar mb-4 md:mb-6" aria-label="피드 보기">
-          {([{ id: 'all', text: '전체 피드' }, { id: 'trips', text: '✈️ 여행·이벤트' }, { id: 'month', text: '📅 이번 달' }, { id: 'notes', text: '🏷️ 뒷면 낙서' }] as const).map(filter => <button key={filter.id} type="button" aria-pressed={feedFilter === filter.id} onClick={() => setFeedFilter(filter.id)} className={`px-3 py-1.5 rounded-full ${label} shrink-0 transition-colors ${feedFilter === filter.id ? 'bg-[#99452c] text-white font-semibold shadow-xs' : 'bg-[#fcebe0] text-[#55433d] hover:bg-[#f6e5db]'}`}>{filter.text}</button>)}
-        </section>
+        {!!data.albums.length && albumWelcome}
+        <div className="mb-4 mt-3"><h2 className="stitch-serif text-lg font-semibold text-[#30251f]">최근 기록</h2><p className="mt-1 text-xs leading-5 text-[#78675e]">이 공간에서 볼 수 있는 최근 기록 12개예요. 이전 사진은 앨범에서 이어보세요.</p></div>
         <div className="mx-auto flex w-full max-w-[780px] flex-col gap-6">
           {items.map((item, index) => <FeedCard key={item.kind + item.id} item={item} index={index} owner={crew.ownerId} actions={{...actions,onOpenBundle:(bundle,mode)=>setFullBundle({item:bundle,mode})}}/>)}
           {!items.length && <div className="flex flex-col items-center text-center gap-2 bg-[#ffffff] rounded-2xl shadow-[0_4px_20px_-2px_rgba(112,100,92,0.08)] px-5 py-10">
             <Icon name="photo_library" className="text-[32px] text-[#bf9061]"/>
-            <p className="stitch-serif text-[1.25rem] leading-[1.75rem] font-[500]">{feedFilter === 'trips' ? '아직 여행 묶음이 없어요' : feedFilter === 'month' ? '이번 달 기록이 아직 없어요' : feedFilter === 'notes' ? '뒷면 낙서가 아직 없어요' : '아직 올라온 조각이 없어요'}</p>
+            <p className="stitch-serif text-[1.25rem] leading-[1.75rem] font-[500]">아직 남긴 기록이 없어요</p>
             <p className="stitch-sans text-[0.8125rem] leading-[1.25rem] text-[#55433d]">첫 사진을 올리면 {crew.id ? '크루 모두의' : '나만의'} 피드가 시작돼요.</p>
           </div>}
         </div>
         <div className="mt-6 self-center w-full max-w-sm px-2">
           <Link href={createAlbumHref} className="w-full flex items-center justify-center gap-2 bg-[#99452c] hover:bg-[#7b2e17] text-[#ffffff] py-3 px-5 rounded-2xl shadow-[0_8px_24px_rgba(153,69,44,0.35)] active:scale-98 transition-all group">
             <Icon name="photo_camera" className="text-[20px] transition-transform group-hover:rotate-[-8deg]"/>
-            <span className="stitch-sans text-[0.875rem] leading-[1.25rem] font-[600] tracking-wide">새 여행 조각 묶음 올리기</span><span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">최대 30장</span>
+            <span className="stitch-sans text-[0.875rem] leading-[1.25rem] font-[600] tracking-wide">새 추억 앨범 만들기</span><span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">최대 30장</span>
           </Link>
         </div>
       </div>

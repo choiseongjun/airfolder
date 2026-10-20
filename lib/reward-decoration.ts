@@ -32,6 +32,19 @@ export const STUDIO_STICKER_COPY: Record<string, { category: 'jokes' | 'cafe' | 
   'bubble-wow': { category: 'jokes', title: '이게 실화야?', caption: '지금 표정 봤어?' }, 'bubble-cute': { category: 'cafe', title: '오늘 너무 좋다', caption: '우리 또 오자 ♡' }, 'bubble-note': { category: 'roast', title: '속마음: 집 가고 싶다', caption: '근데 디저트는 먹고 감' },
 };
 export type StudioSticker = { id: string; sticker: typeof STUDIO_STICKERS[number]['id']; kind: typeof STUDIO_STICKERS[number]['kind']; x: number; y: number; size: number; rotation: number };
+/** Prefer an unoccupied edge position so new stickers do not stack over the photo's center. */
+export function nextStickerPosition(stickers: Pick<StudioSticker, 'x' | 'y'>[]) {
+  const slots = [
+    { x: 22, y: 12 }, { x: 78, y: 88 }, { x: 78, y: 12 }, { x: 22, y: 88 },
+    { x: 20, y: 36 }, { x: 80, y: 64 }, { x: 20, y: 64 }, { x: 80, y: 36 },
+    { x: 50, y: 12 }, { x: 50, y: 88 }, { x: 20, y: 50 }, { x: 80, y: 50 },
+  ];
+  if (!stickers.length) return slots[0];
+  return slots.reduce((best, slot) => {
+    const distance = (point: typeof slot) => Math.min(...stickers.map(item => (item.x - point.x) ** 2 + (item.y - point.y) ** 2));
+    return distance(slot) > distance(best) ? slot : best;
+  });
+}
 export type RewardDecoration = { character?: string; outfit?: string; phrase?: RewardPhrase; stickers?: StudioSticker[] };
 export type AlbumRewardData = {
   cover: RewardDecoration | null;
