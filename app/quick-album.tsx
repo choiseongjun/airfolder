@@ -66,7 +66,7 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
   const [saving, setSaving] = useState(''), [error, setError] = useState('');
   const urls = useRef<string[]>([]), [todayKey] = useState(() => dayKey(Date.now()));
   useEffect(() => { let active = true; api<{ accepted: boolean }>('/api/policy').then(p => { if (active) setAccepted(p.accepted); }).catch(() => { if (active) setAccepted(false); }); return () => { active = false; }; }, []);
-  useEffect(() => { if (!groupId) { setCrewMeta(null); return; } let active = true; api<{crew: {name: string | null; members: unknown[]}}>(`/api/feed?group=${encodeURIComponent(groupId)}`).then(data => { if (active) setCrewMeta({name: data.crew.name || t('우리 크루', 'Our crew'), members: data.crew.members.length}); }).catch(() => { if (active) setCrewMeta({name: t('선택한 크루', 'Selected crew'), members: 1}); }); return () => { active = false; }; }, [groupId, locale]);
+  useEffect(() => { if (!groupId) return; let active = true; api<{crew: {name: string | null; members: unknown[]}}>(`/api/feed?group=${encodeURIComponent(groupId)}`).then(data => { if (active) setCrewMeta({name: data.crew.name || (locale === 'ko' ? '우리 크루' : 'Our crew'), members: data.crew.members.length}); }).catch(() => { if (active) setCrewMeta({name: (locale === 'ko' ? '선택한 크루' : 'Selected crew'), members: 1}); }); return () => { active = false; }; }, [groupId, locale]);
   useEffect(() => () => urls.current.forEach(u => URL.revokeObjectURL(u)), []);
   useEffect(() => { const overflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; return () => { document.body.style.overflow = overflow; }; }, []);
 
@@ -211,8 +211,8 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
         const photoIds = d.picks.map(p => p.id).filter(id => uploaded.has(id));
         if (photoIds.length) await api('/api/memories', { method: 'POST', body: JSON.stringify({ id: crypto.randomUUID(), folderId, title: '', body: d.note, day: d.key, shared: true, photoIds }) }).catch(() => {});
       }
-      // Keep the theme they picked in the preview.
-      try { const picked = localStorage.getItem('memonestia-album-theme:quick-preview'); if (picked) { localStorage.setItem('memonestia-album-theme:' + folderId, picked); localStorage.removeItem('memonestia-album-theme:quick-preview'); } } catch {}
+      // Persist the preview theme for invited friends as well as this browser.
+      try { const picked = localStorage.getItem('memonestia-album-theme:quick-preview'); if (picked) { await api('/api/folders', { method: 'PUT', body: JSON.stringify({ action: 'style', id: folderId, theme: picked }) }); localStorage.setItem('memonestia-album-theme:' + folderId, picked); localStorage.removeItem('memonestia-album-theme:quick-preview'); } } catch {}
       onSaved(folderId);
     } catch { setError(t('저장하지 못했어요. 연결을 확인하고 다시 눌러 주세요.', 'Could not save. Check your connection and try again.')); }
     finally { setSaving(''); }
@@ -226,13 +226,11 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
     </header>
 
     {step === 'pick' && <section className="qa-body">
-      <div className="qa-crew-card"><span className="qa-crew-lock">⌑</span><span><b>{crewMeta?.name || t('내 공간', 'My space')}</b><small>{crewMeta ? t(`멤버 ${crewMeta.members}명 · 비공개 보관함`, `${crewMeta.members} members · private album`) : t('나만 볼 수 있는 비공개 보관함', 'A private album only you can see')}</small></span><i>비공개</i></div>
+      <div className="qa-crew-card"><span className="qa-crew-lock">⌑</span><span><b>{(groupId ? crewMeta?.name : null) || (groupId ? t('선택한 크루', 'Selected crew') : t('내 공간', 'My space'))}</b><small>{groupId ? t('저장하면 크루 멤버에게 공유돼요', 'Shared with crew members when saved') : t('초대 전에는 나만, 초대 후에는 앨범 멤버와 공유', 'Only you until you invite others; then shared with album members')}</small></span><i>{groupId ? t('크루 공유', 'Crew') : t('초대형 앨범', 'Invite-only')}</i></div>
       <span className="qa-eyebrow">{editItem ? t('기존 기록 수정 중', 'EDITING A MEMORY') : t('새 추억 보관함 생성 중', 'A NEW MEMORY ALBUM')}</span>
-      <h2>{editItem ? t('앨범 이름과 사진을 확인해 주세요', 'Check the title and photos') : t('앨범에 어떤 이름을 붙일까요?', 'What should we call this album?')}</h2>
-      <label className="qa-field">{t('앨범 이름', 'Album name')}<input maxLength={60} value={name} onChange={e => setName(e.target.value)} placeholder={autoTitle} /></label>
-      <div className="qa-date-card"><span className="qa-date-icon">▦</span><span><b>{t('기억된 날짜', 'Memory dates')}</b><small>{picks.length ? `${new Date(first + 'T12:00:00').toLocaleDateString(ko ? 'ko-KR' : 'en-US')}${first !== last ? ` — ${new Date(last + 'T12:00:00').toLocaleDateString(ko ? 'ko-KR' : 'en-US')}` : ''}` : t('사진 촬영일을 읽어 자동으로 정리해요', 'Dates are read from the selected photos')}</small></span><span className="qa-date-auto">EXIF</span></div>
-      <div className="qa-theme-note"><span>✦</span><span><b>{t('앨범책 스타일', 'Album style')}</b><small>{t('앨범의 배경과 사진 배치예요. 사진을 고른 뒤 미리보기에서 바꿀 수 있어요.', 'Controls the album background and photo layout. Choose photos first, then change it in the preview.')}</small></span></div>
-      <div className="qa-photo-heading"><span><b>{editItem ? t('현재 기록 사진', 'Current photos') : t('기록 조각들', 'Photo moments')}</b><small>{picks.length}{t('장 선택됨', ' selected')}</small></span><small>{t(`최대 ${MAX_PHOTOS}장`, `Up to ${MAX_PHOTOS}`)}</small></div>
+      <h2>{editItem ? t('앨범 이름과 사진을 확인해 주세요', 'Check the title and photos') : t('함께 찍은 사진 몇 장이면 충분해요', 'A few photos are all you need')}</h2>
+      <p>{t('사진을 고르면 날짜와 한 줄을 담아 앨범으로 꾸며드려요. 이름과 꾸미기는 나중에 바꿔도 돼요.', 'Choose photos for an album with dates and captions. Change the title and decorations later.')}</p>
+      <div className="qa-photo-heading"><span><b>{editItem ? t('현재 기록 사진', 'Current photos') : t('함께 남길 사진', 'Photos to keep')}</b><small>{picks.length}{t('장 선택됨', ' selected')}</small></span><small>{t(`최대 ${MAX_PHOTOS}장`, `Up to ${MAX_PHOTOS}`)}</small></div>
       <div className="qa-sources">
         <label className="qa-source"><ImagePlus size={26} /><strong>{t('앨범에서 여러 장 고르기', 'Choose photos')}</strong><input type="file" accept="image/*,.heic,.heif" multiple onChange={e => { void add(Array.from(e.target.files || [])); e.target.value = ''; }} /></label>
         <label className="qa-source"><Camera size={26} /><strong>{t('사진 찍기', 'Take a photo')}</strong><input type="file" accept="image/*" capture="environment" onChange={e => { void add(Array.from(e.target.files || [])); e.target.value = ''; }} /></label>
@@ -256,7 +254,9 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
 
     {step === 'preview' && <section className="qa-body qa-preview">
       <div className="qa-edit-bar"><span>{dayCount > 1 ? t(`${dayCount}일로 나눠 꾸몄어요`, `Sorted into ${dayCount} days`) : t('자동으로 꾸몄어요', 'Decorated for you')}</span><button onClick={() => setStep('note')}><PencilLine size={14} />{t('제목·한 줄 바꾸기', 'Edit title & line')}</button></div>
-      {!editItem && <section className="qa-studio" aria-label={t('앨범 꾸미기', 'Decorate album')}>
+      <ThemeAlbum folderId="quick-preview" title={title} description="" locale={locale} browsing={false} localItems={items} onPhoto={() => {}} />
+      {!editItem && <details className="qa-studio" aria-label={t('앨범 꾸미기', 'Decorate album')}>
+        <summary>{t('스티커로 더 꾸미기 (선택)', 'Add stickers (optional)')}</summary>
         <div className="qa-studio-title"><span>✦</span><div><small>{t('앨범 생성 전에 바로 꾸며요', 'DECORATE BEFORE SAVING')}</small><strong>{t('다꾸 스튜디오', 'Sticker studio')}</strong><p>{t('스티커·이모지·사운드콘을 사진에 붙여 원하는 곳에 놓아보세요.', 'Add stickers, emoji and sound-con reactions to your cover photo.')}</p></div></div>
         <div className="qa-studio-stage" ref={studioStage} onPointerMove={moveStudioSticker} onPointerUp={() => { studioDragging.current = null; }} onPointerCancel={() => { studioDragging.current = null; }}>
           {picks.find(p => !p.video) ? <img src={picks.find(p => !p.video)!.url} alt="" draggable={false}/> : <div className="qa-studio-empty">{t('앨범 사진을 고르면 표지가 여기에 보여요.', 'Choose photos to preview the album cover.')}</div>}
@@ -270,9 +270,9 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
         <div className="qa-studio-combo"><strong>♡ {t('감정 콤보 스티커', 'Mood stickers')}</strong><span>{t(`내가 고른 ${studioStickers.length}개`, `${studioStickers.length} selected`)}</span><div>{['💗','🥐','🤣','🔥','💸'].map((emoji,index)=>{ const stickerId = ['heart','croissant','laugh','fire','money'][index]; const count = studioStickers.filter(item => item.sticker === stickerId).length; return <button type="button" key={emoji} aria-label={t(`${emoji} 이모지 추가`, `Add ${emoji}`)} onClick={()=>addStudioSticker(STUDIO_STICKERS.find(item=>item.id===stickerId)!)}>{emoji}<small>{count}</small></button>; })}</div></div>
         {selectedStudioSticker && <div className="qa-studio-adjust"><label>{t('스티커 크기', 'Sticker size')}<input type="range" min="24" max="88" value={studioStickers.find(item => item.id === selectedStudioSticker)?.size ?? 40} onChange={event => setStudioStickers(old => old.map(item => item.id === selectedStudioSticker ? { ...item, size: Number(event.target.value) } : item))}/></label><button type="button" onClick={() => { setStudioStickers(old => old.filter(item => item.id !== selectedStudioSticker)); setSelectedStudioSticker(null); }}>{t('선택 삭제', 'Remove')}</button></div>}
         {studioStickers.length >= 12 && <p className="qa-studio-limit">{t('앨범 하나에 꾸미기 요소를 최대 12개까지 넣을 수 있어요.', 'Up to 12 decorations per album.')}</p>}
-      </section>}
+      </details>}
       {grouped > 0 && <p className="qa-days">{t(`비슷한 사진은 한 장으로 예쁘게 묶었어요 (${grouped}곳)`, `Grouped similar shots into one frame (${grouped})`)}</p>}
-      <ThemeAlbum folderId="quick-preview" title={title} description="" locale={locale} browsing={false} localItems={items} onPhoto={() => {}} />
+      <p className="qa-audience">{editItem ? t('기존 기록의 공개 범위를 유지해요.', 'This keeps the memory’s existing audience.') : groupId ? t('저장하면 크루 멤버가 사진과 한마디를 볼 수 있어요.', 'Crew members can see these photos and captions once saved.') : t('저장한 뒤 친구를 초대하면 함께 볼 수 있어요. 초대 링크를 가진 사람은 공유된 사진을 보고 참여할 수 있어요.', 'After saving, invite friends to view it together. Anyone with the invite link can see shared photos and join.')}</p>
       <div className="qa-dock">
         {accepted === false && <Consent ko={ko} checked={consent} onChange={setConsent} />}
         {error && <p className="qa-error" role="alert">{error}</p>}

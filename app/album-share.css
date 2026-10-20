@@ -26,3 +26,5 @@
  .share-sheet{max-width:none;border-radius:22px 22px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
  .share-preview{height:260px}
 }
+
+.share-audience{margin:14px 0;padding:14px;border-radius:14px;background:#f7efe7;font-size:12px;line-height:1.7}.share-audience p{margin:6px 0}.share-audience small{color:#78675e}

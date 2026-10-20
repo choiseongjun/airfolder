@@ -109,3 +109,5 @@
 .qa-days{margin:14px 0 0;font-size:13px;font-weight:700;color:var(--brand)}
 .qa-edit-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;font-size:13px;font-weight:700;color:var(--ink-soft)}
 .qa-edit-bar button{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid var(--brand-line);border-radius:999px;background:var(--card);color:var(--brand);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+
+.qa-studio>summary{cursor:pointer;font-weight:700;padding:8px 0}.qa-audience{padding:14px;border-radius:12px;background:#f5eee6;font-size:12px;line-height:1.7}

@@ -5,11 +5,10 @@ export async function POST(request: Request) { return safe(async () => {
   sameOrigin(request);
   const who = await viewer(), body = await json(request);
   if (typeof body.token !== 'string' || !/^[a-f\d]{64}$/.test(body.token)) throw new ApiError(400, 'INVALID_INVITE');
-  // Holding the invite link is the access control for this count, same as for the album
-  // itself (see /api/join/album) — it covers every photo, not only ones shared with members.
+  // Counts match what an invite holder can actually preview.
   const result = await pool().query(`SELECT f.id,f.name,'album' AS kind,i.expires_at,f.owner_id=$2 AS owner,f.category,to_char(f.ends_on,'YYYY-MM-DD') AS day,
-      (SELECT count(*)::int FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND NOT p.safety_hidden) AS photos,
-      (SELECT count(DISTINCT p.owner_id)::int FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND NOT p.safety_hidden) AS people
+      (SELECT count(*)::int FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND NOT p.safety_hidden AND p.shared AND cardinality(p.recipients)=0 AND NOT p.capsule_hold) AS photos,
+      (SELECT count(DISTINCT p.owner_id)::int FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND NOT p.safety_hidden AND p.shared AND cardinality(p.recipients)=0 AND NOT p.capsule_hold) AS people
     FROM snaproom.invites i JOIN snaproom.folders f ON f.id=i.folder_id AND f.deleted_at IS NULL
     WHERE i.token_hash=$1 AND i.expires_at>now() AND f.group_id IS NULL
     UNION ALL SELECT g.id,g.name,'group' AS kind,i.expires_at,g.owner_id=$2 AS owner,NULL,NULL,NULL,NULL
