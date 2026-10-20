@@ -1,8 +1,10 @@
 CREATE TABLE IF NOT EXISTS snaproom.groups (
  id uuid PRIMARY KEY, owner_id uuid NOT NULL REFERENCES snaproom.viewers(id),
  name text NOT NULL CHECK(length(name) BETWEEN 1 AND 80),
- description text NOT NULL DEFAULT '' CHECK(length(description)<=500), created_at timestamptz NOT NULL DEFAULT now()
+ description text NOT NULL DEFAULT '' CHECK(length(description)<=500),
+ is_public boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE snaproom.groups ADD COLUMN IF NOT EXISTS is_public boolean NOT NULL DEFAULT false;
 CREATE TABLE IF NOT EXISTS snaproom.group_members (
  group_id uuid NOT NULL REFERENCES snaproom.groups(id) ON DELETE CASCADE,
  viewer_id uuid NOT NULL REFERENCES snaproom.viewers(id) ON DELETE CASCADE,

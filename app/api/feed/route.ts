@@ -12,8 +12,18 @@ export async function GET(request:Request){await connection();return safe(async(
  try{new Intl.DateTimeFormat('en',{timeZone:zone}).format();}catch{throw new ApiError(400,'INVALID_TIMEZONE');}
  const db=pool();
  await db.query('SELECT snaproom.reveal_due_capsules($1)',[who]);
- const groups=(await db.query(`SELECT g.id,g.name,g.owner_id,(SELECT count(*)::int FROM snaproom.group_members WHERE group_id=g.id) members
-  FROM snaproom.groups g JOIN snaproom.group_members m ON m.group_id=g.id AND m.viewer_id=$1 ORDER BY g.created_at DESC`,[who])).rows;
+ const groups=(await db.query(`SELECT g.id,g.name,g.owner_id,g.is_public,
+   COALESCE(NULLIF(a.display_name,''),v.display_name,'크루 리더') owner_name,
+   (SELECT count(*)::int FROM snaproom.group_members WHERE group_id=g.id) members
+  FROM snaproom.groups g JOIN snaproom.group_members m ON m.group_id=g.id AND m.viewer_id=$1
+  JOIN snaproom.viewers v ON v.id=g.owner_id LEFT JOIN snaproom.accounts a ON a.viewer_id=g.owner_id
+  ORDER BY g.created_at DESC`,[who])).rows;
+ const publicGroups=(await db.query(`SELECT g.id,g.name,g.description,
+   COALESCE(NULLIF(a.display_name,''),v.display_name,'크루 리더') owner_name,
+   (SELECT count(*)::int FROM snaproom.group_members WHERE group_id=g.id) members
+  FROM snaproom.groups g JOIN snaproom.viewers v ON v.id=g.owner_id LEFT JOIN snaproom.accounts a ON a.viewer_id=g.owner_id
+  WHERE g.is_public=true AND NOT EXISTS(SELECT 1 FROM snaproom.group_members m WHERE m.group_id=g.id AND m.viewer_id=$1)
+  ORDER BY g.created_at DESC LIMIT 30`,[who])).rows;
  // No choice yet: open the newest crew, or the personal space when there is none.
  const group=requested==='personal'?null:requested?uuid(requested):groups[0]?.id??null;
  const crew=group?groups.find(g=>g.id===group):null;
@@ -71,7 +81,8 @@ export async function GET(request:Request){await connection();return safe(async(
 
  return Response.json({
   me:who,
-  groups:groups.map(g=>({id:g.id,name:g.name,members:g.members})),
+  groups:groups.map(g=>({id:g.id,name:g.name,members:g.members,mine:g.owner_id===who,ownerName:g.owner_name,isPublic:g.is_public})),
+  publicGroups:publicGroups.map(g=>({id:g.id,name:g.name,description:g.description,ownerName:g.owner_name,members:g.members})),
   albums:albums.map(a=>({id:a.id,name:a.name,category:a.category,photoCount:a.photo_count,cover:a.cover_id?`/api/photos/${a.cover_id}/content`:null,updatedAt:a.updated_at})),
   crew:{id:group,name:crew?.name??null,ownerId:crew?.owner_id??null,members:members.map(m=>({...m,mine:m.id===who}))},
   month:{count:month.count,today:month.today,goal:MONTHLY_GOAL,contributors:month.contributors.map(person)},

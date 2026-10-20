@@ -8,7 +8,7 @@ import {isBrowse} from '@/lib/browse-data';
 import type {Locale} from './i18n';
 import './group-space.css';
 import MembersPanel from './members-panel';
-export type Group={id:string;name:string;description:string;mine:boolean;muted:boolean;members:number;albums:number};
+export type Group={id:string;name:string;description:string;mine:boolean;muted:boolean;members:number;albums:number;is_public?:boolean};
 type Member={id:string;name:string;mine:boolean;owner:boolean};
 export default function Groups({locale,selected,onSelect,onChanged,revision}:{locale:Locale;selected:string|null;onSelect:(id:string|null)=>void;onChanged:()=>Promise<void>;revision:string}){
  const ko=locale==='ko',text=(a:string,b:string)=>ko?a:b;

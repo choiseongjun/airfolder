@@ -13,7 +13,7 @@ export async function GET(request:Request){await connection();return safe(async(
   const invites=await pool().query('SELECT i.expires_at FROM snaproom.group_invites i JOIN snaproom.groups g ON g.id=i.group_id WHERE i.group_id=$1 AND g.owner_id=$2 AND i.expires_at>now()',[id,who]);
   return Response.json({members:members.rows,invites:invites.rows},{headers:{'Cache-Control':'private, no-store'}});
  }
- const result=await pool().query(`SELECT g.id,g.name,g.description,g.owner_id=$1 mine,m.muted,
+ const result=await pool().query(`SELECT g.id,g.name,g.description,g.is_public is_public,g.owner_id=$1 mine,m.muted,
  (SELECT count(*)::int FROM snaproom.group_members WHERE group_id=g.id) members,
  (SELECT count(*)::int FROM snaproom.folders WHERE group_id=g.id AND deleted_at IS NULL) albums
  FROM snaproom.groups g JOIN snaproom.group_members m ON m.group_id=g.id AND m.viewer_id=$1 ORDER BY g.created_at DESC`,[who]);
@@ -24,13 +24,17 @@ export async function POST(request:Request){return safe(async()=>{
  const id=await transaction(async db=>{
   await db.query('SELECT pg_advisory_xact_lock(hashtext($1))',['group-create:'+who]);
   const count=await db.query('SELECT count(*)::int n FROM snaproom.groups WHERE owner_id=$1',[who]);if(count.rows[0].n>=50)throw new ApiError(409,'GROUP_LIMIT');
-  const id=randomUUID();await db.query('INSERT INTO snaproom.groups(id,owner_id,name,description) VALUES($1,$2,$3,$4)',[id,who,textBody(b.name,80),b.description?textBody(b.description,500):'']);
+  const id=randomUUID();await db.query('INSERT INTO snaproom.groups(id,owner_id,name,description,is_public) VALUES($1,$2,$3,$4,$5)',[id,who,textBody(b.name,80),b.description?textBody(b.description,500):'',b.isPublic===true]);
   await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id) VALUES($1,$2)',[id,who]);return id;
  });return Response.json({id},{status:201});
 });}
 export async function PATCH(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),b=await json(request),id=uuid(b.id);await requireTerms(who);
  const data=await transaction(async db=>{
+  if(b.action==='joinPublic'){
+   const group=await db.query('SELECT id FROM snaproom.groups WHERE id=$1 AND is_public=true FOR UPDATE',[id]);if(!group.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');
+   await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id) VALUES($1,$2) ON CONFLICT(group_id,viewer_id) DO NOTHING',[id,who]);return {ok:true};
+  }
   const rows=await db.query('SELECT * FROM snaproom.groups WHERE id=$1 FOR UPDATE',[id]);if(!rows.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');const group=rows.rows[0];
   const membership=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[id,who]);if(!membership.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');
   if(b.action==='mute'){if(typeof b.muted!=='boolean')throw new ApiError(400,'INVALID_SETTING');await db.query('UPDATE snaproom.group_members SET muted=$3 WHERE group_id=$1 AND viewer_id=$2',[id,who,b.muted]);return {ok:true};}
@@ -44,6 +48,7 @@ export async function PATCH(request:Request){return safe(async()=>{
    await db.query('DELETE FROM snaproom.group_invites WHERE group_id=$1',[id]);return {ok:true};
   }
   if(group.owner_id!==who)throw new ApiError(403,'OWNER_REQUIRED');
+  if(b.action==='visibility'){if(typeof b.isPublic!=='boolean')throw new ApiError(400,'INVALID_SETTING');await db.query('UPDATE snaproom.groups SET is_public=$2 WHERE id=$1',[id,b.isPublic]);return {ok:true};}
   if(b.action==='invite'){
    const token=randomBytes(32).toString('hex');await db.query('DELETE FROM snaproom.group_invites WHERE group_id=$1',[id]);
    await db.query('INSERT INTO snaproom.group_invites(token_hash,group_id) VALUES($1,$2)',[hash(token),id]);return {token};
