@@ -15,7 +15,8 @@ export function trackGrowth(input: GrowthInput) {
       if (requestHeaders.get('dnt') === '1' || requestHeaders.get('sec-gpc') === '1') return;
       const attribution = attributionFromCookie(requestHeaders.get('cookie') || '');
       if (attribution) await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,environment,properties,created_at)
-        VALUES($1,'site_visit',$2,$3,$4,$5) ON CONFLICT(event_key) DO NOTHING`,
+        VALUES($1,'site_visit',$2,$3,$4,$5) ON CONFLICT(event_key) DO UPDATE SET properties=EXCLUDED.properties,
+        created_at=LEAST(growth_events.created_at,EXCLUDED.created_at) WHERE growth_events.properties->>'journey_id' IS NULL`,
         [`visit:${attribution.journey_id}`, input.who, growthEnvironment(), growthProperties(attribution), new Date(attribution.acquired_at)]);
       await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,context_id,environment,properties)
         VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(event_key) DO NOTHING`,

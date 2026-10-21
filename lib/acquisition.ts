@@ -4,8 +4,8 @@ const slug = (value: unknown) => typeof value === 'string' && /^[a-z0-9][a-z0-9_
 export function parseAttribution(raw: string | undefined, now = Date.now()): Attribution | null {
   try {
     const a = JSON.parse(decodeURIComponent(raw || ''));
-    if (!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(a.journey_id) || !Number.isFinite(a.acquired_at) || a.acquired_at > now || now - a.acquired_at > 30 * 86400000) return null;
-    return { journey_id: a.journey_id, acquired_at: a.acquired_at, campaign_source: slug(a.campaign_source) || 'direct', campaign_medium: slug(a.campaign_medium) || 'none', campaign_name: slug(a.campaign_name) || 'none' };
+    if (!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(a.journey_id) || !Number.isFinite(a.acquired_at) || a.acquired_at > now + 300000 || now - a.acquired_at > 30 * 86400000) return null;
+    return { journey_id: a.journey_id, acquired_at: Math.min(a.acquired_at, now), campaign_source: slug(a.campaign_source) || 'direct', campaign_medium: slug(a.campaign_medium) || 'none', campaign_name: slug(a.campaign_name) || 'none' };
   } catch { return null; }
 }
 export function attributionFromCookie(cookie: string) {

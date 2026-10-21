@@ -15,6 +15,8 @@ test('attribution survives OAuth cookie encoding and rejects expired or malforme
  const encoded=encodeURIComponent(JSON.stringify(value));
  assert.equal(a.attributionFromCookie(`other=1; memonestia_attribution=${encoded}`).campaign_name,'birthday');
  assert.equal(a.parseAttribution(encoded,value.acquired_at+31*86400000),null);
+ assert.equal(a.parseAttribution(encoded,value.acquired_at-200).acquired_at,value.acquired_at-200);
+ assert.equal(a.parseAttribution(encoded,value.acquired_at-600000),null);
  assert.equal(a.parseAttribution(encodeURIComponent(JSON.stringify({...value,journey_id:'email@example.com'}))),null);
  assert.equal(a.parseAttribution(encodeURIComponent(JSON.stringify({...value,campaign_name:'https://private/link?email=x'}))).campaign_name,'none');
 });
