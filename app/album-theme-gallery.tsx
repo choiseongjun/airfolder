@@ -1,0 +1,22 @@
+'use client';
+import { useState } from 'react';
+import Link from 'next/link';
+import ThemeAlbum from './theme-album';
+import { albumTemplates } from '@/lib/memory-templates';
+import { localAlbumPhotos } from '@/lib/local-album-photos';
+import './album-theme-gallery.css';
+
+const featured = ['ticket','receipt','vinyl','magazine','birthday','film'];
+const ordered = [...albumTemplates].sort((a,b)=>(featured.includes(a.albumTheme!)?featured.indexOf(a.albumTheme!):99)-(featured.includes(b.albumTheme!)?featured.indexOf(b.albumTheme!):99));
+export default function AlbumThemeGallery(){
+ const [all,setAll]=useState(false);
+ return <section className="album-theme-gallery" aria-labelledby="album-theme-gallery-title">
+  <div className="memory-start-intro"><span>같은 사진도, 우리다운 앨범으로</span><h1 id="album-theme-gallery-title">어떤 모습으로<br/>기억하고 싶나요?</h1><p>여행은 보딩패스로, 함께한 날은 LP로.<br/>마음에 드는 앨범을 골라 내 사진을 넣어보세요.</p></div>
+  <div className="album-theme-grid">{(all?ordered:ordered.slice(0,6)).map(item=><Link key={item.id} href={`/make?template=${item.id}`} className="album-theme-option" aria-label={`${item.name} 앨범 만들기`}>
+   <div className="album-theme-window" aria-hidden="true"><div className="album-theme-mini" inert><ThemeAlbum preview folderId={`preview-${item.id}`} title={item.title} description="" locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:item.albumTheme!,song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(item.photos.map(photo=>`/explore/album-samples/${photo}.jpg`))}/></div></div>
+   <div className="album-theme-caption"><strong>{item.name}</strong><p>{item.description}</p><span>이 앨범으로 시작하기 →</span></div>
+  </Link>)}</div>
+  <button className="album-themes-more" onClick={()=>setAll(!all)} aria-expanded={all}>{all?'대표 테마만 보기':`앨범 테마 ${albumTemplates.length}가지 모두 보기`}</button>
+  <p className="memory-start-reassurance">로그인 없이 내 사진으로 먼저 꾸며볼 수 있어요.</p>
+ </section>;
+}

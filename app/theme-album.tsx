@@ -17,23 +17,8 @@ import './theme-concepts.css';
 // The three "killer" concepts (real interaction/motion you won't find in a sticker-dakku app:
 // tear the pass, watch it print, the record actually spins) lead the picker. The rest follow,
 // roughly by how distinctive their layout is, not just a recolour of the same card.
-export const albumThemes = [
- { id: 'ticket', ko: '보딩패스', en: 'Boarding Pass', hintKo: '탑승권을 뜯으면 열리는 여행 앨범', hintEn: 'Tear the pass to open the trip', kicker: 'BOARDING PASS', chapter: 'GATE', layout: 'ticket' },
- { id: 'receipt', ko: '추억 영수증', en: 'Memory Receipt', hintKo: '감열지 영수증으로 지이잉 출력', hintEn: 'Printed out like a thermal receipt', kicker: 'MEMONESTIA PHOTO LAB', chapter: 'ITEM', layout: 'receipt' },
- { id: 'vinyl', ko: 'LP 플레이어', en: 'Vinyl Player', hintKo: '돌아가는 LP와 그날의 노래', hintEn: 'A spinning record and the song of the day', kicker: 'SIDE A', chapter: 'TRACK', layout: 'vinyl' },
- { id: 'polaroid', ko: '폴라로이드 썸머', en: 'Polaroid Summer', hintKo: '파란 바다, 마스킹테이프, 손글씨', hintEn: 'Blue sea, washi tape, handwriting', kicker: 'SUMMER DIARY', chapter: 'DAY', layout: 'classic' },
- { id: 'birthday', ko: '버스데이 필름', en: 'Birthday Film', hintKo: '가랜드, 컨페티, 케이크', hintEn: 'Garland, confetti & cake', kicker: 'HAPPY BIRTHDAY', chapter: 'PART', layout: 'classic' },
- { id: 'fourcut', ko: '인생네컷', en: 'Photo Booth', hintKo: '네 컷 스트립으로 착착', hintEn: 'Stacked four-cut strips', kicker: 'PHOTO BOOTH', chapter: 'TAKE', layout: 'strip' },
- { id: 'film', ko: '필름 아카이브', en: 'Film Archive', hintKo: '필름 프레임과 주황 날짜 도장', hintEn: 'Film frames & orange date stamps', kicker: 'ROLL 01 · 36 EXP', chapter: 'FRAME', layout: 'classic' },
- { id: 'magazine', ko: '매거진', en: 'Magazine', hintKo: '큰 화보 사진과 기사 구성', hintEn: 'Cover shots and feature spreads', kicker: 'ISSUE NO. 01', chapter: 'FEATURE', layout: 'magazine' },
- { id: 'starry', ko: '별밤 콘서트', en: 'Starry Night', hintKo: '밤하늘, 별빛, 네온 테두리', hintEn: 'Night sky, starlight & neon', kicker: 'NIGHT OUT', chapter: 'TRACK', layout: 'classic' },
- { id: 'scrap', ko: '크래프트 스크랩', en: 'Kraft Scrapbook', hintKo: '겹쳐 붙인 사진과 찢은 메모지', hintEn: 'Overlapped prints & torn notes', kicker: 'SCRAPBOOK', chapter: 'NO.', layout: 'collage' },
- { id: 'stamp', ko: '우표 컬렉션', en: 'Stamp Collection', hintKo: '톱니 테두리와 날짜 소인', hintEn: 'Perforated edges & postmarks', kicker: 'AIR MAIL', chapter: 'SET', layout: 'stamp' },
- { id: 'softgirl', ko: '소프트 걸', en: 'Soft Girl', hintKo: '핑크 깅엄, 리본, 하트', hintEn: 'Pink gingham, ribbons & hearts', kicker: 'xoxo, us', chapter: '♡', layout: 'classic' },
- { id: 'picnic', ko: '피크닉 데이', en: 'Picnic Day', hintKo: '체크 돗자리, 체리, 데이지', hintEn: 'Gingham blanket, cherries & daisies', kicker: 'PICNIC CLUB', chapter: 'SPOT', layout: 'classic' },
- { id: 'diary', ko: '다이어리 노트', en: 'Diary Notebook', hintKo: '줄노트에 붙이고 옆에 메모', hintEn: 'Taped on lined paper, notes in the margin', kicker: 'MY DIARY', chapter: 'PAGE', layout: 'notebook' },
-] as const;
-export type AlbumThemeId = typeof albumThemes[number]['id'];
+import { albumThemes, type AlbumThemeId } from '@/lib/album-themes';
+export { albumThemes, type AlbumThemeId } from '@/lib/album-themes';
 
 export type StickerKind = 'sun' | 'wave' | 'star' | 'heart' | 'bow' | 'sparkle' | 'cake' | 'balloon' | 'flower' | 'cherry' | 'moon';
 type Decor = StickerKind | { text: string };
@@ -111,7 +96,7 @@ export function albumShareMessage(title: string, url: string, ko: boolean, birth
 /** `birthday` is the party date (or '' when unknown) for birthday albums; undefined otherwise. */
 /** `localItems` renders photos that are not uploaded yet (a live preview), skipping the server and sharing. */
 /** `style` is what the owner saved for everyone; `owner` may change it. `onChanged` reloads the workspace after a capsule opens. */
-export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto, localItems, style, owner, onChanged }: { folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void; localItems?: MemoryItem[]; style?: AlbumStyle; owner?: boolean; onChanged?: () => void }) {
+export default function ThemeAlbum({ folderId, title, description, locale, browsing, birthday, canShare, onPhoto, localItems, style, owner, onChanged, preview = false }: { preview?: boolean; folderId: string; title: string; description: string; locale: 'ko' | 'en'; browsing: boolean; birthday?: string; canShare?: boolean; onPhoto: (item: MemoryItem) => void; localItems?: MemoryItem[]; style?: AlbumStyle; owner?: boolean; onChanged?: () => void }) {
  const ko = locale === 'ko';
  // Owners share the album's invite link (it opens on this decorated view); members share the finished look.
  const [sharing, setSharing] = useState<'' | 'share' | 'nudge'>(''), shareable = !browsing && !localItems;
@@ -125,14 +110,14 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  }, [canShare, folderId]);
  const [month, setMonth] = useState('all');
  const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
- const [theme, setTheme] = useState<AlbumThemeId>(() => savedTheme(folderId, birthday !== undefined, style?.theme));
+ const [theme, setTheme] = useState<AlbumThemeId>(() => preview && isTheme(style?.theme) ? style.theme : savedTheme(folderId, birthday !== undefined, style?.theme));
  const [themePickerOpen, setThemePickerOpen] = useState(false);
  const [studioOpen, setStudioOpen] = useState(false);
  const themeRowRef = useRef<HTMLDivElement>(null);
  const editable = !!owner && !browsing && !localItems;
  const [song, setSong] = useState(style?.song || ''), [songDraft, setSongDraft] = useState<string | null>(null);
  const [revealAt, setRevealAt] = useState(style?.revealAt || ''), [capsuleDraft, setCapsuleDraft] = useState(''), [styleError, setStyleError] = useState('');
- const [now, setNow] = useState(() => Date.now()), [torn, setTorn] = useState(false), [slide, setSlide] = useState(0);
+ const [now, setNow] = useState(() => Date.now()), [torn, setTorn] = useState(preview), [slide, setSlide] = useState(0);
  const locked = !!revealAt && Date.parse(revealAt) > now;
  useEffect(() => {
   if (!locked) return;
@@ -329,7 +314,7 @@ ${url}`;
    <div className="ta-studio-entry-head"><span className="ta-studio-entry-icon"><StickerIcon size={19}/></span><div><small>{ko ? '앨범을 우리답게 꾸며요' : 'MAKE IT YOURS'}</small><strong>{ko ? '다꾸 스튜디오' : 'Decoration studio'}</strong><p>{ko ? '사진 위에 스티커를 붙이고 모은 캐릭터도 더해요.' : 'Place stickers on your photo and add collected characters.'}</p></div><button type="button" aria-expanded={studioOpen} onClick={() => setStudioOpen(open => !open)}>{studioOpen ? (ko ? '닫기' : 'Close') : (ko ? '꾸미기' : 'Decorate')}</button></div>
    {studioOpen && <AlbumRewardCover folderId={folderId} ko={ko} owner initiallyOpen photoSrc={cover?.src}/>}
   </section>}
-  <details className="ta-picker" open={themePickerOpen} onToggle={event => setThemePickerOpen(event.currentTarget.open)}>
+  {!preview && <details className="ta-picker" open={themePickerOpen} onToggle={event => setThemePickerOpen(event.currentTarget.open)}>
    <summary className="ta-picker-summary"><span className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마' : 'Album theme'}</strong><small>{ko ? `${meta.ko} 적용 중 · ${albumThemes.length}가지, 좌우로 넘겨 선택` : `${meta.en} selected · ${albumThemes.length} styles, scroll sideways`}</small></span><span className="ta-picker-chevron" aria-hidden="true">⌄</span></summary>
    <div className={`ta-picker-rail${localItems ? ' is-compact' : ''}`}>
     <button type="button" className="ta-picker-scroll" aria-label={ko ? '이전 앨범 테마' : 'Previous album themes'} onClick={() => themeRowRef.current?.scrollBy({ left: -220, behavior: 'smooth' })}><ArrowLeft size={17}/></button>
@@ -342,7 +327,7 @@ ${url}`;
     </div>
     <button type="button" className="ta-picker-scroll" aria-label={ko ? '다음 앨범 테마' : 'Next album themes'} onClick={() => themeRowRef.current?.scrollBy({ left: 220, behavior: 'smooth' })}><ArrowRight size={17}/></button>
    </div>
-  </details>
+  </details>}
   {editable && birthday === undefined && !locked && <details className="ta-capsule-setup">
    <summary><Hourglass size={16}/><strong>{ko ? '타임캡슐로 만들기' : 'Make it a time capsule'}</strong><small>{ko ? '각자 올린 사진을 정한 시간에 한꺼번에 공개' : 'Everyone’s photos open together at a set time'}</small></summary>
    <p>{ko ? '여행이나 모임 중에 각자 사진을 올려 두면, 공개 시간까지는 올린 사람만 볼 수 있어요. 시간이 되면 모두에게 동시에 열려요.' : 'During the trip everyone adds photos, visible only to themselves. At the set time they open for everyone at once.'}</p>
