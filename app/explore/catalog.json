@@ -34,133 +34,97 @@
       "id": "e99766e8-969c-4f06-9166-843eb9de2eea",
       "group": 0,
       "names": [
-        "제주, 우리 다섯의 여름",
-        "Jeju, the five of us"
+        "우리의 순간, 한 앨범에",
+        "Our moments, one album"
       ],
       "date": "2026-10-16",
       "note": [
-        "다섯 명이 각자 찍은 사진을 앨범 하나로 모았어요.",
-        "Five phones, one album."
+        "친구들이 각자 찍은 순간을 한 앨범에 모았어요.",
+        "Friends brought their favorite moments into one shared album."
       ],
       "theme": "polaroid",
       "showcase": true,
       "records": [
         [
-          "첫날 · 바다부터 보러 갔다",
-          "Day 1 · Straight to the sea"
+          "함께 모은 사진",
+          "Photos from everyone"
         ],
         [
-          "둘째 날 · 비 오던 날 성산일출봉",
-          "Day 2 · A rainy day at Seongsan"
+          "오래 얘기한 오후",
+          "An afternoon that ran long"
         ],
         [
-          "마지막 밤 · 내년에도 여기",
-          "Last night · Same place next year"
+          "다시 열어 보는 우리",
+          "A little album to revisit"
         ]
       ],
       "photos": [
         {
           "id": "a24a6223-178e-4fa5-93f9-24c0c403704d",
-          "src": "/explore/photo-5.jpg",
+          "src": "/explore/album-samples/cafe-friends.jpg",
           "caption": [
-            "다 같이 손잡고 입수 직전",
-            "Holding hands, right before we jumped in"
+            "카페에서 다 같이 웃던 순간",
+            "The moment we laughed together at the café"
           ],
           "by": [
-            "하윤",
-            "Hayun"
+            "서연",
+            "Seoyeon"
           ]
         },
         {
           "id": "67bfe697-7fae-4eb1-9e7f-f841fd327e49",
-          "src": "/explore/photo-11.jpg",
+          "src": "/explore/album-samples/bbq-friends.jpg",
           "caption": [
-            "물 차갑다고 소리 지른 거 나야",
-            "Yes, I was the one screaming"
+            "고기 굽고 사진 찍던 저녁",
+            "Grilling dinner and taking too many photos"
           ],
           "by": [
-            "도윤",
-            "Doyun"
+            "민지",
+            "Minji"
           ]
         },
         {
           "id": "f23f18fd-e7db-4bf7-b751-da6d1cf0bf69",
-          "src": "/explore/photo-6.jpg",
+          "src": "/explore/album-samples/hiking-friends.jpg",
           "caption": [
-            "모래 뜨거워서 뛰어다님",
-            "The sand was way too hot"
+            "정상에서 남긴 단체사진",
+            "Our group photo at the summit"
           ],
           "by": [
-            "서연",
-            "Seoyeon"
+            "지수",
+            "Jisoo"
           ]
         },
         {
           "id": "bfab5577-f76c-4ed2-891a-c23624b7c892",
-          "src": "/explore/photo-4.jpg",
+          "src": "/explore/album-samples/spring-picnic.jpg",
           "caption": [
-            "해 질 때까지 수다",
-            "Talking till sunset"
+            "돗자리 펴고 천천히 얘기한 오후",
+            "A slow afternoon on a picnic blanket"
           ],
           "by": [
-            "지수",
-            "Jisoo"
+            "하은",
+            "Haeun"
           ]
         },
         {
           "id": "226f45d4-6b59-4c75-867a-d2f1bc7a0b66",
-          "src": "/explore/photo-12.jpg",
+          "src": "/explore/album-samples/festival-friends.jpg",
           "caption": [
-            "비 그치자마자 다시 바다로",
-            "Back in the sea the moment the rain stopped"
+            "노래 나오자 다 같이",
+            "Together as soon as the music started"
           ],
           "by": [
-            "민지",
-            "Minji"
+            "준호",
+            "Junho"
           ]
         },
         {
           "id": "9b5d41ea-5df6-4c28-9106-08acd44de84d",
-          "src": "/explore/photo-25.jpg",
+          "src": "/explore/album-samples/autumn-family.jpg",
           "caption": [
-            "우산 하나에 다섯 명",
-            "Five people, one umbrella"
-          ],
-          "by": [
-            "하윤",
-            "Hayun"
-          ]
-        },
-        {
-          "id": "404a3590-e380-451d-bdfc-5f5a1b8c44f8",
-          "src": "/explore/photo-18.jpg",
-          "caption": [
-            "말 안 해도 좋았던 순간",
-            "We did not need to say anything"
-          ],
-          "by": [
-            "지수",
-            "Jisoo"
-          ]
-        },
-        {
-          "id": "f02b1e38-df8f-4a30-8d4b-4d3caa7409f9",
-          "src": "/explore/photo-21.jpg",
-          "caption": [
-            "어깨동무는 국룰",
-            "Arms around shoulders, always"
-          ],
-          "by": [
-            "도윤",
-            "Doyun"
-          ]
-        },
-        {
-          "id": "1cf8a409-32f9-49dd-93f5-97323a31753c",
-          "src": "/explore/photo-13.jpg",
-          "caption": [
-            "노을 보면서 조용해진 우리",
-            "We all went quiet at sunset"
+            "가을 공원에서 남긴 한 장",
+            "One more photo in the autumn park"
           ],
           "by": [
             "서연",
@@ -168,11 +132,11 @@
           ]
         },
         {
-          "id": "d606dbea-08af-4cee-9446-fc6951d957b7",
-          "src": "/explore/photo-16.jpg",
+          "id": "404a3590-e380-451d-bdfc-5f5a1b8c44f8",
+          "src": "/explore/album-samples/family-birthday.jpg",
           "caption": [
-            "이 사진 프사 각",
-            "Profile picture material"
+            "케이크 앞에서 축하한 날",
+            "A birthday gathered around the cake"
           ],
           "by": [
             "민지",
@@ -180,23 +144,11 @@
           ]
         },
         {
-          "id": "6df92dd4-63e5-4ce1-b445-a05ceb892354",
-          "src": "/explore/photo-28.jpg",
+          "id": "f02b1e38-df8f-4a30-8d4b-4d3caa7409f9",
+          "src": "/explore/album-samples/jeju-couple.jpg",
           "caption": [
-            "무슨 얘기에 저렇게 웃었더라",
-            "What were we laughing about?"
-          ],
-          "by": [
-            "도윤",
-            "Doyun"
-          ]
-        },
-        {
-          "id": "350af54b-901e-4b99-89a3-01dbe8daa6be",
-          "src": "/explore/photo-0.jpg",
-          "caption": [
-            "마지막 단체 셀카, 다 눈 떴다!",
-            "Last group selfie, eyes open!"
+            "제주에서 둘이 남긴 순간",
+            "Two little moments from Jeju"
           ],
           "by": [
             "지수",
@@ -4907,7 +4859,7 @@
       "theme": "diary"
     }
   ],
-  "photoCount": 336,
+  "photoCount": 328,
   "source": "Unsplash (https://unsplash.com/license)",
   "fictional": true,
   "credits": [
