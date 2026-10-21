@@ -1,69 +1,11 @@
 "use client";
-/* eslint-disable @next/next/no-img-element -- A local decorative photograph; no optimization needed. */
 import Link from 'next/link';
+import MemoryStart from './memory-start';
 import { useState, type FormEvent } from 'react';
 import { Icon, StitchIconFont, sansStack, serifStack, stitchRoot } from './stitch-kit';
 
-// Ported 1:1 from the Stitch screen "메모네스티아 첫 진입 & 카카오 1초 로그인 (풍성한 온보딩)".
-// Colors are that screen's own Material palette, written as literal values so the app theme stays untouched.
+// Result-first entry with the existing account and invitation actions.
 type Actions = { onKakao: () => void; onGoogle: () => void; onApple: () => void; kakaoDisabled: boolean; googleDisabled: boolean; appleDisabled: boolean; authError?: string; exploreHref: string; onJoin: (token: string) => void };
-
-function Showcase() {
-  return <>
-    <StitchIconFont/>
-    <section className="text-center px-2">
-      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f6e5db] text-[#7d562d] text-[11px] font-semibold mb-2.5 border border-[#7d562d]/20">
-        <Icon name="photo_library" className="text-[13px]"/>친구들과 함께 채우는 추억 앨범
-      </div>
-      <h1 style={{ fontFamily: serifStack }} className="text-[1.45rem] font-bold text-[#221a14] leading-snug tracking-tight">
-        같이 찍은 사진,<br/><span className="text-[#99452c]">우리의 앨범으로 남겨요</span>
-      </h1>
-      <p className="text-xs text-[#55433d] mt-2 font-medium leading-relaxed">
-        여행과 모임의 사진을 한곳에 모으고,<br/>친구들과 꾸미며 그날의 이야기를 남겨요.
-      </p>
-    </section>
-    <section className="relative w-full max-w-[320px] mx-auto pt-3 pb-2 select-none">
-      <div className="absolute -top-1 left-4 z-20 w-24 h-6 bg-[#e27d60]/35 -rotate-6 rounded-xs border-dashed border-t border-b border-[#99452c]/40 shadow-xs flex items-center justify-center pointer-events-none">
-        <span className="text-[9px] font-bold text-[#7b2e17] tracking-wider uppercase">CREW MEMO #1</span>
-      </div>
-      <div className="absolute -top-2 right-6 z-20 w-9 h-9 rounded-full bg-[#fde047] shadow-md border-2 border-dashed border-[#ca8a04] flex items-center justify-center rotate-12">
-        <span className="text-sm">✨</span>
-      </div>
-      <div className="absolute -bottom-2 -left-3 z-10 w-[92%] bg-[#fff9d2] p-3 rounded-2xl border border-[#ebd876] shadow-md rotate-[-3deg] transition-transform duration-300">
-        <div className="flex items-center justify-between pb-1 mb-1 border-b border-[#ebd876]/60">
-          <span className="text-[10px] font-bold text-[#7d562d] flex items-center gap-1"><Icon name="draw" className="text-[12px]"/> 사진 뒤 비밀 롤링페이퍼</span>
-          <span className="text-[9px] text-[#9a7649] bg-[#f9edb0] px-1.5 py-0.5 rounded">🔒 크루 전용</span>
-        </div>
-        <p className="text-xs text-[#492a04] leading-snug font-medium">&quot;이때 서연이 맥주 쏟을 뻔한 거 실화냐ㅋㅋㅋ 평생 놀림거리 박제 완료!&quot;</p>
-        <div className="flex items-center justify-between mt-1 pt-1 text-[10px] text-[#88726c]">
-          <span style={{ fontFamily: "var(--font-pen), 'Nanum Pen Script', cursive" }} className="text-sm text-[#99452c] font-bold">From. 지민, 도현, 유진</span>
-          <span className="text-[10px] bg-white/70 px-1.5 py-0.5 rounded-full font-medium">댓글 5개</span>
-        </div>
-      </div>
-      <div className="relative z-10 bg-white p-3 pb-5 rounded-2xl shadow-[0_14px_32px_-8px_rgba(153,69,44,0.22)] border border-[#dbc1ba]/50 rotate-[1.5deg] hover:rotate-0 transition-all duration-300">
-        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#fcebe0] shadow-inner">
-          <img alt="크루 맥주 테라스 밤" className="w-full h-full object-cover" src="/entry/terrace.jpg"/>
-          <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-md text-white text-[11px] font-medium flex items-center gap-1.5 shadow-xs">
-            <Icon name="local_bar" className="text-[14px] text-[#ffdbd1]"/><span>강릉 맥주 테라스의 밤 🍻</span>
-          </div>
-          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-xs text-[10px] font-bold text-[#99452c] shadow-xs flex items-center gap-0.5">
-            <Icon name="flip" className="text-[12px]"/><span>뒷면 낙서 보기</span>
-          </div>
-        </div>
-        <div className="mt-3 flex items-center justify-between px-1">
-          <div>
-            <p className="text-[11px] font-bold text-[#221a14]">강릉 맥주 테라스 밤 🍻</p>
-            <p className="text-[10px] text-[#88726c]">우리 크루의 소중한 순간</p>
-          </div>
-          <div className="w-10 h-10 rounded-full border border-dashed border-[#99452c]/40 bg-[#fcebe0] flex flex-col items-center justify-center rotate-6 text-[#99452c]">
-            <span className="text-[8px] font-bold leading-none uppercase tracking-tighter">SAVED</span>
-            <span className="text-[10px] font-bold leading-none mt-0.5">FOREVER</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </>;
-}
 
 function CallToAction({ onKakao, onGoogle, onApple, appleDisabled, googleDisabled, kakaoDisabled, authError, exploreHref, onJoin }: Actions) {
   const [code, setCode] = useState(''); const [codeError, setCodeError] = useState('');
@@ -78,7 +20,7 @@ function CallToAction({ onKakao, onGoogle, onApple, appleDisabled, googleDisable
   return <>
     <button className="w-full h-12 rounded-xl bg-[#FEE500] hover:bg-[#FADA0A] active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-[0_6px_20px_rgba(254,229,0,0.4)]" disabled={kakaoDisabled} onClick={onKakao} type="button">
       <svg className="w-5 h-5 text-[#191919]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-5.52 0-10 3.58-10 8c0 2.82 1.83 5.3 4.63 6.75l-.97 3.58c-.08.31.25.56.51.38l4.35-2.88c.48.06.98.09 1.48.09 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>
-      <span className="text-[15px] font-bold text-[#191919]">카카오로 1초 만에 시작하기</span>
+      <span className="text-[15px] font-bold text-[#191919]">카카오로 계속하기</span>
     </button>
     <button className="w-full h-12 rounded-xl border border-[#dbc1ba]/70 bg-white hover:bg-[#fffaf8] active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-sm" disabled={googleDisabled} onClick={onGoogle} type="button">
       <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.3 2.98-7.36Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.62-2.41l-3.23-2.51c-.9.6-2.06.96-3.39.96-2.61 0-4.82-1.76-5.61-4.12H3.05v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.39 13.92a6 6 0 0 1 0-3.84V7.49H3.05a10 10 0 0 0 0 9.02l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.96c1.47 0 2.79.51 3.83 1.51L18.7 4.6A9.62 9.62 0 0 0 12 2a10 10 0 0 0-8.95 5.49l3.34 2.59C7.18 7.72 9.39 5.96 12 5.96Z"/></svg>
@@ -104,10 +46,9 @@ function CallToAction({ onKakao, onGoogle, onApple, appleDisabled, googleDisable
   </>;
 }
 
-// The full Stitch page — its own header, story and sign-in footer.
 export function EntryScreen(actions: Actions) {
-  return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] selection:bg-[#ffdbd1] selection:text-[#99452c]`} style={{ fontFamily: sansStack }}>
-    <div className="min-h-full flex flex-col">
+  return <div className={`${stitchRoot} h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] selection:bg-[#ffdbd1] selection:text-[#99452c]`} style={{ fontFamily: sansStack, maxWidth: 'none', width: '100%', padding: 0 }}>
+    <StitchIconFont/><div className="min-h-full flex flex-col">
     <header className="pt-[max(env(safe-area-inset-top),12px)] sticky top-0 z-30 bg-[#fff8f5]/90 backdrop-blur-md border-b border-[#dbc1ba]/30 w-full px-5 pb-2.5">
       <div className="flex items-center justify-between h-12 max-w-md mx-auto">
         <div className="flex items-center gap-1.5">
@@ -116,8 +57,8 @@ export function EntryScreen(actions: Actions) {
         </div>
       </div>
     </header>
-    <main className="flex-1 w-full max-w-md mx-auto px-4 py-4 flex flex-col gap-6"><Showcase/></main>
-    <footer className="w-full max-w-md mx-auto px-4 pb-[max(env(safe-area-inset-bottom),16px)] pt-2 flex flex-col gap-2.5 bg-[#fff8f5]"><CallToAction {...actions}/></footer>
+    <main className="entry-result-main"><MemoryStart/></main>
+    <footer className="entry-result-footer"><details><summary>이미 함께 쓰고 있나요? 로그인 · 초대 링크</summary><div className="entry-result-auth"><CallToAction {...actions}/></div></details></footer>
     </div>
   </div>;
 }

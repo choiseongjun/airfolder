@@ -1,7 +1,7 @@
 /* The app's global element rules (button{background:none}, h1{display:flex}, main{padding…}) are unlayered,
    so they beat Tailwind's layered utilities. Roll them back inside Stitch-ported screens so they render as
    exported. Icon glyphs keep their own (also unlayered) Material Symbols rules, except the size class. */
-.stitch-root.stitch-root.stitch-root :not(.material-symbols-outlined):not(.settings-group-manager):not(.settings-group-manager *){all:revert-layer}
+.stitch-root.stitch-root.stitch-root :not(.material-symbols-outlined):not(.settings-group-manager):not(.settings-group-manager *):not(.entry-result-main):not(.entry-result-main *){all:revert-layer}
 .stitch-root.stitch-root.stitch-root .material-symbols-outlined{font-size:revert-layer}
 @layer utilities{
   @keyframes note-arrive{from{opacity:0;transform:translateY(-9px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
