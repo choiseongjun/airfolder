@@ -4,6 +4,7 @@ function route({enabled=true,row={active:null,draft:null,attempts:0},who='me'}={
  const db={query:async(sql,args)=>{queries.push({sql,args});return {rows:[row],rowCount:row?1:0}}};
  const loaded={exports:{}};const imports={'sharp':()=>{throw Error('Must not decode')},'node:crypto':require('node:crypto'),'@/lib/safety':{requireTerms:async()=>{}},'@/lib/server':{ApiError,pool:()=>db,viewer:async()=>who,sameOrigin:r=>{if(r.headers.get('origin')!=='https://app.test')throw new ApiError(403,'INVALID_ORIGIN')},transaction:fn=>fn(db),safe:async fn=>{try{return await fn()}catch(e){return Response.json({error:e.message},{status:e.status||500})}}}};
  process.env.CHARACTER_PROFILE_ENABLED=enabled?'1':'0';
+ imports['@/lib/character-style']={characterPrompt:()=> 'Test portrait prompt'};
  const code=ts.transpileModule(fs.readFileSync('app/api/character-profile/route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
  new Function('require','module','exports',code)(n=>imports[n],loaded,loaded.exports);return {...loaded.exports,queries};
 }

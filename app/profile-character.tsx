@@ -2,7 +2,9 @@
 /* eslint-disable @next/next/no-img-element -- Private generated images and local previews use data/object URLs. */
 import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
+import {characterAnimals,type CharacterAnimal} from '@/lib/character-style';
 import './profile-character.css';
+import './character-style.css';
 
 type State={active:string|null;draft:string|null;remaining:number;busy:boolean;configured:boolean};
 const errors:Record<string,string>={
@@ -22,6 +24,7 @@ async function call(options?:RequestInit):Promise<State>{
  const data=await response.json();if(!response.ok)throw Error(data.error||'SERVER_ERROR');return data;
 }
 export default function ProfileCharacter({name}:{name:string}){
+ const [style,setStyle]=useState<'animal'|'human'>('animal'),[animal,setAnimal]=useState<CharacterAnimal>('cat');
  const [state,setState]=useState<State|null>(null),[open,setOpen]=useState(false),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[consent,setConsent]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const input=useRef<HTMLInputElement>(null),trigger=useRef<HTMLButtonElement>(null);
  useEffect(()=>{let active=true;call().then(data=>{if(active)setState(data)}).catch(()=>{});return()=>{active=false}},[]);
@@ -30,7 +33,7 @@ export default function ProfileCharacter({name}:{name:string}){
  function close(){if(busy)return;setOpen(false);trigger.current?.focus();}
  async function generate(){
   if(!file||!consent||busy)return;setBusy(true);setError('');setNotice('');
-  try{const result=await call({method:'POST',headers:{'content-type':file.type,'x-photo-consent':'yes'},body:file});setState(current=>current?{...current,draft:result.draft}:current);setNotice('완성됐어요. 원형 프사에서 얼굴이 잘 보이는지 확인해 주세요.');}
+  try{const result=await call({method:'POST',headers:{'content-type':file.type,'x-photo-consent':'yes','x-character-style':style,'x-character-animal':animal},body:file});setState(current=>current?{...current,draft:result.draft}:current);setNotice('완성됐어요. 원형 프사에서 얼굴이 잘 보이는지 확인해 주세요.');}
   catch(e){setError(errors[(e as Error).message]||'캐릭터를 만들지 못했어요. 원래 프로필은 그대로예요.');}
   finally{try{setState(await call())}catch{}setBusy(false);}
  }
@@ -46,6 +49,9 @@ export default function ProfileCharacter({name}:{name:string}){
  {state&&open&&createPortal(<div className="character-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="character-title" className="character-sheet">
  <header><div><small>나를 닮은 작은 캐릭터 · 실험실</small><h2 id="character-title">내 사진으로 캐릭터 만들기</h2></div><button autoFocus type="button" disabled={busy} aria-label="캐릭터 창 닫기" onClick={close}>✕</button></header>
  <p>셀카 한 장을 따뜻한 그림으로 바꿔요. 마음에 들면 내 프로필에 적용해 보세요.</p>
+ <fieldset className="character-style" disabled={busy||state.busy}><legend>어떤 모습으로 만들까요?</legend><div className="character-style-tabs">{(['animal','human'] as const).map(value=><button type="button" key={value} aria-pressed={style===value} onClick={()=>setStyle(value)}>{value==='animal'?'🐾 동물 친구':'🙂 사람 캐릭터'}</button>)}</div>
+ {style==='animal'&&<div className="character-animal-options" role="group" aria-label="동물 종류">{characterAnimals.map(item=><button type="button" key={item.id} aria-pressed={animal===item.id} onClick={()=>setAnimal(item.id)}><span aria-hidden="true">{item.emoji}</span>{item.label}</button>)}</div>}
+ <p className="character-hint">{style==='animal'?'내 머리·안경·옷의 특징을 담은 동물 친구로 만들어요.':'얼굴 특징을 살린 사람 일러스트로 만들어요.'} 선택을 바꾸면 다음 생성부터 적용돼요.</p></fieldset>
  <div className="character-comparison"><div>{preview?<img src={preview} alt="선택한 원본 사진"/>:<div className="character-placeholder">📷</div>}<small>내 사진</small></div><span aria-hidden="true">→</span><div>{state.draft||image?<img src={state.draft||image!} alt="원형 캐릭터 프로필 미리보기"/>:<div className="character-placeholder">✦</div>}<small>{state.draft?'새 캐릭터':'캐릭터 프사'}</small></div></div>
  <label className="character-file">셀카 찍기 / 사진 고르기<input ref={input} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event=>{const next=event.target.files?.[0];event.target.value='';if(!next)return;if(next.size>6*1024*1024||!['image/jpeg','image/png','image/webp'].includes(next.type)){setError('6MB 이하 JPG·PNG·WebP 사진을 골라주세요.');return;}setFile(next);setPreview(URL.createObjectURL(next));setConsent(false);setError('');setNotice('');}}/></label>
  <p className="character-hint">혼자 나온 밝은 정면 사진이 좋아요. 현재 프사는 ‘프로필에 적용’을 누르기 전까지 바뀌지 않아요.</p>
