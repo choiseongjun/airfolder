@@ -13,6 +13,7 @@ import { AlbumRewardCover } from './reward-decoration';
 import './theme-album.css';
 import './theme-layouts.css';
 import './theme-concepts.css';
+import './theme-worlds.css';
 
 // The three "killer" concepts (real interaction/motion you won't find in a sticker-dakku app:
 // tear the pass, watch it print, the record actually spins) lead the picker. The rest follow,
@@ -23,6 +24,9 @@ export { albumThemes, type AlbumThemeId } from '@/lib/album-themes';
 export type StickerKind = 'sun' | 'wave' | 'star' | 'heart' | 'bow' | 'sparkle' | 'cake' | 'balloon' | 'flower' | 'cherry' | 'moon';
 type Decor = StickerKind | { text: string };
 const decor: Record<AlbumThemeId, Decor[]> = {
+ comic: [{ text: 'WOW!' }, { text: 'TO BE CONTINUED' }, { text: '찰칵!' }, 'star'],
+ orbit: [{ text: '● REC' }, { text: 'MISSION 01' }, 'sparkle', 'moon'],
+ gallery: [{ text: '01 / ∞' }, { text: 'COLLECTION' }, { text: 'EXHIBIT' }, 'flower'],
  polaroid: ['sun', { text: 'summer!' }, 'wave', 'star', { text: 'best day ever' }, 'flower'],
  film: [{ text: 'MEMO 400' }, 'sparkle', { text: '★ keep' }, 'star', { text: 'NO. 07' }, 'sparkle'],
  softgirl: ['heart', 'sparkle', { text: 'xoxo' }, 'bow', 'flower', { text: 'so cute' }],
@@ -240,6 +244,9 @@ ${url}`;
  function spread(chapter: Chapter, ci: number) {
   const ps = chapter.photos, no = (i: number) => `${String(ci + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
   switch (meta.layout) {
+   case 'comic': return <div className="ta-comic-panels">{ps.map((p, i) => <article key={p.id} className="ta-comic-panel">{photo(p, i, 'small', true)}<span className="ta-comic-bubble">{captionOf(p) || (ko ? ['이 장면, 저장!', '그리고 잠시 후…', '완벽한 하루!'][i % 3] : ['Keep this moment!', 'A little later…', 'What a day!'][i % 3])}</span><small>{String(i + 1).padStart(2, '0')}</small></article>)}</div>;
+   case 'orbit': return <div className="ta-orbit-log">{ps.map((p, i) => <article key={p.id} className="ta-orbit-entry"><div className="ta-orbit-coordinates"><span>LOG {no(i)}</span><span>{dotted(p.day || chapter.day)}</span></div>{photo(p, i, 'big')}<p>{captionOf(p) || (ko ? '이 순간의 궤도에 머무르기' : 'Staying in this moment’s orbit')}</p></article>)}</div>;
+   case 'gallery': return <div className="ta-exhibition">{ps.map((p, i) => <article key={p.id} className="ta-exhibit">{photo(p, i, 'big', true)}<div className="ta-art-label"><b>{String(i + 1).padStart(2, '0')}</b><div><strong>{captionOf(p) || (ko ? '오래 바라보고 싶은 순간' : 'A moment worth keeping')}</strong><small>{p.author || (ko ? '나의 컬렉션' : 'My collection')} · {dotted(p.day || chapter.day)}</small></div></div></article>)}</div>;
    case 'notebook': return ps.map((p, i) => <div key={p.id} className={`ta-row ta-row-one ta-nb-row${i % 2 ? ' is-flip' : ''}`}>{photo(p, i, 'big')}</div>);
    case 'strip': {
     const strips: MemoryItem[][] = []; for (let i = 0; i < ps.length; i += 4) strips.push(ps.slice(i, i + 4));

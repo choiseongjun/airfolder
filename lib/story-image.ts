@@ -1,10 +1,13 @@
 'use client';
 // Renders a themed album as a 1080x1920 story image (Instagram/Threads stories) on a canvas.
 
-export type StoryTheme = 'polaroid' | 'film' | 'softgirl' | 'birthday' | 'picnic' | 'starry' | 'diary' | 'fourcut' | 'ticket' | 'magazine' | 'stamp' | 'scrap' | 'receipt' | 'vinyl';
+export type StoryTheme = import('./album-themes').AlbumThemeId;
 type Palette = { bg: (ctx: CanvasRenderingContext2D, w: number, h: number) => void; ink: string; sub: string; accent: string; frame: string; kicker: string };
 
 const palettes: Record<StoryTheme, Palette> = {
+ comic: { ink: '#191919', sub: '#343434', accent: '#191919', frame: '#191919', kicker: 'THE DAILY COMIC', bg: (ctx, w, h) => { ctx.fillStyle = '#ffe34d'; ctx.fillRect(0, 0, w, h); dots(ctx, w, h, '#19191933', 18, 2); } },
+ orbit: { ink: '#dbf9ee', sub: '#b1dace', accent: '#9fffd5', frame: '#436174', kicker: 'MISSION: MEMORIES', bg: (ctx, w, h) => { ctx.fillStyle = '#091b29'; ctx.fillRect(0, 0, w, h); dots(ctx, w, h, '#b2ffdf66', 58, 2); ctx.strokeStyle = '#75e6c866'; ctx.lineWidth = 3; for (const r of [180, 300, 420]) { ctx.beginPath(); ctx.arc(w, h, r, 0, Math.PI * 2); ctx.stroke(); } } },
+ gallery: { ink: '#292b28', sub: '#64665f', accent: '#3b332c', frame: '#3b332c', kicker: 'A PRIVATE EXHIBITION', bg: (ctx, w, h) => { ctx.fillStyle = '#f3f2ed'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#292b28'; ctx.fillRect(70, 95, w - 140, 2); } },
  polaroid: { ink: '#1d5b86', sub: '#3a7cab', accent: '#ff8a5c', frame: '#fffefa', kicker: 'SUMMER DIARY', bg: (ctx, w, h) => { const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#cfeaf8'); g.addColorStop(.55, '#f3f6ef'); g.addColorStop(1, '#f6e5c3'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); dots(ctx, w, h, '#ffffffaa', 44, 3); } },
  film: { ink: '#f6e7c4', sub: '#d9c59c', accent: '#ff9d3b', frame: '#0e0d0b', kicker: 'ROLL 01 · 36 EXP', bg: (ctx, w, h) => { ctx.fillStyle = '#1b1a17'; ctx.fillRect(0, 0, w, h); for (let i = 0; i < 9000; i++) { ctx.fillStyle = Math.random() > .5 ? '#ffffff08' : '#00000014'; ctx.fillRect(Math.random() * w, Math.random() * h, 2, 2); } } },
  softgirl: { ink: '#d0507b', sub: '#c2557d', accent: '#e46d93', frame: '#ffffff', kicker: 'xoxo, us', bg: (ctx, w, h) => { ctx.fillStyle = '#fff0f3'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#ffd6e077'; for (let x = 0; x < w; x += 56) ctx.fillRect(x, 0, 28, h); for (let y = 0; y < h; y += 56) ctx.fillRect(0, y, w, 28); } },

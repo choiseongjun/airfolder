@@ -1,4 +1,7 @@
 export const albumThemes = [
+ { id: 'comic', ko: '오늘의 만화', en: 'Comic Day', hintKo: '말풍선과 컷 분할로 만드는 한 편의 만화', hintEn: 'Turn your day into panels and speech bubbles', kicker: 'THE DAILY COMIC', chapter: 'EPISODE', layout: 'comic' },
+ { id: 'orbit', ko: '우주 관측일지', en: 'Orbit Log', hintKo: '우주선 창 너머로 수집한 반짝이는 순간', hintEn: 'Collect moments through a spacecraft window', kicker: 'MISSION: MEMORIES', chapter: 'LOG', layout: 'orbit' },
+ { id: 'gallery', ko: '나의 작은 전시', en: 'Private Exhibition', hintKo: '여백과 작품 번호로 완성하는 작은 미술관', hintEn: 'A quiet exhibition with artwork labels', kicker: 'A PRIVATE EXHIBITION', chapter: 'ROOM', layout: 'gallery' },
  { id: 'ticket', ko: '보딩패스', en: 'Boarding Pass', hintKo: '탑승권을 뜯으면 열리는 여행 앨범', hintEn: 'Tear the pass to open the trip', kicker: 'BOARDING PASS', chapter: 'GATE', layout: 'ticket' },
  { id: 'receipt', ko: '추억 영수증', en: 'Memory Receipt', hintKo: '감열지 영수증으로 지이잉 출력', hintEn: 'Printed out like a thermal receipt', kicker: 'MEMONESTIA PHOTO LAB', chapter: 'ITEM', layout: 'receipt' },
  { id: 'vinyl', ko: 'LP 플레이어', en: 'Vinyl Player', hintKo: '돌아가는 LP와 그날의 노래', hintEn: 'A spinning record and the song of the day', kicker: 'SIDE A', chapter: 'TRACK', layout: 'vinyl' },

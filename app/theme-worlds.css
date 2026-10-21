@@ -1,0 +1,41 @@
+/* Three distinct worlds, shared by the live album and entry previews. */
+.ta-album.theme-comic{--ink:#191919;background:#ffe34d;border:3px solid #191919;border-radius:3px;background-image:radial-gradient(#19191922 1px,transparent 1px);background-size:8px 8px}
+.theme-comic .ta-cover{display:flex;flex-direction:column;align-items:center}
+.theme-comic .ta-kicker{background:#191919;color:#fff;padding:10px;letter-spacing:2px}
+.theme-comic .ta-cover h2{order:-1;font-family:var(--font-geist-sans),sans-serif;font-size:40px;font-weight:950;line-height:1.25;transform:rotate(-3deg);margin:8px 0 20px}
+.theme-comic .ta-cover-photo{max-width:94%;width:94%;margin:18px auto}
+.theme-comic .ta-frame{border:4px solid #191919;box-shadow:6px 6px 0 #191919;background:white}
+.theme-comic .ta-sticker-text{background:#fff;color:#191919;border:2px solid #191919;border-radius:50%;font-family:monospace}
+.ta-comic-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ta-comic-panel{position:relative;min-width:0;background:#fff;border:3px solid #191919;padding:5px 5px 42px}
+.ta-comic-panel:nth-child(3n+1){grid-column:1/-1}
+.theme-comic .ta-comic-panel .ta-frame{border:0;box-shadow:none}
+.ta-comic-bubble{position:relative;display:block;width:fit-content;max-width:95%;margin:-12px 5px 0;padding:9px 12px;border:2px solid #191919;border-radius:18px 18px 18px 0;background:white;font-size:13px;font-weight:800;overflow-wrap:anywhere}
+.ta-comic-panel>small{position:absolute;bottom:8px;right:12px;font:700 12px monospace}
+.ta-album.theme-orbit{--ink:#dbf9ee;background:radial-gradient(ellipse at 100% 0,#234a66,transparent 55%),#091b29;border:1px solid #75e6c866;border-radius:24px;background-image:radial-gradient(circle at 80% 10%,#235671,transparent 40%),radial-gradient(#b2ffdf55 1px,transparent 1px);background-size:auto,29px 29px}
+.theme-orbit .ta-kicker{color:#9fffd5;letter-spacing:2px;border-bottom:1px solid #7ce4bb;padding-bottom:12px}
+.theme-orbit .ta-cover-photo{width:76%;max-width:76%;padding:14px;border:1px solid #7de6ca77;border-radius:50%;margin:24px auto}
+.theme-orbit .ta-cover-photo .ta-frame{border:8px solid #436174;border-radius:50%;box-shadow:0 0 0 3px #0b131e,0 0 35px #85e9d333}
+.theme-orbit .ta-cover-photo img,.theme-orbit .ta-cover-photo video{aspect-ratio:1}
+.theme-orbit .ta-cover h2{font:700 32px/1.3 var(--font-geist-sans),sans-serif;letter-spacing:2px}
+.theme-orbit .ta-sticker-text{background:#0e2839;color:#a0ffd4;border:1px solid #88dfc5;font:600 12px monospace;box-shadow:none}
+.theme-orbit .ta-end-stamp{border-color:#9fffd5;color:#9fffd5}
+.ta-orbit-log{display:grid;gap:24px}
+.ta-orbit-entry{border:1px solid #76bda466;padding:14px;border-radius:3px 24px 3px 3px;background:#ffffff05}
+.ta-orbit-coordinates{display:flex;justify-content:space-between;gap:10px;margin-bottom:12px;color:#9fffd5;font:11px monospace}
+.ta-orbit-entry p{margin:12px 0 0;font-size:13px;color:#d1e9e7}
+.ta-album.theme-gallery{--ink:#292b28;background:#f3f2ed;border-radius:0;padding:32px 32px 42px;box-shadow:0 15px 40px #00000014}
+.theme-gallery .ta-cover{text-align:left;display:flex;flex-direction:column}
+.theme-gallery .ta-cover h2{order:-2;font:500 44px/1.2 var(--font-serif),Georgia,serif;letter-spacing:-2px;margin:0 0 18px;max-width:350px}
+.theme-gallery .ta-kicker{order:-1;font-size:9px;letter-spacing:2px;border-top:1px solid #292b28;padding-top:12px;width:100%}
+.theme-gallery .ta-cover-photo{max-width:80%;width:80%;margin:32px auto}
+.theme-gallery .ta-frame{padding:14px;background:#fffcf6;border:7px solid #3b332c;box-shadow:8px 12px 15px #292b2822}
+.theme-gallery .ta-sticker{display:none}
+.theme-gallery .ta-cover-meta{justify-content:flex-start}
+.theme-gallery .ta-chapter-head{text-align:left;border-top:1px solid #b8b6aa;padding-top:15px}
+.ta-exhibition{display:grid;gap:42px;padding:8px 12px}
+.ta-exhibit:nth-child(even){width:83%;margin-left:auto}
+.ta-art-label{display:flex;gap:12px;margin-top:20px;border-left:2px solid #292b28;padding-left:10px}
+.ta-art-label>b{font:20px Georgia,serif}.ta-art-label strong{display:block;font-size:12px;font-weight:500;line-height:1.5}.ta-art-label small{display:block;font-size:10px;color:#64665f;margin-top:5px}
+.swatch-comic .ta-swatch-art{background:#ffe34d;border:2px solid #191919;border-radius:0}.swatch-orbit .ta-swatch-art{background:#0b2638}.swatch-orbit .ta-swatch-art>img{border-radius:50%;border:4px solid #729baf}.swatch-gallery .ta-swatch-art{background:#eeede7}.swatch-gallery .ta-swatch-art>img{border:5px solid #3b332c;border-radius:0}
+@media(max-width:480px){.theme-comic .ta-cover h2{font-size:32px}.theme-orbit .ta-cover h2{font-size:27px}.ta-album.theme-gallery{padding:25px 20px}.theme-gallery .ta-cover h2{font-size:36px}.ta-comic-panels{gap:10px}.ta-comic-bubble{padding:7px;font-size:11px}}

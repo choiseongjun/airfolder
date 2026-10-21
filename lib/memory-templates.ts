@@ -5,5 +5,24 @@ export const memoryTemplates = [
   { id: 'travel', name: '여행 네컷', eyebrow: 'SOMEWHERE WITH YOU', description: '다시 꺼내보고 싶은 여행의 네 장면.', title: '우리의 작은 여행', note: '함께라서 더 오래 기억할 풍경.', style: 'four', mood: 'mint', photos: ['jeju-couple','hiking-friends','spring-picnic','autumn-family'] },
 ] as const;
 export type MemoryTemplate = {id:string;name:string;eyebrow:string;description:string;title:string;note:string;style:string;mood:string;photos:readonly string[];albumTheme?:AlbumThemeId};
-export const albumTemplates: MemoryTemplate[] = albumThemes.map(theme => ({id: `album-${theme.id}`,name:theme.ko,eyebrow:theme.kicker,description:theme.hintKo,title:theme.id==='birthday'?'태어나줘서 고마워':theme.id==='ticket'?'우리의 작은 여행':'우리라서 좋았던 날',note:'다시 꺼내보고 싶은 우리의 순간들.',style:'four',mood:'cream',albumTheme:theme.id,photos:theme.id==='ticket'?['jeju-couple','hiking-friends','spring-picnic','autumn-family']:theme.id==='birthday'?['family-birthday','cafe-friends','spring-picnic','bbq-friends']:['cafe-friends','bbq-friends','festival-friends','spring-picnic']}));
+const albumScenes: Record<AlbumThemeId, { title: string; photos: readonly string[] }> = {
+  comic: { title: '별일 있는 하루!', photos: ['bbq-friends','festival-friends','cafe-friends','spring-picnic'] },
+  orbit: { title: '지구에서 보낸 신호', photos: ['hiking-friends','jeju-couple','festival-friends','autumn-family'] },
+  gallery: { title: '느리게 바라본 계절', photos: ['autumn-family','spring-picnic','jeju-couple','hiking-friends'] },
+  ticket: { title: '다음 역은 제주', photos: ['jeju-couple','hiking-friends','spring-picnic','autumn-family'] },
+  receipt: { title: '행복 한 잔, 추가요', photos: ['cafe-friends','bbq-friends','spring-picnic','family-birthday'] },
+  vinyl: { title: '그 밤의 플레이리스트', photos: ['festival-friends','bbq-friends','cafe-friends','jeju-couple'] },
+  polaroid: { title: '여름을 한 장 더', photos: ['jeju-couple','spring-picnic','hiking-friends','bbq-friends'] },
+  birthday: { title: '태어나줘서 고마워', photos: ['family-birthday','cafe-friends','spring-picnic','bbq-friends'] },
+  fourcut: { title: '셋, 둘, 하나, 웃어!', photos: ['cafe-friends','bbq-friends','festival-friends','spring-picnic'] },
+  film: { title: '빛이 머물던 오후', photos: ['hiking-friends','autumn-family','jeju-couple','cafe-friends'] },
+  magazine: { title: '주말의 발견', photos: ['spring-picnic','cafe-friends','jeju-couple','autumn-family'] },
+  starry: { title: '아직 앙코르가 남았어', photos: ['festival-friends','bbq-friends','jeju-couple','cafe-friends'] },
+  scrap: { title: '좋아하는 것 수집 중', photos: ['bbq-friends','spring-picnic','autumn-family','cafe-friends'] },
+  stamp: { title: '먼 곳에서 안부를', photos: ['jeju-couple','autumn-family','hiking-friends','spring-picnic'] },
+  softgirl: { title: '분홍빛 작은 취향', photos: ['cafe-friends','family-birthday','spring-picnic','jeju-couple'] },
+  picnic: { title: '오늘은 바깥에서', photos: ['spring-picnic','hiking-friends','bbq-friends','autumn-family'] },
+  diary: { title: '10월의 어느 페이지', photos: ['autumn-family','cafe-friends','family-birthday','hiking-friends'] },
+};
+export const albumTemplates: MemoryTemplate[] = albumThemes.map(theme => ({id: `album-${theme.id}`,name:theme.ko,eyebrow:theme.kicker,description:theme.hintKo,...albumScenes[theme.id],note:'다시 꺼내보고 싶은 순간들.',style:'four',mood:'cream',albumTheme:theme.id}));
 export function memoryTemplate(id: string | null | undefined) { return [...memoryTemplates,...albumTemplates].find(item => item.id === id); }
