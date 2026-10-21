@@ -1,4 +1,6 @@
+import { extraAlbumThemes } from './extra-album-themes';
 export const albumThemes = [
+ ...extraAlbumThemes.map(theme => ({ ...theme, layout: 'collection' as const })),
  { id: 'desktop', ko: '추억.zip', en: 'Memory.zip', hintKo: '옛날 컴퓨터의 폴더를 열어 꺼내는 사진 파일', hintEn: 'Open folders on a retro desktop', kicker: 'MEMORY OS · 1999', chapter: 'DIRECTORY', layout: 'desktop' },
  { id: 'metro', ko: '하루 노선도', en: 'Day Line', hintKo: '사진 한 장이 한 정거장, 하루를 잇는 노선', hintEn: 'Every photo is a stop along your day', kicker: 'MEMORY TRANSIT', chapter: 'LINE', layout: 'metro' },
  { id: 'tarot', ko: '운명의 사진 카드', en: 'Arcana Memories', hintKo: '별빛 카드 뒷면을 열면 나타나는 그날의 장면', hintEn: 'Reveal the moments hidden in your cards', kicker: 'THE MEMORY ARCANA', chapter: 'ARCANA', layout: 'tarot' },

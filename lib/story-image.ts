@@ -1,10 +1,12 @@
 'use client';
+import { extraAlbumThemes, type ExtraAlbumThemeId } from './extra-album-themes';
 // Renders a themed album as a 1080x1920 story image (Instagram/Threads stories) on a canvas.
 
 export type StoryTheme = import('./album-themes').AlbumThemeId;
 type Palette = { bg: (ctx: CanvasRenderingContext2D, w: number, h: number) => void; ink: string; sub: string; accent: string; frame: string; kicker: string };
 
 const palettes: Record<StoryTheme, Palette> = {
+ ...Object.fromEntries(extraAlbumThemes.map(theme=>[theme.id,{ink:theme.ink,sub:theme.ink,accent:theme.accent,frame:theme.bg,kicker:theme.kicker,bg:(ctx:CanvasRenderingContext2D,w:number,h:number)=>{ctx.fillStyle=theme.bg;ctx.fillRect(0,0,w,h);ctx.strokeStyle=theme.accent;ctx.lineWidth=3;ctx.strokeRect(35,35,w-70,h-70);if(theme.id==='blueprint'){ctx.lineWidth=1;ctx.globalAlpha=.25;for(let x=0;x<w;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(let y=0;y<h;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}ctx.globalAlpha=1;}}}])) as Record<ExtraAlbumThemeId,Palette>,
  desktop: { ink: '#ffffff', sub: '#e2f8f6', accent: '#c5c5cd', frame: '#c5c5cd', kicker: 'MEMORY OS · ARCHIVE.ZIP', bg: (ctx, w, h) => { ctx.fillStyle = '#258b8c'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#c5c5cd'; ctx.fillRect(0, h - 65, w, 65); ctx.fillStyle = '#29246d'; ctx.fillRect(40, 50, w - 80, 45); } },
  metro: { ink: '#133b35', sub: '#356b5e', accent: '#167a5c', frame: '#ffffff', kicker: 'MEMORY TRANSIT · LINE 01', bg: (ctx, w, h) => { ctx.fillStyle = '#f7f7ed'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#167a5c'; ctx.fillRect(35, 0, 14, h); for (let y = 160; y < h; y += 280) { ctx.beginPath(); ctx.arc(42, y, 23, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(42, y, 12, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#167a5c'; } } },
  tarot: { ink: '#f7e3ad', sub: '#ddc99f', accent: '#d4b96e', frame: '#d4b96e', kicker: 'XVII · THE MEMORY ARCANA', bg: (ctx, w, h) => { ctx.fillStyle = '#352342'; ctx.fillRect(0, 0, w, h); ctx.strokeStyle = '#d4b96e'; ctx.lineWidth = 3; ctx.strokeRect(28, 28, w - 56, h - 56); ctx.strokeRect(40, 40, w - 80, h - 80); dots(ctx, w, h, '#d4b96e44', 90, 2); } },

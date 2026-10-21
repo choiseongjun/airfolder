@@ -16,6 +16,10 @@ import './theme-concepts.css';
 import './theme-worlds.css';
 import './theme-adventures.css';
 import AdventureCover, { adventureThemes } from './adventure-cover';
+import { CollectionCover, CollectionSpread, isCollectionTheme } from './collection-album';
+import { extraAlbumThemes, type ExtraAlbumThemeId } from '@/lib/extra-album-themes';
+import { albumCategories, themeInCategory } from '@/lib/album-categories';
+import './theme-collections.css';
 
 // The three "killer" concepts (real interaction/motion you won't find in a sticker-dakku app:
 // tear the pass, watch it print, the record actually spins) lead the picker. The rest follow,
@@ -26,6 +30,7 @@ export { albumThemes, type AlbumThemeId } from '@/lib/album-themes';
 export type StickerKind = 'sun' | 'wave' | 'star' | 'heart' | 'bow' | 'sparkle' | 'cake' | 'balloon' | 'flower' | 'cherry' | 'moon';
 type Decor = StickerKind | { text: string };
 const decor: Record<AlbumThemeId, Decor[]> = {
+ ...Object.fromEntries(extraAlbumThemes.map(theme=>[theme.id,[{text:theme.chapter},{text:'KEEP'},{text:'MEMORIES'},{text:'♡'}]])) as Record<ExtraAlbumThemeId,Decor[]>,
  desktop: [{ text: 'SAVE AS…' }, { text: '.JPG' }, { text: '100% LOADED' }, { text: 'BACKUP' }],
  metro: [{ text: 'TRANSFER' }, { text: '01' }, { text: 'NEXT STOP' }, { text: 'EXIT →' }],
  tarot: ['moon', 'star', 'sparkle', { text: 'DESTINY' }],
@@ -124,6 +129,7 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const [fetched, setItems] = useState<MemoryItem[] | null>(null), [error, setError] = useState(false), [retry, setRetry] = useState(0);
  const [theme, setTheme] = useState<AlbumThemeId>(() => preview && isTheme(style?.theme) ? style.theme : savedTheme(folderId, birthday !== undefined, style?.theme));
  const [themePickerOpen, setThemePickerOpen] = useState(false);
+ const [themeCategory, setThemeCategory] = useState('all');
  const [studioOpen, setStudioOpen] = useState(false);
  const themeRowRef = useRef<HTMLDivElement>(null);
  const editable = !!owner && !browsing && !localItems;
@@ -252,6 +258,7 @@ ${url}`;
  function spread(chapter: Chapter, ci: number) {
   const ps = chapter.photos, no = (i: number) => `${String(ci + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
   switch (meta.layout) {
+   case 'collection': return isCollectionTheme(theme) ? <CollectionSpread theme={theme} photos={ps} ko={ko} renderPhoto={(p,i)=>photo(p,i,'small')}/> : null;
    case 'desktop': return <div className="ta-desktop-files">{ps.map((p, i) => <details key={p.id} className="ta-file-window" open={preview || i === 0}><summary><span>▣ {captionOf(p) || `memory_${no(i)}.jpg`}</span><span aria-hidden="true">＋</span></summary><div className="ta-file-content">{photo(p, i, 'big', true)}<small>{dotted(p.day || chapter.day)} · {ko ? '소중한 파일 · 보관됨' : 'Precious file · archived'}</small></div></details>)}</div>;
    case 'metro': return <div className="ta-metro-line">{ps.map((p, i) => <article key={p.id} className="ta-metro-stop"><span className="ta-station-number">{String(i + 1).padStart(2, '0')}</span><h3>{captionOf(p) || (ko ? ['설렘역','웃음역','행복역','또 만나역'][i % 4] : ['Excitement','Laughter','Happiness','See you again'][i % 4])}</h3>{photo(p, i, 'small', true)}<small>{dotted(p.day || chapter.day)} · {ko ? '이번 역의 풍경' : 'A view from this stop'}</small></article>)}</div>;
    case 'tarot': return <div className="ta-tarot-deck">{ps.map((p, i) => <details key={p.id} className="ta-arcana" open={preview}><summary><span className="ta-arcana-number">{['I','II','III','IV','V','VI'][i % 6]}</span><span className="ta-arcana-symbol" aria-hidden="true">✧</span><strong>{ko ? '어떤 순간이 기다릴까?' : 'What moment awaits?'}</strong><small>{ko ? '눌러서 카드 열기 · 다시 눌러 접기' : 'Tap to reveal · tap again to close'}</small></summary><div className="ta-arcana-reveal">{photo(p, i, 'small', true)}<p>{captionOf(p) || (ko ? ['태양 같은 하루','별처럼 빛난 순간','다시 만날 운명'][i % 3] : ['A day of sunshine','A shining moment','Destined to meet again'][i % 3])}</p></div></details>)}</div>;
@@ -337,10 +344,11 @@ ${url}`;
   </section>}
   {!preview && <details className="ta-picker" open={themePickerOpen} onToggle={event => setThemePickerOpen(event.currentTarget.open)}>
    <summary className="ta-picker-summary"><span className="ta-picker-head"><Palette size={16}/><strong>{ko ? '앨범 테마' : 'Album theme'}</strong><small>{ko ? `${meta.ko} 적용 중 · ${albumThemes.length}가지, 좌우로 넘겨 선택` : `${meta.en} selected · ${albumThemes.length} styles, scroll sideways`}</small></span><span className="ta-picker-chevron" aria-hidden="true">⌄</span></summary>
+   <label className="ta-category-select">{ko?'카테고리':'Category'}<select value={themeCategory} onChange={e=>{setThemeCategory(e.target.value);themeRowRef.current?.scrollTo({left:0});}}><option value="all">{ko?'전체 테마':'All themes'} ({albumThemes.length})</option>{albumCategories.map(category=><option key={category.id} value={category.id}>{ko?category.ko:category.en} ({category.themes.length})</option>)}</select></label>
    <div className={`ta-picker-rail${localItems ? ' is-compact' : ''}`}>
     <button type="button" className="ta-picker-scroll" aria-label={ko ? '이전 앨범 테마' : 'Previous album themes'} onClick={() => themeRowRef.current?.scrollBy({ left: -220, behavior: 'smooth' })}><ArrowLeft size={17}/></button>
     <div ref={themeRowRef} className="ta-picker-row" role="group" aria-label={ko ? '앨범 테마' : 'Album themes'}>
-    {albumThemes.map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
+    {albumThemes.filter(t=>themeInCategory(t.id,themeCategory)).map(t => <button key={t.id} className={`ta-swatch swatch-${t.id}`} aria-pressed={theme === t.id} onClick={() => choose(t.id)}>
      <span className="ta-swatch-art" aria-hidden="true">{cover?.src && cover.mediaType !== 'video' ? <img src={cover.src} alt=""/> : <i/>}<span className="ta-swatch-deco"><Deco item={decor[t.id][0]} className=""/></span></span>
      <strong>{ko ? t.ko : t.en}</strong><small>{ko ? t.hintKo : t.hintEn}</small>
      <em>{theme === t.id ? (ko ? '✓ 적용 중' : '✓ On') : (ko ? '눌러보기' : 'Try it')}</em>
@@ -378,7 +386,7 @@ ${url}`;
   {theme === 'receipt' && <div className="ta-printer" aria-hidden="true"><span/></div>}
   {!(theme === 'ticket' && !torn) && <div key={theme} className={`ta-album theme-${theme}`}>
    {theme === 'birthday' && <div className="ta-garland" aria-hidden="true">{Array.from({ length: 11 }, (_, i) => <i key={i}/>)}</div>}
-   {adventureThemes.includes(theme) ? <header className="ta-cover ta-cover-adventure"><AdventureCover theme={theme} title={monthly && month !== 'all' ? monthTitle(month) : title} picture={cover ? photo(cover, 0, 'big', true) : <div className="ta-adventure-empty">{ko ? '첫 번째 사진을 기다리는 중' : 'Waiting for your first photo'}</div>} count={allPhotos.length} ko={ko}/>{description && <p className="ta-cover-note">{description}</p>}</header> : <header className="ta-cover">
+   {isCollectionTheme(theme) ? <header className="ta-cover ta-cover-collection"><CollectionCover theme={theme} title={monthly && month !== 'all' ? monthTitle(month) : title} picture={cover?photo(cover,0,'big',true):<div className="ta-adventure-empty">{ko?'첫 번째 사진을 기다리는 중':'Waiting for your first photo'}</div>} count={allPhotos.length} ko={ko}/>{description&&<p className="ta-cover-note">{description}</p>}</header> : adventureThemes.includes(theme) ? <header className="ta-cover ta-cover-adventure"><AdventureCover theme={theme} title={monthly && month !== 'all' ? monthTitle(month) : title} picture={cover ? photo(cover, 0, 'big', true) : <div className="ta-adventure-empty">{ko ? '첫 번째 사진을 기다리는 중' : 'Waiting for your first photo'}</div>} count={allPhotos.length} ko={ko}/>{description && <p className="ta-cover-note">{description}</p>}</header> : <header className="ta-cover">
     <span className="ta-kicker">{meta.kicker}</span>
     {theme === 'vinyl' ? <div className="ta-turntable">
      <div className="ta-sleeve">{stills.length ? <img key={slide % stills.length} src={stills[slide % stills.length].src} alt=""/> : <i/>}</div>
