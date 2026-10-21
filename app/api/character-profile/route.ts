@@ -7,6 +7,10 @@ import { characterPrompt } from '@/lib/character-style';
 export const maxDuration = 180;
 const headers = {'Cache-Control':'private, no-store'};
 const limit = 6 * 1024 * 1024;
+function dailyLimit() {
+ const value=Number(process.env.CHARACTER_PROFILE_DAILY_LIMIT);
+ return Number.isInteger(value)&&value>=1&&value<=10?value:3;
+}
 function enabled() { if(process.env.CHARACTER_PROFILE_ENABLED !== '1') throw new ApiError(404,'FEATURE_DISABLED'); }
 const dataUrl = (value: Buffer | null) => value ? 'data:image/webp;base64,'+value.toString('base64') : null;
 
@@ -14,7 +18,7 @@ export async function GET() { return safe(async()=>{
  enabled(); const who=await viewer();
  const result=await pool().query("SELECT active,CASE WHEN draft_at>now()-interval '24 hours' THEN draft END AS draft,CASE WHEN usage_day=CURRENT_DATE THEN attempts ELSE 0 END AS attempts,busy_until>now() AS busy FROM snaproom.character_profiles WHERE viewer_id=$1",[who]);
  const row=result.rows[0];
- return Response.json({active:dataUrl(row?.active),draft:dataUrl(row?.draft),remaining:Math.max(0,3-(row?.attempts||0)),busy:!!row?.busy,configured:!!process.env.OPENAI_API_KEY},{headers});
+ return Response.json({active:dataUrl(row?.active),draft:dataUrl(row?.draft),dailyLimit:dailyLimit(),remaining:Math.max(0,dailyLimit()-(row?.attempts||0)),busy:!!row?.busy,configured:!!process.env.OPENAI_API_KEY},{headers});
 });}
 
 export async function POST(request:Request) { return safe(async()=>{
@@ -38,7 +42,7 @@ export async function POST(request:Request) { return safe(async()=>{
   await db.query('INSERT INTO snaproom.character_profiles(viewer_id) VALUES($1) ON CONFLICT DO NOTHING',[who]);
   const row=(await db.query('SELECT attempts,usage_day=CURRENT_DATE AS today,busy_until>now() AS busy FROM snaproom.character_profiles WHERE viewer_id=$1 FOR UPDATE',[who])).rows[0];
   if(row.busy)throw new ApiError(409,'GENERATION_BUSY');
-  if(row.today&&row.attempts>=3)throw new ApiError(429,'DAILY_LIMIT');
+  if(row.today&&row.attempts>=dailyLimit())throw new ApiError(429,'DAILY_LIMIT');
   const total=(await db.query('SELECT COALESCE(sum(attempts),0)::int AS n FROM snaproom.character_profiles WHERE usage_day=CURRENT_DATE')).rows[0].n;
   if(total>=30)throw new ApiError(429,'EXPERIMENT_LIMIT');
   await db.query("UPDATE snaproom.character_profiles SET attempts=CASE WHEN usage_day=CURRENT_DATE THEN attempts+1 ELSE 1 END,usage_day=CURRENT_DATE,request_id=$2,busy_until=now()+interval '3 minutes' WHERE viewer_id=$1",[who,id]);

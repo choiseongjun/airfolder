@@ -6,9 +6,9 @@ import {characterAnimals,type CharacterAnimal} from '@/lib/character-style';
 import './profile-character.css';
 import './character-style.css';
 
-type State={active:string|null;draft:string|null;remaining:number;busy:boolean;configured:boolean};
+type State={active:string|null;draft:string|null;remaining:number;dailyLimit:number;busy:boolean;configured:boolean};
 const errors:Record<string,string>={
- DAILY_LIMIT:'오늘의 생성 3회를 모두 사용했어요. 내일 다시 만들어주세요.',
+ DAILY_LIMIT:'오늘의 생성 횟수를 모두 사용했어요. 내일 다시 만들어주세요.',
  EXPERIMENT_LIMIT:'오늘 테스트 생성 한도에 도달했어요.',
  GENERATION_BUSY:'이미 캐릭터를 만드는 중이에요. 잠시 후 다시 확인해 주세요.',
  AI_BILLING_REQUIRED:'이미지 생성 API의 결제·사용 한도를 확인해야 해요.',
@@ -28,6 +28,14 @@ export default function ProfileCharacter({name}:{name:string}){
  const [state,setState]=useState<State|null>(null),[open,setOpen]=useState(false),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[consent,setConsent]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const input=useRef<HTMLInputElement>(null),trigger=useRef<HTMLButtonElement>(null);
  useEffect(()=>{let active=true;call().then(data=>{if(active)setState(data)}).catch(()=>{});return()=>{active=false}},[]);
+ useEffect(()=>{
+  if(!open||busy)return;
+  let active=true;
+  const refresh=()=>{void call().then(data=>{if(active)setState(data)}).catch(()=>{});};
+  refresh();
+  const timer=window.setInterval(refresh,15000);
+  return()=>{active=false;window.clearInterval(timer)};
+ },[open,busy]);
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview)},[preview]);
  useEffect(()=>{if(!open)return;const key=(event:KeyboardEvent)=>{if(event.key==='Escape'&&!busy){setOpen(false);trigger.current?.focus()}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key)},[open,busy]);
  function close(){if(busy)return;setOpen(false);trigger.current?.focus();}
@@ -45,6 +53,7 @@ export default function ProfileCharacter({name}:{name:string}){
   setBusy(true);setError('');try{await call({method:'DELETE'});setState(await call());setNotice('기본 프로필로 돌아왔어요.');}catch{setError('프로필을 초기화하지 못했어요.');}finally{setBusy(false);}
  }
  const image=state?.active;
+ const blocked=busy?'처리 중이에요. 잠시 기다려주세요.':state?.busy?'캐릭터를 만들고 있어요. 완료되면 자동으로 상태를 갱신해요.':!state?.configured?'이미지 생성 연결이 준비되지 않았어요.':state.remaining<=0?'오늘 생성 횟수를 모두 사용했어요. 내일 다시 만들 수 있어요.':!file?'먼저 셀카를 찍거나 사진을 골라주세요.':!consent?'사진 전송 동의를 체크하면 만들 수 있어요.':'';
  return <><button ref={trigger} type="button" className="character-avatar" aria-label="캐릭터 프로필 만들기" disabled={!state} onClick={()=>{setError('');setOpen(true)}}>{image?<img src={image} alt={name+' 캐릭터 프로필'}/>:name.slice(0,1)}{state&&<span aria-hidden="true">✦</span>}</button>
  {state&&open&&createPortal(<div className="character-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="character-title" className="character-sheet">
  <header><div><small>나를 닮은 작은 캐릭터 · 실험실</small><h2 id="character-title">내 사진으로 캐릭터 만들기</h2></div><button autoFocus type="button" disabled={busy} aria-label="캐릭터 창 닫기" onClick={close}>✕</button></header>
@@ -56,9 +65,9 @@ export default function ProfileCharacter({name}:{name:string}){
  <label className="character-file">셀카 찍기 / 사진 고르기<input ref={input} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event=>{const next=event.target.files?.[0];event.target.value='';if(!next)return;if(next.size>6*1024*1024||!['image/jpeg','image/png','image/webp'].includes(next.type)){setError('6MB 이하 JPG·PNG·WebP 사진을 골라주세요.');return;}setFile(next);setPreview(URL.createObjectURL(next));setConsent(false);setError('');setNotice('');}}/></label>
  <p className="character-hint">혼자 나온 밝은 정면 사진이 좋아요. 현재 프사는 ‘프로필에 적용’을 누르기 전까지 바뀌지 않아요.</p>
  <label className="character-consent"><input type="checkbox" checked={consent} disabled={busy} onChange={event=>setConsent(event.target.checked)}/><span>선택한 사진을 캐릭터 생성 목적으로 OpenAI에 전송하는 데 동의해요. 앱은 원본을 저장하지 않으며, 생성 결과만 보관해요. 미적용 미리보기는 24시간 동안 사용할 수 있어요.</span></label>
- <button className="character-primary" type="button" disabled={busy||state.busy||!file||!consent||state.remaining<=0||!state.configured} onClick={()=>void generate()}>{busy?'처리 중… 잠시 기다려주세요':state.busy?'캐릭터 생성 중':'캐릭터 1장 만들기'}</button>
- <p className="character-hint">오늘 남은 생성 {state.remaining}회 / 3회 · 생성 요청은 실패해도 한도에 포함돼요.</p>
- {!state.configured&&<p role="status">이미지 생성 연결이 준비되지 않았어요.</p>}
+ <button className="character-primary" type="button" aria-describedby="character-generation-status" disabled={!!blocked} onClick={()=>void generate()}>{busy?'처리 중… 잠시 기다려주세요':state.busy?'캐릭터 생성 중':state.remaining<=0?'오늘 생성 횟수를 모두 사용했어요':'캐릭터 1장 만들기'}</button>
+ <p id="character-generation-status" role="status" className="character-hint">{blocked||'준비됐어요. 버튼을 누르면 선택한 사진으로 캐릭터를 만들어요.'}</p>
+ <p className="character-hint">오늘 남은 생성 {state.remaining}회 / {state.dailyLimit}회 · 생성 요청은 실패해도 한도에 포함돼요.</p>
  {state.draft&&<button className="character-primary" type="button" disabled={busy||state.busy} onClick={()=>void apply()}>이 캐릭터를 프로필에 적용</button>}
  {(state.active||state.draft)&&<button className="character-reset" type="button" disabled={busy||state.busy} onClick={()=>void reset()}>캐릭터 삭제 · 기본 프로필로</button>}
  {error&&<p role="alert" className="character-error">{error}</p>}{notice&&<p role="status" className="character-notice">{notice}</p>}

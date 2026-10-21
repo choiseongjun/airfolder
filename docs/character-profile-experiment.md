@@ -17,7 +17,11 @@ Active and pending images are private and viewer-scoped. A preview is usable for
 24 hours; applying it replaces the active image. Delete clears both images without
 resetting usage. Account deletion cascades to this table.
 
-Budget: 3 attempts per viewer per database calendar day, 30 total. Failed provider
+Budget: 3 attempts per viewer per database calendar day by default; set
+CHARACTER_PROFILE_DAILY_LIMIT to an integer from 1 to 10 for testing (local: 10).
+The global cap remains 30. The UI displays the server's configured limit and
+explains blocked generation conditions, refreshing while the dialog is open.
+Failed provider
 requests count toward the cap because upstream billing may already have occurred.
 Database locking reserves budget before network requests. The 3-minute lease is
 longer than the 150-second provider timeout. Original profile stays unchanged on failure.

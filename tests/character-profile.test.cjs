@@ -9,6 +9,16 @@ function route({enabled=true,row={active:null,draft:null,attempts:0},who='me'}={
  new Function('require','module','exports',code)(n=>imports[n],loaded,loaded.exports);return {...loaded.exports,queries};
 }
 const request=(method,headers={},body)=>new Request('https://app.test/api/character-profile',{method,headers:{origin:'https://app.test',...headers},body});
+test('test quota is configurable but bounded and remaining never goes negative',async()=>{
+ const previous=process.env.CHARACTER_PROFILE_DAILY_LIMIT;
+ try{
+  for(const [setting,limit,remaining] of [['10',10,7],['3',3,0],['100',3,0],['bad',3,0]]){
+   process.env.CHARACTER_PROFILE_DAILY_LIMIT=setting;
+   const body=await (await route({row:{attempts:3}}).GET()).json();
+   assert.equal(body.dailyLimit,limit);assert.equal(body.remaining,remaining);
+  }
+ }finally{if(previous===undefined)delete process.env.CHARACTER_PROFILE_DAILY_LIMIT;else process.env.CHARACTER_PROFILE_DAILY_LIMIT=previous;}
+});
 test('experiment disabled means no profile reads or writes',async()=>{const r=route({enabled:false});assert.equal((await r.GET()).status,404);assert.equal(r.queries.length,0)});
 test('profile results are viewer scoped and uncacheable',async()=>{const r=route({row:{active:Buffer.from('test'),draft:null,attempts:2}});const res=await r.GET();const b=await res.json();assert.equal(b.remaining,1);assert.match(b.active,/^data:image\/webp;base64,/);assert.match(res.headers.get('cache-control'),/no-store/);assert.deepEqual(r.queries[0].args,['me'])});
 test('photo consent is required before any generation or quota writes',async()=>{const r=route();assert.equal((await r.POST(request('POST',{'content-type':'image/jpeg'},'x'))).status,400);assert.equal(r.queries.length,0)});
