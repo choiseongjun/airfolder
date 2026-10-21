@@ -61,6 +61,7 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
   const [crewMeta, setCrewMeta] = useState<{name: string; members: number} | null>(null);
   const [scanning, setScanning] = useState(false), [grouped, setGrouped] = useState(0);
   const [accepted, setAccepted] = useState<boolean | null>(null), [consent, setConsent] = useState(false);
+  const [showConsent, setShowConsent] = useState(false);
   const [studioStickers, setStudioStickers] = useState<StudioSticker[]>([]), [studioTab, setStudioTab] = useState<typeof STUDIO_CATEGORIES[number]['id']>('jokes'), [selectedStudioSticker, setSelectedStudioSticker] = useState<string | null>(null);
   const studioStage = useRef<HTMLDivElement>(null), studioDragging = useRef<string | null>(null);
   const [saving, setSaving] = useState(''), [error, setError] = useState('');
@@ -174,7 +175,8 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
   })), [days]);
 
   async function save() {
-    if (saving || (!picks.length && !editItem) || (!accepted && !consent)) return;
+    if (saving || accepted === null || (!picks.length && !editItem)) return;
+    if (!accepted && !consent) { setShowConsent(true); return; }
     setError('');
     try {
       if (!accepted) { setSaving(t('약관 확인 중…', 'Confirming…')); await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) }); setAccepted(true); }
@@ -274,9 +276,9 @@ export default function QuickAlbum({ locale, onClose, onSaved, onBlank, groupId 
       {grouped > 0 && <p className="qa-days">{t(`비슷한 사진은 한 장으로 예쁘게 묶었어요 (${grouped}곳)`, `Grouped similar shots into one frame (${grouped})`)}</p>}
       <p className="qa-audience">{editItem ? t('기존 기록의 공개 범위를 유지해요.', 'This keeps the memory’s existing audience.') : groupId ? t('저장하면 크루 멤버가 사진과 한마디를 볼 수 있어요.', 'Crew members can see these photos and captions once saved.') : t('저장한 뒤 친구를 초대하면 함께 볼 수 있어요. 초대 링크를 가진 사람은 공유된 사진을 보고 참여할 수 있어요.', 'After saving, invite friends to view it together. Anyone with the invite link can see shared photos and join.')}</p>
       <div className="qa-dock">
-        {accepted === false && <Consent ko={ko} checked={consent} onChange={setConsent} />}
+        {showConsent && accepted === false && <Consent ko={ko} checked={consent} onChange={setConsent} />}
         {error && <p className="qa-error" role="alert">{error}</p>}
-        <button className="qa-primary" disabled={!!saving || accepted === null || (!accepted && !consent) || (!picks.length && !editItem)} onClick={() => void save()}>{saving || (editItem ? t('수정 사항 저장하기', 'Save changes') : t('이 앨범 저장하기', 'Keep this album'))}<ArrowRight size={18} /></button>
+        <button className="qa-primary" disabled={!!saving || accepted === null || (showConsent && !accepted && !consent) || (!picks.length && !editItem)} onClick={() => void save()}>{saving || (editItem ? t('수정 사항 저장하기', 'Save changes') : t('이 앨범 저장하기', 'Keep this album'))}<ArrowRight size={18} /></button>
         <small>{editItem ? t('사진을 빼면 이 기록에서 숨김 처리돼요.', 'Removed photos are hidden from this memory.') : t('저장하면 링크 하나로 친구들이 가입 없이 사진과 한마디를 얹을 수 있어요.', 'Once saved, friends can add photos and a note from one link, no sign-up needed.')}</small>
       </div>
     </section>}
