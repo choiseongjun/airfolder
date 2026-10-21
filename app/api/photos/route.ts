@@ -1,4 +1,4 @@
-import {requireTerms} from '@/lib/safety';
+import {requireActiveViewer} from '@/lib/safety';
 import {trackGrowth} from '@/lib/growth';
 import { notifySharedPhotos } from '@/lib/push';
 import {checkStorageQuota} from '@/lib/storage-quota';
@@ -17,7 +17,7 @@ const limit = VIDEO_LIMIT;
 const allowed = new Set(['image/jpeg','image/png','image/webp','image/gif','image/heic','image/heif','image/avif','video/mp4','video/quicktime','video/webm']);
 export async function POST(request: Request) {
   return safe(async () => {
-    sameOrigin(request); const who = await viewer();await requireTerms(who);
+    sameOrigin(request); const who = await viewer();await requireActiveViewer(who);
     if (Number(request.headers.get('content-length') || 0) > limit + 65536) throw new ApiError(413, 'MEDIA_TOO_LARGE');
     const storageLimit=await storageFileLimit();
     if(Number(request.headers.get('content-length')||0)>storageLimit+65536)throw new ApiError(413,'STORAGE_LIMIT_REQUIRES_UPGRADE');
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
 }
 export async function PATCH(request: Request) {
   return safe(async () => {
-    sameOrigin(request); const who = await viewer(), body = await json(request);await requireTerms(who);
+    sameOrigin(request); const who = await viewer(), body = await json(request);await requireActiveViewer(who);
     if (!Array.isArray(body.ids) || !body.ids.length || body.ids.length > 200 || typeof body.shared !== 'boolean') throw new ApiError(400,'INVALID_SELECTION');
     const ids = [...new Set(body.ids.map(uuid))], recipients = parseRecipients(body.recipients,body.shared);
     const folders: string[] = [];

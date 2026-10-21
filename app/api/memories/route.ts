@@ -1,4 +1,4 @@
-import {requireTerms} from '@/lib/safety';
+import {requireActiveViewer} from '@/lib/safety';
 import {attachPhotos,photoIds} from '@/lib/record-bundles';
 import {parseRecipients,checkRecipients} from '@/lib/audience';
 import {connection} from 'next/server';
@@ -24,7 +24,7 @@ export async function GET(request:Request){
  });
 }
 export async function POST(request:Request){return safe(async()=>{
- sameOrigin(request);const who=await viewer(),b=await json(request),folder=uuid(b.folderId),id=uuid(b.id);await requireTerms(who);
+ sameOrigin(request);const who=await viewer(),b=await json(request),folder=uuid(b.folderId),id=uuid(b.id);await requireActiveViewer(who);
  const ids=photoIds(b.photoIds),title=b.title===undefined?'':String(b.title).trim();if(title.length>120)throw new ApiError(400,'INVALID_TITLE');
  const body=textBody(b.body||title||(ids?.length?'사진 기록':''),4000),day=recordDate(b.day);if(typeof b.shared!=='boolean')throw new ApiError(400,'INVALID_VISIBILITY');
  await requireMember(folder,who);
@@ -39,7 +39,7 @@ export async function POST(request:Request){return safe(async()=>{
  });return Response.json({id},{status:201});
 });}
 export async function PATCH(request:Request){return safe(async()=>{
- sameOrigin(request);const who=await viewer(),b=await json(request);await requireTerms(who);
+ sameOrigin(request);const who=await viewer(),b=await json(request);await requireActiveViewer(who);
  await transaction(async db=>{
   const target=await targetAccess(db,who,'record',b.id);if(target.owner_id!==who)throw new ApiError(403,'NOT_OWNED');
   if(typeof b.shared!=='boolean')throw new ApiError(400,'INVALID_VISIBILITY');

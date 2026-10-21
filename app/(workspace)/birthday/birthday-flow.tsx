@@ -3,8 +3,6 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Cake, Camera, Check, Copy, PenLine, Send, UserRound } from 'lucide-react';
 import { api, initializeSession } from '@/lib/client-api';
-import { TERMS_VERSION } from '@/lib/policy';
-import Consent from '../../growth/consent';
 import { Sticker } from '../../theme-album';
 import '../../theme-album.css';
 import './birthday.css';
@@ -22,19 +20,18 @@ export function birthdayMessage(hero: string, url: string, ko: boolean) {
 
 export default function BirthdayFlow({ locale }: { locale: string }) {
   const ko = locale === 'ko', text = (a: string, b: string) => ko ? a : b;
-  const [ready, setReady] = useState(false), [accepted, setAccepted] = useState(false), [consent, setConsent] = useState(false);
+  const [ready, setReady] = useState(false);
   const [hero, setHero] = useState(''), [day, setDay] = useState(() => localDay(7)), [busy, setBusy] = useState(false), [error, setError] = useState('');
   const [album, setAlbum] = useState(''), [invite, setInvite] = useState(''), [copied, setCopied] = useState('');
   const albumRef = useRef(''), creationId = useRef('');
-  useEffect(() => { let active = true; initializeSession().then(() => api<{ accepted: boolean }>('/api/policy')).then(p => {
-    if (active) { setAccepted(p.accepted); setReady(true); }
+  useEffect(() => { let active = true; initializeSession().then(() => {
+    if (active) { setReady(true); }
   }).catch(() => { if (active) setError(ko ? '연결하지 못했어요. 새로고침해 주세요.' : 'Could not connect. Please reload.'); }); return () => { active = false; }; }, [ko]);
   const name = hero.trim(), title = ko ? `${name}의 생일` : `${name}'s birthday`, left = daysUntil(day);
   async function create(event: FormEvent) {
-    event.preventDefault(); if (busy || !ready || !name || (!accepted && !consent)) return;
+    event.preventDefault(); if (busy || !ready || !name) return;
     setBusy(true); setError('');
     try {
-      if (!accepted) { await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) }); setAccepted(true); }
       // Keep the created album if generating its invite fails; retry must not create duplicate albums.
       if (!albumRef.current) {
         creationId.current ||= crypto.randomUUID();
@@ -73,9 +70,8 @@ export default function BirthdayFlow({ locale }: { locale: string }) {
         <label className="growth-field">{text('누구의 생일인가요?', 'Whose birthday is it?')}<input required maxLength={30} disabled={Boolean(album)} value={hero} onChange={e => setHero(e.target.value)} placeholder={text('예: 지수', 'e.g. Jisoo')} enterKeyHint="next" /></label>
         <label className="growth-field">{text('생일 날짜', 'Birthday')}<input type="date" required min={localDay()} disabled={Boolean(album)} value={day} onChange={e => setDay(e.target.value)} /></label>
         {left > INVITE_DAYS && <p className="growth-note">{text(`초대 링크는 ${INVITE_DAYS}일간 유효해요. 생일이 더 남았다면 나중에 앨범에서 새 링크를 만들 수 있어요.`, `Invite links last ${INVITE_DAYS} days. You can make a fresh link from the album later.`)}</p>}
-        {!accepted && <Consent ko={ko} checked={consent} onChange={setConsent} />}
         <p className="growth-note">{text('주인공 몰래 만들어도 돼요. 생일날 같은 링크를 주인공에게 보내면 완성된 앨범을 볼 수 있어요.', 'Keep it a surprise. On the day, send the same link to the birthday person so they can open the finished album.')}</p>
-        <div className="bday-dock"><button className="growth-button" disabled={!ready || busy || !name || !day || (!accepted && !consent)}>{busy ? text('준비하고 있어요…', 'Preparing…') : !name ? text('주인공 이름을 적어주세요', 'Add their name first') : text(`${title} 앨범 만들기`, `Create ${title} album`)}<ArrowRight size={18} /></button></div>
+        <div className="bday-dock"><button className="growth-button" disabled={!ready || busy || !name || !day}>{busy ? text('준비하고 있어요…', 'Preparing…') : !name ? text('주인공 이름을 적어주세요', 'Add their name first') : text(`${title} 앨범 만들기`, `Create ${title} album`)}<ArrowRight size={18} /></button></div>
       </form> : <div className="bday-step">
         <div className="bday-message"><span>{text('단톡방에 보낼 메시지', 'Message for the group chat')}</span><p>{message}</p></div>
         <div className="bday-copy-row">

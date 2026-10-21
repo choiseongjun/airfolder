@@ -1,10 +1,10 @@
 import {ApiError,json,requireMember,safe,sameOrigin,transaction,uuid,viewer} from '@/lib/server';
 import {mediaLimit} from '@/lib/media-limits';
-import {requireTerms} from '@/lib/safety';
+import {requireActiveViewer} from '@/lib/safety';
 
 export async function POST(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),body=await json(request),id=uuid(body.id),folder=uuid(body.folderId);
- await requireTerms(who);await requireMember(folder,who);
+ await requireActiveViewer(who);await requireMember(folder,who);
  const size=Number(body.size),created=Number(body.created);
  if(!Number.isSafeInteger(size)||size<1||size>mediaLimit(String(body.mime)))throw new ApiError(413,'MEDIA_TOO_LARGE');
  if(!Number.isFinite(created)||created<0||created>Date.now()+86400000)throw new ApiError(400,'INVALID_DATE');
@@ -27,7 +27,7 @@ export async function POST(request:Request){return safe(async()=>{
 
 export async function PUT(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),q=new URL(request.url).searchParams,id=uuid(q.get('id')),part=Number(q.get('part'));
- await requireTerms(who);
+ await requireActiveViewer(who);
  if(!Number.isInteger(part)||part<0||part>16)throw new ApiError(400,'INVALID_PART');
  // Count the stream, including requests without Content-Length.
  const reader=request.body?.getReader();if(!reader)throw new ApiError(400,'INVALID_UPLOAD');

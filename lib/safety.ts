@@ -4,6 +4,11 @@ import { ApiError, pool, uuid } from './server';
 import { targetAccess } from './memories';
 import { TERMS_VERSION } from './policy';
 
+export async function requireActiveViewer(who: string) {
+  const result = await pool().query('SELECT suspended_at FROM snaproom.viewers WHERE id=$1', [who]);
+  if (result.rows[0]?.suspended_at) throw new ApiError(403, 'ACCOUNT_SUSPENDED');
+}
+
 export async function requireTerms(who: string) {
   const result = await pool().query('SELECT terms_version,suspended_at FROM snaproom.viewers WHERE id=$1', [who]);
   if (result.rows[0]?.suspended_at) throw new ApiError(403, 'ACCOUNT_SUSPENDED');

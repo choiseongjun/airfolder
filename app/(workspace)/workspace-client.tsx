@@ -10,7 +10,6 @@ import BrandMark from '@/app/brand-mark';
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import PolicyGate from '../policy-gate';
-import { useSaveConsent } from '../use-save-consent';
 import {BlockedUsers} from '../safety-actions';
 import EmailLogin from "../email-login";
 import AccountNudge from "../account-nudge";
@@ -75,7 +74,6 @@ async function saveWorkspace(rooms: Room[], photos: Photo[], viewerId: string) {
 
 export default function Home({ initialLocale, browsing=false, initialLogin=false }: { initialLocale: Locale; browsing?:boolean; initialLogin?:boolean }) {
   const [locale, setLocale] = useState<Locale>(initialLocale); const [localeReady, setLocaleReady] = useState(false);
-  const { beforeSave, consentGate } = useSaveConsent(locale === "ko");
   const t = (key: string) => translate(locale, key);
   const number = (value: number) => new Intl.NumberFormat(localeTag[locale]).format(value);
   function roomTitle(value: Room | undefined) {
@@ -326,7 +324,6 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
   async function createRoom(event: React.FormEvent) {
     event.preventDefault(); if(!roomName.trim() || !ready || busy)return; setBusy(true);
     try {
-      if (!await beforeSave()) return;
       const result=await api<{id:string}>("/api/folders",{method:"POST",body:JSON.stringify({name:roomName.trim(),category,description,groupId:activeGroup,startDate:albumStart||null,endDate:albumEnd||null})});
       await refreshWorkspace(); setRoomName(""); setDescription("");setAlbumStart("");setAlbumEnd(""); setFilter("전체"); startCollect(result.id);
     } catch { setToast("서버에 폴더를 만들지 못했어요. 다시 시도해 주세요."); } finally {setBusy(false);}
@@ -411,8 +408,7 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
     {!isAlbumPhotosView && <WorkspaceStory locale={locale} onCreate={openQuick} onHelp={()=>setModal("help")}/>}
     <div className="main-shell"><header className="topbar"><Link className="brand app-brand" href="/" aria-label={t("Memonestia 홈")}><span className="brand-icon"><BrandMark/></span>memonestia<span className="brand-dot">.</span></Link><div className="header-tools"><label className="language-picker"><Globe2 size={15}/><select aria-label="Language / 언어" disabled={!localeReady} value={locale} onChange={e => changeLanguage(e.target.value)}><option value="en">English</option><option value="ko">한국어</option></select></label><span className="local-status"><span />{t("개인 작업공간")}</span><button className="icon-button" title={t("알림")} onClick={() => setModal("notifications")}><Bell size={18} />{unreadCount>0&&<i aria-label={locale==="ko"?`새 소식 ${unreadCount}개`:`${unreadCount} unread updates`}/>}</button><button className="header-avatar" onClick={() => setModal("profile")} aria-label={t("내 계정")}>S</button></div></header>
     {(busy || authBusy || photos.some(p=>p.uploadStatus==="uploading")) && <div className="workspace-progress" role="status" aria-live="polite"><span className="activity-spinner" aria-hidden="true"/>{authBusy?(locale==="ko"?"로그인 연결 중…":"Connecting your account…"):busy?(locale==="ko"?"변경사항 저장 중…":"Saving changes…"):(locale==="ko"?"사진을 안전하게 올리는 중…":"Uploading your memories…")}</div>}
-    {consentGate}
-    {ready&&!browsing&&(modal==="collect"||modal==="join"||modal==="discussion")&&<PolicyGate key={viewerId} ko={locale==="ko"}/>}
+    {ready&&!browsing&&(modal==="join"||modal==="discussion")&&<PolicyGate key={viewerId} ko={locale==="ko"}/>}
     <main className={isAlbumPhotosView ? "album-media-main" : ""}>{browsing&&<div className="browse-ribbon"><span><BookOpen size={15}/>{locale==="ko"?"앨범 둘러보는 중":"Exploring albums"}</span><button onClick={()=>setModal("help")} aria-label={locale==="ko"?"둘러보기 안내":"About exploring"}><CircleHelp size={16}/></button><a href={`/?lang=${locale}`}>{locale==="ko"?"내 공간으로":"My space"}<ArrowRight size={13}/></a></div>}{serverError && <div className="server-banner" role="alert">{t("서버에 연결하지 못했어요. 기기에 대기 중인 사진은 유지됩니다.")}<button onClick={()=>{if(ready)void refreshWorkspace().catch(()=>setServerError(true));else setRetryConnection(v=>v+1);}}>{t("다시 시도")}</button></div>}{!ready && !serverError && <WorkspaceLoading ko={locale==="ko"}/>}{ready && (isAlbumPhotosView ? <AlbumMediaLibrary photos={visiblePhotos} locale={locale} title={roomTitle(room!)} onBack={() => setFolderView("theme")} onOpen={setPreview} onAdd={browsing?undefined:openCollect}/> : <>
       {nativeApp&&incomingCount>0&&<button className="primary-button full" onClick={()=>setModal("incoming-folder")}>{locale==="ko"?`공유받은 사진·영상 ${incomingCount}개를 앨범에 담기`:`Save ${incomingCount} incoming photos & videos`}</button>}
       <div className="page-heading"><div><div className="eyebrow"><Heart size={11}/> {firstVisit ? "A PRIVATE PLACE FOR YOUR PEOPLE" : "OUR LITTLE MEMORIES"}</div><h1>{room ? <><button className="back-button" onClick={() => { selectGroup(room.groupId||null);setActiveRoom(null); setSelected([]); }} aria-label={t("내 방으로")}><ArrowLeft size={24}/></button>{roomTitle(room)}</> : page === "rooms" ? firstVisit ? (locale==="ko"?"우리들만의 사진 뒷면 비밀 일기장":"A private little diary behind your photos") : (locale==="ko"?"우리의 추억 책장":"Our memory bookshelf") : page === "groups" ? (locale==="ko"?"크루와 함께하는 사람들":"Your crew") : page === "private" ? t("나만 간직한 순간들.") : t("함께 나눈 순간들.")}</h1><p>{room ? roomSummary(room) || t("이 방에 새로운 순간을 담아보세요.") : page === "rooms" ? firstVisit ? (locale==="ko"?"단톡방에 묻힌 사진을 모으고, 사진 뒷면에 우리만의 메모를 남겨요.":"Keep photos out of the chat scroll and leave little notes on their backs.") : (locale==="ko"?"다시 펼쳐보고 싶은 순간들을 모아요.":"A home for the moments you want to revisit.") : page === "private" ? t("아직 공개하지 않은 사진이에요. 필요한 순간에, 원하는 사람에게만.") : t("내가 공개한 사진들을 한눈에 확인하세요.")}</p></div><div className="page-heading-actions">{room && !browsing && <button className="secondary-button heading-share" onClick={()=>setShareTarget({folderId:room.id,title:roomTitle(room),photos:photos.filter(p=>p.roomId===room.id&&p.mediaType!=="video"&&p.uploadStatus==="uploaded").slice(0,3).map(p=>p.src),canInvite:!room.groupId&&room.mine!==false,birthday:room.category==="생일",day:room.endDate||""})} aria-label={locale==="ko"?"앨범 공유하기":"Share album"}><Share2 size={16}/>{locale==="ko"?"공유":"Share"}</button>}{!firstVisit && <button className="primary-button" onClick={() => browsing ? openQuick() : room ? openCollect() : activeGroup ? setModal("create") : setQuick(true)}>{room ? <ImagePlus size={17}/> : <Plus size={18}/>}{room ? (locale==="ko"?"사진·영상 추가":"Add photos & videos") : (locale==="ko"?"새 앨범":"New album")}</button>}</div></div>
@@ -441,7 +437,7 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
     </nav>
     </div>
     {ready&&!browsing&&!account&&photos.some(p=>p.mine!==false&&p.uploadStatus==="uploaded")&&<AccountNudge ko={locale==="ko"} viewerId={viewerId} onConnect={()=>setModal("profile")}/>}
-    {studio&&<MemoryStudio beforeSave={beforeSave} ko={locale==="ko"} guest={!account} onConnect={()=>{closeStudio();setModal("profile");}} albums={rooms} photos={photos} initialAlbum={activeRoom} onClose={closeStudio} onSaved={id=>{closeStudio();void refreshWorkspace().then(()=>{setActiveRoom(id);setPage("rooms");setFolderView("theme");}).catch(()=>setServerError(true));}}/>}
+    {studio&&<MemoryStudio ko={locale==="ko"} guest={!account} onConnect={()=>{closeStudio();setModal("profile");}} albums={rooms} photos={photos} initialAlbum={activeRoom} onClose={closeStudio} onSaved={id=>{closeStudio();void refreshWorkspace().then(()=>{setActiveRoom(id);setPage("rooms");setFolderView("theme");}).catch(()=>setServerError(true));}}/>}
     {selected.length > 0 && <div className="selection-bar"><button onClick={() => setSelected([])} aria-label={t("선택 해제")}><X size={17}/></button><strong>{formatCount(locale, selected.length, "selected")}</strong><button onClick={() => { setAudience("방 전체"); setRecipients([]); setModal("share"); }}><Users size={16}/>{t("공개 설정")}</button><button onClick={async () => { for (const p of photos.filter(p => selected.includes(p.id))) await download(p); }}><ArrowDownToLine size={16}/>{t("다운로드")}</button></div>}
     {toast && <div className="toast" role="status"><Check size={17}/>{t(toast)}</div>}
     {saveError && <div className="save-error" role="alert">{t("기기에 저장하지 못했어요.")}<button onClick={() => saveWorkspace(rooms, photos, viewerId).then(() => setSaveError(false)).catch(() => setToast("저장공간을 확인해 주세요"))}>{t("다시 시도")}</button></div>}
