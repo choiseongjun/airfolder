@@ -1,4 +1,10 @@
 export const albumThemes = [
+ { id: 'desktop', ko: '추억.zip', en: 'Memory.zip', hintKo: '옛날 컴퓨터의 폴더를 열어 꺼내는 사진 파일', hintEn: 'Open folders on a retro desktop', kicker: 'MEMORY OS · 1999', chapter: 'DIRECTORY', layout: 'desktop' },
+ { id: 'metro', ko: '하루 노선도', en: 'Day Line', hintKo: '사진 한 장이 한 정거장, 하루를 잇는 노선', hintEn: 'Every photo is a stop along your day', kicker: 'MEMORY TRANSIT', chapter: 'LINE', layout: 'metro' },
+ { id: 'tarot', ko: '운명의 사진 카드', en: 'Arcana Memories', hintKo: '별빛 카드 뒷면을 열면 나타나는 그날의 장면', hintEn: 'Reveal the moments hidden in your cards', kicker: 'THE MEMORY ARCANA', chapter: 'ARCANA', layout: 'tarot' },
+ { id: 'detective', ko: '그날의 사건 파일', en: 'The Memory Case', hintKo: '빨간 실, 증거 사진, 기밀 문서로 추적하는 하루', hintEn: 'Follow red threads and photographic evidence', kicker: 'CONFIDENTIAL · CASE FILE', chapter: 'EVIDENCE', layout: 'detective' },
+ { id: 'quest', ko: '추억 퀘스트', en: 'Memory Quest', hintKo: '사진으로 채우는 게임 맵과 클리어 보상', hintEn: 'A game map of moments and unlocked rewards', kicker: 'PLAYER ONE · SAVE FILE', chapter: 'WORLD', layout: 'quest' },
+ { id: 'cinema', ko: '우리의 엔딩 크레딧', en: 'End Credits', hintKo: '와이드 스크린과 출연진으로 완성하는 한 편의 영화', hintEn: 'Widescreen scenes with a cast and closing credits', kicker: 'A FILM BY ALL OF US', chapter: 'SCENE', layout: 'cinema' },
  { id: 'comic', ko: '오늘의 만화', en: 'Comic Day', hintKo: '말풍선과 컷 분할로 만드는 한 편의 만화', hintEn: 'Turn your day into panels and speech bubbles', kicker: 'THE DAILY COMIC', chapter: 'EPISODE', layout: 'comic' },
  { id: 'orbit', ko: '우주 관측일지', en: 'Orbit Log', hintKo: '우주선 창 너머로 수집한 반짝이는 순간', hintEn: 'Collect moments through a spacecraft window', kicker: 'MISSION: MEMORIES', chapter: 'LOG', layout: 'orbit' },
  { id: 'gallery', ko: '나의 작은 전시', en: 'Private Exhibition', hintKo: '여백과 작품 번호로 완성하는 작은 미술관', hintEn: 'A quiet exhibition with artwork labels', kicker: 'A PRIVATE EXHIBITION', chapter: 'ROOM', layout: 'gallery' },

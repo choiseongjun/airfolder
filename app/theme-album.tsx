@@ -14,6 +14,8 @@ import './theme-album.css';
 import './theme-layouts.css';
 import './theme-concepts.css';
 import './theme-worlds.css';
+import './theme-adventures.css';
+import AdventureCover, { adventureThemes } from './adventure-cover';
 
 // The three "killer" concepts (real interaction/motion you won't find in a sticker-dakku app:
 // tear the pass, watch it print, the record actually spins) lead the picker. The rest follow,
@@ -24,6 +26,12 @@ export { albumThemes, type AlbumThemeId } from '@/lib/album-themes';
 export type StickerKind = 'sun' | 'wave' | 'star' | 'heart' | 'bow' | 'sparkle' | 'cake' | 'balloon' | 'flower' | 'cherry' | 'moon';
 type Decor = StickerKind | { text: string };
 const decor: Record<AlbumThemeId, Decor[]> = {
+ desktop: [{ text: 'SAVE AS…' }, { text: '.JPG' }, { text: '100% LOADED' }, { text: 'BACKUP' }],
+ metro: [{ text: 'TRANSFER' }, { text: '01' }, { text: 'NEXT STOP' }, { text: 'EXIT →' }],
+ tarot: ['moon', 'star', 'sparkle', { text: 'DESTINY' }],
+ detective: [{ text: 'TOP SECRET' }, { text: 'EXHIBIT A' }, { text: 'CLUE' }, { text: 'SOLVED' }],
+ quest: [{ text: 'LEVEL UP!' }, 'star', { text: '+100 XP' }, { text: 'CLEAR!' }],
+ cinema: [{ text: 'TAKE 01' }, { text: 'REC ●' }, { text: 'DIRECTOR’S CUT' }, { text: 'FIN' }],
  comic: [{ text: 'WOW!' }, { text: 'TO BE CONTINUED' }, { text: '찰칵!' }, 'star'],
  orbit: [{ text: '● REC' }, { text: 'MISSION 01' }, 'sparkle', 'moon'],
  gallery: [{ text: '01 / ∞' }, { text: 'COLLECTION' }, { text: 'EXHIBIT' }, 'flower'],
@@ -244,6 +252,12 @@ ${url}`;
  function spread(chapter: Chapter, ci: number) {
   const ps = chapter.photos, no = (i: number) => `${String(ci + 1).padStart(2, '0')}${String(i + 1).padStart(2, '0')}`;
   switch (meta.layout) {
+   case 'desktop': return <div className="ta-desktop-files">{ps.map((p, i) => <details key={p.id} className="ta-file-window" open={preview || i === 0}><summary><span>▣ {captionOf(p) || `memory_${no(i)}.jpg`}</span><span aria-hidden="true">＋</span></summary><div className="ta-file-content">{photo(p, i, 'big', true)}<small>{dotted(p.day || chapter.day)} · {ko ? '소중한 파일 · 보관됨' : 'Precious file · archived'}</small></div></details>)}</div>;
+   case 'metro': return <div className="ta-metro-line">{ps.map((p, i) => <article key={p.id} className="ta-metro-stop"><span className="ta-station-number">{String(i + 1).padStart(2, '0')}</span><h3>{captionOf(p) || (ko ? ['설렘역','웃음역','행복역','또 만나역'][i % 4] : ['Excitement','Laughter','Happiness','See you again'][i % 4])}</h3>{photo(p, i, 'small', true)}<small>{dotted(p.day || chapter.day)} · {ko ? '이번 역의 풍경' : 'A view from this stop'}</small></article>)}</div>;
+   case 'tarot': return <div className="ta-tarot-deck">{ps.map((p, i) => <details key={p.id} className="ta-arcana" open={preview}><summary><span className="ta-arcana-number">{['I','II','III','IV','V','VI'][i % 6]}</span><span className="ta-arcana-symbol" aria-hidden="true">✧</span><strong>{ko ? '어떤 순간이 기다릴까?' : 'What moment awaits?'}</strong><small>{ko ? '눌러서 카드 열기 · 다시 눌러 접기' : 'Tap to reveal · tap again to close'}</small></summary><div className="ta-arcana-reveal">{photo(p, i, 'small', true)}<p>{captionOf(p) || (ko ? ['태양 같은 하루','별처럼 빛난 순간','다시 만날 운명'][i % 3] : ['A day of sunshine','A shining moment','Destined to meet again'][i % 3])}</p></div></details>)}</div>;
+   case 'detective': return <div className="ta-evidence-board">{ps.map((p, i) => <article key={p.id} className="ta-evidence"><span className="ta-evidence-pin" aria-hidden="true"/><span className="ta-evidence-id">EVIDENCE #{no(i)}</span>{photo(p, i, 'small', true)}<p>{captionOf(p) || (ko ? '이날 행복했다는 결정적 증거' : 'Proof that this was a good day')}</p><small>{dotted(p.day || chapter.day)}</small></article>)}</div>;
+   case 'quest': return <div className="ta-quest-map">{ps.map((p, i) => <article key={p.id} className="ta-quest-stage"><span className="ta-level">{String(i + 1).padStart(2, '0')}</span><div><div className="ta-quest-status"><b>STAGE {i + 1}</b><span>★ CLEAR</span></div>{photo(p, i, 'small', true)}<details className="ta-quest-reward"><summary>{ko ? '보상 상자 열기' : 'Open reward chest'} ▣</summary><p>★ +100 MEMORY XP<br/>{captionOf(p) || (ko ? '다시 꺼내볼 추억을 획득했어요!' : 'A memory worth revisiting unlocked!')}</p></details></div></article>)}</div>;
+   case 'cinema': return <div className="ta-cinema-scenes">{ps.map((p, i) => <article key={p.id} className="ta-cinema-scene"><div className="ta-scene-slate"><span>SCENE {String(i + 1).padStart(2, '0')}</span><span>{dotted(p.day || chapter.day)}</span></div>{photo(p, i, 'big', true)}<p className="ta-subtitle">{captionOf(p) || (ko ? '이 장면은 오래 기억될 거야.' : 'This scene will stay with us.')}</p><small>{ko ? '출연' : 'STARRING'} · {p.author || (ko ? '우리 모두' : 'ALL OF US')}</small></article>)}</div>;
    case 'comic': return <div className="ta-comic-panels">{ps.map((p, i) => <article key={p.id} className="ta-comic-panel">{photo(p, i, 'small', true)}<span className="ta-comic-bubble">{captionOf(p) || (ko ? ['이 장면, 저장!', '그리고 잠시 후…', '완벽한 하루!'][i % 3] : ['Keep this moment!', 'A little later…', 'What a day!'][i % 3])}</span><small>{String(i + 1).padStart(2, '0')}</small></article>)}</div>;
    case 'orbit': return <div className="ta-orbit-log">{ps.map((p, i) => <article key={p.id} className="ta-orbit-entry"><div className="ta-orbit-coordinates"><span>LOG {no(i)}</span><span>{dotted(p.day || chapter.day)}</span></div>{photo(p, i, 'big')}<p>{captionOf(p) || (ko ? '이 순간의 궤도에 머무르기' : 'Staying in this moment’s orbit')}</p></article>)}</div>;
    case 'gallery': return <div className="ta-exhibition">{ps.map((p, i) => <article key={p.id} className="ta-exhibit">{photo(p, i, 'big', true)}<div className="ta-art-label"><b>{String(i + 1).padStart(2, '0')}</b><div><strong>{captionOf(p) || (ko ? '오래 바라보고 싶은 순간' : 'A moment worth keeping')}</strong><small>{p.author || (ko ? '나의 컬렉션' : 'My collection')} · {dotted(p.day || chapter.day)}</small></div></div></article>)}</div>;
@@ -364,7 +378,7 @@ ${url}`;
   {theme === 'receipt' && <div className="ta-printer" aria-hidden="true"><span/></div>}
   {!(theme === 'ticket' && !torn) && <div key={theme} className={`ta-album theme-${theme}`}>
    {theme === 'birthday' && <div className="ta-garland" aria-hidden="true">{Array.from({ length: 11 }, (_, i) => <i key={i}/>)}</div>}
-   <header className="ta-cover">
+   {adventureThemes.includes(theme) ? <header className="ta-cover ta-cover-adventure"><AdventureCover theme={theme} title={monthly && month !== 'all' ? monthTitle(month) : title} picture={cover ? photo(cover, 0, 'big', true) : <div className="ta-adventure-empty">{ko ? '첫 번째 사진을 기다리는 중' : 'Waiting for your first photo'}</div>} count={allPhotos.length} ko={ko}/>{description && <p className="ta-cover-note">{description}</p>}</header> : <header className="ta-cover">
     <span className="ta-kicker">{meta.kicker}</span>
     {theme === 'vinyl' ? <div className="ta-turntable">
      <div className="ta-sleeve">{stills.length ? <img key={slide % stills.length} src={stills[slide % stills.length].src} alt=""/> : <i/>}</div>
@@ -383,7 +397,7 @@ ${url}`;
     {description && <p className="ta-cover-note">{description}</p>}
     <p className="ta-cover-meta">{day && <span>{dotted(day)}</span>}{people.length > 0 && <span>{people.slice(0, 4).join(' · ')}{people.length > 4 ? (ko ? ` 외 ${people.length - 4}명` : ` +${people.length - 4}`) : ''}</span>}</p>
 
-   </header>
+   </header>}
    {shown.map((chapter, ci) => <section key={`${chapter.id}:${ci}`} className="ta-chapter">
     <div className="ta-chapter-head"><span className="ta-chapter-label">{meta.chapter} {String(ci + 1).padStart(2, '0')}</span>{chapter.note && <p className="ta-note">{chapter.note}</p>}</div>
     <Deco item={decor[theme][(ci * 2 + 2) % decor[theme].length]} className="ta-at-a"/>
