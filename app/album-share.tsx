@@ -6,6 +6,7 @@ import { api } from '@/lib/client-api';
 import { shareToKakao } from '@/lib/kakao-share';
 import { renderStory, type StoryTheme } from '@/lib/story-image';
 import { renderStoryVideo } from '@/lib/story-video';
+import { inviteRequestMessage, requestInviteLink, type InviteRequest } from '@/lib/invite-request';
 import './album-share.css';
 
 type Props = { folderId: string; title: string; theme: StoryTheme; photos: string[]; people: string[]; day: string; locale: 'ko' | 'en'; canInvite: boolean; message: (url: string) => string; onClose: () => void };
@@ -17,6 +18,7 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
  const [image, setImage] = useState<Blob | null>(null), [preview, setPreview] = useState(''), [link, setLink] = useState(''), [note, setNote] = useState(''), [busy, setBusy] = useState('');
  const [inviteReady, setInviteReady] = useState(false);
  const [groupInvite, setGroupInvite] = useState(false);
+ const [request, setRequest] = useState<InviteRequest>(theme === 'birthday' ? 'birthday' : 'photos');
  const [makingVideo, setMakingVideo] = useState(false), [videoProgress, setVideoProgress] = useState(0);
  useEffect(() => {
   let active = true, url = '';
@@ -29,7 +31,8 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
   return () => { active = false; if (url) URL.revokeObjectURL(url); };
  // eslint-disable-next-line react-hooks/exhaustive-deps -- Render the story and mint the link once per opened sheet.
  }, []);
- const text = link ? message(link) : '';
+ const requestLink = link && canInvite ? requestInviteLink(link, request) : link;
+ const text = requestLink ? canInvite ? inviteRequestMessage(title, requestLink, request, ko) : message(requestLink) : '';
  const fileName = `memonestia-${theme}.jpg`;
 
  async function video() {
@@ -56,7 +59,7 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
  }
  async function kakao() {
   if (!link) return; setBusy('kakao');
-  try { await shareToKakao(link); }
+  try { await shareToKakao(requestLink); }
   catch {
    if (navigator.share) { try { await navigator.share({ text }); } catch { /* Closing the sheet is fine. */ } }
    else { await copy(text, t('카카오톡을 열 수 없어 메시지를 복사했어요. 카톡에 붙여넣으세요.', 'Could not open KakaoTalk; the message is copied.')); }
@@ -80,7 +83,8 @@ export default function AlbumShare({ folderId, title, theme, photos, people, day
 
  return <div className="share-sheet-backdrop" role="dialog" aria-modal="true" aria-label={t('앨범 공유', 'Share album')} onClick={onClose}>
   <section className="share-sheet" onClick={e => e.stopPropagation()}>
-   <header><strong>{t('앨범 공유하기', 'Share this album')}</strong><button aria-label={t('닫기', 'Close')} onClick={onClose}><X size={18} /></button></header>
+   <header><strong>{canInvite ? t('친구에게 부탁하기', 'Ask your friends') : t('앨범 공유하기', 'Share this album')}</strong><button aria-label={t('닫기', 'Close')} onClick={onClose}><X size={18} /></button></header>
+   {canInvite && <div className="share-request"><div role="group" aria-label={t('초대 목적', 'Invitation purpose')}><button type="button" aria-pressed={request === 'photos'} onClick={() => setRequest('photos')}>{t('📸 내 사진 받아오기', '📸 Ask for photos')}</button><button type="button" aria-pressed={request === 'birthday'} onClick={() => setRequest('birthday')}>{t('💌 축하 한마디 받아오기', '💌 Ask for birthday wishes')}</button></div><p>{request === 'photos' ? t('친구 폰에 있는 내 사진, 이 앨범으로 받아요.', 'Collect photos of you from your friends’ phones.') : t('사진 없이 한 줄만 남겨도 롤링페이퍼가 채워져요.', 'One line is enough to fill your shared birthday card.')}</p><pre>{text || t('요청 링크를 만드는 중…', 'Making your request link…')}</pre></div>}
    <div className="share-preview">{preview ? <img src={preview} alt={t('스토리 미리보기', 'Story preview')} /> : <span>{t('스토리 이미지를 만드는 중…', 'Making the story image…')}</span>}<canvas ref={canvas} hidden /></div>
    <div className="share-audience"><strong>{inviteReady ? t('이 링크로 누가 무엇을 할 수 있나요?', 'Who can use this link?') : t('공유 전에 확인해 주세요', 'Before sharing')}</strong><p>{groupInvite ? t('이 링크는 크루 전체 초대예요. 참여하면 크루의 기존·새 앨범에 접근할 수 있고 멤버 전체에게 공유된 사진을 볼 수 있어요. 나만 보기·선택 공개 권한은 그대로 유지돼요.', 'This invites someone to the whole crew, including existing and future albums. Private and selected-recipient permissions remain unchanged.') : canInvite ? t('초대 링크를 가진 사람은 전체 멤버에게 공유된 사진을 보고, 참여해 자기 사진을 추가할 수 있어요. 나만 보기·선택 공개 사진과 아직 열리지 않은 타임캡슐 사진은 링크 미리보기에 나오지 않아요.', 'Anyone with the invite link can view photos shared with all members and join to add their own. Private, selected-recipient and held time-capsule photos are excluded from the link preview.') : t('이 링크는 앨범 초대가 아닌 서비스 소개 링크예요.', 'This link introduces the service; it does not invite people to this album.')}</p><small>{t('이미지·영상으로 저장해 외부에 올리면 해당 서비스의 공개 범위가 적용돼요.', 'Images and videos posted elsewhere follow that service’s audience settings.')}</small></div>
    <div className="share-targets">

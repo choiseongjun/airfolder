@@ -12,4 +12,18 @@ test('crew album invitation creates a crew token without revoking outstanding in
 test('personal album invitation stays scoped to the album',async()=>{const r=route({id:'album',group_id:null});const res=await r.POST(request());assert.equal(res.status,200);assert.equal((await res.json()).kind,'album');assert.match(r.writes[0].sql,/INSERT INTO snaproom.invites/);});
 test('non-owner or missing album cannot mint invitations',async()=>{const r=route(null);assert.equal((await r.POST(request())).status,403);assert.equal(r.writes.length,0);});
 const {joinedAlbumHref}=load('lib/album-navigation.ts',{});
+const {inviteRequest,requestInviteLink,inviteRequestMessage}=load('lib/invite-request.ts',{});
+test('request links preserve the target album and route birthday guests to notes',()=>{
+ const base='https://example.test/join/token?lang=ko&album=target';
+ const birthday=new URL(requestInviteLink(base,'birthday'));
+ assert.equal(birthday.searchParams.get('album'),'target');
+ assert.equal(birthday.searchParams.get('next'),'rolling');
+ assert.equal(birthday.searchParams.get('request'),'birthday');
+ const photos=new URL(requestInviteLink(birthday.toString(),'photos'));
+ assert.equal(photos.searchParams.get('next'),null);
+ assert.equal(photos.searchParams.get('request'),'photos');
+ assert.equal(inviteRequest('untrusted'),'photos');
+ assert.match(inviteRequestMessage('여행',photos.toString(),'photos',true),/내가 나온 사진/);
+ assert.match(inviteRequestMessage('생일',birthday.toString(),'birthday',true),/사진이 없어도/);
+});
 test('Korean invitation destinations preserve crew, album and rolling paper in the new drawer',()=>{assert.equal(joinedAlbumHref('ko','album','crew'),'/crew/photos?group=crew&album=album');assert.equal(joinedAlbumHref('ko','album'),'/crew/photos?group=personal&album=album');assert.equal(joinedAlbumHref('ko',undefined,'crew'),'/crew/photos?group=crew');assert.equal(joinedAlbumHref('ko','album','crew','rolling'),'/crew/photos?group=crew&album=album&view=rolling');assert.equal(joinedAlbumHref('en','album'), '/?lang=en&album=album&view=theme');});

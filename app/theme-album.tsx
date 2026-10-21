@@ -307,8 +307,8 @@ ${url}`;
  const opened = revealDate && !locked && now - revealDate.getTime() < 3 * 86400000;
  return <section className="ta-wrap" aria-label={ko ? '꾸민 앨범' : 'Themed album'}>
   {shareable && canShare && <div className="ta-album-actions">
-   <div><strong>{ko ? '친구들과 이 앨범을 채워요' : 'Fill this album together'}</strong><p>{ko ? '내 사진을 보태고, 함께한 친구에게 초대 링크를 보내세요.' : 'Add your photos and invite the friends who were there.'}</p></div>
-   <div className="ta-album-action-buttons"><Link href={`/?lang=${locale}&album=${encodeURIComponent(folderId)}&view=photos`}>{ko ? '사진 관리·추가' : 'Manage & add photos'}</Link><button type="button" onClick={share}>{ko ? '친구 초대·공유' : 'Invite & share'}</button></div>
+   <div><strong>{ko ? '내가 나온 사진은 친구 폰에 있잖아' : 'Your friends have photos of you'}</strong><p>{ko ? '사진 보내달라는 말 대신, 이 앨범으로 바로 받아요. 생일에는 축하 한마디도 부탁해 보세요.' : 'Ask friends to send photos straight to this album, or collect birthday wishes.'}</p></div>
+   <div className="ta-album-action-buttons"><Link href={`/?lang=${locale}&album=${encodeURIComponent(folderId)}&view=photos`}>{ko ? '사진 관리·추가' : 'Manage & add photos'}</Link><button type="button" onClick={share}>{ko ? '내 사진 받아오기' : 'Ask for my photos'}</button></div>
   </div>}
   {opened && <div className="ta-capsule-done"><Hourglass size={18}/><div><strong>{ko ? '현상 완료!' : 'Developed!'}</strong><small>{ko ? `${revealLabel}에 모두의 사진이 한꺼번에 공개됐어요.` : `Everyone's photos opened together ${revealLabel}.`}</small></div></div>}
   {birthday !== undefined && <div className="ta-birthday-bar">

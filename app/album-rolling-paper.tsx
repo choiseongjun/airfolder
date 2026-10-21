@@ -67,7 +67,7 @@ export default function AlbumRollingPaper({ folderId, title, locale, canInvite, 
     setSharing(true); setError('');
     try {
       const result = await api<{ token: string }>('/api/invites', { method: 'POST', body: JSON.stringify({ folderId }) });
-      const url = `${window.location.origin}/join/${result.token}?lang=${locale}&next=rolling`;
+      const url = `${window.location.origin}/join/${result.token}?lang=${locale}&next=rolling&request=birthday&album=${encodeURIComponent(folderId)}`;
       const text = ko ? `앨범에 롤링페이퍼 한마디 남겨줘 💌\n${url}` : `Leave us a note in our album 💌\n${url}`;
       if (navigator.share) {
         try { await navigator.share({ title, text, url }); }

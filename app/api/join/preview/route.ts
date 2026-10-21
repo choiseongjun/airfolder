@@ -16,9 +16,15 @@ export async function POST(request: Request) { return safe(async () => {
     WHERE i.token_hash=$1 AND i.expires_at>now()`, [hash(body.token), who]);
   const invite = result.rows[0];
   if (!invite) throw new ApiError(404, 'INVITE_EXPIRED');
+  // A crew token may name a target album, but never disclose an album outside that crew.
+  let target = invite;
+  if (invite.kind === 'group' && typeof body.album === 'string' && /^[a-f\d-]{36}$/i.test(body.album)) {
+    const album = await pool().query("SELECT name,category,to_char(ends_on,'YYYY-MM-DD') AS day FROM snaproom.folders WHERE id=$1 AND group_id=$2 AND deleted_at IS NULL", [body.album, invite.id]);
+    if (album.rows[0]) target = { ...invite, ...album.rows[0] };
+  }
   if (!invite.owner) trackGrowth({ event: 'invite_opened', who, contextId: invite.id,
     key: `invite_opened:${who}:${invite.id}:${new Date().toISOString().slice(0, 10)}`,
     properties: { source: 'guest', invite_type: invite.kind } });
-  return Response.json({ name: invite.name, kind: invite.kind, expiresAt: invite.expires_at, birthday: invite.category === '생일', day: invite.day, photos: invite.photos, people: invite.people },
+  return Response.json({ name: target.name, kind: invite.kind, expiresAt: invite.expires_at, birthday: target.category === '생일', day: target.day, photos: invite.photos, people: invite.people },
     { headers: { 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' } });
 }); }
