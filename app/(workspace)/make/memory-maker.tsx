@@ -18,7 +18,7 @@ export default function MemoryMaker() {
     setGuest(!workspace.account);
     return true;
   }
-  return <main className="memory-make-shell"><Link className="memory-make-back" href="/make">← 앨범 · 카드 다시 고르기</Link>
+  return <main className="memory-make-shell"><Link className="memory-make-back" href={template?'/make':'/?lang=ko&home=1'}>{template?'← 앨범 · 카드 다시 고르기':'← 피드 홈으로'}</Link>
     {template ? <MemoryStudio key={template.id} ko guest={guest} albums={[]} photos={[]} starter={template} beforeSave={beforeSave} onClose={() => router.push('/make')} onConnect={() => router.push('/?lang=ko&login=1')} onSaved={id => router.push(`/?lang=ko&home=1&album=${encodeURIComponent(id)}`)}/> : <MemoryStart/>}
   </main>;
 }

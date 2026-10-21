@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { joinedAlbumHref } from '@/lib/album-navigation';
 import { createPortal } from 'react-dom';
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { Trash2, X } from 'lucide-react';
 import { api } from '@/lib/client-api';
 import { TERMS_VERSION } from '@/lib/policy';
@@ -15,9 +15,10 @@ import MemoryLoading from './memory-loading';
 import BrandMark from './brand-mark';
 import PhotoNotes from './photo-notes';
 import type { NoteColor, NoteOptions } from '@/lib/comment-note';
+import FeedInspiration, { FeedSampleStory } from './feed-inspiration';
 
-// The signed-in home: the Stitch "프라이빗 크루 데일리 홈 피드" layout filled with the viewer's own crew.
-// Decorative mockup details without persisted data are omitted from the signed-in feed.
+// One feed home for first-time visitors and existing crews. Editorial examples
+// are explicitly labelled and never mixed into the viewer's private records.
 type Person = { id: string; name: string; mine: boolean };
 type Media = { id: string; src: string; video: boolean; day: string | null };
 export type FeedItem = { kind: 'photo' | 'record'; id: string; folderId: string; album: string; author: Person; createdAt: string; title: string; body: string; photos: Media[]; photoCount: number; comments: { id: string; body: string; author: Person; createdAt: string; color?: NoteColor; photoId?: string }[]; commentCount: number; likes: number; liked: boolean; shared: boolean; recipients: string[]; revision: number; day: string };
@@ -65,6 +66,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
   const [termsBusy, setTermsBusy] = useState(false);
   const [shareNotice, setShareNotice] = useState('');
   const { crew } = data;
+  const guest = !data.me;
   const publicGroups = data.publicGroups ?? [];
   useEffect(() => {
     const syncAlbumFromUrl = () => {
@@ -92,7 +94,7 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
   }
   const crewHref = '/crew/settings';
   const currentGroup = crew.id ?? 'personal';
-  const screenHref = (next: 'home'|'photos'|'behind'|'settings') => next === 'home' ? `/?lang=ko&home=1&group=${encodeURIComponent(currentGroup)}` : `/crew/${next}?group=${encodeURIComponent(currentGroup)}`;
+  const screenHref = (next: 'home'|'photos'|'behind'|'settings') => guest && next !== 'home' ? '/?lang=ko&login=1' : next === 'home' ? `/?lang=ko&home=1&group=${encodeURIComponent(currentGroup)}` : `/crew/${next}?group=${encodeURIComponent(currentGroup)}`;
   const createAlbumHref = `/?lang=ko&quick=1&group=${encodeURIComponent(currentGroup)}&returnTo=${encodeURIComponent(`/?lang=ko&home=1&group=${encodeURIComponent(currentGroup)}`)}`;
   const items = data.items;
   const invite = crew.id && <Link href={`${crewHref}?group=${encodeURIComponent(crew.id)}`} className="flex items-center gap-1.5 bg-[#f6e5db] hover:bg-[#f0dfd5] transition-colors px-2.5 py-1.5 rounded-full shrink-0 text-[#55433d] active:scale-95"><div className="w-6 h-6 rounded-full border-2 border-dashed border-[#88726c] flex items-center justify-center text-[#99452c]"><Icon name="person_add" className="text-[14px]"/></div><span className={`${label} font-medium`}>+ 친구 초대</span></Link>;
@@ -109,13 +111,6 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
       window.setTimeout(() => setShareNotice(''), 3200);
     }
   }
-  const albumWelcome = (<section className="mb-6 rounded-2xl bg-[#fcebe0] p-5">
-          <p className="text-xs font-semibold text-[#99452c]">함께 채우는 추억 앨범</p>
-          <h1 className="stitch-serif mt-2 text-2xl font-semibold leading-snug text-[#30251f]">{data.albums.length ? '그날의 이야기를 이어가요' : '우리의 첫 앨범을 만들어볼까요?'}</h1>
-          <p className="mt-2 text-sm leading-6 text-[#78675e]">사진을 모으고, 친구를 초대하고,<br/>함께 웃었던 순간을 한마디로 남겨요.</p>
-          <Link href={createAlbumHref} className="mt-4 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#99452c] px-4 py-3 text-sm font-semibold text-white"><Icon name="add_a_photo" className="text-xl"/>{data.albums.length ? '새 추억 앨범 만들기' : '사진으로 첫 앨범 만들기'}</Link>
-          <p className="mt-3 text-center text-[11px] leading-5 text-[#78675e]">사진 선택 → 앨범 완성 → 친구 초대</p>
-        </section>);
   if (openedAlbum) return <FeedAlbumView key={openedAlbum.id} album={openedAlbum} onBack={closeAlbum}/>;
   if (fullBundle) return <FullBundleView item={fullBundle.item} initialMode={fullBundle.mode} onBack={() => setFullBundle(null)} actions={actions}/>;
   return <div className={`${stitchRoot} crew-feed-shell h-screen overflow-y-auto bg-[#fff8f5] text-[#221a14] antialiased`} style={{ fontFamily: sansStack }}>
@@ -124,12 +119,12 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
       <div className="mx-auto flex w-full max-w-[480px] flex-col gap-2 px-5 pb-2 pt-2 md:max-w-[1200px] md:px-8 md:pb-3 md:pt-3">
         <div className="flex h-10 items-center justify-between gap-3">
           <Link href={`/?lang=ko&home=1&group=${encodeURIComponent(crew.id ?? "personal")}`} aria-label="메모네스티아 홈" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"><BrandMark/></Link>
-          <div className="flex shrink-0 items-center gap-1"><button type="button" onClick={() => void shareSpace()} aria-label="공간 피드 공유" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="share" className="text-[21px]"/></button><Link href="/crew/settings" aria-label="계정 및 크루 설정" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#99452c] shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></Link></div>
+          <div className="flex shrink-0 items-center gap-1">{guest?<Link href="/?lang=ko&login=1" className="rounded-full bg-[#99452c] px-4 py-2 text-xs font-semibold text-white">로그인</Link>:<><button type="button" onClick={() => void shareSpace()} aria-label="공간 피드 공유" className="flex h-9 w-9 items-center justify-center rounded-xl text-[#78675e] hover:bg-[#f6e5db]"><Icon name="share" className="text-[21px]"/></button><Link href="/crew/settings" aria-label="계정 및 크루 설정" className="flex h-8 w-8 items-center justify-center rounded-full bg-[#99452c] shadow-[0_2px_8px_rgba(153,69,44,0.2)]"><Icon name="person" className="text-[#ffffff] text-[18px]"/></Link></>}</div>
         </div>
         <div className="flex min-w-0 items-center justify-between gap-2">
-          <button type="button" aria-expanded={picking} aria-haspopup="dialog" onClick={() => setPicking(v => !v)} className="group flex min-w-0 items-center gap-2 rounded-xl px-1 py-1 text-left hover:bg-[#fff1e9]">
+          {guest?<div className="py-1"><span className="stitch-serif text-base font-semibold">메모네스티아</span><p className="mt-1 text-[10px] text-[#78675e]">작은 순간을 모으는 곳</p></div>:<button type="button" aria-expanded={picking} aria-haspopup="dialog" onClick={() => setPicking(v => !v)} className="group flex min-w-0 items-center gap-2 rounded-xl px-1 py-1 text-left hover:bg-[#fff1e9]">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f6e5db] text-[#99452c]"><Icon name={crew.id ? 'groups' : 'person'} className="text-[18px]"/></span><span className="min-w-0"><span className="stitch-serif block truncate text-[1rem] font-semibold text-[#221a14]">{crew.name ?? '내 개인 공간'}</span><span className="block truncate text-[10px] text-[#78675e]">{crew.id ? `${crew.members.length}명 · ${data.groups.find(group => group.id === crew.id)?.mine ? '내가 만든 공간' : '초대받은 공간'}` : '눌러서 다른 크루로 이동'}</span></span><Icon name="expand_more" className="shrink-0 text-[18px] text-[#55433d] transition-transform group-hover:translate-y-0.5"/>
-          </button>
+          </button>}
           {invite}
 
         </div>
@@ -153,20 +148,15 @@ export function CrewFeedView({ data, actions }: { data: FeedData; actions: FeedA
     </SpacePickerModal>}
     <main className={`memory-feed-enter mx-auto flex min-h-screen w-full max-w-md flex-col relative bg-[#fff8f5] px-[1.25rem] pb-24 md:max-w-[1200px] md:px-8 ${crew.id ? 'pt-[calc(10.2rem+env(safe-area-inset-top,0px))] md:pt-[calc(10.2rem+env(safe-area-inset-top,0px))]' : 'pt-[calc(8.5rem+env(safe-area-inset-top,0px))] md:pt-[calc(8.5rem+env(safe-area-inset-top,0px))]'}`}>
       <div className="flex flex-col w-full pb-8">
-        {!data.albums.length && albumWelcome}
-        <section className="mb-5" aria-label="공간 앨범">
+        <div className="mb-5"><h1 className="stitch-serif text-2xl font-semibold text-[#30251f]">오늘의 피드</h1><p className="mt-2 text-xs leading-5 text-[#78675e]">{items.length?'함께 쌓아 온 순간들, 오늘도 이어봐요.':'소소한 하루부터 특별한 날까지, 천천히 둘러보세요.'}</p></div>
+        {!!data.albums.length && <section className="mb-5" aria-label="공간 앨범">
           <div className="mb-2 flex items-center justify-between"><h2 id="feed-albums" className="stitch-serif scroll-mt-24 text-base font-semibold text-[#30251f]">최근 앨범</h2><span className="text-[10px] text-[#78675e]">{data.albums.length}개</span></div>
           {data.albums.length ? <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 no-scrollbar">{data.albums.map(album=><button type="button" key={album.id} onClick={()=>openAlbum(album)} className="text-left w-48 shrink-0 overflow-hidden rounded-xl border border-[#efdfd5] bg-white shadow-[0_3px_12px_rgba(112,100,92,.07)]"><div className="aspect-[4/3] bg-[#f3e5dc]">{album.cover?<img src={album.cover} alt="" className="h-full w-full object-cover"/>:<div className="flex h-full items-center justify-center text-3xl text-[#b89170]">📖</div>}</div><div className="p-2.5"><strong className="block truncate text-xs text-[#30251f]">{album.name}</strong><span className="mt-1 block text-[10px] text-[#78675e]">사진 {album.photoCount}장 · 앨범 열기</span></div></button>)}</div> : <p className="rounded-xl bg-white/80 px-3 py-3 text-[11px] text-[#78675e]">아직 앨범이 없어요. 사진을 담으면 이곳에서 바로 볼 수 있어요.</p>}
-        </section>
-        {!!data.albums.length && albumWelcome}
-        <div className="mb-4 mt-3"><h2 className="stitch-serif text-lg font-semibold text-[#30251f]">최근 기록</h2><p className="mt-1 text-xs leading-5 text-[#78675e]">이 공간에서 볼 수 있는 최근 기록 12개예요. 이전 사진은 앨범에서 이어보세요.</p></div>
+        </section>}
+        {!!items.length && <div className="mb-4 mt-3"><h2 className="stitch-serif text-lg font-semibold text-[#30251f]">최근 기록</h2><p className="mt-1 text-xs leading-5 text-[#78675e]">이 공간에서 볼 수 있는 최근 기록 12개예요. 이전 사진은 앨범에서 이어보세요.</p></div>}
         <div className="mx-auto flex w-full max-w-[780px] flex-col gap-6">
-          {items.map((item, index) => <FeedCard key={item.kind + item.id} item={item} index={index} groupId={crew.id} owner={crew.ownerId} actions={{...actions,onOpenBundle:(bundle,mode)=>setFullBundle({item:bundle,mode})}}/>)}
-          {!items.length && <div className="flex flex-col items-center text-center gap-2 bg-[#ffffff] rounded-2xl shadow-[0_4px_20px_-2px_rgba(112,100,92,0.08)] px-5 py-10">
-            <Icon name="photo_library" className="text-[32px] text-[#bf9061]"/>
-            <p className="stitch-serif text-[1.25rem] leading-[1.75rem] font-[500]">아직 남긴 기록이 없어요</p>
-            <p className="stitch-sans text-[0.8125rem] leading-[1.25rem] text-[#55433d]">첫 사진을 올리면 {crew.id ? '크루 모두의' : '나만의'} 피드가 시작돼요.</p>
-          </div>}
+          {items.map((item, index) => <Fragment key={item.kind + item.id}><FeedCard item={item} index={index} groupId={crew.id} owner={crew.ownerId} actions={{...actions,onOpenBundle:(bundle,mode)=>setFullBundle({item:bundle,mode})}}/>{index===0&&<FeedInspiration/>}</Fragment>)}
+          {!items.length && <><FeedSampleStory/><FeedInspiration/><div className="rounded-2xl border border-[#efdfd5] bg-white p-5"><h2 className="stitch-serif text-base font-semibold">여기에 내 이야기도 쌓아봐요</h2><p className="mt-2 text-xs leading-5 text-[#78675e]">위 기록은 둘러보기용 예시예요. 내 사진을 담으면 이 피드에서 바로 이어볼 수 있어요.</p>{guest&&<Link href="/?lang=ko&login=1&returnTo=%2F%3Flang%3Dko%26home%3D1" className="mt-3 inline-block py-2 text-xs font-semibold text-[#99452c]">이미 쓰고 있다면 로그인 →</Link>}</div></>}
         </div>
         <div className="mt-6 self-center w-full max-w-sm px-2">
           <Link href={createAlbumHref} className="w-full flex items-center justify-center gap-2 bg-[#99452c] hover:bg-[#7b2e17] text-[#ffffff] py-3 px-5 rounded-2xl shadow-[0_8px_24px_rgba(153,69,44,0.35)] active:scale-98 transition-all group">
@@ -447,6 +437,9 @@ async function fetchFeed(group: string | null): Promise<FeedData> {
   if (group) params.set('group', group);
   try { return await api<FeedData>(`/api/feed?${params}`); }
   catch (error) {
+    // Browsing the first-visit feed must not require an account or create a guest
+    // session. Real connection errors still use the retry screen.
+    if (error instanceof Error && ['SESSION_REQUIRED','SESSION_EXPIRED'].includes(error.message)) return {me:'',groups:[],publicGroups:[],albums:[],crew:{id:null,name:null,ownerId:null,members:[]},month:{count:0,today:0,goal:25,contributors:[]},items:[]};
     // A remembered crew the viewer has since left falls back to the default one.
     if (group && group !== 'personal' && error instanceof Error && error.message === 'GROUP_NOT_FOUND') { forgetGroup(); return fetchFeed(null); }
     throw error;
