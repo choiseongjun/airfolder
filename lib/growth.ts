@@ -3,6 +3,7 @@ import { after } from 'next/server';
 import { headers } from 'next/headers';
 import { hash, pool } from './server';
 import { growthProperties, type GrowthEvent } from './growth-events';
+import { attributionFromCookie } from './acquisition';
 
 export const growthEnvironment = () => process.env.ANALYTICS_ENVIRONMENT === 'production' ? 'production' : 'development';
 export type GrowthInput = { event: GrowthEvent; who: string; key: string; contextId?: string; properties?: Record<string, unknown> };
@@ -12,9 +13,13 @@ export function trackGrowth(input: GrowthInput) {
     try {
       const requestHeaders = await headers();
       if (requestHeaders.get('dnt') === '1' || requestHeaders.get('sec-gpc') === '1') return;
+      const attribution = attributionFromCookie(requestHeaders.get('cookie') || '');
+      if (attribution) await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,environment,properties,created_at)
+        VALUES($1,'site_visit',$2,$3,$4,$5) ON CONFLICT(event_key) DO NOTHING`,
+        [`visit:${attribution.journey_id}`, input.who, growthEnvironment(), growthProperties(attribution), new Date(attribution.acquired_at)]);
       await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,context_id,environment,properties)
         VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(event_key) DO NOTHING`,
-      [input.key, input.event, input.who, input.contextId || null, growthEnvironment(), growthProperties(input.properties)]);
+      [input.key, input.event, input.who, input.contextId || null, growthEnvironment(), growthProperties({ ...input.properties, ...attribution })]);
       await flushGrowth();
     } catch { console.error('Growth analytics unavailable'); }
   });

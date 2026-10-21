@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { ApiError, ensureSession, hash, transaction } from '@/lib/server';
 import { attachIdentity } from '@/lib/auth-core';
 import { kakaoIdentity, KAKAO_STATE_COOKIE, safeReturnPath } from '@/lib/kakao-auth';
+import { trackGrowth } from '@/lib/growth';
 
 function sameState(a: string, b: string) { return a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b)); }
 
@@ -20,16 +21,22 @@ export async function GET(request: Request) {
     const identity = await kakaoIdentity(request, code);
     const guest = await ensureSession(request);
     const token = randomBytes(32).toString('hex'), oldToken = jar.get('snaproom_session')?.value;
-    await transaction(async db => {
+    let isNewAccount = false;
+    const viewerId = await transaction(async db => {
       const deleting = await db.query('SELECT 1 FROM snaproom.accounts a JOIN snaproom.viewers v ON v.id=a.viewer_id WHERE a.firebase_uid=$1 AND v.deletion_requested_at IS NOT NULL', [identity.uid]);
       if (deleting.rowCount) throw new ApiError(409, 'ACCOUNT_DELETION_PENDING');
       let owner;
-      try { owner = await attachIdentity(db, guest, identity); }
+      try { owner = await attachIdentity(db, guest, identity, () => { isNewAccount = true; }); }
       catch (error) { if (error instanceof Error && ['LOGOUT_FIRST', 'SESSION_CHANGED'].includes(error.message)) throw new ApiError(409, error.message); throw error; }
       if (oldToken) await db.query('DELETE FROM snaproom.sessions WHERE token_hash=$1', [hash(oldToken)]);
       await db.query("INSERT INTO snaproom.sessions(token_hash,viewer_id,expires_at) VALUES($1,$2,now()+interval '30 days')", [hash(token), owner]);
+      return owner;
     });
     jar.set('snaproom_session', token, { httpOnly: true, secure: new URL(request.url).protocol === 'https:', sameSite: 'lax', path: '/', maxAge: 2592000 });
+    trackGrowth({ event: 'login', who: viewerId, key: `login:${hash(token)}`, properties: { method: 'kakao' } });
+    if (isNewAccount) trackGrowth({ event: 'sign_up', who: viewerId, key: `sign_up:${viewerId}`, properties: { method: 'kakao' } });
+    // A short-lived, non-identifying receipt lets the browser send consented GA events after OAuth.
+    jar.set('memonestia_auth_result', isNewAccount ? 'signup' : 'login', { secure: new URL(request.url).protocol === 'https:', sameSite: 'lax', path: '/', maxAge: 120 });
     return back();
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'UnknownError';

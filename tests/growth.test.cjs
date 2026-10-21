@@ -23,14 +23,14 @@ test('raw upload errors reduce to coarse categories', () => {
 });
 test('database and PostHog failure do not break the successful product response', async () => {
   let callback, logged = 0;
-  const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers() }, './server': { hash: s => s, pool: () => ({ query: async () => { throw new Error('DB down'); } }) }, './growth-events': events }, { process: { env: {} }, console: { error: () => logged++ }, Headers });
+  const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers() }, './server': { hash: s => s, pool: () => ({ query: async () => { throw new Error('DB down'); } }) }, './growth-events': events, './acquisition': load('lib/acquisition.ts') }, { process: { env: {} }, console: { error: () => logged++ }, Headers });
   assert.doesNotThrow(() => growth.trackGrowth({ event: 'upload_succeeded', who: 'test', key: 'test' }));
   await callback(); assert.equal(logged, 1);
 });
 test('privacy signals prevent persistence and delivery', async () => {
   for (const header of ['dnt', 'sec-gpc']) {
     let callback;
-    const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers({ [header]: '1' }) }, './server': { hash: s => s, pool: () => { throw new Error('must not access DB'); } }, './growth-events': events }, { process: { env: {} }, console: { error: () => assert.fail('must not log an error') }, Headers });
+    const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers({ [header]: '1' }) }, './server': { hash: s => s, pool: () => { throw new Error('must not access DB'); } }, './growth-events': events, './acquisition': load('lib/acquisition.ts') }, { process: { env: {} }, console: { error: () => assert.fail('must not log an error') }, Headers });
     growth.trackGrowth({ event: 'upload_succeeded', who: 'test', key: 'test' }); await callback();
   }
 });

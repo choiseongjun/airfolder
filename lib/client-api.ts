@@ -1,6 +1,8 @@
 import {isBrowse,browseResponse} from './browse-data';
+import { captureAttribution } from './acquisition';
 export async function api<T = Record<string, unknown>>(url: string, options: RequestInit = {}): Promise<T> {
   if(isBrowse())return browseResponse(url,options.method||'GET') as T;
+  captureAttribution();
   if(url==='/api/photos'&&options.method==='POST'&&options.body instanceof FormData){
     const form=options.body,file=form.get('file');
     if(file instanceof Blob){
@@ -18,6 +20,19 @@ export async function api<T = Record<string, unknown>>(url: string, options: Req
   const response = await fetch(url, { ...options, credentials: 'same-origin', cache: 'no-store', headers: options.body instanceof FormData ? options.headers : { 'Content-Type': 'application/json', ...options.headers } });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'SERVER_ERROR');
+  if (options.method === 'POST' && ['/api/auth/firebase','/api/folders','/api/invites'].includes(url)) {
+    try {
+      const { trackGaEvent } = await import('./auth-analytics');
+      const emit = async () => {
+        if (url === '/api/auth/firebase' && data.authAnalytics) {
+          await trackGaEvent('login', { method: data.authAnalytics.method });
+          if (data.authAnalytics.isNewAccount) await trackGaEvent('sign_up', { method: data.authAnalytics.method });
+        } else if (url === '/api/folders' && data.created) await trackGaEvent('album_created');
+        else if (url === '/api/invites') await trackGaEvent('invite_created');
+      };
+      await Promise.race([emit(), new Promise(resolve => setTimeout(resolve, 1000))]);
+    } catch { /* Measurement must not fail a successful action. */ }
+  }
   return data as T;
 }
 

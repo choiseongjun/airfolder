@@ -16,7 +16,7 @@ export function identityFromVerifiedClaims(token: {
 }
 
 // The caller owns the transaction. Never identify or merge an account by email.
-export async function attachIdentity(db: PoolClient, guest: string, identity: Identity) {
+export async function attachIdentity(db: PoolClient, guest: string, identity: Identity, onCreated?: () => void) {
   await db.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['snaproom-auth:' + identity.uid]);
   const locked = await db.query('SELECT id FROM snaproom.viewers WHERE id=$1 FOR UPDATE', [guest]);
   if (!locked.rowCount) throw new Error('SESSION_CHANGED');
@@ -27,10 +27,12 @@ export async function attachIdentity(db: PoolClient, guest: string, identity: Id
     await db.query('INSERT INTO snaproom.accounts(firebase_uid,viewer_id,provider,email,display_name,last_login_at) VALUES($1,$2,$3,$4,$5,clock_timestamp())', [identity.uid,guest,identity.provider,identity.email,identity.name]);
     // Guest cookies must not become permanent credentials for the upgraded account.
     await db.query('DELETE FROM snaproom.sessions WHERE viewer_id=$1', [guest]);
+    onCreated?.();
     return guest;
   }
   const owner = existing.rows[0].viewer_id as string;
   if (owner !== guest) {
+    await db.query('UPDATE snaproom.growth_events SET viewer_id=$1 WHERE viewer_id=$2', [owner,guest]);
     await db.query('UPDATE snaproom.groups SET owner_id=$1 WHERE owner_id=$2',[owner,guest]);
     await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id,muted) SELECT group_id,$1,muted FROM snaproom.group_members WHERE viewer_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);
     await db.query('INSERT INTO snaproom.notifications(viewer_id,folder_id,photo_id,record_id,actor_id,kind,event_key,created_at,read_at,pushed_at) SELECT $1,folder_id,photo_id,record_id,actor_id,kind,event_key,created_at,read_at,pushed_at FROM snaproom.notifications WHERE viewer_id=$2 ON CONFLICT DO NOTHING',[owner,guest]);

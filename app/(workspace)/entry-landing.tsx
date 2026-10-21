@@ -30,7 +30,6 @@ export default function EntryLanding() {
       const result=await signInWithPopup(auth,provider);
       try {
         await api('/api/auth/firebase',{method:'POST',body:JSON.stringify({idToken:await result.user.getIdToken()})});
-        void trackAuthEvent('login',kind,'web');
         window.location.assign('/?lang=ko&home=1');
       } finally { await signOut(auth).catch(()=>{}); }
     } catch(error) {

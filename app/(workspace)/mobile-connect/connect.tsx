@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import EmailLogin from '../../email-login';
 import AnalyticsPreference from '../../analytics-preference';
 import { trackAuthEvent } from '@/lib/auth-analytics';
-import { getAdditionalUserInfo, GoogleAuthProvider, OAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, OAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { firebaseAuth, authConfigured } from '@/lib/firebase-client';
 import { api, initializeSession } from '@/lib/client-api';
 
@@ -31,8 +31,6 @@ export default function Connect() {
       const result = await signInWithPopup(auth, provider);
       try { await api('/api/auth/firebase', { method: 'POST', body: JSON.stringify({ idToken: await result.user.getIdToken() }) }); }
       finally { await signOut(auth); }
-      void trackAuthEvent('login', apple ? 'apple' : 'google', 'app_connect');
-      if (getAdditionalUserInfo(result)?.isNewUser) void trackAuthEvent('sign_up', apple ? 'apple' : 'google', 'app_connect');
       const w = await api<{ account: typeof account }>('/api/workspace'); setAccount(w.account);
     } catch (error) { void trackAuthEvent('login_failed', apple ? 'apple' : 'google', 'app_connect', error); setError(t('Sign-in failed. Please retry.', '로그인에 실패했습니다. 다시 시도해 주세요.')); }
     finally { setBusy(false); }

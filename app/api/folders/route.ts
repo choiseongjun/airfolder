@@ -85,6 +85,6 @@ export async function POST(request: Request) {
     });
     if (created) trackGrowth({ event: 'album_created', who, key: `album_created:${id}`, contextId: id,
       properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace' } });
-    return Response.json({ id }, { status: 201 });
+    return Response.json({ id, created }, { status: 201 });
   });
 }

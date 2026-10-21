@@ -42,7 +42,7 @@ import "../workspace-stitch.css";
 import { Discussion } from "../memories";
 import AnalyticsPreference from "../analytics-preference";
 import { trackAuthEvent } from "@/lib/auth-analytics";
-import { getAdditionalUserInfo, GoogleAuthProvider, OAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { GoogleAuthProvider, OAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { authConfigured, firebaseAuth } from "@/lib/firebase-client";
 // Kakao sign-in is offered on the Korean app only; it turns on once the Kakao REST key is set.
 const kakaoEnabled = Boolean(process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY);
@@ -370,7 +370,7 @@ export default function Home({ initialLocale, browsing=false, initialLogin=false
       const provider=kind==="apple"?new OAuthProvider("apple.com"):new GoogleAuthProvider();
       if(kind==="apple"){provider.addScope("email");provider.addScope("name");provider.setCustomParameters({locale:locale==="ko"?"ko_KR":"en_US"});}else provider.setCustomParameters({prompt:"select_account"});
       const result=await signInWithPopup(auth,provider);
-      try { await api("/api/auth/firebase",{method:"POST",body:JSON.stringify({idToken:await result.user.getIdToken()})});await Promise.race([trackAuthEvent("login",kind,"web").then(()=>getAdditionalUserInfo(result)?.isNewUser ? trackAuthEvent("sign_up",kind,"web") : undefined),new Promise(resolve=>setTimeout(resolve,1500))]);await clearAccountCache();reloadSignedState(); }
+      try { await api("/api/auth/firebase",{method:"POST",body:JSON.stringify({idToken:await result.user.getIdToken()})});await clearAccountCache();reloadSignedState(); }
       finally {await signOut(auth).catch(()=>{});}
     } catch(error) {
       void trackAuthEvent("login_failed",kind,"web",error);

@@ -37,10 +37,34 @@ WITH events AS (
   AND event='album_created' AND properties->>'source'='organizer'
   AND created_at>=c.clicked AND created_at<=v.viewed+interval '7 days'
  ) a ON true
+), acquisition_views AS (
+ SELECT DISTINCT ON (properties->>'journey_id') properties->>'journey_id' journey,
+ properties->>'campaign_source' source, properties->>'campaign_medium' medium,
+ properties->>'campaign_name' campaign, created_at viewed
+ FROM events WHERE event='site_visit' AND properties->>'journey_id' IS NOT NULL
+ ORDER BY properties->>'journey_id',created_at
+), acquisition_funnel AS (
+ SELECT v.*,l.logged_in,s.signed_up,a.created,i.invited FROM acquisition_views v
+ LEFT JOIN LATERAL (SELECT min(created_at) logged_in FROM snaproom.growth_events
+   WHERE environment=$1 AND properties->>'journey_id'=v.journey AND event='login'
+   AND created_at>=v.viewed AND created_at<=v.viewed+interval '7 days') l ON true
+ LEFT JOIN LATERAL (SELECT min(created_at) signed_up FROM snaproom.growth_events
+   WHERE environment=$1 AND properties->>'journey_id'=v.journey AND event='sign_up'
+   AND created_at>=v.viewed AND created_at<=v.viewed+interval '7 days') s ON true
+ LEFT JOIN LATERAL (SELECT created_at created,context_id FROM snaproom.growth_events
+   WHERE environment=$1 AND properties->>'journey_id'=v.journey AND event='album_created'
+   AND created_at>=l.logged_in AND created_at<=v.viewed+interval '7 days' ORDER BY created_at LIMIT 1) a ON true
+ LEFT JOIN LATERAL (SELECT min(e.created_at) invited FROM snaproom.growth_events e
+   WHERE e.environment=$1 AND e.properties->>'journey_id'=v.journey AND e.event='invite_created'
+   AND (e.context_id=a.context_id OR e.context_id=(SELECT group_id FROM snaproom.folders WHERE id=a.context_id))
+   AND e.created_at>=a.created AND e.created_at<=v.viewed+interval '7 days') i ON true
 ), days AS (
  SELECT generate_series((now() AT TIME ZONE 'UTC')::date-$2::int,(now() AT TIME ZONE 'UTC')::date,interval '1 day') AS bucket
 )
 SELECT json_build_object(
+ 'acquisition',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
+   SELECT source,medium,campaign,count(*) visits,count(logged_in) logins,count(signed_up) signups,count(created) albums,count(invited) invites
+   FROM acquisition_funnel GROUP BY source,medium,campaign ORDER BY count(*) DESC) x),
  'albums',(SELECT count(*) FROM albums),
  'activatedAlbums',(SELECT count(*) FROM album_activity WHERE contributors>=3 AND photos>=20),
  'sharedPhotos',(SELECT COALESCE(sum(photos),0) FROM album_activity),
@@ -65,6 +89,7 @@ SELECT json_build_object(
 ) report`;
 
 export type GrowthReport = {
+ acquisition: { source: string; medium: string; campaign: string; visits: number; logins: number; signups: number; albums: number; invites: number }[];
  albums: number; activatedAlbums: number; sharedPhotos: number; contributors: number; repeatHosts: number;
  guestFunnel: { opened: number; joined: number; uploaded: number; medianMinutes: number | null; stillMaturing: number };
  hostFunnel: { viewed: number; clicked: number; created: number };
