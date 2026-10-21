@@ -32,6 +32,7 @@ try {
   await db.query(readFileSync(new URL('../db/030_piece_rewards.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/031_reward_decorations.sql', import.meta.url), 'utf8'));
   await db.query(readFileSync(new URL('../db/032_public_groups.sql', import.meta.url), 'utf8'));
+  await db.query(readFileSync(new URL('../db/034_account_last_login.sql', import.meta.url), 'utf8'));
   await db.query('COMMIT');
   const storage = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } }).storage;
   const bucket = env.SUPABASE_STORAGE_BUCKET;

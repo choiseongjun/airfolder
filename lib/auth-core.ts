@@ -24,7 +24,7 @@ export async function attachIdentity(db: PoolClient, guest: string, identity: Id
   if (current.rowCount && current.rows[0].firebase_uid !== identity.uid) throw new Error('LOGOUT_FIRST');
   const existing = await db.query('SELECT viewer_id FROM snaproom.accounts WHERE firebase_uid=$1', [identity.uid]);
   if (!existing.rowCount) {
-    await db.query('INSERT INTO snaproom.accounts(firebase_uid,viewer_id,provider,email,display_name) VALUES($1,$2,$3,$4,$5)', [identity.uid,guest,identity.provider,identity.email,identity.name]);
+    await db.query('INSERT INTO snaproom.accounts(firebase_uid,viewer_id,provider,email,display_name,last_login_at) VALUES($1,$2,$3,$4,$5,clock_timestamp())', [identity.uid,guest,identity.provider,identity.email,identity.name]);
     // Guest cookies must not become permanent credentials for the upgraded account.
     await db.query('DELETE FROM snaproom.sessions WHERE viewer_id=$1', [guest]);
     return guest;
@@ -50,5 +50,7 @@ export async function attachIdentity(db: PoolClient, guest: string, identity: Id
     await db.query('INSERT INTO snaproom.safety_reports(id,reporter_id,target_user_id,reason,status,created_at,resolved_at) SELECT gen_random_uuid(),reporter_id,$1,reason,status,created_at,resolved_at FROM snaproom.safety_reports WHERE target_user_id=$2 AND reporter_id<>$1 ON CONFLICT DO NOTHING',[owner,guest]);
     await db.query('DELETE FROM snaproom.viewers WHERE id=$1', [guest]);
   }
+  // Roll back with the caller's session creation if login cannot complete.
+  await db.query('UPDATE snaproom.accounts SET last_login_at=clock_timestamp() WHERE firebase_uid=$1', [identity.uid]);
   return owner;
 }

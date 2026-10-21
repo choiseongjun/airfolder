@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { joinedAlbumHref } from '@/lib/album-navigation';
 import { ArrowRight, Check, ImagePlus, LockKeyhole, Upload, Users } from 'lucide-react';
 import { api, initializeSession } from '@/lib/client-api';
 import { IMAGE_LIMIT } from '@/lib/media-limits';
@@ -23,7 +24,7 @@ type PublicAlbum = { folderId: string; style: { theme: string; song: string }; i
 function dDay(day: string) { const now = new Date(), today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()); const left = Math.round((Date.parse(day + 'T00:00:00Z') - today) / 86400000); return left > 0 ? `D-${left}` : left === 0 ? 'D-DAY' : ''; }
 type Album = { id: string; name: string };
 type Item = { id: string; file: File; status: 'waiting' | 'uploading' | 'done' | 'failed'; error?: string; shared?: boolean; folder?: string; preview?: string };
-export default function GuestFlow({ token, locale, nextView }: { token: string; locale: string; nextView?: 'rolling' }) {
+export default function GuestFlow({ token, locale, nextView, preferredAlbum }: { token: string; locale: string; nextView?: 'rolling'; preferredAlbum?: string }) {
   const ko = locale === 'ko', text = (a: string, b: string) => ko ? a : b;
   const [invite, setInvite] = useState<Invite | null>(null), [ready, setReady] = useState(false), [accepted, setAccepted] = useState(false), [consent, setConsent] = useState(false);
   const [previewFailed, setPreviewFailed] = useState(false);
@@ -70,8 +71,9 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
     try {
       const result = await api<{ folderId?: string; groupId?: string; albums: Album[] }>('/api/join', { method: 'POST', body: JSON.stringify({ token, name: nickname.trim() || undefined }) });
       // A shared album link should land on the decorated album itself, not the upload form.
-      if (thenView && result.folderId) { router.push(`/?lang=${locale}&album=${result.folderId}&view=${nextView || 'theme'}`); return; }
-      setAlbums(result.albums); setFolder(result.folderId || (result.albums.length === 1 ? result.albums[0].id : '')); setGroup(result.groupId || ''); setJoined(true);
+      const selectedFolder = result.folderId || result.albums.find(album => album.id === preferredAlbum)?.id || (result.albums.length === 1 ? result.albums[0].id : '');
+      if (thenView) { router.push(joinedAlbumHref(locale, selectedFolder, result.groupId, nextView)); return; }
+      setAlbums(result.albums); setFolder(selectedFolder); setGroup(result.groupId || ''); setJoined(true);
     } catch (cause) { setError(cause instanceof Error && /INVITE/.test(cause.message) ? text('초대가 만료되었어요. 모임장에게 새 링크를 요청해 주세요.', 'The invite expired. Ask the organizer for a new link.') : text('참여하지 못했어요. 모임 정원이나 연결 상태를 확인하고 다시 시도해 주세요.', 'Could not join. Check the group capacity or your connection and try again.')); }
     finally { setBusy(false); }
   }
@@ -163,7 +165,7 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
           <div className="bday-thumbs">{items.map(item => <span key={item.id} className="bday-thumb">{item.preview && <img src={item.preview} alt="" />}<Check size={16} /></span>)}</div>
           <p className="bday-lead">{text('친구들 사진이 다 모이면 버스데이 테마 앨범으로 완성돼요.', 'Once everyone adds theirs, it becomes a Birthday Film album.')}</p>
           <label className="bday-more">{text('+ 사진 더 보내기', '+ Send more photos')}<input type="file" accept="image/*,.heic,.heif" multiple disabled={busy} onChange={e => { choose(e.target.files); e.target.value = ''; }} /></label>
-          <div className="bday-dock"><Link className="growth-button" href={`/?lang=${locale}&album=${folder}&view=theme`}>{text('완성되는 앨범 미리보기', 'Peek at the album')}<ArrowRight size={18} /></Link></div>
+          <div className="bday-dock"><Link className="growth-button" href={joinedAlbumHref(locale, folder, group, nextView)}>{text('완성되는 앨범 미리보기', 'Peek at the album')}<ArrowRight size={18} /></Link></div>
         </div> : <div className="bday-step">
           <div className="bday-thumbs">
             {items.map(item => <span key={item.id} className={`bday-thumb is-${item.status}`}>{item.preview && <img src={item.preview} alt="" onError={e => { e.currentTarget.style.display = 'none'; }} />}
@@ -214,7 +216,7 @@ export default function GuestFlow({ token, locale, nextView }: { token: string; 
           {completed > 0 && <p className="growth-success" role="status">{text(`${completed}장의 사진을 보탰어요. 함께한 순간이 더 풍성해졌네요.`, `${completed} photos added. Your moments are now part of the story.`)}</p>}
         </>}
         {folder && (messageSaved || completed > 0) && <div id="guest-memory-result"><AlbumKeepsake key={`${folder}:${completed}:${messageSaved}`} folderId={folder} title={invite?.name || '우리의 추억'} ko={ko}/></div>}
-        <div className="growth-links">{!pending && <>{birthday && folder ? <Link className="growth-button" href={`/?lang=${locale}&album=${folder}&view=theme`}>{text('완성되는 앨범 미리보기', 'Peek at the album')}</Link> : <Link className="growth-button secondary" href={`/?lang=${locale}${folder ? `&album=${folder}&view=theme` : group ? `&group=${group}` : ''}`}>{text('모임 앨범 보기', 'View the album')}</Link>}<Link className="growth-button secondary" href={`/${locale}/hosts`}>{text('다음 모임은 내가 열어볼래요', 'Host my next gathering')}</Link></>}
+        <div className="growth-links">{!pending && <>{birthday && folder ? <Link className="growth-button" href={joinedAlbumHref(locale, folder, group, nextView)}>{text('완성되는 앨범 미리보기', 'Peek at the album')}</Link> : <Link className="growth-button secondary" href={joinedAlbumHref(locale, folder, group, nextView)}>{text('모임 앨범 보기', 'View the album')}</Link>}<Link className="growth-button secondary" href={`/${locale}/hosts`}>{text('다음 모임은 내가 열어볼래요', 'Host my next gathering')}</Link></>}
           <p className="growth-note">{text('이 브라우저에 참여 정보가 저장됩니다. 나중에 다른 기기에서도 보려면 내 공간에서 계정을 연결해 주세요.', 'Your membership is saved in this browser. Connect an account in My space to return on another device.')}</p></div>
       </>}
     </section></main>;

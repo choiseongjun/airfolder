@@ -208,10 +208,15 @@ type DrawerNote={id:string;body:string;author:string;mine:boolean;createdAt:stri
 export function StitchPhotoDrawer({groupId}:{groupId:string|null}) {
   const [rooms,setRooms]=useState<DrawerRoom[]>([]),[photos,setPhotos]=useState<DrawerPhoto[]>([]),[roomId,setRoomId]=useState<string|null>(null),[monthKey,setMonthKey]=useState<string|null>(null),[sort,setSort]=useState<'latest'|'oldest'>('latest'),[grid,setGrid]=useState(true),[loading,setLoading]=useState(true),[failed,setFailed]=useState(false);
   const [openedAlbumId, setOpenedAlbumId] = useState<string | null>(null);
+  const [albumTab, setAlbumTab] = useState<'album' | 'paper'>('album');
   const albumTrigger = useRef<HTMLButtonElement | null>(null);
   const drawerAnchor = useRef<HTMLSpanElement | null>(null);
   useEffect(() => {
-    const sync = () => setOpenedAlbumId(new URLSearchParams(window.location.search).get('album'));
+    const sync = () => {
+      const params = new URLSearchParams(window.location.search);
+      setOpenedAlbumId(params.get('album'));
+      setAlbumTab(params.get('view') === 'rolling' ? 'paper' : 'album');
+    };
     sync();
     window.addEventListener('popstate', sync);
     return () => window.removeEventListener('popstate', sync);
@@ -224,12 +229,14 @@ export function StitchPhotoDrawer({groupId}:{groupId:string|null}) {
     url.searchParams.delete('view');
     window.history.pushState({ ...window.history.state, drawerAlbum: true }, '', url);
     setOpenedAlbumId(id);
+    setAlbumTab('album');
   }
   function closeDrawerAlbum() {
     if (window.history.state?.drawerAlbum) window.history.back();
     else {
       const url = new URL(window.location.href);
       url.searchParams.delete('album');
+      url.searchParams.delete('view');
       window.history.replaceState(window.history.state, '', url);
       setOpenedAlbumId(null);
     }
@@ -247,7 +254,7 @@ export function StitchPhotoDrawer({groupId}:{groupId:string|null}) {
   return <>
     <span ref={drawerAnchor} hidden/>
     {openedRoom && createPortal(<div className="fixed inset-0 z-[100] bg-[#efe8e2]">
-      <FeedAlbumView key={openedRoom.id} album={{id:openedRoom.id,name:openedRoom.name,category:openedRoom.category,photoCount:openedRoom.count,cover:openedRoom.image||null,updatedAt:''}} onBack={closeDrawerAlbum} backLabel="사진 서랍으로 돌아가기"/>
+      <FeedAlbumView key={openedRoom.id} album={{id:openedRoom.id,name:openedRoom.name,category:openedRoom.category,photoCount:openedRoom.count,cover:openedRoom.image||null,updatedAt:''}} onBack={closeDrawerAlbum} initialTab={albumTab} backLabel="사진 서랍으로 돌아가기"/>
     </div>, document.body)}
     <section className="mb-5 flex flex-col gap-3 pt-2"><div className="flex items-start justify-between gap-2"><div><span className="mb-1.5 inline-flex items-center gap-1 rounded-full bg-[#e5efe3] px-2.5 py-1 text-[10px] font-semibold text-[#527452]"><Icon name="auto_stories" className="text-sm"/>공동 사진 보관함</span><h2 className="stitch-serif flex items-center gap-1.5 text-[1.65rem] font-semibold tracking-tight text-[#30251f] md:text-3xl">우리들의 사진 서랍 <span className="text-xl">🗄️</span></h2><p className="mt-1 text-xs leading-snug text-[#78675e] md:text-sm">차곡차곡 쌓인 우리 크루의 모든 순간과 숨겨진 사진 뒷면 이야기</p></div><div className="flex shrink-0 items-center gap-1 pt-1"><button type="button" onClick={()=>setSort(sort==='latest'?'oldest':'latest')} className="flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-[10px] font-semibold text-[#55433d] shadow-sm"><Icon name="history_edu" className="text-sm text-[#99452c]"/>{sort==='latest'?'최신순':'오래된순'}<Icon name="expand_more" className="text-sm"/></button><button type="button" aria-label="보기 방식 전환" onClick={()=>setGrid(v=>!v)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-[#78675e] shadow-sm"><Icon name={grid?'grid_view':'photo_library'} className="text-lg"/></button></div></div></section>
     <div className="mb-6 flex gap-2 overflow-x-auto pb-1 no-scrollbar" aria-label="사진 서랍 필터"><button type="button" onClick={()=>{setRoomId(null);setMonthKey(null)}} aria-pressed={!roomId&&!monthKey} className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${!roomId&&!monthKey?'bg-[#dc765a] text-white shadow-sm':'bg-white text-[#78675e]'}`}>전체 <span className="ml-0.5 opacity-80">{photos.length}</span></button>{months.slice(0,4).map(month=><button key={month} type="button" onClick={()=>{setRoomId(null);setMonthKey(month)}} aria-pressed={monthKey===month} className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${monthKey===month?'bg-[#dc765a] text-white shadow-sm':'bg-white text-[#78675e]'}`}>{new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long'}).format(new Date(`${month}-01T00:00:00`))} <span className="ml-0.5 opacity-70">{photos.filter(p=>`${new Date(p.created).getFullYear()}-${String(new Date(p.created).getMonth()+1).padStart(2,'0')}`===month).length}</span></button>)}{rooms.slice(0,3).map(room=><button key={room.id} type="button" onClick={()=>{setRoomId(room.id);setMonthKey(null)}} aria-pressed={roomId===room.id} className={`shrink-0 rounded-full px-3.5 py-1.5 text-[11px] font-semibold ${roomId===room.id?'bg-[#dc765a] text-white shadow-sm':'bg-white text-[#78675e]'}`}>{room.name}</button>)}</div>

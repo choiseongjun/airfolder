@@ -17,6 +17,9 @@ try {
   await db.query('INSERT INTO snaproom.viewers(id) SELECT unnest($1::uuid[])',[[owner,guest,other]]);
   await db.query("INSERT INTO snaproom.sessions(token_hash,viewer_id,expires_at) VALUES($1,$2,now()+interval '1 day')",[randomUUID(),owner]);
   assert.equal(await attachIdentity(db,owner,identity),owner);
+  const loginAt=async uid=>(await db.query('SELECT last_login_at FROM snaproom.accounts WHERE firebase_uid=$1',[uid])).rows[0].last_login_at;
+  assert.ok(await loginAt(identity.uid) instanceof Date, 'First login is recorded');
+  await db.query("UPDATE snaproom.accounts SET last_login_at='2000-01-01T00:00:00Z' WHERE firebase_uid=$1",[identity.uid]);
   assert.equal((await db.query('SELECT 1 FROM snaproom.sessions WHERE viewer_id=$1',[owner])).rowCount,0);
   await db.query('INSERT INTO snaproom.folders(id,owner_id,name) VALUES($1,$2,$3)',[folder,guest,'Auth fixture']);
   await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2),($1,$3)',[folder,guest,owner]);
@@ -33,6 +36,7 @@ try {
   await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id) VALUES($1,$2),($1,$3)',[group,guest,owner]);
   await db.query('UPDATE snaproom.folders SET group_id=$2 WHERE id=$1',[folder,group]);
   assert.equal(await attachIdentity(db,guest,identity),owner);
+  assert.ok((await loginAt(identity.uid)).getUTCFullYear()>2000, 'Cross-device login updates the existing account');
   assert.equal((await db.query('SELECT owner_id FROM snaproom.groups WHERE id=$1',[group])).rows[0].owner_id,owner);
   assert.equal((await db.query('SELECT viewer_id FROM snaproom.group_members WHERE group_id=$1',[group])).rowCount,1);
 
@@ -49,9 +53,18 @@ try {
   assert.equal((await db.query('SELECT 1 FROM snaproom.members WHERE folder_id=$1',[folder])).rowCount,1);
   assert.equal((await db.query('SELECT created_by FROM snaproom.invites WHERE folder_id=$1',[folder])).rows[0].created_by,owner);
   assert.equal((await db.query('SELECT 1 FROM snaproom.viewers WHERE id=$1',[guest])).rowCount,0);
+  await db.query('UPDATE snaproom.accounts SET last_login_at=NULL WHERE firebase_uid=$1',[identity.uid]);
   assert.equal(await attachIdentity(db,owner,identity),owner); // Repeated sign-in is stable.
+  const repeatedLogin=await loginAt(identity.uid);
+  assert.ok(repeatedLogin instanceof Date, 'Existing accounts without login history are recorded on login');
+  await db.query('SAVEPOINT failed_session');
+  await attachIdentity(db,owner,identity);
+  await db.query('ROLLBACK TO SAVEPOINT failed_session');
+  assert.deepEqual(await loginAt(identity.uid),repeatedLogin,'Failed session transaction does not retain a login timestamp');
   const unrelated={...identity,uid:'test-'+randomUUID(),provider:'apple.com'};
   assert.equal(await attachIdentity(db,other,unrelated),other); // Same email does not merge accounts.
   await assert.rejects(()=>attachIdentity(db,owner,unrelated),/LOGOUT_FIRST/);
+  assert.deepEqual(await loginAt(identity.uid),repeatedLogin,'Rejected account switch does not change last login');
+  console.log('PASS: first, repeat and cross-device last login timestamps; rejected login and transaction rollback.');
   console.log('PASS: account upgrade, cross-device merge, private visibility, member deduplication, guest session revocation, stable identity, same-email isolation and switch rejection.');
 } finally {await db.query('ROLLBACK').catch(()=>{});await db.end();console.log('Rolled back all account fixtures.');}
