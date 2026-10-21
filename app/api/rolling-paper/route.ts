@@ -39,7 +39,7 @@ export async function GET(request: Request) {
         [folderId, noteIds],
       ) : Promise.resolve({ rows: [] }),
     ]);
-    const mapPhoto = (photo: any) => ({ id: photo.id, name: photo.name || '', mediaType: photo.mime.startsWith('video/') ? 'video' : 'image', src: `/api/photos/${photo.id}/content`, createdAt: photo.captured_at });
+    const mapPhoto = (photo: { id: string; name: string | null; mime: string; captured_at: Date }) => ({ id: photo.id, name: photo.name || '', mediaType: photo.mime.startsWith('video/') ? 'video' : 'image', src: `/api/photos/${photo.id}/content`, createdAt: photo.captured_at });
     return Response.json({ notes: result.rows.map(note => ({
       id: note.id,
       body: note.body,

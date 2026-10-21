@@ -85,10 +85,13 @@ try{
  // Rate limiting is scoped to the author, including serialized concurrent writes.
  await db.query("INSERT INTO snaproom.records(id,folder_id,owner_id,body,recorded_on) SELECT gen_random_uuid(),$1,$2,'Rate fixture',current_date FROM generate_series(1,20)",[f.id,b.id]);
  await call(b,'/api/memories','POST',{...content,id:randomUUID()},429);
+ const preservedCounts=await db.query('SELECT (SELECT count(*) FROM snaproom.comments WHERE record_id=$1) AS comments,(SELECT count(*) FROM snaproom.reactions WHERE record_id=$1) AS reactions',[id]);
  await call(a,'/api/memories','DELETE',{id});
  await call(a,`/api/discussion?kind=record&id=${id}`,'GET',undefined,404);
- assert.equal((await db.query('SELECT count(*) FROM snaproom.comments WHERE record_id=$1',[id])).rows[0].count,'0');
- assert.equal((await db.query('SELECT count(*) FROM snaproom.reactions WHERE record_id=$1',[id])).rows[0].count,'0');
+ assert.ok((await db.query('SELECT deleted_at FROM snaproom.records WHERE id=$1',[id])).rows[0].deleted_at, 'Record is in the trash');
+ assert.ok(!(await call(a,`/api/memories?folderId=${f.id}`)).items.some(item=>item.id===id), 'Trashed record is hidden from the feed');
+ assert.equal((await db.query('SELECT count(*) FROM snaproom.comments WHERE record_id=$1',[id])).rows[0].count,preservedCounts.rows[0].comments, 'Comments remain available for restoration');
+ assert.equal((await db.query('SELECT count(*) FROM snaproom.reactions WHERE record_id=$1',[id])).rows[0].count,preservedCounts.rows[0].reactions, 'Reactions remain available for restoration');
  console.log(`PASS: ${checks} memory API checks, privacy, ownership, conflict handling, moderation, photo permissions, idempotency and cascades.`);
 }finally{
  await db.query('DELETE FROM snaproom.folders WHERE id=ANY($1::uuid[])',[folders]);

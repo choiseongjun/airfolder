@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const ts=require('typescript');
-function load(file,imports){const module={exports:{}};const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;new Function('require','module','exports',code)(name=>{if(name in imports)return imports[name];throw new Error(name);},module,module.exports);return module.exports;}
+function load(file,imports){const loaded ={exports:{}};const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;new Function('require','module','exports',code)(name=>{if(name in imports)return imports[name];throw new Error(name);},loaded,loaded.exports);return loaded.exports;}
 function route(row){const writes=[];class ApiError extends Error{constructor(status,code){super(code);this.status=status;}}const mod=load('app/api/invites/route.ts',{
  'node:crypto':require('node:crypto'), '@/lib/growth':{trackGrowth(){}},'@/lib/safety':{requireTerms:async()=>{}},
  '@/lib/server':{ApiError,viewer:async()=> 'viewer',sameOrigin(){},uuid:v=>v,hash:v=>v,json:r=>r.json(),pool:()=>({query:async(sql,args)=>{if(sql.startsWith('SELECT')){assert.match(sql,/COALESCE\(g.owner_id,f.owner_id\)=\$2/);assert.match(sql,/deleted_at IS NULL/);return {rowCount:row?1:0,rows:row?[row]:[]};}writes.push({sql,args});return {};}}),safe:async fn=>{try{return await fn();}catch(e){return Response.json({error:e.message},{status:e.status||500});}}}

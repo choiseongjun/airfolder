@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       properties:{media_type:type.mime.startsWith('image/')?'image':'video',shared}});
     if(staged)await pool().query('DELETE FROM snaproom.upload_sessions WHERE id=$1 AND owner_id=$2',[id,who]);
     if (shared) await notifySharedPhotos([folder],who).catch(()=>console.error('Push notification delivery failed'));
-    return Response.json({id},{status:201});
+    return Response.json({id},{status:inserted?201:200});
     } finally {await upload.cleanup();}
   });
 }

@@ -23,7 +23,7 @@ async function guest() {
 }
 const workspace = async user => (await call(user, '/api/workspace')).json();
 async function upload(user, folder, id, image, status = 201) {
-  paths.push(`${user.id}/${folder}/${id}.jpg`);
+  paths.push(`${user.id}/${folder}/${id}.jpg`,`${user.id}/${folder}/${id}.preview.jpg`);
   const data = new FormData();
   for (const [key,value] of Object.entries({ folderId: folder, id, name: 'Integration fixture.jpg', created: String(Date.now()), shared: 'false' })) data.set(key,value);
   data.set('file', new Blob([image], {type:'image/jpeg'}), 'fixture.jpg');

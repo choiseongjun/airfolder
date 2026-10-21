@@ -54,7 +54,11 @@ function Choices({ data, value, onChange, ko, phrases, disabled }: {
 function CollectionLink({ data, ko }: { data: AlbumRewardData; ko: boolean }) {
   return <p className="reward-decoration-empty">{ko ? '이 공간에서 5조각을 모으면 첫 캐릭터가 열려요. 크루 설정의 보관함에서 보상을 받은 뒤 사용해 보세요.' : 'Collect 5 pieces in this space to meet your first friend. Open your crew settings collection to claim your rewards.'}<Link href={`/crew/settings?group=${encodeURIComponent(data.group ?? 'personal')}#crew-rewards`}>{ko ? '크루 설정 보상 보관함으로' : 'Open reward collection'} →</Link></p>;
 }
-export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, photoSrc }: { folderId: string; ko: boolean; owner: boolean; initiallyOpen?: boolean; photoSrc?: string }) {
+type CoverProps = { folderId: string; ko: boolean; owner: boolean; initiallyOpen?: boolean; photoSrc?: string };
+export function AlbumRewardCover(props: CoverProps) {
+  return <AlbumRewardCoverEditor key={props.folderId} {...props}/>;
+}
+function AlbumRewardCoverEditor({ folderId, ko, owner, initiallyOpen = false, photoSrc }: CoverProps) {
   const { data, setData, error: loadError, retry } = useAlbumRewards(folderId);
   const [draft, setDraft] = useState<RewardDecoration | null>(null);
   const [busy, setBusy] = useState(false);
@@ -65,7 +69,6 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
   const [stickerCategory, setStickerCategory] = useState<'jokes' | 'cafe' | 'roast'>('jokes');
   const stageRef = useRef<HTMLDivElement>(null);
   const dragging = useRef<string | null>(null);
-  useEffect(() => { if (data) setStickerDraft(data.cover?.stickers ?? []); }, [data]);
   const stickers = stickerDraft ?? data?.cover?.stickers ?? [];
   const choice = draft ?? (data?.cover?.character ? defaultDecoration(data) : null);
   async function save(value: RewardDecoration | null) {
@@ -73,6 +76,7 @@ export function AlbumRewardCover({ folderId, ko, owner, initiallyOpen = false, p
     try {
       const result = await api<{ cover: RewardDecoration | null }>('/api/album-rewards', { method: 'PUT', body: JSON.stringify({ folderId, decoration: value }) });
       setData(previous => previous ? { ...previous, cover: result.cover } : previous);
+      setStickerDraft(null);
       setMessage(ko ? (value ? '앨범 표지에 붙였어요. 멤버들도 같은 모습으로 볼 수 있어요.' : '표지 장식을 뗐어요. 보상은 보관함에 남아 있어요.') : (value ? 'Added to the cover for all album members.' : 'Removed from the cover. Your reward is still in your collection.'));
     } catch { setFailed(true); setMessage(ko ? '저장하지 못했어요. 권한과 보상 해금 상태를 확인해 주세요.' : 'Could not save. Check your permissions and unlocked rewards.'); }
     finally { setBusy(false); }

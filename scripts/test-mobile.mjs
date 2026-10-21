@@ -44,7 +44,7 @@ try {
   const {id:folder} = await (await call('/api/folders',{method:'POST',token,body:{name:'Mobile interop fixture',category:'개인',startDate:'2026-10-01',endDate:'2026-10-14'},status:201})).json(); folders.push(folder);
   const webWorkspace = await (await call('/api/workspace',{cookie:owner.cookie})).json();
   assert.equal(webWorkspace.rooms.find(f=>f.id===folder).startDate,'2026-10-01');
-  const photo=randomUUID(); paths.push(`${owner.id}/${folder}/${photo}.jpg`);
+  const photo=randomUUID(); paths.push(`${owner.id}/${folder}/${photo}.jpg`,`${owner.id}/${folder}/${photo}.preview.jpg`);
   const bytes=await sharp({create:{width:8,height:8,channels:3,background:'#284d3c'}}).jpeg().toBuffer();
   const data = new FormData();
   for(const [key,value] of Object.entries({id:photo,folderId:folder,name:'Native fixture.jpg',created:String(Date.now()),shared:'false'})) data.set(key,value);

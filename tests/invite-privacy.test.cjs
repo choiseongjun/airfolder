@@ -18,13 +18,13 @@ function loadRoute(path, query) {
     '@/lib/share-links': { linkedPhotos: async () => [] },
     '@/lib/growth': { trackGrowth() {} },
   };
-  const module = { exports: {} };
+  const loaded = { exports: {} };
   const source = ts.transpileModule(fs.readFileSync(path, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   new Function('require', 'module', 'exports', source)(name => {
     if (!(name in imports)) throw new Error(name);
     return imports[name];
-  }, module, module.exports);
-  return { ...module.exports, queries, signed };
+  }, loaded, loaded.exports);
+  return { ...loaded.exports, queries, signed };
 }
 function restricted(sql, alias = '') {
   const prefix = alias ? alias + '.' : '';
