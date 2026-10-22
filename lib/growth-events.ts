@@ -8,6 +8,7 @@ export function growthProperties(input: Record<string, unknown> = {}) {
   if (typeof input.journey_id === 'string' && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(input.journey_id)) result.journey_id = input.journey_id;
   if (['kakao','google','apple','password'].includes(String(input.method))) result.method = String(input.method);
   if (['organizer', 'guest', 'workspace'].includes(String(input.source))) result.source = String(input.source);
+  if (['guest', 'member'].includes(String(input.creator_type))) result.creator_type = String(input.creator_type);
   if (['ko', 'en'].includes(String(input.locale))) result.locale = String(input.locale);
   if (['image', 'video'].includes(String(input.media_type))) result.media_type = String(input.media_type);
   if (['album', 'group'].includes(String(input.invite_type))) result.invite_type = String(input.invite_type);

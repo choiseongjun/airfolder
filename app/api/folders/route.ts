@@ -69,11 +69,14 @@ export async function POST(request: Request) {
     let dates: [string | null, string | null];
     try { dates = folderDates(body.startDate, body.endDate); } catch { throw new ApiError(400, 'INVALID_DATE_RANGE'); }
     const groupId=body.groupId?uuid(body.groupId):null;
+    let creatorType: 'guest' | 'member' = 'guest';
     const created = await transaction(async db => {
       await db.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['folder-create:'+id]);
       const existing = await db.query('SELECT owner_id FROM snaproom.folders WHERE id=$1', [id]);
       if (existing.rowCount) { if (existing.rows[0].owner_id !== who) throw new ApiError(409, 'FOLDER_CONFLICT'); return false; }
       if(groupId){await db.query('SELECT id FROM snaproom.groups WHERE id=$1 FOR UPDATE',[groupId]);const m=await db.query('SELECT 1 FROM snaproom.group_members WHERE group_id=$1 AND viewer_id=$2',[groupId,who]);if(!m.rowCount)throw new ApiError(404,'GROUP_NOT_FOUND');}
+      const account = await db.query('SELECT 1 FROM snaproom.accounts WHERE viewer_id=$1', [who]);
+      creatorType = account.rowCount ? 'member' : 'guest';
       await db.query('INSERT INTO snaproom.folders(id,owner_id,name,category,description,starts_on,ends_on,group_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [id, who, body.name.trim(), category, body.description || '', ...dates,groupId]);
       await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2) ON CONFLICT DO NOTHING', [id, who]);
       if (body.decoration !== undefined) {
@@ -84,7 +87,7 @@ export async function POST(request: Request) {
       return true;
     });
     if (created) trackGrowth({ event: 'album_created', who, key: `album_created:${id}`, contextId: id,
-      properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace' } });
+      properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace', creator_type: creatorType } });
     return Response.json({ id, created }, { status: 201 });
   });
 }

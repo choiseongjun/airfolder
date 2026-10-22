@@ -10,6 +10,32 @@ function load(file, imports = {}, globals = {}) {
   return loaded.exports;
 }
 const events = load('lib/growth-events.ts');
+test('creator type accepts only coarse membership states', () => {
+  assert.equal(events.growthProperties({creator_type:'guest'}).creator_type,'guest');
+  assert.equal(events.growthProperties({creator_type:'member'}).creator_type,'member');
+  assert.equal(events.growthProperties({creator_type:'someone@example.test'}).creator_type,undefined);
+});
+
+test('album creation snapshots server account state, ignores client claims and skips retries', async () => {
+  for (const member of [false,true]) for (const existing of [false,true]) {
+    const tracked=[];
+    const db={query:async sql=> {
+      if(sql.startsWith('SELECT count'))return {rows:[{count:0}]};
+      if(sql.startsWith('SELECT owner_id'))return {rowCount:existing?1:0,rows:existing?[{owner_id:'viewer'}]:[]};
+      if(sql.startsWith('SELECT 1 FROM snaproom.accounts'))return {rowCount:member?1:0,rows:[]};
+      return {rowCount:1,rows:[]};
+    }};
+    const route=load('app/api/folders/route.ts',{
+      '@/lib/safety':{requireActiveViewer:async()=>{}},'node:crypto':{randomUUID:()=> 'album'},
+      '@/lib/server':{sameOrigin:()=>{},viewer:async()=> 'viewer',json:async()=>({name:'Album',creator_type:member?'guest':'member'}),pool:()=>db,transaction:fn=>fn(db),safe:fn=>fn()},
+      '@/lib/folder-dates':{folderDates:()=>[null,null]},'@/lib/growth':{trackGrowth:e=>tracked.push(e)},
+      '@/lib/album-deletion':{},'@/lib/album-style':{},'@/lib/album-rewards':{}
+    },{Response});
+    const response=await route.POST({});assert.equal(response.status,201);
+    assert.equal(tracked.length,existing?0:1);
+    if(!existing)assert.equal(tracked[0].properties.creator_type,member?'member':'guest');
+  }
+});
 test('analytics drops personal content, tokens, URLs, nested data and arbitrary property values', () => {
   const result = events.growthProperties({ source: 'guest', shared: true, locale: 'ko', media_type: 'image', reason: 'network', email: 'private@example.test', name: 'Private album', token: 'secret', url: '/join/secret', file: { contents: 'photo' }, context_id: 'untrusted', invite_type: 'private-name' });
   assert.deepEqual(JSON.parse(JSON.stringify(result)), { source: 'guest', locale: 'ko', media_type: 'image', reason: 'network', shared: true });

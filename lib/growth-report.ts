@@ -44,7 +44,7 @@ WITH events AS (
  FROM events WHERE event='site_visit' AND properties->>'journey_id' IS NOT NULL
  ORDER BY properties->>'journey_id',created_at
 ), acquisition_funnel AS (
- SELECT v.*,l.logged_in,s.signed_up,a.created,i.invited FROM acquisition_views v
+ SELECT v.*,l.logged_in,s.signed_up,a.created,i.invited,k.guest,k.member,k.unknown FROM acquisition_views v
  LEFT JOIN LATERAL (SELECT min(created_at) logged_in FROM snaproom.growth_events
    WHERE environment=$1 AND properties->>'journey_id'=v.journey AND event='login'
    AND created_at>=v.viewed AND created_at<=v.viewed+interval '7 days') l ON true
@@ -53,7 +53,12 @@ WITH events AS (
    AND created_at>=v.viewed AND created_at<=v.viewed+interval '7 days') s ON true
  LEFT JOIN LATERAL (SELECT created_at created,context_id FROM snaproom.growth_events
    WHERE environment=$1 AND properties->>'journey_id'=v.journey AND event='album_created'
-   AND created_at>=l.logged_in AND created_at<=v.viewed+interval '7 days' ORDER BY created_at LIMIT 1) a ON true
+   AND created_at>=v.viewed AND created_at<=v.viewed+interval '7 days' ORDER BY created_at LIMIT 1) a ON true
+ LEFT JOIN LATERAL (SELECT bool_or(properties->>'creator_type'='guest') guest,
+   bool_or(properties->>'creator_type'='member') member,
+   bool_or(COALESCE(properties->>'creator_type','unknown') NOT IN ('guest','member')) unknown
+   FROM snaproom.growth_events WHERE environment=$1 AND properties->>'journey_id'=v.journey
+   AND event='album_created' AND created_at>=v.viewed AND created_at<=v.viewed+interval '7 days') k ON true
  LEFT JOIN LATERAL (SELECT min(e.created_at) invited FROM snaproom.growth_events e
    WHERE e.environment=$1 AND e.properties->>'journey_id'=v.journey AND e.event='invite_created'
    AND (e.context_id=a.context_id OR e.context_id=(SELECT group_id FROM snaproom.folders WHERE id=a.context_id))
@@ -63,9 +68,15 @@ WITH events AS (
 )
 SELECT json_build_object(
  'acquisition',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
-   SELECT source,medium,campaign,count(*) visits,count(logged_in) logins,count(signed_up) signups,count(created) albums,count(invited) invites
+   SELECT source,medium,campaign,count(*) visits,count(logged_in) logins,count(signed_up) signups,count(created) albums,count(invited) invites,
+   count(*) FILTER(WHERE guest) "guestAlbums",count(*) FILTER(WHERE member) "memberAlbums",count(*) FILTER(WHERE unknown) "unknownAlbums"
    FROM acquisition_funnel GROUP BY source,medium,campaign ORDER BY count(*) DESC) x),
  'albums',(SELECT count(*) FROM albums),
+ 'albumCreators',(SELECT json_build_object(
+   'guest',count(*) FILTER(WHERE properties->>'creator_type'='guest'),
+   'member',count(*) FILTER(WHERE properties->>'creator_type'='member'),
+   'unknown',count(*) FILTER(WHERE COALESCE(properties->>'creator_type','unknown') NOT IN ('guest','member'))
+ ) FROM events WHERE event='album_created'),
  'activatedAlbums',(SELECT count(*) FROM album_activity WHERE contributors>=3 AND photos>=20),
  'sharedPhotos',(SELECT COALESCE(sum(photos),0) FROM album_activity),
  'contributors',(SELECT count(DISTINCT viewer_id) FROM events WHERE event='upload_succeeded' AND properties->>'media_type'='image'),
@@ -89,7 +100,8 @@ SELECT json_build_object(
 ) report`;
 
 export type GrowthReport = {
- acquisition: { source: string; medium: string; campaign: string; visits: number; logins: number; signups: number; albums: number; invites: number }[];
+ acquisition: { source: string; medium: string; campaign: string; visits: number; logins: number; signups: number; albums: number; invites: number; guestAlbums: number; memberAlbums: number; unknownAlbums: number }[];
+ albumCreators: { guest: number; member: number; unknown: number };
  albums: number; activatedAlbums: number; sharedPhotos: number; contributors: number; repeatHosts: number;
  guestFunnel: { opened: number; joined: number; uploaded: number; medianMinutes: number | null; stillMaturing: number };
  hostFunnel: { viewed: number; clicked: number; created: number };

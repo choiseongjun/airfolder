@@ -18,7 +18,7 @@ export default function FeedAlbumView({ album, onBack, backLabel = '피드로 �
     return () => { active = false; };
   }, [album.id]);
   const [photo, setPhoto] = useState<MemoryItem | null>(null);
-  return <div className="mx-auto h-screen w-full max-w-[480px] overflow-y-auto bg-[#fff8f5] text-[#30251f]" style={{height:'100dvh'}}>
+  return <div className="mx-auto min-h-dvh w-full max-w-[480px] bg-[#fff8f5] text-[#30251f]">
     <header className={`${stitchRoot} sticky top-0 z-50 border-b border-[#efdfd5] bg-[#fff8f5]/95 px-5 py-4 backdrop-blur`} style={{ fontFamily: sansStack }}>
       <StitchIconFont/>
       <div className="mx-auto flex max-w-md items-center gap-3">
