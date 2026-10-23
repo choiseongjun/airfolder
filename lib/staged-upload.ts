@@ -9,7 +9,8 @@ export async function stagedUpload(idValue:unknown,who:string){
  if(!rows.rowCount)throw new ApiError(404,'UPLOAD_EXPIRED');const session=rows.rows[0];
  await requireMember(session.folder_id,who);
  const dir=await mkdtemp(join(tmpdir(),'memolumi-upload-')),path=join(dir,'original');
- const cleanup=()=>rm(dir,{recursive:true,force:true});
+ // Temporary-file cleanup must not turn an already committed upload into a failure.
+ const cleanup=()=>rm(dir,{recursive:true,force:true,maxRetries:2,retryDelay:100}).catch(()=>{});
  const file=await open(path,'wx');
  try{
   for(let part=0;part<Math.ceil(Number(session.size_bytes)/3145728);part++){

@@ -2,7 +2,7 @@ import AnalyticsPreference from '../../analytics-preference';
 import Link from 'next/link';
 export default function Privacy(){return <main style={{maxWidth:720,margin:'40px auto',padding:24,lineHeight:1.8}}>
   <Link href="/">← Memonestia</Link><h1>Privacy / 개인정보 처리 안내</h1><p>Updated / 개정일: 2026-10-15</p>
-  <p>Operator / 운영자: 최성준 (Seongjun Choi)<br/>Contact / 개인정보 문의: <a href="mailto:choisj2702@gmail.com">choisj2702@gmail.com</a></p>
+  <p>Operator / 운영자: 최성준 (Seongjun Choi)<br/>Contact / 개인정보 문의: <a href="mailto:crewcheck.inapp@gmail.com">crewcheck.inapp@gmail.com</a></p>
   <p>Memonestia stores the photos you select, folder information, sharing choices, and account information from Google or Apple (account identifier, name and email when provided).</p>
   <p>선택한 사진, 폴더 정보, 공개 설정과 Google·Apple 계정 식별자 및 제공되는 이름·이메일을 서비스 제공에 사용합니다. 사진 접근 권한을 허용해도 모든 사진을 자동으로 업로드하지 않습니다.</p>
   <h2>Photos / 사진</h2><p>New uploads preserve selected original photos and videos, including embedded metadata, videos up to 50 MB and photos up to 20 MB, subject to server storage limits. Separate compressed image and video previews are generated. Older uploads may only retain a processed copy. Firebase handles sign-in; Supabase stores application records and photos. Photos are private until you share them with all or selected folder members. Authorized members can download originals; copies they download remain outside our control.</p>
