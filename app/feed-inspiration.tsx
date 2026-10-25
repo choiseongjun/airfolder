@@ -20,7 +20,7 @@ export function FeedSampleStory(){
 
 export default function FeedInspiration(){
  return <section className="feed-theme-recommendations" aria-labelledby="feed-theme-title">
-  <header><div><span>사진이 이야기가 되는 방법</span><h2 id="feed-theme-title">이런 앨범도 만들어봐요</h2></div><Link href="/make">테마 더 보기 <span aria-hidden="true">→</span></Link></header>
+  <header><div><span>사진이 이야기가 되는 방법</span><h2 id="feed-theme-title">이런 앨범도 만들어봐요</h2></div><Link href="/make?themes=1">테마 더 보기 <span aria-hidden="true">→</span></Link></header>
   <div className="feed-theme-rail">{suggestions.map(item=><Link key={item.id} href={`/make?template=${item.id}`} className="feed-theme-card" aria-label={`${item.name}으로 앨범 만들기`}><div className="feed-theme-preview" aria-hidden="true"><div inert><ThemeAlbum preview folderId={`feed-preview-${item.id}`} title={item.title} description="" locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:item.albumTheme!,song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(item.photos.map(photo=>`/explore/album-samples/${photo}.jpg`))}/></div></div><strong>{item.name}</strong><span>{item.albumTheme==='passport'?'다녀온 곳을 한 권에':item.albumTheme==='recipe'?'맛있는 날의 기록':'다시 열어보는 추억'}</span></Link>)}</div>
  </section>;
 }

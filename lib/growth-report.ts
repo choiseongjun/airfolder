@@ -63,10 +63,29 @@ WITH events AS (
    WHERE e.environment=$1 AND e.properties->>'journey_id'=v.journey AND e.event='invite_created'
    AND (e.context_id=a.context_id OR e.context_id=(SELECT group_id FROM snaproom.folders WHERE id=a.context_id))
    AND e.created_at>=a.created AND e.created_at<=v.viewed+interval '7 days') i ON true
+), maker_views AS (
+ SELECT properties->>'attempt_id' attempt,min(created_at) viewed,
+   max(properties->>'template_id') template,max(properties->>'session_source') source,max(properties->>'session_campaign') campaign
+ FROM events WHERE event='album_maker_viewed' AND properties->>'attempt_id' IS NOT NULL
+ GROUP BY properties->>'attempt_id'
+), maker_steps AS (
+ SELECT v.*,bool_or(e.event='album_picker_opened') picked,bool_or(e.event='album_photos_selected') selected,
+   bool_or(e.event='album_preview_ready') previewed,bool_or(e.event='album_save_started') saving,
+   bool_or(e.event='album_save_completed') saved,bool_or(e.event='album_save_failed') failed,
+   bool_or(e.event='album_photo_failed') photo_failed
+ FROM maker_views v LEFT JOIN snaproom.growth_events e ON e.environment=$1 AND e.properties->>'attempt_id'=v.attempt
+   AND e.created_at BETWEEN v.viewed-interval '1 minute' AND v.viewed+interval '7 days'
+ GROUP BY v.attempt,v.viewed,v.template,v.source,v.campaign
 ), days AS (
- SELECT generate_series((now() AT TIME ZONE 'UTC')::date-$2::int,(now() AT TIME ZONE 'UTC')::date,interval '1 day') AS bucket
+ SELECT generate_series((now() AT TIME ZONE 'Asia/Seoul')::date-($2::int-1),(now() AT TIME ZONE 'Asia/Seoul')::date,interval '1 day') AS bucket
 )
 SELECT json_build_object(
+ 'visits',(SELECT json_build_object('sessions',count(*),'browsers',count(DISTINCT viewer_id),'since',min(created_at)) FROM events WHERE event='session_started'),
+ 'maker',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
+   SELECT COALESCE(source,'unknown') source,COALESCE(campaign,'none') campaign,template,count(*) viewed,
+     count(*) FILTER(WHERE picked) picked,count(*) FILTER(WHERE selected) selected,count(*) FILTER(WHERE previewed) previewed,
+     count(*) FILTER(WHERE saving) saving,count(*) FILTER(WHERE saved) saved,count(*) FILTER(WHERE failed) failed,count(*) FILTER(WHERE photo_failed) "photoFailed"
+   FROM maker_steps GROUP BY source,campaign,template ORDER BY count(*) DESC) x),
  'acquisition',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
    SELECT source,medium,campaign,count(*) visits,count(logged_in) logins,count(signed_up) signups,count(created) albums,count(invited) invites,
    count(*) FILTER(WHERE guest) "guestAlbums",count(*) FILTER(WHERE member) "memberAlbums",count(*) FILTER(WHERE unknown) "unknownAlbums"
@@ -89,8 +108,10 @@ SELECT json_build_object(
  'uploadFailures',(SELECT count(*) FROM events WHERE event='upload_failed'),
  'uploadSuccesses',(SELECT count(*) FROM events WHERE event='upload_succeeded' AND properties->>'media_type'='image'),
  'daily',(SELECT json_agg(json_build_object('date',to_char(d.bucket,'YYYY-MM-DD'),
-   'albums',(SELECT count(*) FROM events WHERE event='album_created' AND (created_at AT TIME ZONE 'UTC')::date=d.bucket::date),
-   'uploads',(SELECT count(*) FROM events WHERE event='upload_succeeded' AND properties->>'media_type'='image' AND (created_at AT TIME ZONE 'UTC')::date=d.bucket::date)) ORDER BY d.bucket) FROM days d),
+   'sessions',(SELECT count(*) FROM events WHERE event='session_started' AND (created_at AT TIME ZONE 'Asia/Seoul')::date=d.bucket::date),
+   'albums',(SELECT count(*) FROM events WHERE event='album_created' AND (created_at AT TIME ZONE 'Asia/Seoul')::date=d.bucket::date),
+   'uploads',(SELECT count(*) FROM events WHERE event='upload_succeeded' AND properties->>'media_type'='image' AND (created_at AT TIME ZONE 'Asia/Seoul')::date=d.bucket::date)) ORDER BY d.bucket) FROM days d),
+ 'makerFailures',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (SELECT event,COALESCE(properties->>'reason','other') reason,count(*)::int count FROM events WHERE event IN ('album_save_failed','album_photo_failed') GROUP BY event,properties->>'reason' ORDER BY count(*) DESC) x),
  'failures',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (SELECT COALESCE(properties->>'reason','other') reason,count(*)::int count FROM events WHERE event='upload_failed' GROUP BY properties->>'reason' ORDER BY count(*) DESC) x),
  'firstEvent',(SELECT min(created_at) FROM snaproom.growth_events WHERE environment=$1),
  'lastEvent',(SELECT max(created_at) FROM snaproom.growth_events WHERE environment=$1),
@@ -100,13 +121,16 @@ SELECT json_build_object(
 ) report`;
 
 export type GrowthReport = {
+ visits: { sessions: number; browsers: number; since: string | null };
+ maker: { source: string; campaign: string; template: string; viewed: number; picked: number; selected: number; previewed: number; saving: number; saved: number; failed: number; photoFailed: number }[];
+ makerFailures: { event: string; reason: string; count: number }[];
  acquisition: { source: string; medium: string; campaign: string; visits: number; logins: number; signups: number; albums: number; invites: number; guestAlbums: number; memberAlbums: number; unknownAlbums: number }[];
  albumCreators: { guest: number; member: number; unknown: number };
  albums: number; activatedAlbums: number; sharedPhotos: number; contributors: number; repeatHosts: number;
  guestFunnel: { opened: number; joined: number; uploaded: number; medianMinutes: number | null; stillMaturing: number };
  hostFunnel: { viewed: number; clicked: number; created: number };
  uploadAttempts: number; uploadFailures: number; uploadSuccesses: number;
- daily: { date: string; albums: number; uploads: number }[]; failures: { reason: string; count: number }[];
+ daily: { date: string; sessions: number; albums: number; uploads: number }[]; failures: { reason: string; count: number }[];
  firstEvent: string | null; lastEvent: string | null; pendingDelivery: number; lastDelivery: string | null; exhaustedDelivery: number;
  posthogConfigured: boolean; environment: string; days: number;
 };

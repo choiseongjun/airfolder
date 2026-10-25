@@ -42,21 +42,21 @@ test('analytics drops personal content, tokens, URLs, nested data and arbitrary 
   assert.deepEqual(JSON.parse(JSON.stringify(events.growthProperties({ source: 'private text', shared: 'true', reason: 'error with sensitive content' }))), {});
 });
 test('client events cannot spoof a completed upload, created album or joined invitation', () => {
-  for (const e of ['upload_succeeded', 'album_created', 'invite_joined', 'invite_opened']) assert.equal(events.clientEvents.includes(e), false);
+  for (const e of ['upload_succeeded', 'album_created', 'album_save_completed', 'invite_joined', 'invite_opened']) assert.equal(events.clientEvents.includes(e), false);
 });
 test('raw upload errors reduce to coarse categories', () => {
   for (const [error, reason] of [['MEDIA_TOO_LARGE','size'],['ACCOUNT_STORAGE_LIMIT','storage'],['INVALID_IMAGE','format'],['SESSION_EXPIRED','permission'],['Failed to fetch','network'],['some sensitive message','other']]) assert.equal(events.uploadFailureReason(error), reason);
 });
 test('database and PostHog failure do not break the successful product response', async () => {
   let callback, logged = 0;
-  const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers() }, './server': { hash: s => s, pool: () => ({ query: async () => { throw new Error('DB down'); } }) }, './growth-events': events, './acquisition': load('lib/acquisition.ts') }, { process: { env: {} }, console: { error: () => logged++ }, Headers });
+  const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers() }, './server': { hash: s => s, pool: () => ({ query: async () => { throw new Error('DB down'); } }) }, './growth-events': events, './acquisition': load('lib/acquisition.ts'), './visit-session': load('lib/visit-session.ts') }, { process: { env: {} }, console: { error: () => logged++ }, Headers });
   assert.doesNotThrow(() => growth.trackGrowth({ event: 'upload_succeeded', who: 'test', key: 'test' }));
   await callback(); assert.equal(logged, 1);
 });
 test('privacy signals prevent persistence and delivery', async () => {
   for (const header of ['dnt', 'sec-gpc']) {
     let callback;
-    const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers({ [header]: '1' }) }, './server': { hash: s => s, pool: () => { throw new Error('must not access DB'); } }, './growth-events': events, './acquisition': load('lib/acquisition.ts') }, { process: { env: {} }, console: { error: () => assert.fail('must not log an error') }, Headers });
+    const growth = load('lib/growth.ts', { 'server-only': {}, 'next/server': { after: cb => { callback = cb; } }, 'next/headers': { headers: async () => new Headers({ [header]: '1' }) }, './server': { hash: s => s, pool: () => { throw new Error('must not access DB'); } }, './growth-events': events, './acquisition': load('lib/acquisition.ts'), './visit-session': load('lib/visit-session.ts') }, { process: { env: {} }, console: { error: () => assert.fail('must not log an error') }, Headers });
     growth.trackGrowth({ event: 'upload_succeeded', who: 'test', key: 'test' }); await callback();
   }
 });

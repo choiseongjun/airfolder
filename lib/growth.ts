@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { hash, pool } from './server';
 import { growthProperties, type GrowthEvent } from './growth-events';
 import { attributionFromCookie } from './acquisition';
+import { sessionFromCookie } from './visit-session';
 
 export const growthEnvironment = () => process.env.ANALYTICS_ENVIRONMENT === 'production' ? 'production' : 'development';
 export type GrowthInput = { event: GrowthEvent; who: string; key: string; contextId?: string; properties?: Record<string, unknown> };
@@ -14,13 +15,18 @@ export function trackGrowth(input: GrowthInput) {
       const requestHeaders = await headers();
       if (requestHeaders.get('dnt') === '1' || requestHeaders.get('sec-gpc') === '1') return;
       const attribution = attributionFromCookie(requestHeaders.get('cookie') || '');
+      const session = sessionFromCookie(requestHeaders.get('cookie') || '');
+      const environment = session?.session_source === 'qa' ? 'development' : growthEnvironment();
+      if (session) await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,environment,properties,created_at)
+        VALUES($1,'session_started',$2,$3,$4,$5) ON CONFLICT(event_key) DO NOTHING`,
+        [`session:${session.session_id}`, input.who, environment, growthProperties(session), new Date(session.started_at)]);
       if (attribution) await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,environment,properties,created_at)
         VALUES($1,'site_visit',$2,$3,$4,$5) ON CONFLICT(event_key) DO UPDATE SET properties=EXCLUDED.properties,
         created_at=LEAST(growth_events.created_at,EXCLUDED.created_at) WHERE growth_events.properties->>'journey_id' IS NULL`,
-        [`visit:${attribution.journey_id}`, input.who, growthEnvironment(), growthProperties(attribution), new Date(attribution.acquired_at)]);
+        [`visit:${attribution.journey_id}`, input.who, environment, growthProperties(attribution), new Date(attribution.acquired_at)]);
       await pool().query(`INSERT INTO snaproom.growth_events(event_key,event,viewer_id,context_id,environment,properties)
         VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(event_key) DO NOTHING`,
-      [input.key, input.event, input.who, input.contextId || null, growthEnvironment(), growthProperties({ ...input.properties, ...attribution })]);
+      [input.key, input.event, input.who, input.contextId || null, environment, growthProperties({ ...input.properties, ...attribution, ...session })]);
       await flushGrowth();
     } catch { console.error('Growth analytics unavailable'); }
   });

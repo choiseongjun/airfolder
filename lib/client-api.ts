@@ -1,8 +1,10 @@
 import {isBrowse,browseResponse} from './browse-data';
 import { captureAttribution } from './acquisition';
+import { captureVisitSession } from './visit-session';
 export async function api<T = Record<string, unknown>>(url: string, options: RequestInit = {}): Promise<T> {
   if(isBrowse())return browseResponse(url,options.method||'GET') as T;
   captureAttribution();
+  captureVisitSession();
   if(url==='/api/photos'&&options.method==='POST'&&options.body instanceof FormData){
     const form=options.body,file=form.get('file');
     if(file instanceof Blob){

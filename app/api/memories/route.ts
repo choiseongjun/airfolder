@@ -1,4 +1,5 @@
 import {requireActiveViewer} from '@/lib/safety';
+import {trackAlbumSaved} from '@/lib/album-save-analytics';
 import {attachPhotos,photoIds} from '@/lib/record-bundles';
 import {parseRecipients,checkRecipients} from '@/lib/audience';
 import {connection} from 'next/server';
@@ -36,7 +37,7 @@ export async function POST(request:Request){return safe(async()=>{
   await db.query('INSERT INTO snaproom.records(id,folder_id,owner_id,body,recorded_on,shared,recipients,title) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[id,folder,who,body,day,b.shared,recipients,title]);
   await attachPhotos(db,id,folder,who,ids);
   await db.query('UPDATE snaproom.folders SET updated_at=now() WHERE id=$1',[folder]);
- });return Response.json({id},{status:201});
+ });trackAlbumSaved(who,id,folder,b.maker);return Response.json({id},{status:201});
 });}
 export async function PATCH(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),b=await json(request);await requireActiveViewer(who);
