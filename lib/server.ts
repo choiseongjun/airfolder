@@ -79,7 +79,8 @@ export async function requireMember(folder: string, who: string) {
 export async function safe(work: () => Promise<Response>) {
   try { return await work(); } catch (error) {
     if (error instanceof ApiError) return Response.json({ error: error.code }, { status: error.status });
-    console.error('Snaproom request failed', error instanceof Error ? error.name : 'UnknownError');
+    const code = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string' && /^[A-Z0-9_]{2,48}$/.test(error.code) ? error.code : 'UNCLASSIFIED';
+    console.error('Snaproom request failed', error instanceof Error ? error.name : 'UnknownError', code);
     return Response.json({ error: 'SERVER_ERROR' }, { status: 503 });
   }
 }
