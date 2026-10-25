@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import MemoryStudio from '@/app/memory-studio';
 import MemoryStart from '@/app/memory-start';
 import { makerTemplate, isPhotoRequestEntry } from '@/lib/album-campaigns';
-import PhotoRequestStart from '@/app/photo-request-start';
+import TripStoryStart from '@/app/trip-story';
 import { api, initializeSession } from '@/lib/client-api';
 import { trackGaEvent } from '@/lib/auth-analytics';
 
@@ -22,7 +22,7 @@ export default function MemoryMaker() {
     setGuest(!workspace.account);
     return true;
   }
-  if (collecting) return <main className="memory-make-shell"><Link className="memory-make-back" href="/?lang=ko&home=1">← 피드 홈으로</Link><PhotoRequestStart/></main>;
+  if (collecting) return <main className="memory-make-shell"><Link className="memory-make-back" href="/?lang=ko&home=1">← 피드 홈으로</Link><TripStoryStart/></main>;
   return <main className="memory-make-shell"><Link className="memory-make-back" href={template?'/make?themes=1':'/?lang=ko&home=1'}>{template?'← 다른 앨범 둘러보기':'← 피드 홈으로'}</Link>
     {template ? <MemoryStudio key={`${template.id}:${occasion || ''}`} ko guest={guest} albums={[]} photos={[]} starter={template} beforeSave={beforeSave} onClose={() => router.push('/make?themes=1')} onConnect={id => router.push(`/?lang=ko&login=1&returnTo=${encodeURIComponent(id?`/?lang=ko&home=1&group=personal&album=${encodeURIComponent(id)}`:'/?lang=ko&home=1')}`)} onSaved={id => router.push(`/?lang=ko&home=1&group=personal&album=${encodeURIComponent(id)}`)}/> : <MemoryStart/>}
   </main>;

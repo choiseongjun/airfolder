@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import {useState} from 'react';
 import ThemeAlbum from './theme-album';
+import {StoryCards} from './trip-story';
 import { albumTemplates } from '@/lib/memory-templates';
 import { localAlbumPhotos } from '@/lib/local-album-photos';
 import './feed-inspiration.css';
@@ -11,11 +12,9 @@ const suggestions=['album-passport','album-recipe','album-desktop'].map(id=>albu
 export function FeedSampleStory(){
  const [open,setOpen]=useState(false);
  return <article className="travel-feed-story" aria-label="여행 앨범 예시">
-  <header><span>여행 다녀온 친구들과</span><h2>친구 폰 속 내 사진,<br/>이제 한곳에 모아요.</h2><p>사진 받을 링크를 단톡방에 보내세요.<br/>친구가 골라 보낸 사진이 같은 앨범에 쌓여요.</p></header>
-  <div className="travel-feed-content"><ol><li><b>1</b> 링크 만들기</li><li><b>2</b> 단톡방에 보내기</li><li><b>3</b> 친구가 사진 보태기</li></ol><Link className="travel-feed-create" href="/make?occasion=travel">사진 받을 링크 만들기 →</Link><p className="travel-feed-hint">내 사진 없이 시작 · 친구도 앱 설치·회원가입 없이 참여</p><Link className="travel-feed-secondary" href="/make?occasion=travel&mode=decorate">내 사진으로 앨범부터 꾸미기 →</Link></div>
-  <Link href="/make?occasion=travel&mode=decorate" className="travel-album-preview" aria-label="모인 사진으로 만드는 여행 앨범 예시"><div inert><ThemeAlbum preview folderId="travel-cover-example" title="우리의 여행" description="다음에도 같이 가자." locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:'ticket',song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(['/landing/sea.webp','/landing/friends.webp'])}/></div></Link>
-  <div className="travel-feed-content"><p className="travel-feed-hint">모인 사진은 이런 여행 앨범이 돼요 · 샘플 사진</p><button type="button" aria-expanded={open} onClick={()=>setOpen(value=>!value)}>{open?'예시 앨범 접기':'완성된 예시 앨범 펼쳐보기'} {open?'−':'＋'}</button></div>
-  {open&&<ThemeAlbum preview folderId="travel-feed-example" title="우리의 여행" description="다음에도 같이 가자." locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:'ticket',song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(['/landing/sea.webp','/landing/friends.webp'])}/>}
+  <header><span>각자가 기억하는 같은 여행</span><h2>같이 다녀왔지만,<br/>기억은 다 다르니까.</h2><p>나는 바다가 기억나고, 너는 그때 웃었던 게 기억나지?<br/>각자의 사진과 한마디로 우리 여행편을 만들어요.</p></header>
+  <div className="travel-feed-content"><ol><li><b>1</b> 내 사진과 기억</li><li><b>2</b> 친구의 한 장</li><li><b>3</b> 우리의 여행편</li></ol><Link className="travel-feed-create" href="/make?occasion=travel">우리 여행편 시작하기 →</Link><p className="travel-feed-hint">사진 1~3장으로 시작 · 친구는 사진 한 장과 한마디</p><button type="button" aria-expanded={open} onClick={()=>setOpen(value=>!value)}>{open?'예시 접기':'함께 만든 여행편은 이런 모습이에요'} {open?'−':'＋'}</button></div>
+  {open&&<div className="trip-story travel-feed-content"><p className="travel-feed-hint">아래 사진과 한마디는 예시입니다.</p><StoryCards title="부산에서 보낸 주말" entries={[{id:'sample-1',personId:'sample-1',name:'지우',body:'길 잘못 들어서 우연히 찾은 바다가 제일 좋았어 ㅋㅋ',animal:'cat',avatar:null,mine:false,photos:[{id:'sample-sea',src:'/landing/sea.webp'}]},{id:'sample-2',personId:'sample-2',name:'서연',body:'나는 다 같이 뛰다가 신발에 모래 들어간 순간. 아직도 웃겨!',animal:'rabbit',avatar:null,mine:false,photos:[{id:'sample-friends',src:'/landing/friends.webp'}]}]}/></div>}
  </article>;
 }
 

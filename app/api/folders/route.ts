@@ -78,6 +78,7 @@ export async function POST(request: Request) {
       const account = await db.query('SELECT 1 FROM snaproom.accounts WHERE viewer_id=$1', [who]);
       creatorType = account.rowCount ? 'member' : 'guest';
       await db.query('INSERT INTO snaproom.folders(id,owner_id,name,category,description,starts_on,ends_on,group_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8)', [id, who, body.name.trim(), category, body.description || '', ...dates,groupId]);
+      if(body.story===true)await db.query('UPDATE snaproom.folders SET story_mode=true WHERE id=$1',[id]);
       await db.query('INSERT INTO snaproom.members(folder_id,viewer_id) VALUES($1,$2) ON CONFLICT DO NOTHING', [id, who]);
       if (body.decoration !== undefined) {
         const decoration = await allowedAlbumDecoration(db, who, id, body.decoration);
@@ -88,7 +89,7 @@ export async function POST(request: Request) {
     });
     if (created) trackGrowth({ event: 'album_created', who, key: `album_created:${id}`, contextId: id,
       properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace', creator_type: creatorType,
-        ...(body.source === 'organizer' && body.flow === 'photo_request' ? { flow: 'photo_request', attempt_id: body.attempt_id } : {}) } });
+        ...(body.source === 'organizer' && ['photo_request','trip_story'].includes(body.flow) ? { flow: body.flow, attempt_id: body.attempt_id } : {}) } });
     return Response.json({ id, created }, { status: 201 });
   });
 }

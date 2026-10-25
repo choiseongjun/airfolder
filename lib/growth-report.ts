@@ -101,6 +101,16 @@ WITH events AS (
  SELECT generate_series((now() AT TIME ZONE 'Asia/Seoul')::date-($2::int-1),(now() AT TIME ZONE 'Asia/Seoul')::date,interval '1 day') AS bucket
 )
 SELECT json_build_object(
+ 'tripStories',(SELECT json_build_object(
+  'viewed',count(DISTINCT properties->>'attempt_id') FILTER(WHERE event='trip_story_viewed'),
+  'previewed',count(DISTINCT properties->>'attempt_id') FILTER(WHERE event='trip_story_previewed'),
+  'saved',count(DISTINCT context_id) FILTER(WHERE event='trip_story_saved'),
+  'contributed',count(DISTINCT context_id) FILTER(WHERE event='trip_story_contributed'),
+  'exported',count(*) FILTER(WHERE event='trip_story_exported'),
+  'sharing',count(*) FILTER(WHERE event='trip_story_share_opened'),
+  'invited',count(DISTINCT context_id) FILTER(WHERE event='trip_story_invite_copied'),
+  'repeatHosts',(SELECT count(*) FROM (SELECT viewer_id FROM events WHERE event='trip_story_saved' GROUP BY viewer_id HAVING count(DISTINCT context_id)>=2) repeated)
+ ) FROM events),
  'visits',(SELECT json_build_object('sessions',count(*),'browsers',count(DISTINCT viewer_id),'since',min(created_at)) FROM events WHERE event='session_started'),
  'photoRequests',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
    SELECT COALESCE(source,'unknown') source,COALESCE(campaign,'none') campaign,count(*) viewed,
@@ -138,7 +148,7 @@ SELECT json_build_object(
    'albums',(SELECT count(*) FROM events WHERE event='album_created' AND (created_at AT TIME ZONE 'Asia/Seoul')::date=d.bucket::date),
    'uploads',(SELECT count(*) FROM events WHERE event='upload_succeeded' AND properties->>'media_type'='image' AND (created_at AT TIME ZONE 'Asia/Seoul')::date=d.bucket::date)) ORDER BY d.bucket) FROM days d),
  'makerFailures',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (SELECT event,COALESCE(properties->>'reason','other') reason,count(*)::int count FROM events WHERE event IN ('album_save_failed','album_photo_failed') GROUP BY event,properties->>'reason' ORDER BY count(*) DESC) x),
- 'failures',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (SELECT COALESCE(properties->>'reason','other') reason,count(*)::int count FROM events WHERE event='upload_failed' GROUP BY properties->>'reason' ORDER BY count(*) DESC) x),
+ 'failures',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (SELECT COALESCE(properties->>'reason','other') reason,count(DISTINCT COALESCE(properties->>'attempt_id',id::text))::int count FROM events WHERE event='upload_failed' AND properties->>'media_type'='image' GROUP BY properties->>'reason' ORDER BY count(*) DESC) x),
  'firstEvent',(SELECT min(created_at) FROM snaproom.growth_events WHERE environment=$1),
  'lastEvent',(SELECT max(created_at) FROM snaproom.growth_events WHERE environment=$1),
  'pendingDelivery',(SELECT count(*) FROM snaproom.growth_events WHERE environment='production' AND posthog_sent_at IS NULL),
@@ -147,6 +157,7 @@ SELECT json_build_object(
 ) report`;
 
 export type GrowthReport = {
+ tripStories:{viewed:number;previewed:number;saved:number;contributed:number;exported:number;sharing:number;invited:number;repeatHosts:number};
  photoRequests: { source: string; campaign: string; viewed: number; started: number; ready: number; copied: number; sharing: number; opened: number; contributed: number }[];
  visits: { sessions: number; browsers: number; since: string | null };
  maker: { source: string; campaign: string; template: string; viewed: number; picked: number; selected: number; previewed: number; saving: number; saved: number; failed: number; photoFailed: number }[];

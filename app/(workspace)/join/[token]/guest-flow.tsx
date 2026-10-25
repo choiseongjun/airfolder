@@ -18,9 +18,10 @@ import ThemeAlbum, { Sticker } from '../../../theme-album';
 import type { MemoryItem } from '../../../memories';
 import '../../../theme-album.css';
 import '../../birthday/birthday.css';
+import {TripStoryGuest} from '@/app/trip-story';
 import '../../../growth/cute.css';
 
-type Invite = { name: string; kind: 'album' | 'group'; expiresAt: string; birthday?: boolean; day?: string | null; photos?: number | null; people?: number | null };
+type Invite = { name: string; story?:boolean;folderId?:string;kind: 'album' | 'group'; expiresAt: string; birthday?: boolean; day?: string | null; photos?: number | null; people?: number | null };
 type PublicAlbum = { folderId: string; style: { theme: string; song: string }; items: MemoryItem[] };
 type Album = { id: string; name: string };
 type Item = { id: string; file: File; status: 'waiting' | 'uploading' | 'done' | 'failed'; error?: string; shared?: boolean; folder?: string; preview?: string };
@@ -137,6 +138,7 @@ export default function GuestFlow({ token, locale, nextView, preferredAlbum, req
   const previewCard = publicAlbum && publicAlbum.items.length > 0 ? <div className="growth-album-preview"><ThemeAlbum folderId={publicAlbum.folderId} title={invite?.name || ''} description="" locale={ko ? 'ko' : 'en'} browsing={false} localItems={publicAlbum.items} style={{ theme: publicAlbum.style.theme, song: publicAlbum.style.song, revealAt: '', held: 0, heldPeople: 0 }} onPhoto={openPhoto} /></div> : publicAlbum ? <p className="growth-note">{text('아직 미리 볼 수 있는 공유 사진이 없어요. 첫 사진을 보태주세요.', 'No shared photos to preview yet. Add the first one.')}</p> : invite?.photos ? <p role="status">{previewFailed ? text('미리보기를 불러오지 못했어요. 다시 시도하거나 아래에서 참여할 수 있어요.', 'Preview unavailable. Retry or join below.') : text('친구들이 모은 사진을 펼치는 중…', 'Opening your friends’ photos…')}{previewFailed && <button className="growth-button secondary" onClick={() => setRetry(n => n + 1)}>{text('미리보기 다시 보기', 'Retry preview')}</button>}</p> : null;
   const audienceNote = <p className="growth-note">{invite?.kind === 'group' && text('크루 전체에 참여하며 기존·새 앨범에 접근할 수 있어요. ', 'Joining gives access to the whole crew, including existing and future albums. ')}{text('이 초대 링크를 가진 사람은 공유된 사진을 보고 참여할 수 있어요. 나만 보기·선택 공개 사진은 링크 미리보기에 나오지 않아요.', 'Anyone with this invite link can view shared photos and join. Private and selected-recipient photos are excluded from the preview.')}</p>;
   const completed = items.filter(i => i.status === 'done').length, pending = items.filter(i => i.status !== 'done').length;
+  if(invite?.story)return <TripStoryGuest token={token} folderId={preferredAlbum||invite.folderId}/>;
   return <main className="growth-page cute-page request-flow" style={{fontFamily:sansStack}}><nav className="growth-nav"><Link className="growth-brand" href={`/${locale}/hosts`}>memonestia.</Link><Link href={`/?lang=${locale}`}>{text('내 공간', 'My space')}</Link></nav>
     <section className="growth-card">
       <span className="cute-deco cute-deco-a" aria-hidden="true"><Sticker kind="sparkle" /></span><span className="cute-deco cute-deco-b" aria-hidden="true"><Sticker kind="heart" /></span>

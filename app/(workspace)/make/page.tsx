@@ -5,8 +5,8 @@ import { makerTemplate, isPhotoRequestEntry } from '@/lib/album-campaigns';
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const q = await searchParams;
   if (isPhotoRequestEntry(typeof q.template === 'string' ? q.template : null, typeof q.occasion === 'string' ? q.occasion : null, q.themes === '1', typeof q.mode === 'string' ? q.mode : null)) {
-    const title = '친구 폰 속 내 사진, 링크 하나로 모아요 | 메모네스티아';
-    const description = '여행 사진 받을 링크를 만들고 단톡방에 보내세요. 내 사진 없이 시작하고, 친구도 앱 설치·회원가입 없이 사진을 보탤 수 있어요.';
+    const title = '각자가 기억하는 같은 여행 | 메모네스티아';
+    const description = '사진 3장과 내 한마디로 시작하는 우리 여행편. 친구의 사진과 가장 웃겼던 순간까지 모아 캐릭터가 소개하는 카드로 남겨요.';
     return { title, description, openGraph: { title, description }, twitter: { card: 'summary_large_image' as const, title, description } };
   }
   const template = q.themes === '1' ? null : makerTemplate(typeof q.template === 'string' ? q.template : null, typeof q.occasion === 'string' ? q.occasion : null);

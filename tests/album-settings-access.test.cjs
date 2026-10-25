@@ -7,7 +7,7 @@ const loaded={exports:{}};new Function('require','module','exports',ts.transpile
 test('album members receive saved theme, birthday and capsule settings without losing their values',async()=>{
  const r=route(true),response=await r.GET(new Request('https://qa.invalid/api/members?folderId='+folder)),data=await response.json();
  assert.equal(response.status,200);assert.match(response.headers.get('cache-control'),/private, no-store/);
- assert.deepEqual(data.album,{description:'Trip',endDate:'2026-12-01',style:{theme:'ticket',song:'Together',revealAt:'2026-12-01T00:00:00.000Z',held:2,heldPeople:1}});
+ assert.deepEqual(data.album,{story:false,description:'Trip',endDate:'2026-12-01',style:{theme:'ticket',song:'Together',revealAt:'2026-12-01T00:00:00.000Z',held:2,heldPeople:1}});
 });
 test('nonmembers cannot read album settings or membership data',async()=>{
  const r=route(false);assert.equal((await r.GET(new Request('https://qa.invalid/api/members?folderId='+folder))).status,404);assert.equal(r.calls(),0);
