@@ -17,7 +17,8 @@ export async function POST(request: Request) {
       return Response.json({ token, kind: 'group', groupId, expiresInDays: 7 }, { headers: { 'Cache-Control': 'no-store' } });
     }
     await pool().query("INSERT INTO snaproom.invites(token_hash,folder_id,created_by,expires_at) VALUES($1,$2,$3,now()+interval '7 days')", [hash(token), folder, who]);
-    trackGrowth({ event: 'invite_created', who, key: `invite_created:${hash(token)}`, contextId: folder, properties: { invite_type: 'album' } });
+    trackGrowth({ event: 'invite_created', who, key: `invite_created:${hash(token)}`, contextId: folder, properties: { invite_type: 'album',
+      ...(body.flow === 'photo_request' ? { flow: 'photo_request', attempt_id: body.attempt_id } : {}) } });
     return Response.json({ token, kind: 'album', expiresInDays: 7 }, { headers: { 'Cache-Control': 'no-store' } });
   });
 }

@@ -40,7 +40,7 @@ const decor: Record<AlbumThemeId, Decor[]> = {
  comic: [{ text: 'WOW!' }, { text: 'TO BE CONTINUED' }, { text: '찰칵!' }, 'star'],
  orbit: [{ text: '● REC' }, { text: 'MISSION 01' }, 'sparkle', 'moon'],
  gallery: [{ text: '01 / ∞' }, { text: 'COLLECTION' }, { text: 'EXHIBIT' }, 'flower'],
- polaroid: ['sun', { text: 'summer!' }, 'wave', 'star', { text: 'best day ever' }, 'flower'],
+ polaroid: ['sun', { text: 'together!' }, 'wave', 'star', { text: 'best day ever' }, 'flower'],
  film: [{ text: 'MEMO 400' }, 'sparkle', { text: '★ keep' }, 'star', { text: 'NO. 07' }, 'sparkle'],
  softgirl: ['heart', 'sparkle', { text: 'xoxo' }, 'bow', 'flower', { text: 'so cute' }],
  birthday: ['cake', 'balloon', { text: 'HBD!' }, 'star', { text: 'make a wish' }, 'heart'],

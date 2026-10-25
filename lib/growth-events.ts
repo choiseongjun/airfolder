@@ -1,5 +1,5 @@
 // Only coarse, explicitly allowed properties may leave the app. Never add free text here.
-export const clientEvents = ['site_visit', 'session_started', 'album_maker_viewed', 'album_picker_opened', 'album_photos_selected', 'album_preview_ready', 'album_save_started', 'album_save_failed', 'album_photo_failed', 'login_start', 'login_failed', 'organizer_landing_view', 'organizer_cta_clicked', 'upload_started', 'upload_failed'] as const;
+export const clientEvents = ['site_visit', 'session_started', 'photo_request_viewed', 'photo_request_started', 'photo_request_link_copied', 'photo_request_share_opened', 'photo_request_failed', 'album_maker_viewed', 'album_picker_opened', 'album_photos_selected', 'album_preview_ready', 'album_save_started', 'album_save_failed', 'album_photo_failed', 'login_start', 'login_failed', 'organizer_landing_view', 'organizer_cta_clicked', 'upload_started', 'upload_failed'] as const;
 export type ClientGrowthEvent = typeof clientEvents[number];
 export type GrowthEvent = ClientGrowthEvent | 'album_save_completed' | 'login' | 'sign_up' | 'album_created' | 'invite_created' | 'invite_opened' | 'invite_joined' | 'upload_succeeded';
 export function growthProperties(input: Record<string, unknown> = {}) {
@@ -11,6 +11,7 @@ export function growthProperties(input: Record<string, unknown> = {}) {
   if (typeof input.journey_id === 'string' && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(input.journey_id)) result.journey_id = input.journey_id;
   if (['kakao','google','apple','password'].includes(String(input.method))) result.method = String(input.method);
   if (['organizer', 'guest', 'workspace'].includes(String(input.source))) result.source = String(input.source);
+  if (input.flow === 'photo_request') result.flow = 'photo_request';
   if (['guest', 'member'].includes(String(input.creator_type))) result.creator_type = String(input.creator_type);
   if (['ko', 'en'].includes(String(input.locale))) result.locale = String(input.locale);
   if (['image', 'video'].includes(String(input.media_type))) result.media_type = String(input.media_type);

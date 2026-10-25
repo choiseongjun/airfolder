@@ -13,7 +13,7 @@ export const albumThemes = [
  { id: 'ticket', ko: '보딩패스', en: 'Boarding Pass', hintKo: '탑승권을 뜯으면 열리는 여행 앨범', hintEn: 'Tear the pass to open the trip', kicker: 'BOARDING PASS', chapter: 'GATE', layout: 'ticket' },
  { id: 'receipt', ko: '추억 영수증', en: 'Memory Receipt', hintKo: '감열지 영수증으로 지이잉 출력', hintEn: 'Printed out like a thermal receipt', kicker: 'MEMONESTIA PHOTO LAB', chapter: 'ITEM', layout: 'receipt' },
  { id: 'vinyl', ko: 'LP 플레이어', en: 'Vinyl Player', hintKo: '돌아가는 LP와 그날의 노래', hintEn: 'A spinning record and the song of the day', kicker: 'SIDE A', chapter: 'TRACK', layout: 'vinyl' },
- { id: 'polaroid', ko: '폴라로이드 썸머', en: 'Polaroid Summer', hintKo: '파란 바다, 마스킹테이프, 손글씨', hintEn: 'Blue sea, washi tape, handwriting', kicker: 'SUMMER DIARY', chapter: 'DAY', layout: 'classic' },
+ { id: 'polaroid', ko: '폴라로이드 앨범', en: 'Polaroid Album', hintKo: '마스킹테이프와 손글씨로 남기는 우리 사진', hintEn: 'Our photos with washi tape and handwritten notes', kicker: 'OUR LITTLE MOMENTS', chapter: 'DAY', layout: 'classic' },
  { id: 'birthday', ko: '버스데이 필름', en: 'Birthday Film', hintKo: '가랜드, 컨페티, 케이크', hintEn: 'Garland, confetti & cake', kicker: 'HAPPY BIRTHDAY', chapter: 'PART', layout: 'classic' },
  { id: 'fourcut', ko: '인생네컷', en: 'Photo Booth', hintKo: '네 컷 스트립으로 착착', hintEn: 'Stacked four-cut strips', kicker: 'PHOTO BOOTH', chapter: 'TAKE', layout: 'strip' },
  { id: 'film', ko: '필름 아카이브', en: 'Film Archive', hintKo: '필름 프레임과 주황 날짜 도장', hintEn: 'Film frames & orange date stamps', kicker: 'ROLL 01 · 36 EXP', chapter: 'FRAME', layout: 'classic' },

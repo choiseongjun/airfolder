@@ -11,9 +11,10 @@ const suggestions=['album-passport','album-recipe','album-desktop'].map(id=>albu
 export function FeedSampleStory(){
  const [open,setOpen]=useState(false);
  return <article className="travel-feed-story" aria-label="여행 앨범 예시">
-  <header><span>여행 앨범 예시 · 샘플 사진</span><h2>여행은 끝나도,<br/>우리 사진은 한곳에.</h2><p>사진 몇 장이면 이런 앨범이 돼요.<br/>우선 내 사진으로 바꿔서 구경해 보세요.</p></header>
-  <Link href="/make?template=album-ticket" className="travel-album-preview" aria-label="이 앨범을 내 사진으로 바꾸기"><div inert><ThemeAlbum preview folderId="travel-cover-example" title="우리의 여행" description="다음에도 같이 가자." locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:'ticket',song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(['/landing/sea.webp','/landing/friends.webp'])}/></div></Link>
-  <div className="travel-feed-content"><ol><li><b>1</b> 내 사진 고르기</li><li><b>2</b> 완성된 앨범 보기</li></ol><Link className="travel-feed-create" href="/make?template=album-ticket">내 사진으로 바꾸기 →</Link><p className="travel-feed-hint">사진 1장부터 · 로그인 없이 미리보기</p><button type="button" aria-expanded={open} onClick={()=>setOpen(value=>!value)}>{open?'예시 앨범 접기':'완성된 예시 앨범 펼쳐보기'} {open?'−':'＋'}</button></div>
+  <header><span>여행 다녀온 친구들과</span><h2>친구 폰 속 내 사진,<br/>이제 한곳에 모아요.</h2><p>사진 받을 링크를 단톡방에 보내세요.<br/>친구가 골라 보낸 사진이 같은 앨범에 쌓여요.</p></header>
+  <div className="travel-feed-content"><ol><li><b>1</b> 링크 만들기</li><li><b>2</b> 단톡방에 보내기</li><li><b>3</b> 친구가 사진 보태기</li></ol><Link className="travel-feed-create" href="/make?occasion=travel">사진 받을 링크 만들기 →</Link><p className="travel-feed-hint">내 사진 없이 시작 · 친구도 앱 설치·회원가입 없이 참여</p><Link className="travel-feed-secondary" href="/make?occasion=travel&mode=decorate">내 사진으로 앨범부터 꾸미기 →</Link></div>
+  <Link href="/make?occasion=travel&mode=decorate" className="travel-album-preview" aria-label="모인 사진으로 만드는 여행 앨범 예시"><div inert><ThemeAlbum preview folderId="travel-cover-example" title="우리의 여행" description="다음에도 같이 가자." locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:'ticket',song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(['/landing/sea.webp','/landing/friends.webp'])}/></div></Link>
+  <div className="travel-feed-content"><p className="travel-feed-hint">모인 사진은 이런 여행 앨범이 돼요 · 샘플 사진</p><button type="button" aria-expanded={open} onClick={()=>setOpen(value=>!value)}>{open?'예시 앨범 접기':'완성된 예시 앨범 펼쳐보기'} {open?'−':'＋'}</button></div>
   {open&&<ThemeAlbum preview folderId="travel-feed-example" title="우리의 여행" description="다음에도 같이 가자." locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:'ticket',song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(['/landing/sea.webp','/landing/friends.webp'])}/>}
  </article>;
 }

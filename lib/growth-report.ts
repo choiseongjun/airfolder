@@ -76,11 +76,37 @@ WITH events AS (
  FROM maker_views v LEFT JOIN snaproom.growth_events e ON e.environment=$1 AND e.properties->>'attempt_id'=v.attempt
    AND e.created_at BETWEEN v.viewed-interval '1 minute' AND v.viewed+interval '7 days'
  GROUP BY v.attempt,v.viewed,v.template,v.source,v.campaign
+), request_views AS (
+ SELECT properties->>'attempt_id' attempt,min(created_at) viewed,(array_agg(viewer_id ORDER BY created_at))[1] host,
+   max(properties->>'session_source') source,max(properties->>'session_campaign') campaign
+ FROM events WHERE event='photo_request_viewed' AND properties->>'attempt_id' IS NOT NULL GROUP BY properties->>'attempt_id'
+), request_albums AS (
+ SELECT v.*,a.context_id album_id,i.invited FROM request_views v
+ LEFT JOIN LATERAL (SELECT context_id,created_at FROM snaproom.growth_events
+   WHERE environment=$1 AND event='album_created' AND viewer_id=v.host AND properties->>'flow'='photo_request'
+   AND properties->>'attempt_id'=v.attempt AND created_at BETWEEN v.viewed-interval '1 minute' AND v.viewed+interval '7 days'
+   ORDER BY created_at LIMIT 1) a ON true
+ LEFT JOIN LATERAL (SELECT min(created_at) invited FROM snaproom.growth_events
+   WHERE environment=$1 AND event='invite_created' AND context_id=a.context_id AND viewer_id=v.host
+   AND properties->>'attempt_id'=v.attempt AND created_at BETWEEN a.created_at AND v.viewed+interval '7 days') i ON true
+), request_steps AS (
+ SELECT a.*,
+   EXISTS(SELECT 1 FROM snaproom.growth_events e WHERE e.environment=$1 AND e.event='photo_request_started' AND e.viewer_id=a.host AND e.properties->>'attempt_id'=a.attempt AND e.created_at BETWEEN a.viewed-interval '1 minute' AND a.viewed+interval '7 days') started,
+   EXISTS(SELECT 1 FROM snaproom.growth_events e WHERE e.environment=$1 AND e.event='photo_request_link_copied' AND e.viewer_id=a.host AND e.context_id=a.album_id AND e.properties->>'attempt_id'=a.attempt AND e.created_at BETWEEN a.invited AND a.viewed+interval '7 days') copied,
+   EXISTS(SELECT 1 FROM snaproom.growth_events e WHERE e.environment=$1 AND e.event='photo_request_share_opened' AND e.viewer_id=a.host AND e.context_id=a.album_id AND e.properties->>'attempt_id'=a.attempt AND e.created_at BETWEEN a.invited AND a.viewed+interval '7 days') sharing,
+   EXISTS(SELECT 1 FROM snaproom.growth_events e WHERE e.environment=$1 AND e.event='invite_opened' AND e.viewer_id<>a.host AND e.context_id=a.album_id AND e.created_at BETWEEN a.invited AND a.viewed+interval '7 days') opened,
+   EXISTS(SELECT 1 FROM snaproom.growth_events e WHERE e.environment=$1 AND e.event='upload_succeeded' AND e.viewer_id<>a.host AND e.context_id=a.album_id AND e.properties->>'shared'='true' AND e.properties->>'media_type'='image' AND e.created_at BETWEEN a.invited AND a.viewed+interval '7 days') contributed
+ FROM request_albums a
 ), days AS (
  SELECT generate_series((now() AT TIME ZONE 'Asia/Seoul')::date-($2::int-1),(now() AT TIME ZONE 'Asia/Seoul')::date,interval '1 day') AS bucket
 )
 SELECT json_build_object(
  'visits',(SELECT json_build_object('sessions',count(*),'browsers',count(DISTINCT viewer_id),'since',min(created_at)) FROM events WHERE event='session_started'),
+ 'photoRequests',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
+   SELECT COALESCE(source,'unknown') source,COALESCE(campaign,'none') campaign,count(*) viewed,
+     count(*) FILTER(WHERE started) started,count(invited) ready,count(*) FILTER(WHERE copied) copied,
+     count(*) FILTER(WHERE sharing) sharing,count(*) FILTER(WHERE opened) opened,count(*) FILTER(WHERE contributed) contributed
+   FROM request_steps GROUP BY source,campaign ORDER BY count(*) DESC) x),
  'maker',(SELECT COALESCE(json_agg(x),'[]'::json) FROM (
    SELECT COALESCE(source,'unknown') source,COALESCE(campaign,'none') campaign,template,count(*) viewed,
      count(*) FILTER(WHERE picked) picked,count(*) FILTER(WHERE selected) selected,count(*) FILTER(WHERE previewed) previewed,
@@ -121,6 +147,7 @@ SELECT json_build_object(
 ) report`;
 
 export type GrowthReport = {
+ photoRequests: { source: string; campaign: string; viewed: number; started: number; ready: number; copied: number; sharing: number; opened: number; contributed: number }[];
  visits: { sessions: number; browsers: number; since: string | null };
  maker: { source: string; campaign: string; template: string; viewed: number; picked: number; selected: number; previewed: number; saving: number; saved: number; failed: number; photoFailed: number }[];
  makerFailures: { event: string; reason: string; count: number }[];

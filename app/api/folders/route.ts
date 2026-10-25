@@ -87,7 +87,8 @@ export async function POST(request: Request) {
       return true;
     });
     if (created) trackGrowth({ event: 'album_created', who, key: `album_created:${id}`, contextId: id,
-      properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace', creator_type: creatorType } });
+      properties: { source: body.source === 'organizer' ? 'organizer' : 'workspace', creator_type: creatorType,
+        ...(body.source === 'organizer' && body.flow === 'photo_request' ? { flow: 'photo_request', attempt_id: body.attempt_id } : {}) } });
     return Response.json({ id, created }, { status: 201 });
   });
 }

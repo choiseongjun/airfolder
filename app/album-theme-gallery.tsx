@@ -21,7 +21,7 @@ export default function AlbumThemeGallery(){
    {albumCategories.map(item=><button type="button" key={item.id} aria-pressed={category===item.id} onClick={()=>{setCategory(item.id);setLimit(12);}}><span>{item.ko}</span><small>{item.themes.length}</small></button>)}
   </div>
   <div className="album-category-heading" aria-live="polite"><div><h2>{selected?.ko || '새로운 테마부터 만나보세요'}</h2><p>{selected?.description || '사진이 담기는 방식까지 다른, 취향별 앨범 컬렉션'}</p></div><span>{filtered.length}종</span></div>
-  <div className="album-theme-grid">{filtered.slice(0,limit).map(item=><Link key={item.id} href={`/make?template=${item.id}`} className="album-theme-option" aria-label={`${item.name} 앨범 만들기`}>
+  <div className="album-theme-grid">{filtered.slice(0,limit).map(item=><Link key={item.id} href={`/make?template=${item.id}&mode=decorate`} className="album-theme-option" aria-label={`${item.name} 앨범 만들기`}>
    <div className="album-theme-window" aria-hidden="true"><div className="album-theme-mini" inert><ThemeAlbum preview folderId={`preview-${item.id}`} title={item.title} description="" locale="ko" browsing={false} onPhoto={()=>{}} style={{theme:item.albumTheme!,song:'',revealAt:'',held:0,heldPeople:0}} localItems={localAlbumPhotos(item.photos.map(photo=>`/explore/album-samples/${photo}.jpg`))}/></div></div>
    <div className="album-theme-caption"><small className="album-theme-category">{albumCategories.find(group=>themeInCategory(item.albumTheme!,group.id))?.ko}</small><strong>{item.name}</strong><p>{item.description}</p><span>이 앨범으로 시작하기 →</span></div>
   </Link>)}</div>
