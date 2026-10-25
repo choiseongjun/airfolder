@@ -1,7 +1,9 @@
 import type {StoryEntry} from './trip-story';
 import {characterAnimals} from './character-style';
 import {characterScene} from './character-scene';
-export async function exportStoryCard(title:string,entries:StoryEntry[],page:number,pages:number){
+import {crewText} from './crew-copy';
+export async function exportStoryCard(title:string,entries:StoryEntry[],page:number,pages:number,locale:'ko'|'en'='ko'){
+ const ct=(key:string,...values:(string|number)[])=>crewText(locale,key,...values);
  await document.fonts.ready;
  const load=(src:string)=>new Promise<HTMLImageElement>((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error('IMAGE_UNAVAILABLE'));i.src=src;});
  const visible=entries.slice(0,3),images=await Promise.all(visible.map(e=>Promise.all(e.photos.slice(0,3).map(p=>load(p.src)))));
@@ -19,13 +21,13 @@ export async function exportStoryCard(title:string,entries:StoryEntry[],page:num
   const y=top+(group.length?photoHeight:0)+20;
   const scene=characterScene(e.animal),height=rowHeight-photoHeight-36,size=visible.length===3?92:150;
   c.fillStyle=scene.background;c.beginPath();c.roundRect(64,y,952,height,22);c.fill();
-  c.fillStyle=scene.ink;c.font='22px sans-serif';c.fillText(scene.label,90,y+34);c.font='34px serif';c.fillText(scene.symbol,948,y+38);
+  c.fillStyle=scene.ink;c.font='22px sans-serif';c.fillText(ct(scene.label),90,y+34);c.font='34px serif';c.fillText(scene.symbol,948,y+38);
   c.fillStyle='#41382f';c.font='30px sans-serif';lines(e.body,visible.length>1?110+size:90,y+82,visible.length>1?874-size:894,40,visible.length===3?2:3);
   const bottom=y+height-size-12;
   c.fillStyle='#ffffff66';c.beginPath();c.roundRect(98+size*.6,bottom-10,50,62,[25,25,0,0]);c.fill();
   if(avatars[n])draw(avatars[n]!,94,bottom,size,size);else{const index=Math.max(0,characterAnimals.findIndex(a=>a.id===e.animal)),w=atlas.width/6,h=atlas.height/5;c.save();c.globalCompositeOperation='multiply';c.drawImage(atlas,index%6*w,Math.floor(index/6)*h,w,h,90,bottom,size,size);c.restore();}
-  c.fillStyle=scene.ink;c.font='bold 25px sans-serif';lines(`${e.name}의 기억`,110+size,bottom+size*.7,850-size,32,1);
+  c.fillStyle=scene.ink;c.font='bold 25px sans-serif';lines(ct('{0}의 기억',e.name),110+size,bottom+size*.7,850-size,32,1);
  });
- c.fillStyle='#78675e';c.font='24px sans-serif';c.fillText(`memonestia · 함께 만든 여행편   ${page+1}/${pages}`,64,canvas.height-80);
+ c.fillStyle='#78675e';c.font='24px sans-serif';c.fillText(`${ct('memonestia · 함께 만든 여행편')}   ${page+1}/${pages}`,64,canvas.height-80);
  const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error('EXPORT')),'image/png'));return new File([blob],`memonestia-trip-${page+1}.png`,{type:'image/png'});
 }

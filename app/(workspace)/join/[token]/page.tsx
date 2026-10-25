@@ -1,3 +1,4 @@
+import {CrewLocaleProvider} from '@/app/crew-locale';
 import { Suspense } from 'react';
 import { requestLocale } from '@/lib/request-locale';
 import { hash, pool } from '@/lib/server';
@@ -35,6 +36,6 @@ export async function generateMetadata({ params, searchParams }: Props) {
 export default function Page(props: Props) { return <Suspense fallback={<main className="growth-page" aria-busy="true">Memonestia</main>}><Content {...props} /></Suspense>; }
 async function Content({ params, searchParams }: Props) {
   const query = await searchParams;
-  if(query.request==='story')return <TripStoryGuest token={(await params).token} folderId={query.album}/>;
+  if(query.request==='story')return <CrewLocaleProvider locale={await requestLocale(query.lang)}><TripStoryGuest token={(await params).token} folderId={query.album}/></CrewLocaleProvider>;
   return <GuestFlow token={(await params).token} locale={await requestLocale(query.lang)} preferredAlbum={query.album} request={query.request ? inviteRequest(query.request) : undefined} nextView={query.next === 'rolling' || query.request === 'birthday' ? 'rolling' : undefined} />;
 }

@@ -19,7 +19,8 @@
 ## Operational limits
 - Actual Web Push delivery requires browser opt-in; external delivery was not exercised with a real user's subscription. iOS requires a compatible installed Home Screen web app.
 - Printing, paid themes, checkout and fulfillment are not implemented. Interest analytics measure demand only.
-- Core navigation/settings/feed/invitation/export are bilingual; older optional character/reward/travel-editor copy still needs a separate comprehensive translation pass.
+- Character creation, all 30 animals, 24 rewards, album decoration stickers and travel editing now use shared Korean/English copy. Invitation links retain the selected language; downloaded reward and trip cards use it as well.
+- Translation release validation: 149 unit tests, TypeScript, targeted lint and production build; Ego browser checked character controls, reward selection/card download, travel save/card download and the guest invitation page. AI image generation itself was not invoked in this translation pass.
 - Migration `039_memory_participation.sql` must be applied before deploying these endpoints. It was applied to the configured database during validation.
 
 ## Production follow-up

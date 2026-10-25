@@ -9,4 +9,4 @@ export function CrewLocaleProvider({ locale, children }: { locale: Locale; child
   return <CrewLocale.Provider value={locale}>{children}</CrewLocale.Provider>;
 }
 export function useCrewLocale() { return useContext(CrewLocale); }
-export function useCrewText() { const locale=useCrewLocale();return useCallback((key:string)=>crewText(locale,key),[locale]); }
+export function useCrewText() { const locale=useCrewLocale();return useCallback((key:string,...values:(string|number)[])=>crewText(locale,key,...values),[locale]); }

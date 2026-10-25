@@ -1,4 +1,5 @@
 import type {Locale} from '../app/i18n';
+import {characterTravelEnglish} from './character-travel-copy';
 
 // UI copy only. Never pass album titles, names, comments or other user content.
 export const crewEnglish: Record<string,string> = Object.fromEntries(`
@@ -271,4 +272,4 @@ Apple 연동됨|Apple connected
 크루 공간을 여는 중…|Opening your space…
 `.trim().split('\n').map(line=>{const i=line.indexOf('|');return [line.slice(0,i),line.slice(i+1)];}));
 
-export function crewText(locale:Locale,key:string){return locale==='en' ? crewEnglish[key]??key : key;}
+export function crewText(locale:Locale,key:string,...values:(string|number)[]){const text=locale==='en' ? characterTravelEnglish[key]??crewEnglish[key]??key : key;return text.replace(/\{(\d+)\}/g,(match,index)=>values[Number(index)]===undefined?match:String(values[Number(index)]));}
