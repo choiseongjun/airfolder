@@ -1,4 +1,5 @@
 'use client';
+import {useIntroPhoto} from '@/lib/intro-photo';
 import {useCrewText,useCrewLocale} from './crew-locale';
 /* eslint-disable @next/next/no-img-element -- Private photos and optional profile characters. */
 import {useEffect,useRef,useState,useSyncExternalStore,type FormEvent,type CSSProperties} from 'react';
@@ -66,7 +67,8 @@ function StoryComposer({folderId,title,host=false,beforeSave,onSaved}:{folderId?
  useEffect(()=>{staged.current=files;},[files]);useEffect(()=>()=>staged.current.forEach(f=>URL.revokeObjectURL(f.src)),[]);
  useEffect(()=>{let active=true;if(host&&!attempt.current){attempt.current=crypto.randomUUID();void trackClient('trip_story_viewed',{flow:'trip_story',attempt_id:attempt.current});}void initializeSession().then(async()=>{const [policy,character]=await Promise.all([api<{accepted:boolean}>('/api/policy'),api<{active:string|null}>('/api/character-profile').catch(()=>null)]);if(active){setAccepted(policy.accepted);setProfile(character?.active||null);}}).catch(()=>{});return()=>{active=false};},[host]);
  useEffect(()=>{if(!files.length)return;const warn=(e:BeforeUnloadEvent)=>e.preventDefault();window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);},[files.length]);
- function choose(list:FileList|null){if(!list||locked||busy)return;const limit=host?3:1;const valid=Array.from(list).filter(f=>f.size>0&&f.size<=20*1024**2&&['image/jpeg','image/png','image/webp'].includes(f.type));const next=valid.slice(0,limit);files.forEach(f=>URL.revokeObjectURL(f.src));setFiles(next.map(file=>({id:crypto.randomUUID(),file,src:URL.createObjectURL(file)})));setError(valid.length!==list.length||valid.length>limit?ct("JPG·PNG·WebP 사진을 {0}장까지, 장당 20MB 이하로 골라주세요.",limit):'');if(next.length&&!previewed.current){previewed.current=true;attempt.current||=crypto.randomUUID();void trackClient('trip_story_previewed',{flow:'trip_story',attempt_id:attempt.current});}}
+ useIntroPhoto(file=>choose([file]),host);
+ function choose(list:FileList|File[]|null){if(!list||locked||busy)return;const limit=host?3:1;const valid=Array.from(list).filter(f=>f.size>0&&f.size<=20*1024**2&&['image/jpeg','image/png','image/webp'].includes(f.type));const next=valid.slice(0,limit);files.forEach(f=>URL.revokeObjectURL(f.src));setFiles(next.map(file=>({id:crypto.randomUUID(),file,src:URL.createObjectURL(file)})));setError(valid.length!==list.length||valid.length>limit?ct("JPG·PNG·WebP 사진을 {0}장까지, 장당 20MB 이하로 골라주세요.",limit):'');if(next.length&&!previewed.current){previewed.current=true;attempt.current||=crypto.randomUUID();void trackClient('trip_story_previewed',{flow:'trip_story',attempt_id:attempt.current});}}
  async function submit(e:FormEvent){e.preventDefault();if(working.current||!files.length||!name.trim()||!body.trim()||(!accepted&&!consent))return;working.current=true;setBusy(true);setError('');setStatus(ct("사진과 한마디를 저장하고 있어요…"));
   try{await initializeSession();if(!accepted){await api('/api/policy',{method:'POST',body:JSON.stringify({version:TERMS_VERSION,accepted:true})});setAccepted(true);}
    const destination=progress.current?.folderId||folderId||await beforeSave?.();attempt.current||=crypto.randomUUID();progress.current||={folderId:destination,creationId:crypto.randomUUID(),noteId:crypto.randomUUID(),uploaded:new Set()};setLocked(true);
@@ -77,6 +79,7 @@ function StoryComposer({folderId,title,host=false,beforeSave,onSaved}:{folderId?
  }
  const draft:StoryEntry={id:'preview',personId:'preview',name:name.trim()||ct("나"),body:body.trim(),animal,avatar:useProfile?profile:null,mine:true,photos:files.map(f=>({id:f.id,src:f.src}))};
  return <form className="trip-compose" onSubmit={submit}>
+  {files.length>0&&<div className="trip-live"><span className="trip-eyebrow">{host?ct("내 사진으로 만든 첫 장"):ct("내가 보탤 장면 미리보기")}</span><StoryCards title={tripName} entries={[draft]}/><small className="trip-hint">{ct("아직 저장 전이에요. 아래 버튼을 누르면 사진과 한마디가 앨범에 공유됩니다.")}</small></div>}
   <fieldset disabled={busy||locked}>
    {host&&<label>{ct("우리 여행 이름")}<input disabled={titleLocked} maxLength={80} value={tripName} onChange={e=>setTripName(e.target.value)} placeholder={ct("예: 부산에서 보낸 주말")}/></label>}
    <label className="trip-file"><Camera size={21}/><strong>{host?ct("여행 사진 1~3장 고르기"):ct("내가 찍은 우리 사진 한 장")}</strong><span>{files.length?ct("{0}장 선택 · 다시 고르기",files.length):ct("JPG·PNG·WebP · 장당 20MB까지")}</span><input type="file" aria-label={host?ct("여행편 시작 사진"):ct("여행편에 보탤 사진")} accept="image/jpeg,image/png,image/webp" multiple={host} onChange={e=>{choose(e.target.files);e.target.value='';}}/></label>
@@ -84,7 +87,7 @@ function StoryComposer({folderId,title,host=false,beforeSave,onSaved}:{folderId?
    <div><span className="trip-eyebrow">{ct("내 기억 옆에 함께할 작은 나")}</span><AnimalPicker value={useProfile?null:animal} onChange={value=>{setAnimal(value);setUseProfile(false)}}/></div>
    {profile&&<label className="trip-check"><input type="checkbox" checked={useProfile} onChange={e=>setUseProfile(e.target.checked)}/>{ct("내 프로필 캐릭터를 이 여행편·공유 이미지에 넣기")}</label>}
   </fieldset>
-  {files.length>0&&<div className="trip-live"><span className="trip-eyebrow">{host?ct("내 사진으로 만든 첫 장"):ct("내가 보탤 장면 미리보기")}</span><StoryCards title={tripName} entries={[draft]}/><small className="trip-hint">{ct("아직 저장 전이에요. 아래 버튼을 누르면 사진과 한마디가 앨범에 공유됩니다.")}</small></div>}
+
   {!accepted&&<label className="trip-check"><input type="checkbox" checked={consent} disabled={busy} onChange={e=>setConsent(e.target.checked)}/><span>{locale==='en'?<>I agree to the <a href="/terms" target="_blank" rel="noreferrer">Terms of Service</a> and have read the <a href="/privacy" target="_blank" rel="noreferrer">Privacy Notice</a>.</>:<><a href="/terms" target="_blank" rel="noreferrer">이용약관</a>에 동의하고 <a href="/privacy" target="_blank" rel="noreferrer">개인정보 안내</a>를 확인했어요.</>}</span></label>}
   <p className="trip-hint">{ct("사진과 한마디는 앨범 멤버·초대 링크를 가진 친구가 볼 수 있어요. 다른 사람의 사진은 허락받고 올려주세요.")}</p>
   <button className="trip-primary" disabled={busy||!files.length||!name.trim()||!body.trim()||(!accepted&&!consent)}>{busy?status:locked?ct("이어서 저장하기"):host?ct("첫 장 저장하고 친구 부르기"):ct("내 사진과 기억 보태기")}<Plus size={18}/></button>

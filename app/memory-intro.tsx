@@ -1,6 +1,6 @@
 'use client';
 /* eslint-disable @next/next/no-img-element -- Bundled editorial preview photos. */
-import {useEffect,useRef} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import Link from 'next/link';
 import {useSearchParams} from 'next/navigation';
 import type {Locale} from './i18n';
@@ -8,6 +8,8 @@ import AnimalMascot from './animal-mascot';
 import {MemoryPhotoPlay,MemoryNotePlay} from './memory-intro-play';
 import {trackClient} from '@/lib/growth-client';
 import './memory-intro.css';
+import {keepIntroPhoto} from '@/lib/intro-photo';
+import type {ClientGrowthEvent} from '@/lib/growth-events';
 
 const examples={
  travel:{photo:'jeju-couple',ko:['같이 다녀왔지만,','기억은 다 다르니까.','바다보다 네 웃음이 먼저 생각나. 길을 잘못 든 덕분에 만난 그 바다도.','다음엔 내가 길 찾을게. 아니, 또 길을 잃어도 좋겠다.'],en:['Same trip.','Different memories.','I remember your laugh before the sea. And the beach we only found because we got lost.','Next time I’ll navigate. Or maybe getting lost together is the best part.']},
@@ -21,13 +23,24 @@ export default function MemoryIntro({locale,onStart}:{locale:Locale;onStart?:()=
  const occasion=params.get('occasion')||({ 'album-polaroid':'couple','album-diary':'family','album-birthday':'friends','album-film':'daily'}[params.get('template')||'']??'travel');
  const example=examples[occasion as keyof typeof examples]||examples.travel,copy=ko?example.ko:example.en;
  const root=useRef<HTMLElement>(null),attempt=useRef(''),sent=useRef(new Set<string>());
- function measure(event:'memory_intro_viewed'|'memory_intro_flipped'|'memory_intro_started'|'memory_intro_engaged'){
+ const picker=useRef<HTMLInputElement>(null),[photo,setPhoto]=useState<{file:File;url:string}|null>(null),[photoError,setPhotoError]=useState('');
+ useEffect(()=>()=>{if(photo)URL.revokeObjectURL(photo.url);},[photo]);
+ function measure(event:ClientGrowthEvent){
   if(sent.current.has(event))return;sent.current.add(event);attempt.current ||= crypto.randomUUID();
-  void trackClient(event,{attempt_id:attempt.current,locale});
+  void trackClient(event,{attempt_id:attempt.current,locale,template_id:'album-intro'});
  }
- useEffect(()=>{const emit=(event:'memory_intro_viewed'|'memory_intro_engaged')=>{if(sent.current.has(event))return;sent.current.add(event);attempt.current ||= crypto.randomUUID();void trackClient(event,{attempt_id:attempt.current,locale});};emit('memory_intro_viewed');let elapsed=0;const timer=setInterval(()=>{if(document.visibilityState==='visible')elapsed++;if(elapsed>=10){emit('memory_intro_engaged');clearInterval(timer);}},1000);return()=>clearInterval(timer);},[locale]);
+ useEffect(()=>{const emit=(event:'memory_intro_viewed'|'memory_intro_engaged')=>{if(sent.current.has(event))return;sent.current.add(event);attempt.current ||= crypto.randomUUID();void trackClient(event,{attempt_id:attempt.current,locale,template_id:'album-intro'});};emit('memory_intro_viewed');let elapsed=0;const timer=setInterval(()=>{if(document.visibilityState==='visible')elapsed++;if(elapsed>=10){emit('memory_intro_engaged');clearInterval(timer);}},1000);return()=>clearInterval(timer);},[locale]);
  const next=new URLSearchParams(params.toString());next.set('stage','create');next.set('lang',locale);if(!next.has('occasion')&&!next.has('template'))next.set('occasion','travel');
- const startAction=onStart?<button type="button" onClick={()=>{measure('memory_intro_started');onStart();}}>{ko?'내 사진으로 만들어보기':'Make it with my photos'} <span aria-hidden="true">↗</span></button>:<Link href={`/make?${next}`} onClick={()=>measure('memory_intro_started')}>{ko?'내 사진으로 만들어보기':'Make it with my photos'} ↗</Link>;
+ function openPhoto(){measure('album_maker_viewed');measure('album_picker_opened');picker.current?.click();}
+ function choosePhoto(file?:File){
+  if(!file)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||!file.size||file.size>20*1024**2){setPhotoError(ko?'20MB 이하의 JPG·PNG·WebP 사진을 골라주세요.':'Choose a JPG, PNG or WebP photo up to 20 MB.');return;}
+  setPhotoError('');setPhoto({file,url:URL.createObjectURL(file)});measure('album_photos_selected');
+ }
+ function begin(){if(photo)keepIntroPhoto(photo.file);measure('memory_intro_started');onStart?.();}
+ const continueAction=onStart?<button type="button" onClick={begin}>{ko?'이 사진에 내 기억 남기기':'Add my memory to this photo'} ↗</button>:<Link href={`/make?${next}`} onClick={begin}>{ko?'이 사진에 내 기억 남기기':'Add my memory to this photo'} ↗</Link>;
+ const startAction=photo?continueAction:<button type="button" onClick={openPhoto}>{ko?'내 사진 한 장으로 바꿔보기':'Try it with my photo'} <span aria-hidden="true">↗</span></button>;
+
  useEffect(()=>{
   const el=root.current;if(!el)return;const motion=matchMedia('(prefers-reduced-motion: reduce)');let frame=0;
   const update=()=>{frame=0;el.style.setProperty('--intro-progress',String(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight)));el.style.setProperty('--intro-drift',motion.matches?'0px':Math.min(180,el.scrollTop*.22)+'px');};
@@ -37,11 +50,12 @@ export default function MemoryIntro({locale,onStart}:{locale:Locale;onStart?:()=
   return()=>{el.removeEventListener('scroll',scroll);cancelAnimationFrame(frame);observer.disconnect();delete el.dataset.motion;};
  },[]);
  return <section ref={root} className="memory-intro" lang={locale}>
+  <input ref={picker} hidden type="file" accept="image/jpeg,image/png,image/webp" aria-label={ko?'카드에 넣을 내 사진':'Your photo for the card'} onChange={e=>{choosePhoto(e.target.files?.[0]);e.target.value='';}}/>
   <div className="memory-intro-progress" aria-hidden="true"/>
   <header className="memory-intro-nav"><span>memonestia</span><Link href={`/?lang=${locale}&login=1`}>{ko?'로그인':'Sign in'}</Link></header>
   <div className="memory-intro-grid"><div className="memory-intro-copy"><span className="memory-intro-eyebrow">A LITTLE PHOTO. A LONG STORY.</span><h1>{copy[0]}<br/><em>{copy[1]}</em></h1><p>{ko?'사진 한 장 뒤에, 서로가 기억하는 그날을 남겨요.':'A photo on the front. The day as each of you remembers it on the back.'}</p><p className="memory-intro-instruction">{ko?'옆의 카드를 눌러 친구의 기억을 읽어보세요.':'Tap the card to read the memories behind it.'}</p>
-   <div className="memory-intro-cta">{onStart?<button type="button" onClick={()=>{measure('memory_intro_started');onStart();}}>{ko?'내 사진으로 만들어보기':'Make it with my photos'} <span aria-hidden="true">↗</span></button>:<Link href={`/make?${next}`} onClick={()=>measure('memory_intro_started')}>{ko?'내 사진으로 만들어보기':'Make it with my photos'} ↗</Link>}<small>{ko?'로그인 없이 시작 · 저장 전에는 사진이 전송되지 않아요':'Start without signing in · Photos stay on your device until you save'}</small></div>
-  </div><div className="memory-intro-demo"><MemoryPhotoPlay key={occasion} ko={ko} photo={example.photo} words={[copy[2],copy[3]]} onFlip={()=>measure('memory_intro_flipped')}/></div></div>
+   <div className="memory-intro-cta">{startAction}<small>{ko?'로그인 없이 시작 · 저장 전에는 사진이 전송되지 않아요':'Start without signing in · Photos stay on your device until you save'}</small></div>
+  </div><div className="memory-intro-demo"><MemoryPhotoPlay key={photo?.url||occasion} personalPhoto={photo?.url} onPhotoError={()=>{setPhoto(null);setPhotoError(ko?'사진을 읽지 못했어요. 다른 사진을 골라주세요.':'Could not read this photo. Please choose another.');}} onPhotoReady={()=>measure('album_preview_ready')} ko={ko} photo={example.photo} words={[copy[2],copy[3]]} onFlip={()=>measure('memory_intro_flipped')}/><div className="memory-intro-remix">{photo?<><p role="status">{ko?'내 사진으로 바뀌었어요. 이제 그날의 한마디를 남겨볼까요?':'Your photo is in. What do you remember about that day?'}</p><button type="button" onClick={openPhoto}>{ko?'다른 사진 고르기':'Choose another photo'}</button></>:<p>{ko?'휴대폰에 있는 그날 사진, 딱 한 장만 골라보세요.':'Pick just one photo of a day you want to keep.'}</p>}<div className="memory-intro-cta">{startAction}<small>{ko?'로그인 없이 미리보기 · 저장 전에는 사진이 전송되지 않아요':'Preview without signing in · Nothing is uploaded until you save'}</small></div>{photoError&&<p role="alert">{photoError}</p>}</div></div></div>
   <a className="memory-intro-scroll" href="#memories-together">{ko?'사진 뒤에는 어떤 이야기가 남을까요?':'What lives on the other side of a photo?'}<span aria-hidden="true">↓</span></a>
   <section className="memory-intro-chapter memory-intro-perspectives" id="memories-together" aria-labelledby="intro-perspectives-title">
    <div className="memory-intro-section-heading"><span className="memory-intro-eyebrow">01 / SAME DAY, YOUR WORDS</span><h2 id="intro-perspectives-title">{ko?'같은 날을 보내고,':'We shared the day.'}<br/>{ko?'다른 장면을 간직했어요.':'We kept different moments.'}</h2><p>{ko?'내가 기억하는 웃긴 순간, 친구가 고마웠던 작은 일. 사진 한 장에 서로의 이야기가 더해져요.':'The moment that made you laugh. The little thing your friend was grateful for. One photo, with room for both stories.'}</p></div>
