@@ -4,11 +4,12 @@ import { createClient } from '@supabase/supabase-js';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { cookies, headers } from 'next/headers';
 import { nativeBearer } from './mobile-auth-core';
+import {databasePoolOptions} from './database-config';
 
 const globalDb = globalThis as typeof globalThis & { snaproomPool?: Pool };
 export function pool() {
   if (!process.env.DATABASE_URL) throw new Error('Server not configured');
-  return globalDb.snaproomPool ??= new Pool({ connectionString: process.env.DATABASE_URL, max: 4, connectionTimeoutMillis: 15000, idleTimeoutMillis: 30000 });
+  return globalDb.snaproomPool ??= new Pool(databasePoolOptions(process.env.DATABASE_URL,process.env.VERCEL==='1'));
 }
 export function storage() {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) throw new Error('Storage not configured');

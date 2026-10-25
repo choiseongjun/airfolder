@@ -21,3 +21,9 @@
 - Printing, paid themes, checkout and fulfillment are not implemented. Interest analytics measure demand only.
 - Core navigation/settings/feed/invitation/export are bilingual; older optional character/reward/travel-editor copy still needs a separate comprehensive translation pass.
 - Migration `039_memory_participation.sql` must be applied before deploying these endpoints. It was applied to the configured database during validation.
+
+## Production follow-up
+- Production smoke tests exposed PostgreSQL `XX000 CONNECTION_CAPACITY` errors. Warm Vercel functions were using the Supabase session pool.
+- Vercel now uses the Supabase transaction endpoint with two connections per process, a five-second idle timeout and a sixty-second connection lifetime. Non-Supabase and local connection endpoints are unchanged. TLS query parameters are preserved.
+- Member panels only poll while visible, pause in hidden tabs, and back off after errors. This avoids background queries from collapsed albums.
+- The transaction endpoint, transaction-scoped advisory locks and session-table queries were verified directly. Connection-mode choice follows [Supabase connection guidance](https://supabase.com/docs/guides/database/connecting-to-postgres).

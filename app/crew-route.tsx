@@ -6,7 +6,7 @@ import {CrewLocaleProvider} from './crew-locale';
 import {crewHref} from '@/lib/crew-navigation';
 import type {Locale} from './i18n';
 import {trackClient} from '@/lib/growth-client';
-import {api} from '@/lib/client-api';
+import {api,initializeSession} from '@/lib/client-api';
 import {StitchBehind,StitchPhotoDrawer,StitchSubpage,type FeedData} from './home-feed';
 import FeedHeader from './feed-header';
 import StitchSettings from './settings-screen';
@@ -29,7 +29,7 @@ export default function CrewRoutePage({screen,locale='ko'}:{screen:Screen;locale
   const url=new URL(window.location.href);url.searchParams.set('group',result.crew.id??'personal');window.history.replaceState(window.history.state,'',url);
   setReady(true);
  },[ct]);
- useEffect(()=>{let active=true;async function initial(){try{let saved=new URLSearchParams(window.location.search).get('group');if(saved===null){try{saved=localStorage.getItem(GROUP_KEY);}catch{}}const album=new URLSearchParams(window.location.search).get('album');if(album&&!new URLSearchParams(window.location.search).has('group')){const info=await api<{rooms:{id:string;groupId:string|null}[]}>('/api/workspace');saved=info.rooms.find(room=>room.id===album)?.groupId??'personal';}const id=saved===null?undefined:saved==='personal'?null:saved;const selected=id===undefined?undefined:id??'personal';const result=await api<FeedData>(`/api/feed${selected?`?group=${encodeURIComponent(selected)}`:''}`);if(!active)return;setGroupId(result.crew.id);setCrewName(result.crew.name??ct("내 공간"));setData(result);try{localStorage.setItem(GROUP_KEY,result.crew.id??'personal');}catch{}}catch{if(active)setError(ct("공간을 불러오지 못했어요. 새로고침해서 다시 시도해 주세요."));}finally{if(active)setReady(true);}}void initial();return()=>{active=false;};},[ct]);
+ useEffect(()=>{let active=true;async function initial(){try{await initializeSession();let saved=new URLSearchParams(window.location.search).get('group');if(saved===null){try{saved=localStorage.getItem(GROUP_KEY);}catch{}}const album=new URLSearchParams(window.location.search).get('album');if(album&&!new URLSearchParams(window.location.search).has('group')){const info=await api<{rooms:{id:string;groupId:string|null}[]}>('/api/workspace');saved=info.rooms.find(room=>room.id===album)?.groupId??'personal';}const id=saved===null?undefined:saved==='personal'?null:saved;const selected=id===undefined?undefined:id??'personal';const result=await api<FeedData>(`/api/feed${selected?`?group=${encodeURIComponent(selected)}`:''}`);if(!active)return;setGroupId(result.crew.id);setCrewName(result.crew.name??ct("내 공간"));setData(result);try{localStorage.setItem(GROUP_KEY,result.crew.id??'personal');}catch{}}catch{if(active)setError(ct("공간을 불러오지 못했어요. 새로고침해서 다시 시도해 주세요."));}finally{if(active)setReady(true);}}void initial();return()=>{active=false;};},[ct]);
  const selectCrew=(id:string|null)=>{void loadCrew(id).catch(()=>setError(ct("공간을 바꾸지 못했어요. 다시 시도해 주세요.")));};
  const screenHref=(next:'home'|'photos'|'behind'|'settings')=>crewHref(next,locale,groupId??'personal');
  const createHref=`/?lang=${locale}&quick=1&group=${encodeURIComponent(groupId??'personal')}&returnTo=${encodeURIComponent(crewHref(screen,locale,groupId??'personal'))}`;
