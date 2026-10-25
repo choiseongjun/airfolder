@@ -6,13 +6,11 @@ import { api, initializeSession } from '@/lib/client-api';
 import { trackClient } from '@/lib/growth-client';
 import { uploadFailureReason, type ClientGrowthEvent } from '@/lib/growth-events';
 import { createPhotoRequest, photoRequestMessage, type PhotoRequestState } from '@/lib/photo-request';
-import { TERMS_VERSION } from '@/lib/policy';
 import { joinedAlbumHref } from '@/lib/album-navigation';
-import Consent from './growth/consent';
 import './photo-request-start.css';
 
 export default function PhotoRequestStart() {
-  const [name, setName] = useState(''), [accepted, setAccepted] = useState(false), [consent, setConsent] = useState(false);
+  const [name, setName] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const [locked, setLocked] = useState(false);
   const [result, setResult] = useState<{ folderId: string; link: string; name: string } | null>(null);
@@ -30,21 +28,14 @@ export default function PhotoRequestStart() {
       seen.current.add('photo_request_viewed');
       void trackClient('photo_request_viewed', { flow: 'photo_request', attempt_id: attempt.current });
     }
-    let active = true;
-    void api<{ accepted: boolean }>('/api/policy').then(p => { if (active) setAccepted(p.accepted); }).catch(() => {});
-    return () => { active = false; };
   }, []);
   async function create(event: FormEvent) {
     event.preventDefault();
-    if (working.current || (!accepted && !consent)) return;
+    if (working.current) return;
     working.current = true; setBusy(true); setError('');
     measure('photo_request_started');
     try {
       await initializeSession();
-      if (!accepted) {
-        await api('/api/policy', { method: 'POST', body: JSON.stringify({ version: TERMS_VERSION, accepted: true }) });
-        setAccepted(true);
-      }
       progress.current ||= { creationId: crypto.randomUUID(), name: name.trim() || '우리의 여행' };
       setLocked(true);
       const album = await createPhotoRequest(api, progress.current, attempt.current);
@@ -85,8 +76,7 @@ export default function PhotoRequestStart() {
       <ol className="photo-request-steps"><li><Link2 size={18}/><span>받을 링크 만들기</span></li><li><Send size={18}/><span>단톡방에 보내기</span></li><li><ImagePlus size={18}/><span>친구가 사진 보태기</span></li></ol>
       <form onSubmit={create} className="photo-request-form">
         <label className="photo-request-name">여행 이름 (선택)<input maxLength={80} disabled={busy || locked} value={name} onChange={e => setName(e.target.value)} placeholder="예: 부산에서 보낸 주말"/></label>
-        {!accepted && <Consent ko checked={consent} onChange={setConsent}/>}
-        <button className="photo-request-primary" disabled={busy || (!accepted && !consent)}>{busy ? '사진 받을 곳을 준비하고 있어요…' : '사진 받을 링크 만들기'}<ArrowRight size={18}/></button>
+        <button className="photo-request-primary" disabled={busy}>{busy ? '사진 받을 곳을 준비하고 있어요…' : '사진 받을 링크 만들기'}<ArrowRight size={18}/></button>
         <p className="photo-request-small">사진 선택 없이 시작 · 친구도 앱 설치·회원가입 없이 참여</p>
         {error && <p role="alert" className="photo-request-error">{error}</p>}
       </form>
