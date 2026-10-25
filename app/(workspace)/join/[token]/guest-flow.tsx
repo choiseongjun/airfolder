@@ -10,7 +10,6 @@ import { ArrowRight, Check, ImagePlus, LockKeyhole, Upload, Users } from 'lucide
 import { api, initializeSession } from '@/lib/client-api';
 import { IMAGE_LIMIT } from '@/lib/media-limits';
 import { TERMS_VERSION } from '@/lib/policy';
-import { trackClient } from '@/lib/growth-client';
 import { uploadFailureReason } from '@/lib/growth-events';
 import { mapLimit } from '@/lib/parallel';
 import Consent from '../../../growth/consent';
@@ -117,14 +116,12 @@ export default function GuestFlow({ token, locale, nextView, preferredAlbum, req
         // Retrying a staged upload must keep its original album and audience.
         const target = item.folder || folder, audience = item.shared ?? shared;
         setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'uploading', folder: target, shared: audience, error: undefined } : i));
-        void trackClient('upload_started', { source: 'guest', media_type: 'image', shared: audience }, target);
         const form = new FormData();
         form.set('id', item.id); form.set('folderId', target); form.set('file', item.file, item.file.name); form.set('name', item.file.name);
         form.set('created', String(Math.min(item.file.lastModified || Date.now(), Date.now()))); form.set('shared', String(audience));
         try { await api('/api/photos', { method: 'POST', body: form }); setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'done' } : i)); completedIds.push(item.id); }
         catch (cause) {
           const reason = uploadFailureReason(cause instanceof Error ? cause.message : '');
-          void trackClient('upload_failed', { source: 'guest', reason }, target);
           const message = reason === 'storage' ? text('저장 공간이 부족해요. 내 공간에서 용량을 확인해 주세요.', 'Storage is full. Check usage in My space.') : reason === 'format' ? text('읽을 수 없는 사진이에요. JPG나 PNG로 다시 선택해 주세요.', 'Could not read this photo. Try a JPG or PNG.') : text('전송하지 못했어요. 연결을 확인하고 다시 올려 주세요.', 'Upload failed. Check your connection and retry.');
           setItems(old => old.map(i => i.id === item.id ? { ...i, status: 'failed', error: message } : i));
         }

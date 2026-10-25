@@ -30,7 +30,17 @@ export function sameOrigin(request: Request) {
   if (!request.headers.has('origin') && request.headers.has('authorization')) {
     try { nativeBearer(request.headers.get('authorization')); return; } catch { throw new ApiError(401, 'INVALID_NATIVE_TOKEN'); }
   }
-  if (request.headers.get('origin') !== new URL(request.url).origin) throw new ApiError(403, 'INVALID_ORIGIN');
+  const origin = request.headers.get('origin');
+  if (origin === new URL(request.url).origin) return;
+  // Next's dev Request URL can use the bind hostname. Only accept an exact
+  // loopback Host/Origin match for isolated local QA; production stays strict.
+  if (process.env.NODE_ENV === 'development' && origin) {
+    try {
+      const local = new URL(origin);
+      if (local.protocol === 'http:' && ['localhost','127.0.0.1','127.0.0.2'].includes(local.hostname) && local.host === request.headers.get('host')) return;
+    } catch { /* Invalid origins are rejected below. */ }
+  }
+  throw new ApiError(403, 'INVALID_ORIGIN');
 }
 export async function sessionToken() {
   const authorization = (await headers()).get('authorization');

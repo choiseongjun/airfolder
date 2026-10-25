@@ -70,7 +70,7 @@ export async function POST(request: Request) {
       return true;
     });
     if(inserted) trackGrowth({event:'upload_succeeded',who,key:`upload_succeeded:${id}`,contextId:folder,
-      properties:{media_type:type.mime.startsWith('image/')?'image':'video',shared}});
+      properties:{attempt_id:id,media_type:type.mime.startsWith('image/')?'image':'video',shared}});
     if(staged)await pool().query('DELETE FROM snaproom.upload_sessions WHERE id=$1 AND owner_id=$2',[id,who]);
     if (shared) await notifySharedPhotos([folder],who).catch(()=>console.error('Push notification delivery failed'));
     return Response.json({id},{status:inserted?201:200});

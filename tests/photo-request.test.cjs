@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const ts=require('typescript');
-function load(path,imports={}) {const module={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module,exports:module.exports,require:n=>{assert.ok(n in imports,n);return imports[n];}});return module.exports;}
+function load(path,imports={}) {const loaded={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module:loaded,exports:loaded.exports,require:n=>{assert.ok(n in imports,n);return imports[n];}});return loaded.exports;}
 const request=load('lib/photo-request.ts');
 test('photo requests resume each failed stage without creating a second album',async()=>{
  for(const failedStage of [0,1,2]) {

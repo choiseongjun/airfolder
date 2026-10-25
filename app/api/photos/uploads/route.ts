@@ -1,11 +1,18 @@
 import {ApiError,json,requireMember,safe,sameOrigin,transaction,uuid,viewer} from '@/lib/server';
 import {mediaLimit} from '@/lib/media-limits';
 import {requireActiveViewer} from '@/lib/safety';
+import {trackGrowth} from '@/lib/growth';
+import {parseRecipients,checkRecipients} from '@/lib/audience';
 
 export async function POST(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),body=await json(request),id=uuid(body.id),folder=uuid(body.folderId);
  await requireActiveViewer(who);await requireMember(folder,who);
+ trackGrowth({event:'upload_started',who,key:`upload_started:${id}`,contextId:folder,properties:{attempt_id:id,source:body.growthSource==='guest'?'guest':'workspace',media_type:String(body.mime).startsWith('video/')?'video':'image',shared:body.shared===true||body.shared==='true'}});
  const size=Number(body.size),created=Number(body.created);
+ const shared=body.shared===true||body.shared==='true';
+ let recipientInput:unknown=body.recipients;
+ if(typeof recipientInput==='string'){try{recipientInput=JSON.parse(recipientInput);}catch{throw new ApiError(400,'INVALID_RECIPIENTS');}}
+ const recipients=parseRecipients(recipientInput,shared);
  if(!Number.isSafeInteger(size)||size<1||size>mediaLimit(String(body.mime)))throw new ApiError(413,'MEDIA_TOO_LARGE');
  if(!Number.isFinite(created)||created<0||created>Date.now()+86400000)throw new ApiError(400,'INVALID_DATE');
  return transaction(async db=>{
@@ -16,9 +23,10 @@ export async function POST(request:Request){return safe(async()=>{
   const old=await db.query('SELECT * FROM snaproom.upload_sessions WHERE id=$1',[id]);
   if(old.rowCount){if(old.rows[0].owner_id!==who||old.rows[0].folder_id!==folder||Number(old.rows[0].size_bytes)!==size)throw new ApiError(409,'PHOTO_CONFLICT');}
   else{
+   await checkRecipients(db,[folder],recipients);
    const usage=await db.query('SELECT COALESCE(sum(size_bytes),0) total,count(*) FILTER(WHERE owner_id=$1) own FROM snaproom.upload_sessions',[who]);
    if(Number(usage.rows[0].total)+size>128*1024*1024||Number(usage.rows[0].own)>=2)throw new ApiError(429,'UPLOAD_BUSY');
-   await db.query('INSERT INTO snaproom.upload_sessions(id,owner_id,folder_id,size_bytes,fields) VALUES($1,$2,$3,$4,$5)',[id,who,folder,size,{id,folderId:folder,name:String(body.name||'Photo').slice(0,200),created:String(created),shared:body.shared===true||body.shared==='true'?'true':'false'}]);
+   await db.query('INSERT INTO snaproom.upload_sessions(id,owner_id,folder_id,size_bytes,fields) VALUES($1,$2,$3,$4,$5)',[id,who,folder,size,{id,folderId:folder,name:String(body.name||'Photo').slice(0,200),created:String(created),shared:shared?'true':'false',recipients:JSON.stringify(recipients)}]);
   }
   const parts=await db.query('SELECT part FROM snaproom.upload_chunks WHERE upload_id=$1',[id]);
   return Response.json({complete:false,chunkSize:3145728,parts:parts.rows.map(r=>r.part)});

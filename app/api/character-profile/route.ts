@@ -3,10 +3,11 @@ import { randomUUID } from 'node:crypto';
 import { ApiError, pool, safe, sameOrigin, transaction, viewer } from '@/lib/server';
 import { requireTerms } from '@/lib/safety';
 import { characterPrompt } from '@/lib/character-style';
+import { CHARACTER_REQUEST_LIMIT } from '@/lib/character-photo';
 
 export const maxDuration = 180;
 const headers = {'Cache-Control':'private, no-store'};
-const limit = 6 * 1024 * 1024;
+const limit = CHARACTER_REQUEST_LIMIT;
 function dailyLimit() {
  const value=Number(process.env.CHARACTER_PROFILE_DAILY_LIMIT);
  return Number.isInteger(value)&&value>=1&&value<=10?value:3;
@@ -16,6 +17,7 @@ const dataUrl = (value: Buffer | null) => value ? 'data:image/webp;base64,'+valu
 
 export async function GET() { return safe(async()=>{
  enabled(); const who=await viewer();
+ await pool().query("UPDATE snaproom.character_profiles SET draft=NULL,draft_at=NULL WHERE viewer_id=$1 AND draft_at<=now()-interval '24 hours' AND (busy_until IS NULL OR busy_until<=now())",[who]);
  const result=await pool().query("SELECT active,CASE WHEN draft_at>now()-interval '24 hours' THEN draft END AS draft,CASE WHEN usage_day=CURRENT_DATE THEN attempts ELSE 0 END AS attempts,busy_until>now() AS busy FROM snaproom.character_profiles WHERE viewer_id=$1",[who]);
  const row=result.rows[0];
  return Response.json({active:dataUrl(row?.active),draft:dataUrl(row?.draft),dailyLimit:dailyLimit(),remaining:Math.max(0,dailyLimit()-(row?.attempts||0)),busy:!!row?.busy,configured:!!process.env.OPENAI_API_KEY},{headers});

@@ -4,9 +4,9 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const ts=require('typescript');
 function load(file, imports={}, globals={}) {
- const module={exports:{}};
- vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module,exports:module.exports,require:n=>{assert.ok(n in imports,n);return imports[n]},...globals});
- return module.exports;
+ const loaded={exports:{}};
+ vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module:loaded,exports:loaded.exports,require:n=>{assert.ok(n in imports,n);return imports[n]},...globals});
+ return loaded.exports;
 }
 const a=load('lib/acquisition.ts');
 const journey='12345678-1234-4234-8234-123456789abc';

@@ -3,6 +3,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {characterAnimals,type CharacterAnimal} from '@/lib/character-style';
+import {CHARACTER_INPUT_LIMIT,characterPhotoTypes,prepareCharacterPhoto} from '@/lib/character-photo';
 import './profile-character.css';
 import './character-style.css';
 
@@ -15,13 +16,13 @@ const errors:Record<string,string>={
  AI_ACCESS_REQUIRED:'이 API 키에 이미지 생성 권한이 없어요. 설정을 확인해 주세요.',
  AI_NOT_CONFIGURED:'이미지 생성 연결이 준비되지 않았어요.',
  INVALID_PHOTO:'사진을 읽을 수 없어요. JPG·PNG·WebP 사진으로 다시 골라주세요.',
- PHOTO_TOO_LARGE:'사진은 6MB 이하로 골라주세요.',
+ PHOTO_TOO_LARGE:'사진은 20MB 이하로 골라주세요. 전송 전에 자동으로 크기를 줄여요.',
  NO_DRAFT:'미리보기가 만료되었거나 생성 중이에요. 다시 확인해 주세요.',
  TERMS_REQUIRED:'이용약관에 동의한 뒤 다시 시도해 주세요.',
 };
 async function call(options?:RequestInit):Promise<State>{
  const response=await fetch('/api/character-profile',{...options,cache:'no-store'});
- const data=await response.json();if(!response.ok)throw Error(data.error||'SERVER_ERROR');return data;
+ const data=await response.json().catch(()=>({}));if(!response.ok)throw Error(response.status===413?'PHOTO_TOO_LARGE':data.error||'SERVER_ERROR');return data;
 }
 export default function ProfileCharacter({name}:{name:string}){
  const [style,setStyle]=useState<'animal'|'human'>('animal'),[animal,setAnimal]=useState<CharacterAnimal>('cat');
@@ -41,7 +42,7 @@ export default function ProfileCharacter({name}:{name:string}){
  function close(){if(busy)return;setOpen(false);trigger.current?.focus();}
  async function generate(){
   if(!file||!consent||busy)return;setBusy(true);setError('');setNotice('');
-  try{const result=await call({method:'POST',headers:{'content-type':file.type,'x-photo-consent':'yes','x-character-style':style,'x-character-animal':animal},body:file});setState(current=>current?{...current,draft:result.draft}:current);setNotice('완성됐어요. 원형 프사에서 얼굴이 잘 보이는지 확인해 주세요.');}
+  try{const photo=await prepareCharacterPhoto(file);const result=await call({method:'POST',headers:{'content-type':photo.type,'x-photo-consent':'yes','x-character-style':style,'x-character-animal':animal},body:photo});setState(current=>current?{...current,draft:result.draft}:current);setNotice('완성됐어요. 원형 프사에서 얼굴이 잘 보이는지 확인해 주세요.');}
   catch(e){setError(errors[(e as Error).message]||'캐릭터를 만들지 못했어요. 원래 프로필은 그대로예요.');}
   finally{try{setState(await call())}catch{}setBusy(false);}
  }
@@ -62,9 +63,10 @@ export default function ProfileCharacter({name}:{name:string}){
  {style==='animal'&&<div className="character-animal-options" role="group" aria-label="동물 종류">{characterAnimals.map(item=><button type="button" key={item.id} aria-pressed={animal===item.id} onClick={()=>setAnimal(item.id)}><span aria-hidden="true">{item.emoji}</span>{item.label}</button>)}</div>}
  <p className="character-hint">{style==='animal'?'내 머리·안경·옷의 특징을 담은 동물 친구로 만들어요.':'얼굴 특징을 살린 사람 일러스트로 만들어요.'} 선택을 바꾸면 다음 생성부터 적용돼요.</p></fieldset>
  <div className="character-comparison"><div>{preview?<img src={preview} alt="선택한 원본 사진"/>:<div className="character-placeholder">📷</div>}<small>내 사진</small></div><span aria-hidden="true">→</span><div>{state.draft||image?<img src={state.draft||image!} alt="원형 캐릭터 프로필 미리보기"/>:<div className="character-placeholder">✦</div>}<small>{state.draft?'새 캐릭터':'캐릭터 프사'}</small></div></div>
- <label className="character-file">셀카 찍기 / 사진 고르기<input ref={input} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event=>{const next=event.target.files?.[0];event.target.value='';if(!next)return;if(next.size>6*1024*1024||!['image/jpeg','image/png','image/webp'].includes(next.type)){setError('6MB 이하 JPG·PNG·WebP 사진을 골라주세요.');return;}setFile(next);setPreview(URL.createObjectURL(next));setConsent(false);setError('');setNotice('');}}/></label>
+ <label className="character-file">셀카 찍기 / 사진 고르기<input ref={input} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event=>{const next=event.target.files?.[0];event.target.value='';if(!next)return;if(!next.size||next.size>CHARACTER_INPUT_LIMIT||!characterPhotoTypes.includes(next.type)){setError('20MB 이하 JPG·PNG·WebP 사진을 골라주세요.');return;}setFile(next);setPreview(URL.createObjectURL(next));setConsent(false);setError('');setNotice('');}}/></label>
  <p className="character-hint">혼자 나온 밝은 정면 사진이 좋아요. 현재 프사는 ‘프로필에 적용’을 누르기 전까지 바뀌지 않아요.</p>
- <label className="character-consent"><input type="checkbox" checked={consent} disabled={busy} onChange={event=>setConsent(event.target.checked)}/><span>선택한 사진을 캐릭터 생성 목적으로 OpenAI에 전송하는 데 동의해요. 앱은 원본을 저장하지 않으며, 생성 결과만 보관해요. 미적용 미리보기는 24시간 동안 사용할 수 있어요.</span></label>
+ <label className="character-consent"><input type="checkbox" checked={consent} disabled={busy} onChange={event=>setConsent(event.target.checked)}/><span>선택한 사진을 기기에서 축소한 뒤 캐릭터 생성 목적으로 OpenAI에 전송하는 데 동의해요. 앱은 입력 사진을 저장하지 않으며, 미리보기는 24시간 후 만료되고 만료 후 24시간 이내 정기 삭제해요. 적용한 캐릭터는 직접 삭제하거나 계정을 삭제할 때까지 보관해요.</span></label>
+ <p className="character-hint">OpenAI는 안전성 점검 등을 위해 입력·출력을 통상 최대 30일 보관할 수 있으며 예외가 있어요. <a href="/privacy#ai-character" target="_blank" rel="noreferrer">사진 처리·삭제 안내</a></p>
  <button className="character-primary" type="button" aria-describedby="character-generation-status" disabled={!!blocked} onClick={()=>void generate()}>{busy?'처리 중… 잠시 기다려주세요':state.busy?'캐릭터 생성 중':state.remaining<=0?'오늘 생성 횟수를 모두 사용했어요':'캐릭터 1장 만들기'}</button>
  <p id="character-generation-status" role="status" className="character-hint">{blocked||'준비됐어요. 버튼을 누르면 선택한 사진으로 캐릭터를 만들어요.'}</p>
  <p className="character-hint">오늘 남은 생성 {state.remaining}회 / {state.dailyLimit}회 · 생성 요청은 실패해도 한도에 포함돼요.</p>

@@ -1,6 +1,8 @@
 import {isBrowse,browseResponse} from './browse-data';
 import { captureAttribution } from './acquisition';
 import { captureVisitSession } from './visit-session';
+import { completeWorkspace, type WorkspacePage } from './workspace-pagination';
+import { uploadFailureReason } from './growth-events';
 export async function api<T = Record<string, unknown>>(url: string, options: RequestInit = {}): Promise<T> {
   if(isBrowse())return browseResponse(url,options.method||'GET') as T;
   captureAttribution();
@@ -9,19 +11,28 @@ export async function api<T = Record<string, unknown>>(url: string, options: Req
     const form=options.body,file=form.get('file');
     if(file instanceof Blob){
       const metadata=Object.fromEntries([...form.entries()].filter(([key])=>key!=='file'));
-      const upload=await api<{complete:boolean;chunkSize:number;parts:number[]}>('/api/photos/uploads',{method:'POST',body:JSON.stringify({...metadata,size:file.size,mime:file.type})});
+      const source=window.location.pathname.startsWith('/join/')?'guest':'workspace';
+      try {
+      const upload=await api<{complete:boolean;chunkSize:number;parts:number[]}>('/api/photos/uploads',{method:'POST',body:JSON.stringify({...metadata,size:file.size,mime:file.type,growthSource:source})});
       if(upload.complete)return {id:metadata.id} as T;
       for(let part=0;part<Math.ceil(file.size/upload.chunkSize);part++){
         if(upload.parts.includes(part))continue;
         const response=await fetch(`/api/photos/uploads?id=${metadata.id}&part=${part}`,{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/octet-stream'},body:file.slice(part*upload.chunkSize,(part+1)*upload.chunkSize)});
         if(!response.ok){const data=await response.json();throw new Error(data.error||'UPLOAD_FAILED');}
       }
-      return api<T>('/api/photos',{method:'POST',body:JSON.stringify({uploadId:metadata.id})});
+      return await api<T>('/api/photos',{method:'POST',body:JSON.stringify({uploadId:metadata.id})});
+      } catch (error) {
+        void import('./growth-client').then(({trackClient})=>trackClient('upload_failed',{attempt_id:metadata.id,source,media_type:file.type.startsWith('video/')?'video':'image',reason:uploadFailureReason(error instanceof Error?error.message:'')},String(metadata.folderId))).catch(()=>{});
+        throw error;
+      }
     }
   }
   const response = await fetch(url, { ...options, credentials: 'same-origin', cache: 'no-store', headers: options.body instanceof FormData ? options.headers : { 'Content-Type': 'application/json', ...options.headers } });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'SERVER_ERROR');
+  if (url === '/api/workspace' && (!options.method || options.method === 'GET')) {
+    return await completeWorkspace(data as WorkspacePage, cursor => api<WorkspacePage>('/api/workspace?cursor=' + encodeURIComponent(cursor), options)) as T;
+  }
   if (options.method === 'POST' && ['/api/auth/firebase','/api/folders','/api/invites'].includes(url)) {
     try {
       const { trackGaEvent } = await import('./auth-analytics');

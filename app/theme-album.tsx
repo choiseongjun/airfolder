@@ -118,11 +118,11 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  // Owners share the album's invite link (it opens on this decorated view); members share the finished look.
  const [sharing, setSharing] = useState<'' | 'share' | 'nudge'>(''), shareable = !browsing && !localItems;
  const share = () => setSharing('share');
- const [members, setMembers] = useState<{ id: string; name: string; mine: boolean }[]>([]);
+ const [members, setMembers] = useState<{ id: string; name: string; mine: boolean; contributed: boolean }[]>([]);
  useEffect(() => {
   if (!canShare) return;
   let active = true;
-  api<{ members: { id: string; name: string; mine: boolean }[] }>(`/api/members?folderId=${encodeURIComponent(folderId)}`).then(r => { if (active) setMembers(r.members); }).catch(() => {});
+  api<{ members: { id: string; name: string; mine: boolean; contributed: boolean }[] }>(`/api/members?folderId=${encodeURIComponent(folderId)}`).then(r => { if (active) setMembers(r.members); }).catch(() => {});
   return () => { active = false; };
  }, [canShare, folderId]);
  const [month, setMonth] = useState('all');
@@ -193,8 +193,8 @@ export default function ThemeAlbum({ folderId, title, description, locale, brows
  const allPhotos = shown.flatMap(c => c.photos);
  const people = [...new Set(allPhotos.map(p => p.author).filter(Boolean))];
  // Who joined but hasn't added anything yet, so the organiser can give them a friendly nudge.
- const contributors = new Set(chapters.flatMap(c => c.photos.map(p => p.author)).filter(Boolean));
- const pending = members.filter(m => !m.mine && !contributors.has(m.name));
+ const contributors = new Set(members.length ? members.filter(m => m.contributed).map(m => m.id) : chapters.flatMap(c => c.photos.map(p => p.author)).filter(Boolean));
+ const pending = members.filter(m => !m.mine && !m.contributed);
  const named = pending.filter(m => !/^Member [0-9a-f]{6}$/.test(m.name)).map(m => m.name);
  function nudgeMessage(url: string, countdown: string) {
   const who = named.length ? named.slice(0, 3).join(', ') + (pending.length > 3 ? (ko ? ` 외 ${pending.length - 3}명` : ` and ${pending.length - 3} more`) : '') : (ko ? `아직 안 올린 ${pending.length}명` : `the ${pending.length} of you who haven't`);
@@ -331,7 +331,7 @@ ${url}`;
   </div>}
   {canShare && members.length > 1 && <div className="ta-nudge">
    <div><strong>{ko ? `${contributors.size}명이 사진을 보탰어요` : `${contributors.size} ${contributors.size === 1 ? 'person has' : 'people have'} added photos`}</strong>
-    {pending.length > 0 ? <span className="ta-nudge-names">{(named.length ? named : []).slice(0, 5).map(n => <i key={n}>{n}</i>)}{pending.length > named.slice(0, 5).length && <i>{ko ? `+${pending.length - named.slice(0, 5).length}명` : `+${pending.length - named.slice(0, 5).length}`}</i>}<small>{ko ? '아직 안 올렸어요' : 'still to add'}</small></span> : <small>{ko ? '모두 사진을 올렸어요 🎉' : 'Everyone has added photos 🎉'}</small>}</div>
+    {pending.length > 0 ? <span className="ta-nudge-names">{(named.length ? named : []).slice(0, 5).map(n => <i key={n}>{n}</i>)}{pending.length > named.slice(0, 5).length && <i>{ko ? `+${pending.length - named.slice(0, 5).length}명` : `+${pending.length - named.slice(0, 5).length}`}</i>}<small>{ko ? '아직 안 올렸어요' : 'still to add'}</small></span> : <small>{contributors.size ? (ko ? '친구들과 사진을 더 모아보세요 📷' : 'Keep adding moments together 📷') : (ko ? '친구를 초대하고 첫 사진을 모아보세요' : 'Invite a friend and add your first photos')}</small>}</div>
    {pending.length > 0 && <button onClick={() => setSharing('nudge')}>{ko ? '조르기' : 'Nudge'}</button>}
   </div>}
   {monthly && <div className="ta-months" role="group" aria-label={ko ? '월별로 보기' : 'View by month'}>

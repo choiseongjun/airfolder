@@ -19,10 +19,10 @@
     "ffmpeg-static": "^5.3.0",
     "file-type": "21.3.4",
     "firebase": "^13.0.0",
-    "firebase-admin": "13.10.0",
+    "firebase-admin": "14.5.0",
     "heic-convert": "^2.1.0",
     "lucide-react": "^1.56.0",
-    "next": "16.4.0",
+    "next": "16.4.3",
     "pg": "^8.23.1",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
@@ -40,9 +40,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.13.6"
   },
   "engines": {
     "node": "24.x"

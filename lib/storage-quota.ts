@@ -5,6 +5,15 @@ import {ACCOUNT_STORAGE_LIMIT,SERVICE_STORAGE_LIMIT} from './media-limits';
 // Reserve room for unfinished previews. Older previews without recorded sizes
 // are conservatively counted at the original size (at least 1 MiB).
 const charged='size_bytes + COALESCE(preview_size_bytes, CASE WHEN original_available OR preview_path IS NOT NULL THEN greatest(size_bytes,1048576) ELSE 0 END)';
+export function storageHealth(used: number) {
+ const percent = Math.round(used / SERVICE_STORAGE_LIMIT * 1000) / 10;
+ const level = used >= SERVICE_STORAGE_LIMIT ? 'full' : used >= SERVICE_STORAGE_LIMIT * 0.85 ? 'critical' : used >= SERVICE_STORAGE_LIMIT * 0.7 ? 'warning' : 'normal';
+ return { used, limit: SERVICE_STORAGE_LIMIT, remaining: Math.max(0, SERVICE_STORAGE_LIMIT - used), percent, level };
+}
+export async function serviceStorageHealth() {
+ const {rows:[row]} = await pool().query(`SELECT COALESCE(sum(${charged}),0) AS used FROM snaproom.photos`);
+ return storageHealth(Number(row.used));
+}
 export async function unlimitedStorage(who:string,db:Pick<PoolClient,'query'>=pool()){
  const r=await db.query('SELECT 1 FROM snaproom.accounts a JOIN snaproom.storage_allowances s ON s.firebase_uid=a.firebase_uid WHERE a.viewer_id=$1 AND s.unlimited',[who]);return !!r.rowCount;
 }
