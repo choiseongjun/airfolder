@@ -1,9 +1,12 @@
 import 'server-only';
+import {after} from 'next/server';
+import {notifyWeb} from './web-push';
 import { pool } from './server';
 
 // Best effort: photo publication must succeed even if the notification provider is unavailable.
 // No photo, folder title or sender identity is exposed on the lock screen.
 export async function notifySharedPhotos(folderIds: string[], actor: string, recipients: string[] = []) {
+  after(()=>notifyWeb(folderIds,actor).catch(()=>console.error('Web notification delivery unavailable')));
   if(process.env.PUSH_ENABLED!=='true'||!folderIds.length)return;
   for(const folderId of [...new Set(folderIds)]){
     const {rows}=await pool().query(`SELECT DISTINCT d.token,d.viewer_id FROM snaproom.push_devices d

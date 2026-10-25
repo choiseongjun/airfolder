@@ -40,7 +40,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
     </div>
     <span style={{ fontSize: 22, letterSpacing: 4, color: birthday ? '#ff6f91' : '#a0795b', marginBottom: 20 }}>{birthday ? 'HAPPY BIRTHDAY' : 'OUR LITTLE HISTORY'}</span>
     <span style={{ fontSize: 64, fontWeight: 700, color: birthday ? '#ff5a87' : '#2c3b2f', textAlign: 'center', maxWidth: 980, lineHeight: 1.3 }}>{invite?.name || '우리의 작은 모임'}</span>
-    <span style={{ fontSize: 28, color: birthday ? '#5a3d8a' : '#6b7665', marginTop: 32 }}>{birthday ? '사진 한 장, 한마디씩 채워주세요' : '함께한 순간을 모으고 있어요'}</span>
+    <span style={{ fontSize: 28, color: birthday ? '#5a3d8a' : '#6b7665', marginTop: 32 }}>{birthday ? '사진 한 장, 한마디씩 채워주세요' : '사진 뒤에, 너의 기억을 남겨줘'}</span>
    </div>
   ),
   { ...size },

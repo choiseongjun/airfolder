@@ -1,10 +1,10 @@
 import {characterAnimals,type CharacterAnimal} from './character-style';
-export const STORY_QUESTION='이번 여행에서 가장 웃겼던 순간은?';
+export const STORY_QUESTION='너는 그날을 어떻게 기억해?';
 export type StoryPhoto={id:string;src:string};
 export type StoryEntry={id:string;personId:string;name:string;body:string;animal:CharacterAnimal;avatar:string|null;mine:boolean;photos:StoryPhoto[]};
 export type TripStory={folderId:string;title:string;canInvite:boolean;entries:StoryEntry[];total:number;people:number};
 export function storyAnimal(value:unknown):CharacterAnimal{return characterAnimals.some(a=>a.id===value)?value as CharacterAnimal:'cat';}
-export function storyInvite(title:string,link:string){return `${title} 여행편 만들었어 📷\n네가 찍은 우리 사진 한 장이랑 가장 웃겼던 순간 넣어줘. 네 캐릭터가 네 이야기를 소개해!\n앱 설치·회원가입 없이 참여할 수 있어.\n${link}`;}
+export function storyInvite(title:string,link:string){return `우리의 ${title}, 나는 이렇게 기억해.\n같은 날을 함께 보냈지만, 네 기억은 조금 다를 것 같아서.\n네가 간직한 사진 한 장과 한마디도 남겨줄래?\n앱 설치·회원가입 없이 보탤 수 있어.\n${link}`;}
 export type StorySaveState={folderId?:string;creationId:string;noteId:string;uploaded:Set<string>;noteAttempted?:boolean;saved?:boolean;token?:string};
 export type StoryFile={id:string;file:File;src:string};
 type StoryApi=<T=Record<string,unknown>>(url:string,options?:RequestInit)=>Promise<T>;

@@ -19,9 +19,12 @@ export async function generateMetadata({ params, searchParams }: Props) {
    name = result.rows[0]?.name ?? null; birthday = result.rows[0]?.category === '생일';
   } catch { /* Metadata degrades gracefully to a generic invite card. */ }
  }
+ const locale=await requestLocale(query.lang);
  const noteRequest = query.request === 'birthday' || (!query.request && birthday);
- const title = `${query.request==='story'?'너는 그 여행을 어떻게 기억해?':noteRequest ? '축하 한마디 남겨줘!' : '내가 나온 사진, 여기로 보내줘!'} · ${name || 'Memonestia'}`;
- const description = query.request==='story'?'네가 찍은 우리 사진 한 장과 가장 웃겼던 순간을 보태줘. 각자의 캐릭터가 소개하는 우리 여행편.':noteRequest ? '사진 없이 한 줄이면 충분해요. 로그인 없이 함께 쓰는 생일 롤링페이퍼.' : '친구 폰에 있는 우리 사진을 한곳에. 로그인 없이 사진을 골라 보내주세요.';
+ const koreanTitle = `${query.request==='story'?'너는 그 여행을 어떻게 기억해?':noteRequest ? '축하 한마디 남겨줘!' : '내가 나온 사진, 여기로 보내줘!'} · ${name || 'Memonestia'}`;
+ const koreanDescription = query.request==='story'?'네가 찍은 우리 사진 한 장과 가장 웃겼던 순간을 보태줘. 각자의 캐릭터가 소개하는 우리 여행편.':noteRequest ? '사진 없이 한 줄이면 충분해요. 로그인 없이 함께 쓰는 생일 롤링페이퍼.' : '친구 폰에 있는 우리 사진을 한곳에. 로그인 없이 사진을 골라 보내주세요.';
+ const title=locale==='ko'?koreanTitle:`${query.request==='story'?'How do you remember our trip?':noteRequest?'Leave a note for our album':'Share your photos with us'} · ${name||'Memonestia'}`;
+ const description=locale==='ko'?koreanDescription:'No account or app needed. Add your name and a memory, or write on the back of a shared photo.';
  // The layout's default og:url (the site homepage) would otherwise win here, so KakaoTalk's
  // shared card would open to the homepage instead of this invite when a guest taps it.
  const search = new URLSearchParams();

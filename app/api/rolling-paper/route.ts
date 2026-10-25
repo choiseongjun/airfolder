@@ -1,3 +1,5 @@
+import {trackGrowth} from '@/lib/growth';
+import {notifySharedPhotos} from '@/lib/push';
 import { randomUUID } from 'node:crypto';
 import { connection } from 'next/server';
 import { ApiError, json, pool, requireMember, safe, sameOrigin, transaction, uuid, viewer } from '@/lib/server';
@@ -60,7 +62,7 @@ export async function POST(request: Request) {
     await requireTerms(who);
     const folderId = uuid(body.folderId);
     const id = body.id === undefined ? randomUUID() : uuid(body.id);
-    const message = textBody(body.body, 500);
+    const message = textBody(body.body, 1000);
     const photoIds = body.photoIds === undefined ? [] : body.photoIds;
     if (!Array.isArray(photoIds) || photoIds.length > 4) throw new ApiError(400, 'INVALID_PHOTOS');
     const uniquePhotoIds = [...new Set(photoIds.map(uuid))];
@@ -89,6 +91,8 @@ export async function POST(request: Request) {
         await db.query('INSERT INTO snaproom.rolling_paper_note_photos(note_id,photo_id,position) VALUES($1,$2,$3)', [id, photoId, position]);
       }
     });
+    trackGrowth({event:'note_created',who,contextId:folderId,key:`note:${id}`});
+    await notifySharedPhotos([folderId],who).catch(()=>console.error('Note notification delivery unavailable'));
     return Response.json({ id }, { status: 201 });
   });
 }

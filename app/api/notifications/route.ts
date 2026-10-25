@@ -4,9 +4,9 @@ export async function GET(){await connection();return safe(async()=>{
  const who=await viewer();
  const result=await pool().query(`SELECT n.id,n.folder_id,n.kind,n.created_at,n.read_at,f.name FROM snaproom.notifications n
  JOIN snaproom.folders f ON f.deleted_at IS NULL AND f.id=n.folder_id JOIN snaproom.members m ON m.folder_id=f.id AND m.viewer_id=$1
- LEFT JOIN snaproom.photos p ON p.id=n.photo_id LEFT JOIN snaproom.records r ON r.id=n.record_id
+ LEFT JOIN snaproom.rolling_paper_notes note ON note.id=n.note_id LEFT JOIN snaproom.photos p ON p.id=n.photo_id LEFT JOIN snaproom.records r ON r.id=n.record_id
  WHERE n.viewer_id=$1 AND snaproom.interaction_allowed(n.actor_id,$1) AND n.created_at>now()-interval '90 days'
- AND ((p.id IS NOT NULL AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)) OR (r.id IS NOT NULL AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$1)))
+ AND ((p.id IS NOT NULL AND p.deleted_at IS NULL AND NOT p.safety_hidden AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)) OR (r.id IS NOT NULL AND r.deleted_at IS NULL AND NOT r.safety_hidden AND snaproom.can_view(r.owner_id,r.shared,r.recipients,$1)) OR (note.id IS NOT NULL AND NOT note.hidden))
  ORDER BY n.created_at DESC LIMIT 200`,[who]);
  const grouped=new Map<string,{folderId:string;name:string;kind:string;ids:string[];unread:number;createdAt:string}>();
  for(const n of result.rows){const key=n.folder_id+':'+n.kind+':'+new Date(n.created_at).toISOString().slice(0,10);let item=grouped.get(key);if(!item){item={folderId:n.folder_id,name:n.name,kind:n.kind,ids:[],unread:0,createdAt:n.created_at};grouped.set(key,item);}item.ids.push(n.id);if(!n.read_at)item.unread++;}

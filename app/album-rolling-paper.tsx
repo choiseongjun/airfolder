@@ -124,7 +124,7 @@ export default function AlbumRollingPaper({ folderId, title, locale, canInvite, 
 
     <form className="arp-compose" onSubmit={submit}>
       <label htmlFor="arp-draft"><Feather size={16}/>{ko ? '한마디 적어둘까요?' : 'Leave a little note'}</label>
-      <textarea id="arp-draft" maxLength={500} value={draft} onChange={event => setDraft(event.target.value)} placeholder={ko ? '그날 고마웠던 순간이나, 친구에게 전하고 싶은 말을 적어보세요.' : 'Write about a moment you loved, or something you want a friend to know.'}/>
+      <textarea id="arp-draft" maxLength={1000} value={draft} onChange={event => setDraft(event.target.value)} placeholder={ko ? '그날 고마웠던 순간이나, 친구에게 전하고 싶은 말을 적어보세요.' : 'Write about a moment you loved, or something you want a friend to know.'}/>
       <div className="arp-photo-tools">
         <button type="button" className="arp-photo-toggle" onClick={() => setPickerOpen(open => !open)} aria-expanded={pickerOpen}><ImagePlus size={14}/>{ko ? '사진 붙이기' : 'Add photos'}{selectedPhotos.length ? ` · ${selectedPhotos.length}` : ''}</button>
         <button type="button" className="arp-photo-upload" onClick={() => uploadInput.current?.click()} disabled={uploadingPhotos}>{uploadingPhotos ? (ko ? '사진 올리는 중…' : 'Uploading…') : (ko ? '기기에서 사진 추가' : 'Upload photos')}</button>
@@ -142,7 +142,7 @@ export default function AlbumRollingPaper({ folderId, title, locale, canInvite, 
       </div>}
       {selectedPhotos.length > 0 && <div className="arp-selected-photos">{selectedPhotos.map(id => { const photo = photoOptions.find(item => item.id === id); return photo ? photo.mediaType === 'video' ? <video key={id} src={photo.src} muted playsInline/> : <img key={id} src={photo.src} alt={photo.name}/> : null; })}</div>}
       {rewardsEnabled && <RewardStickerPicker folderId={folderId} ko={ko} value={sticker} onChange={setSticker} disabled={posting || uploadingPhotos}/>}
-      <div className="arp-compose-foot"><small>{draft.length}/500 · {ko ? '사진은 앨범 멤버 전체에게 공개돼요' : 'Photos are visible to all album members'}</small><button disabled={posting || uploadingPhotos || (!draft.trim() && !sticker?.phrase)}><Send size={14}/>{posting ? (ko ? '남기는 중…' : 'Saving…') : (ko ? '남기기' : 'Post note')}</button></div>
+      <div className="arp-compose-foot"><small>{draft.length}/1000 · {ko ? '사진은 앨범 멤버 전체에게 공개돼요' : 'Photos are visible to all album members'}</small><button disabled={posting || uploadingPhotos || (!draft.trim() && !sticker?.phrase)}><Send size={14}/>{posting ? (ko ? '남기는 중…' : 'Saving…') : (ko ? '남기기' : 'Post note')}</button></div>
       {error && <p className="arp-error" role="alert">{error}</p>}
     </form>
 

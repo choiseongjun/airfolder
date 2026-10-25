@@ -1,5 +1,11 @@
 # Shared trip story — 2026-10-25
 
+## Emotional memory presentation update
+
+The writing question is now “너는 그날을 어떻게 기억해?”. Three optional writing cues change only the placeholder, preserving the user's words. Character buttons open an individual contribution; the shared view previews the first three and keeps all remaining contributions accessible through those buttons. Photos stay adjacent to their own author's words on screen and in the PNG export. Invitation copy asks for the friend's memory in a letter-like panel.
+
+Validated locally with Ego: cue changes preserve draft text; selecting a character shows only that contributor's photo and words; previous-card navigation works; shared PNG download was visually inspected; 390px layout has no horizontal overflow or nested buttons. Temporary two-person fixtures were page-local, not saved to the database, and the QA route was removed. Targeted ESLint, TypeScript, the three story tests and the production build passed. This update has not been deployed; native mobile sharing and a new end-to-end persisted invitation were not retested.
+
 ## Product experiment
 
 The travel entry (`/make?occasion=travel`, including the existing default photo-request entry) now starts a shared trip story. The host adds 1–3 real photos, a name and an answer to “이번 여행에서 가장 웃겼던 순간은?”. The invitation asks a friend for one photo and their own answer. Invite holders can see the first result before joining; saving joins the existing album and adds a card. Existing themes and non-travel campaigns keep their current entry.

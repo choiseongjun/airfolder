@@ -157,6 +157,7 @@ SELECT json_build_object(
 ) report`;
 
 export type GrowthReport = {
+  memoryLoop?:import('./memory-loop-report').MemoryLoopReport;
  tripStories:{viewed:number;previewed:number;saved:number;contributed:number;exported:number;sharing:number;invited:number;repeatHosts:number};
  photoRequests: { source: string; campaign: string; viewed: number; started: number; ready: number; copied: number; sharing: number; opened: number; contributed: number }[];
  visits: { sessions: number; browsers: number; since: string | null };

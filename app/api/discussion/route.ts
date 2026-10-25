@@ -1,3 +1,4 @@
+import {trackGrowth} from '@/lib/growth';
 import {requireTerms} from '@/lib/safety';
 import {notifySharedPhotos} from '@/lib/push';
 import {randomUUID} from 'node:crypto';
@@ -49,7 +50,7 @@ export async function POST(request:Request){return safe(async()=>{
    await db.query("INSERT INTO snaproom.safety_reports(id,comment_id,reporter_id,reason) VALUES($1,$2,$3,$4) ON CONFLICT(reporter_id,comment_id) DO UPDATE SET reason=excluded.reason,status='open',resolved_at=NULL",[randomUUID(),id,who,reason]);
   }else throw new ApiError(400,'INVALID_ACTION');
   return {ok:true};
- });if(notifyFolder)await notifySharedPhotos([notifyFolder],who).catch(()=>console.error('Interaction notification delivery failed'));return Response.json(data);
+ });if(b.action==='comment'&&notifyFolder)trackGrowth({event:'note_created',who,contextId:notifyFolder,key:`note:${b.id}`});if(notifyFolder)await notifySharedPhotos([notifyFolder],who).catch(()=>console.error('Interaction notification delivery failed'));return Response.json(data);
 });}
 export async function PATCH(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),b=await json(request);await requireTerms(who);

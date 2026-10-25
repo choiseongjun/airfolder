@@ -17,6 +17,7 @@ function route(photoAllowed=true){
   return {rowCount:1,rows:[]};
  }};
  const imports={
+  '@/lib/growth':{trackGrowth(){}},
   '@/lib/safety':{requireTerms:async()=>{},requireActiveViewer:async()=>{}},
   '@/lib/push':{notifySharedPhotos:async()=>{}},
   'node:crypto':require('node:crypto'),

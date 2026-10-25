@@ -25,15 +25,15 @@ test('group-only crew and personal links open current Korean home feed',async()=
 test('group context does not swallow explicit workspace actions',async()=>{
  for(const extra of [{quick:'1'},{login:'1'},{album:'album-id',view:'photos'},{studio:'1'},{browse:'1'}])assert.equal(await screen({group:'personal',...extra}),'workspace');
 });
-test('English group links retain workspace and explicit Korean home retains feed',async()=>{
- assert.equal(await screen({lang:'en',group:'personal'}),'workspace');
+test('English and Korean group links use the same feed',async()=>{
+ assert.equal(await screen({lang:'en',group:'personal'}),'home-feed');
  assert.equal(await screen({lang:'ko',home:'1',group:'personal'}),'home-feed');
 });
 
 test('first visits and returning Korean web visits enter the feed without an account lookup',async()=>{
  assert.equal(await screen({}),'home-feed');
  assert.equal(await screen({lang:'ko'}),'home-feed');
- assert.equal(await screen({lang:'en'}),'workspace');
+ assert.equal(await screen({lang:'en'}),'home-feed');
  assert.equal(await screen({lang:'ko'},true),'workspace');
 });
 
