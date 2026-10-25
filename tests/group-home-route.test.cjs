@@ -4,13 +4,14 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const ts=require('typescript');
 const code=ts.transpileModule(fs.readFileSync('app/(workspace)/page.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX}}).outputText;
-async function screen(params, authorization=false){
+async function screen(params, authorization=false, returning=false){
  const exports={};
  vm.runInNewContext(code,{exports,require(name){
   if(name==='react'||name==='react/jsx-runtime')return require(name);
   if(name==='@/lib/request-locale')return {requestLocale:async value=>value||'ko'};
   if(name==='next/navigation')return {redirect:url=>{throw new Error('redirect:'+url)}};
-  if(name==='next/headers')return {headers:async()=>new Map(authorization?[['authorization','Bearer native']]:[])};
+  if(name==='next/headers')return {headers:async()=>new Map(authorization?[['authorization','Bearer native']]:[]),cookies:async()=>new Map(returning?[['snaproom_session','existing']]:[])};
+  if(name==='../memory-intro')return {default:'memory-intro'};
   if(name==='../home-feed')return {default:'home-feed'};
   if(name==='./workspace-client')return {default:'workspace'};
   if(name==='./entry-landing')return {default:'landing'};
@@ -30,10 +31,12 @@ test('English and Korean group links use the same feed',async()=>{
  assert.equal(await screen({lang:'ko',home:'1',group:'personal'}),'home-feed');
 });
 
-test('first visits and returning Korean web visits enter the feed without an account lookup',async()=>{
- assert.equal(await screen({}),'home-feed');
- assert.equal(await screen({lang:'ko'}),'home-feed');
- assert.equal(await screen({lang:'en'}),'home-feed');
+test('new web visitors see the card introduction while returning visitors keep their feed',async()=>{
+ assert.equal(await screen({}),'memory-intro');
+ assert.equal(await screen({lang:'ko'}),'memory-intro');
+ assert.equal(await screen({lang:'en'}),'memory-intro');
+ assert.equal(await screen({lang:'ko'},false,true),'home-feed');
+ assert.equal(await screen({lang:'en'},false,true),'home-feed');
  assert.equal(await screen({lang:'ko'},true),'workspace');
 });
 

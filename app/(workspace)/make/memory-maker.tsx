@@ -8,6 +8,7 @@ import { makerTemplate, isPhotoRequestEntry } from '@/lib/album-campaigns';
 import {CrewLocaleProvider} from '@/app/crew-locale';
 import type {Locale} from '@/app/i18n';
 import TripStoryStart from '@/app/trip-story';
+import MemoryIntro from '@/app/memory-intro';
 import { api, initializeSession } from '@/lib/client-api';
 import { trackGaEvent } from '@/lib/auth-analytics';
 
@@ -25,6 +26,7 @@ export default function MemoryMaker({locale}:{locale:Locale}) {
     setGuest(!workspace.account);
     return true;
   }
+  if (!themes && params.get('stage') !== 'create' && params.get('mode') !== 'decorate') return <MemoryIntro key={`${templateId}:${occasion}`} locale={locale} onStart={() => {const next=new URLSearchParams(params.toString());next.set('stage','create');router.push(`/make?${next}`);}}/>;
   if (collecting) return <CrewLocaleProvider locale={locale}><main className="memory-make-shell"><Link className="memory-make-back" href={`/?lang=${locale}&home=1`}>{ko?'← 피드 홈으로':'← Back to feed'}</Link><TripStoryStart/></main></CrewLocaleProvider>;
   return <CrewLocaleProvider locale={locale}><main className="memory-make-shell"><Link className="memory-make-back" href={template?`/make?themes=1&lang=${locale}`:`/?lang=${locale}&home=1`}>{template?(ko?'← 다른 앨범 둘러보기':'← Browse other albums'):(ko?'← 피드 홈으로':'← Back to feed')}</Link>
     {template ? <MemoryStudio key={`${template.id}:${occasion || ''}`} ko={ko} guest={guest} albums={[]} photos={[]} starter={template} beforeSave={beforeSave} onClose={() => router.push(`/make?themes=1&lang=${locale}`)} onConnect={id => router.push(`/?lang=${locale}&login=1&returnTo=${encodeURIComponent(id?`/?lang=${locale}&home=1&group=personal&album=${encodeURIComponent(id)}`:`/?lang=${locale}&home=1`)}`)} onSaved={id => router.push(`/?lang=${locale}&home=1&group=personal&album=${encodeURIComponent(id)}`)}/> : <MemoryStart/>}

@@ -1,7 +1,8 @@
 import WorkspaceLoading from '../workspace-loading';
 import { publicMetadata } from '@/lib/seo';
 import { Suspense } from 'react';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
+import MemoryIntro from '../memory-intro';
 import { requestLocale } from '@/lib/request-locale';
 import Workspace from './workspace-client';
 import HomeFeed from '../home-feed';
@@ -44,6 +45,9 @@ async function LocalizedWorkspace({ searchParams }: Props) {
   if ((requestedHome || requestedGroupHome) && !requestedAlbumView) return <HomeFeed locale={locale}/>;
   // First-time and returning web visitors enter the same feed. Native bearer clients
   // and explicit album / invitation / sign-in links retain their existing flows.
-  if (!workspaceParams.some(name => params[name] !== undefined) && !(await headers()).has('authorization')) return <HomeFeed locale={locale}/>;
+  if (!workspaceParams.some(name => params[name] !== undefined) && !(await headers()).has('authorization')) {
+    if (!(await cookies()).has('snaproom_session')) return <MemoryIntro locale={locale}/>;
+    return <HomeFeed locale={locale}/>;
+  }
   return <Workspace key={browse==='1'?'browse':'workspace'} initialLocale={locale} browsing={browse==='1'} initialLogin={params.login === '1' || params.loginError !== undefined || requestedHome} />;
 }
