@@ -80,7 +80,9 @@ export async function safe(work: () => Promise<Response>) {
   try { return await work(); } catch (error) {
     if (error instanceof ApiError) return Response.json({ error: error.code }, { status: error.status });
     const code = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string' && /^[A-Z0-9_]{2,48}$/.test(error.code) ? error.code : 'UNCLASSIFIED';
-    console.error('Snaproom request failed', error instanceof Error ? error.name : 'UnknownError', code);
+    const message=error instanceof Error?error.message:'';
+    const category=/max.*client|too many connections|remaining connection slots/i.test(message)?'CONNECTION_CAPACITY':/tenant|user not found/i.test(message)?'POOL_TENANT':/circuit breaker/i.test(message)?'POOL_CIRCUIT':/prepared statement/i.test(message)?'PREPARED_STATEMENT':/cache lookup/i.test(message)?'SCHEMA_CACHE':/timeout|timed out/i.test(message)?'TIMEOUT':/certificate|SSL|TLS/i.test(message)?'TLS':/password|authentication/i.test(message)?'AUTH':'OTHER';
+    console.error('Snaproom request failed', error instanceof Error ? error.name : 'UnknownError', code,category);
     return Response.json({ error: 'SERVER_ERROR' }, { status: 503 });
   }
 }
