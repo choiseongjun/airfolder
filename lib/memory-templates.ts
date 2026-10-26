@@ -32,4 +32,5 @@ const albumScenes: Record<Exclude<AlbumThemeId, ExtraAlbumThemeId>, { title: str
   diary: { title: '10월의 어느 페이지', photos: ['autumn-family','cafe-friends','family-birthday','hiking-friends'] },
 };
 export const albumTemplates: MemoryTemplate[] = albumThemes.map(theme => ({id: `album-${theme.id}`,name:theme.ko,eyebrow:theme.kicker,description:theme.hintKo,...('title' in theme ? {title:theme.title,photos:[...theme.photos].reverse()}:albumScenes[theme.id]),note:'다시 꺼내보고 싶은 순간들.',style:'four',mood:'cream',albumTheme:theme.id}));
-export function memoryTemplate(id: string | null | undefined) { return [...memoryTemplates,...albumTemplates].find(item => item.id === id); }
+export const keepsakeTemplate:MemoryTemplate={id:'album-keepsake',name:'작은 추억책',eyebrow:'A LITTLE BOOK OF US',description:'사진과 이야기를 한 권으로.',title:'오래 간직하고 싶은 날',note:'',style:'four',mood:'cream',photos:[],albumTheme:'diary'};
+export function memoryTemplate(id: string | null | undefined) { return [...memoryTemplates,...albumTemplates,keepsakeTemplate].find(item => item.id === id); }

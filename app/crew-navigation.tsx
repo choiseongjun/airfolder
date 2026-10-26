@@ -16,7 +16,7 @@ export default function CrewNavigation({ locale, screen, screenHref, createHref,
         const create = tab.key === 'create';
         const className = `flex flex-col items-center justify-center gap-1 px-1 py-2 text-center text-[10px] md:text-xs ${screen === tab.key || create ? 'font-semibold text-[#99452c]' : 'text-[#78675e]'}`;
         const content = <><Icon name={tab.icon} className={create ? 'rounded-full bg-[#99452c] p-2 text-[24px] text-white' : 'text-[22px]'} /><span>{tab[locale]}</span></>;
-        return create && onCreate ? <button key={tab.key} type="button" onClick={onCreate} className={className}>{content}</button> : <Link key={tab.key} href={create ? createHref ?? `/?lang=${locale}&quick=1` : screenHref(tab.key as CrewScreen)} aria-current={screen === tab.key ? 'page' : undefined} className={className}>{content}</Link>;
+        return create && onCreate ? <button key={tab.key} type="button" onClick={onCreate} className={className}>{content}</button> : <Link key={tab.key} href={create ? createHref ?? `/make?lang=${locale}&stage=create` : screenHref(tab.key as CrewScreen)} aria-current={screen === tab.key ? 'page' : undefined} className={className}>{content}</Link>;
       })}
     </div>
   </nav>;

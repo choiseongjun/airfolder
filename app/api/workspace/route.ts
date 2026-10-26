@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       pool().query(`SELECT f.*, to_char(f.starts_on, 'YYYY-MM-DD') start_date, to_char(f.ends_on, 'YYYY-MM-DD') end_date, (SELECT count(*)::int FROM snaproom.members m WHERE m.folder_id=f.id) members,
         (SELECT count(*)::int FROM snaproom.photos h WHERE h.folder_id=f.id AND h.deleted_at IS NULL AND h.capsule_hold) held, (SELECT count(DISTINCT h.owner_id)::int FROM snaproom.photos h WHERE h.folder_id=f.id AND h.deleted_at IS NULL AND h.capsule_hold) held_people,
         (SELECT count(*)::int FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND snaproom.album_active(p.folder_id) AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1)) photo_count,
-        (SELECT p.id FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND snaproom.album_active(p.folder_id) AND p.mime LIKE 'image/%' AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1) ORDER BY p.captured_at DESC,p.id DESC LIMIT 1) cover_id
+        (SELECT p.id FROM snaproom.photos p WHERE p.folder_id=f.id AND p.deleted_at IS NULL AND snaproom.album_active(p.folder_id) AND p.mime LIKE 'image/%' AND snaproom.can_view(p.owner_id,p.shared,p.recipients,$1) ORDER BY CASE WHEN p.name='memory-book-01.jpg' THEN 0 ELSE 1 END,p.captured_at DESC,p.id DESC LIMIT 1) cover_id
         FROM snaproom.folders f JOIN snaproom.members m ON m.folder_id=f.id WHERE f.deleted_at IS NULL AND m.viewer_id=$1 ORDER BY f.updated_at DESC`, [who]),
       pool().query(`SELECT p.id,p.folder_id,p.name,p.owner_id,p.shared,p.recipients,p.mime,p.original_available,p.preview_path,p.captured_at,p.capsule_hold,
         to_char(p.captured_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') cursor_at FROM snaproom.photos p

@@ -1,13 +1,13 @@
 import { Suspense } from 'react';
 import {requestLocale} from '@/lib/request-locale';
 import MemoryMaker from './memory-maker';
-import { makerTemplate, isPhotoRequestEntry } from '@/lib/album-campaigns';
+import { makerTemplate } from '@/lib/album-campaigns';
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const q = await searchParams;
   const ko=(await requestLocale(q.lang))==='ko';
-  if (isPhotoRequestEntry(typeof q.template === 'string' ? q.template : null, typeof q.occasion === 'string' ? q.occasion : null, q.themes === '1', typeof q.mode === 'string' ? q.mode : null)) {
-    const title = ko?'각자가 기억하는 같은 여행 | 메모네스티아':'Same trip, different memories | Memonestia';
-    const description = ko?'사진 3장과 내 한마디로 시작하는 우리 여행편. 친구의 사진과 가장 웃겼던 순간까지 모아 캐릭터가 소개하는 카드로 남겨요.':'Start our trip story with photos and a few words. Invite friends to add their memories, with a little character beside each story.';
+  if(q.themes !== '1' && q.mode !== 'decorate') {
+    const title=ko?'당신의 사진과 이야기를 작은 추억책으로 | 메모네스티아':'Your photos and stories, made into a little book | Memonestia';
+    const description=ko?'사진 1~8장과 한마디를 표지·사진 페이지·마지막 편지로 만들어드려요. 로그인 없이 미리보고 JPG 이미지 묶음으로 간직하세요.':'Turn one to eight photos and a few words into a cover, photo pages and a closing letter. Preview without signing in and download your JPG image bundle.';
     return { title, description, openGraph: { title, description }, twitter: { card: 'summary_large_image' as const, title, description } };
   }
   const template = q.themes === '1' ? null : makerTemplate(typeof q.template === 'string' ? q.template : null, typeof q.occasion === 'string' ? q.occasion : null);

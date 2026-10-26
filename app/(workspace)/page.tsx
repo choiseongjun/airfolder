@@ -5,7 +5,8 @@ import { cookies, headers } from 'next/headers';
 import MemoryIntro from '../memory-intro';
 import { requestLocale } from '@/lib/request-locale';
 import Workspace from './workspace-client';
-import HomeFeed from '../home-feed';
+import KeepsakeLogin from '../keepsake-login';
+import KeepsakeWorkspace from '../keepsake-workspace';
 import { redirect } from 'next/navigation';
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -30,9 +31,12 @@ async function LocalizedWorkspace({ searchParams }: Props) {
   const { lang, browse, invite, screen } = params;
   const locale = await requestLocale(lang);
   if (typeof invite === 'string' && /^[a-f\d]{64}$/.test(invite) && browse !== '1') redirect(`/join/${invite}?lang=${locale}`);
+  if (params.login === '1' || params.loginError !== undefined) return <KeepsakeLogin locale={locale}/>;
   if (params.section === 'rooms' && params.album === undefined) redirect(`/?lang=${locale}&home=1${typeof params.group === 'string' ? `&group=${encodeURIComponent(params.group)}` : ''}`);
   if (params.home === '1' && (screen === 'photos' || screen === 'behind' || screen === 'settings')) redirect(`/crew/${screen}?lang=${locale}&group=${encodeURIComponent(typeof params.group === 'string' ? params.group : 'personal')}`);
   // Both languages enter the same crew screens.
+  if (typeof params.album === 'string' && params.legacy !== '1' && params.login === undefined && params.loginError === undefined) redirect(`/library?lang=${locale}&album=${encodeURIComponent(params.album)}`);
+  if ((params.quick === '1' || params.studio === '1') && params.legacy !== '1') redirect(`/make?lang=${locale}&stage=create`);
   const requestedHome = params.home === '1';
   // Group-only links select a crew in the current feed, not the legacy workspace.
   // Keep explicit album, login, upload and invitation flows on their own routes.
@@ -42,12 +46,12 @@ async function LocalizedWorkspace({ searchParams }: Props) {
   // The post-login return URL is an explicit request for the Stitch crew home.
   // Render it directly; a transient server-side session lookup failure must not
   // send a signed-in visitor back to the generic workspace screen.
-  if ((requestedHome || requestedGroupHome) && !requestedAlbumView) return <HomeFeed locale={locale}/>;
+  if ((requestedHome || requestedGroupHome) && !requestedAlbumView) return <KeepsakeWorkspace locale={locale}/>;
   // First-time and returning web visitors enter the same feed. Native bearer clients
   // and explicit album / invitation / sign-in links retain their existing flows.
   if (!workspaceParams.some(name => params[name] !== undefined) && !(await headers()).has('authorization')) {
     if (!(await cookies()).has('snaproom_session')) return <MemoryIntro locale={locale}/>;
-    return <HomeFeed locale={locale}/>;
+    return <KeepsakeWorkspace locale={locale}/>;
   }
   return <Workspace key={browse==='1'?'browse':'workspace'} initialLocale={locale} browsing={browse==='1'} initialLogin={params.login === '1' || params.loginError !== undefined || requestedHome} />;
 }
