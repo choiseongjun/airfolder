@@ -22,6 +22,14 @@ test('invalid photo counts and broken photos fail instead of producing a partial
  for(const photos of [[],Array(9).fill('one'),['broken']])await assert.rejects(()=>renderer().renderKeepsakeBook({title:'Test',companions:'',story:'Words',photos,locale:'en'}));
 });
 
+test('optional words omit the letter without losing the last photo or inventing a memory',async()=>{
+ const r=renderer(),files=await r.renderKeepsakeBook({title:'Our trip',companions:'',story:'   ',photos:['one','two'],locale:'en'});
+ assert.equal(files.length,3);
+ assert.equal(r.pages[2].images[0].src,'two');
+ assert.ok(r.pages.every(p=>!p.text.some(t=>t.value==='THE WORDS I WANT TO KEEP')));
+ assert.ok(r.pages[2].text.some(t=>t.value==='3 / 3'));
+});
+
 test('every album style and pattern reaches every exported page without cropping photos',async()=>{
  const catalog=renderer();
  for(const style of catalog.bookStyles)for(const pattern of catalog.bookPatterns){

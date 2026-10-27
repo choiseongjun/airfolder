@@ -15,8 +15,8 @@ export function publicOrigin(): string | undefined {
 
 export const copy = {
   en: {
-    title: 'Memonestia — Your photos, made into a little memory book',
-    description: 'Turn your photos and a few words into a digital memory book. Preview without signing in, download the finished pages, and optionally keep them in a private album.',
+    title: 'Memonestia — Our days, kept on a shared shelf',
+    description: 'Turn photos and words into memory books. Keep them on a shared shelf and invite someone to add their story.',
     eyebrow: 'YOUR MOMENTS. TOGETHER.',
     heading: 'Days together.\nMemories to revisit.',
     intro: 'Bring everyone’s photos into a shared space. From the first trip to the next gathering, keep collecting the moments you want to come back to.',
@@ -30,8 +30,8 @@ export const copy = {
     footer: 'Private by default. Shared by choice.',
   },
   ko: {
-    title: '메모네스티아 — 당신의 사진과 이야기를 작은 추억책으로',
-    description: '사진과 한마디만 들려주세요. 표지부터 마지막 편지까지 작은 디지털 추억책으로 만들어드립니다. 로그인 없이 미리보고 완성본을 다운로드하세요.',
+    title: '메모네스티아 — 함께한 날들을 우리의 책장에',
+    description: '사진과 이야기로 한 권씩 만들고, 초대한 사람과 같은 책장에 보관하세요. 함께한 여행과 일상을 다시 펼쳐보는 추억 책장.',
     eyebrow: '함께 모으고, 다시 꺼내보는 우리의 기록.',
     heading: '함께한 날들이,\n계속 이어지는 곳.',
     intro: '첫 여행부터 다음 모임까지. 각자 찍은 사진을 한곳에 모으고, 나누고 싶은 순간을 함께 간직하세요.',

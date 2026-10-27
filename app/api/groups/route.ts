@@ -21,10 +21,12 @@ export async function GET(request:Request){await connection();return safe(async(
 });}
 export async function POST(request:Request){return safe(async()=>{
  sameOrigin(request);const who=await viewer(),b=await json(request);await requireTerms(who);
+ const requestedId=b.creationId===undefined?null:uuid(b.creationId);
  const id=await transaction(async db=>{
   await db.query('SELECT pg_advisory_xact_lock(hashtext($1))',['group-create:'+who]);
+  if(requestedId){const existing=await db.query('SELECT owner_id FROM snaproom.groups WHERE id=$1',[requestedId]);if(existing.rowCount){if(existing.rows[0].owner_id!==who)throw new ApiError(409,'GROUP_CONFLICT');return requestedId;}}
   const count=await db.query('SELECT count(*)::int n FROM snaproom.groups WHERE owner_id=$1',[who]);if(count.rows[0].n>=50)throw new ApiError(409,'GROUP_LIMIT');
-  const id=randomUUID();await db.query('INSERT INTO snaproom.groups(id,owner_id,name,description,is_public) VALUES($1,$2,$3,$4,$5)',[id,who,textBody(b.name,80),b.description?textBody(b.description,500):'',b.isPublic===true]);
+  const id=requestedId||randomUUID();await db.query('INSERT INTO snaproom.groups(id,owner_id,name,description,is_public) VALUES($1,$2,$3,$4,$5)',[id,who,textBody(b.name,80),b.description?textBody(b.description,500):'',b.isPublic===true]);
   await db.query('INSERT INTO snaproom.group_members(group_id,viewer_id) VALUES($1,$2)',[id,who]);return id;
  });return Response.json({id},{status:201});
 });}

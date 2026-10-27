@@ -8,7 +8,7 @@ export const bookPatterns = [{id:'plain',ko:'무지',en:'Plain'},{id:'dots',ko:'
 export type BookStyle = typeof bookStyles[number]['id'];
 export type BookPattern = typeof bookPatterns[number]['id'];
 export type BookInput = {title:string;companions:string;story:string;photos:string[];locale:'ko'|'en';style?:BookStyle;pattern?:BookPattern};
-export function bookPageCount(photos:number) { return photos + 2; }
+export function bookPageCount(photos:number,hasStory=true) { return photos + (hasStory?2:1); }
 
 /** All pages are rendered locally, with the user's words unchanged. */
 export async function renderKeepsakeBook(input:BookInput):Promise<File[]> {
@@ -16,7 +16,7 @@ export async function renderKeepsakeBook(input:BookInput):Promise<File[]> {
  await document.fonts.ready;
  const files:File[]=[];
  const load=(src:string)=>new Promise<HTMLImageElement>((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('INVALID_PHOTO'));img.src=src;});
- const ko=input.locale==='ko',total=bookPageCount(input.photos.length);
+ const ko=input.locale==='ko',hasStory=!!input.story.trim(),total=bookPageCount(input.photos.length,hasStory);
  const style=bookStyles.find(s=>s.id===input.style)??bookStyles[0],pattern=bookPatterns.find(p=>p.id===input.pattern)?.id??'plain';
  for(let page=0;page<total;page++){
   const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1440;
@@ -43,7 +43,7 @@ export async function renderKeepsakeBook(input:BookInput):Promise<File[]> {
    text(input.title,185,66,250);text(input.companions,400,28,95);
    const img=await load(input.photos[0]);photo(img,80,510,920,680);
    c.fillStyle=style.accent;c.font='27px serif';c.fillText(ko?'사진은 장면을, 이야기는 마음을.':'A photo keeps the day. A story keeps the feeling.',80,1275);
-  }else if(page===total-1){
+  }else if(hasStory&&page===total-1){
    c.fillStyle=style.accent;c.font='23px sans-serif';c.fillText(ko?'그날을 기억하는 한마디':'THE WORDS I WANT TO KEEP',80,190);
    text(input.story,300,40,900);
   }else{

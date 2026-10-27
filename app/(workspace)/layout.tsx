@@ -37,8 +37,8 @@ const penFont = Nanum_Pen_Script({
 export const metadata: Metadata = {
   ...publicMetadata("en"),
   alternates: undefined,
-  title: "Memonestia — Your days, made to keep.",
-  description: "Turn your photos and words into a little memory book. Create, keep, and give your favorite days.",
+  title: "Memonestia — A shelf for our days.",
+  description: "Keep your photos and stories in memory books on a shared shelf. Invite someone to add their memories.",
   robots: { index: false, follow: false },
 };
 
