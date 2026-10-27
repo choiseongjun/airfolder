@@ -27,9 +27,9 @@ type Memory={author?:string;id:string;kind:string;title:string;body:string;src?:
 const paths={home:'/?home=1',library:'/library',gifts:'/gifts',account:'/account'};
 
 export default function KeepsakeWorkspace({locale,screen='home'}:{locale:Locale;screen?:Screen}){
- const ko=locale==='ko',t=(a:string,b:string)=>ko?a:b,q=useSearchParams(),album=q.get('album'),group=q.get('group');
+ const ko=locale==='ko',t=(a:string,b:string)=>ko?a:b,q=useSearchParams(),album=q.get('album'),group=q.get('group'),shelfInvite=q.get('shelfInvite');
  const [data,setData]=useState<Workspace|null>(null),[error,setError]=useState(''),[revision,setRevision]=useState(0),[filter,setFilter]=useState('all'),[search,setSearch]=useState('');
- useEffect(()=>{let active=true;initializeSession().then(()=>api<Workspace>('/api/workspace')).then(result=>{if(active){setData(result);setError('');}}).catch(()=>{if(active)setError(ko?'보관함을 불러오지 못했어요. 다시 시도해 주세요.':'Could not load your collection. Please retry.');});return()=>{active=false;};},[revision,ko]);
+ useEffect(()=>{let active=true;initializeSession().then(()=>api<Workspace>('/api/workspace')).then(result=>{if(active){setData(result);setError('');}}).catch(()=>{if(active)setError(ko?'보관함을 불러오지 못했어요. 다시 시도해 주세요.':'Could not load your collection. Please retry.');});return()=>{active=false;};},[revision,ko,group,shelfInvite]);
  const href=(next:Screen)=>`${paths[next]}${next==='home'?'&':'?'}lang=${locale}${group&&next!=='account'?`&group=${encodeURIComponent(group)}`:''}`;
  const bookHref=(id:string)=>`/library?lang=${locale}&album=${encodeURIComponent(id)}`;
  const room=data?.rooms.find(r=>r.id===album);
